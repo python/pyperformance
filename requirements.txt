@@ -1,0 +1,14 @@
+six
+perf>=0.7
+# FIXME: reenable it, need Python.h?
+# psutil
+
+Chameleon==2.22                           # chameleon
+Django==1.9                               # django
+Mako==1.0.4                               # mako
+Mercurial==3.9; python_version < '3.0'    # hg_startup
+bzr==2.7.0; python_version < '3.0'        # bzr_startup
+html5lib==0.999999999                     # html5lib
+pathlib2==2.1.0; python_version < '3.4'   # pathlib
+spambayes==1.1b2; python_version < '3.0'  # spambayes
+tornado==4.4.1                            # tornado_http

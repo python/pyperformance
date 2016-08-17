@@ -1,0 +1,22 @@
+This directory contains both macro- and micro-benchmarks for Python
+implementations.
+
+Macro(ish)benchmarks:
+    - bm_django.py: assess Django template performance.
+    - bm_pickle.py: test picking/unpickling performance.
+    - bm_spitfire.py: assess Spitfire template performance.
+    - gcbench.py: GC benchmark (allocate and deallocate lots of objects).
+      Copied from PyPy's pypy/translator/goal/gcbench.py, r60845.
+
+
+Microbenchmarks:
+    - bm_ai.py: solvers for alphametics and N-Queens problems. These are
+      classified as "micro" because they're dominated by a single function.
+    - tuple_gc_hell.py: stress the GC by allocating lots of tuples.
+
+
+Crap benchmarks used for historical comparisons:
+    - pybench/: PyBench 2.0 benchmark suite.
+    - pystone.py: standard PyStone benchmark.
+    - richards.py: standard Richards benchmark.
+      Copied from PyPy's pypy/translator/goal/richards.py, r60845.
