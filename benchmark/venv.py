@@ -132,23 +132,30 @@ def run_cmd(cmd):
     print("")
 
 
-def virtualenv_name(python, version):
-    if not isinstance(python, bytes):
-        python = python.encode('utf-8')
-    md5 = hashlib.md5(python)
-    if isinstance(version, bytes):
-        md5.update(version)
+def virtualenv_name():
+    text = sys.executable + sys.version
+
+    version = sys.version_info
+    if hasattr(sys, 'implementation'):
+        # PEP 421, Python 3.3
+        implementation = sys.implementation.name.lower()
+    elif hasattr(sys, 'pypy_version_info'):
+        version = sys.pypy_version_info
+        implementation = 'pypy'
     else:
-        md5.update(version.encode('utf-8'))
-    md5 = md5.hexdigest()
-    return 'py%s-%s' % (version, md5[:6])
+        implementation = 'cpython'
+
+    if not isinstance(text, bytes):
+        text = text .encode('utf-8')
+    sha1 = hashlib.sha1(text).hexdigest()
+
+    return ('%s%s.%s-%s'
+            % (implementation, version.major, version.minor, sha1[:12]))
 
 
-def create_virtualenv(python):
-    python = which(python)
-    version = interpreter_version([python])
+def create_virtualenv():
     root = ROOT_DIR
-    venv_name = virtualenv_name(python, version)
+    venv_name = virtualenv_name()
     venv_path = os.path.join(root, 'venv', venv_name)
     venv_python = os.path.join(venv_path, 'bin', 'python')
     if os.path.exists(venv_path):
@@ -156,11 +163,10 @@ def create_virtualenv(python):
 
     print("Creating the virtual environment %s" % venv_path)
     try:
-        version_info = (int(version[0]), int(version[2]))
-        if version_info >= (3, 3):
-            cmd = [python, '-m', 'venv', venv_path]
+        if sys.version_info >= (3, 3):
+            cmd = [sys.executable, '-m', 'venv', venv_path]
         else:
-            cmd = ['virtualenv', '-p', python, venv_path]
+            cmd = ['virtualenv', '-p', sys.executable, venv_path]
         run_cmd(cmd)
 
         # upgrade setuptools and pip to make sure that they support environment
@@ -175,13 +181,14 @@ def create_virtualenv(python):
         cmd = [venv_python, '-m', 'pip', 'install', '-r', requirements]
         run_cmd(cmd)
     except:
-        shutil.rmtree(venv_path)
+        if os.path.exists(venv_path):
+            shutil.rmtree(venv_path)
         raise
 
     return venv_python
 
 
 def exec_in_virtualenv(options):
-    venv_python = create_virtualenv(sys.executable)
+    venv_python = create_virtualenv()
     args = [venv_python] + sys.argv + ["--inside-venv"]
     os.execv(args[0], args)
