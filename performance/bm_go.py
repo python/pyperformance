@@ -450,6 +450,10 @@ def main(loops):
     return perf.perf_counter() - t0
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='go')
+    kw = {}
+    if perf.python_has_jit():
+        # PyPy needs more samples to warmup its JIT
+        kw['warmups'] = 50
+    runner = perf.text_runner.TextRunner(name='go', **kw)
     runner.metadata['description'] = "Test the performance of the Go benchmark"
     runner.bench_sample_func(main)

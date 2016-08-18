@@ -86,6 +86,5 @@ def bench_telco(loops):
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='telco')
-    runner.metadata['description'] = ("Test the performance of the Telco "
-                                      "decimal benchmark")
+    runner.metadata['description'] = "Telco decimal benchmark"
     runner.bench_sample_func(bench_telco)

@@ -83,7 +83,11 @@ def bench_tornado(loops):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='tornado_http')
+    kw = {}
+    if perf.python_has_jit():
+        # PyPy needs more samples to warmup its JIT
+        kw['warmups'] = 30
+    runner = perf.text_runner.TextRunner(name='tornado_http', **kw)
     runner.metadata['description'] = ("Test the performance of HTTP requests "
                                       "with Tornado.")
     runner.bench_sample_func(bench_tornado)

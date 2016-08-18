@@ -604,7 +604,6 @@ def main(loops, level):
     range_it = xrange(loops)
     t0 = perf.perf_counter()
 
-
     for _ in range_it:
         stream = StringIO()
         solve_file(board, strategy, order, stream)
@@ -615,7 +614,7 @@ def main(loops, level):
 
     output = '\n'.join(line.rstrip() for line in output.splitlines())
     if output != expected:
-        raise AssertionError("got a wrong answer:\n%s\nexpected: %s" 
+        raise AssertionError("got a wrong answer:\n%s\nexpected: %s"
                              % (output, expected))
 
     return dt
@@ -626,7 +625,11 @@ def prepare_subprocess_args(runner, args):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='hexiom2')
+    kw = {}
+    if perf.python_has_jit():
+        # PyPy needs more samples to warmup its JIT
+        kw['warmups'] = 15
+    runner = perf.text_runner.TextRunner(name='hexiom2', **kw)
     runner.metadata['description'] = "Test the performance of the hexiom2 benchmark"
     levels = sorted(LEVELS)
     runner.argparser.add_argument("--level", type=int,
@@ -639,4 +642,5 @@ if __name__ == "__main__":
     args = runner.parse_args()
     level = args.level
     runner.name += "/level_%s" % level
+
     runner.bench_sample_func(main, level)
