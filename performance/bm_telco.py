@@ -17,12 +17,14 @@ The total price, t, is converted to a string, s.
 
 from __future__ import print_function
 from decimal import ROUND_HALF_EVEN, ROUND_DOWN, Decimal, getcontext, Context
+import io
 import os
 from struct import unpack
 import tempfile
 
-from six.moves import xrange
 import perf.text_runner
+import six
+from six.moves import xrange
 
 
 def rel_path(*path):
@@ -38,38 +40,46 @@ def bench_telco(loops):
     basictax = Decimal("0.0675")
     disttax = Decimal("0.0341")
 
+    with open(filename, "rb") as infil:
+        data = infil.read()
+
+    infil = io.BytesIO(data)
+    outfil = six.StringIO()
+
     start = perf.perf_counter()
     for _ in range(loops):
-        with open(filename, "rb") as infil:
-            with tempfile.TemporaryFile("w") as outfil:
-                sumT = Decimal("0")   # sum of total prices
-                sumB = Decimal("0")   # sum of basic tax
-                sumD = Decimal("0")   # sum of 'distance' tax
+        infil.seek(0)
+        sumT = Decimal("0")   # sum of total prices
+        sumB = Decimal("0")   # sum of basic tax
+        sumD = Decimal("0")   # sum of 'distance' tax
 
-                for i in xrange(5000):
-                    datum = infil.read(8)
-                    if datum == '': break
-                    n, =  unpack('>Q', datum)
+        for i in xrange(5000):
+            datum = infil.read(8)
+            if datum == '': break
+            n, =  unpack('>Q', datum)
 
-                    calltype = n & 1
-                    r = rates[calltype]
+            calltype = n & 1
+            r = rates[calltype]
 
-                    p = Banker.quantize(r * n, twodig)
+            p = Banker.quantize(r * n, twodig)
 
-                    b = p * basictax
-                    b = b.quantize(twodig)
-                    sumB += b
+            b = p * basictax
+            b = b.quantize(twodig)
+            sumB += b
 
-                    t = p + b
+            t = p + b
 
-                    if calltype:
-                        d = p * disttax
-                        d = d.quantize(twodig)
-                        sumD += d
-                        t += d
+            if calltype:
+                d = p * disttax
+                d = d.quantize(twodig)
+                sumD += d
+                t += d
 
-                    sumT += t
-                    print(t, file=outfil)
+            sumT += t
+            print(t, file=outfil)
+
+        outfil.seek(0)
+        outfil.truncate()
 
     return perf.perf_counter() - start
 
