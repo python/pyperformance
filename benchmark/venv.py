@@ -2,6 +2,7 @@ from __future__ import division, with_statement, print_function
 
 import hashlib
 import os
+import platform
 import shutil
 import subprocess
 import sys
@@ -77,6 +78,15 @@ except ImportError:
 ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 
 
+def python_implementation():
+    if hasattr(sys, 'implementation'):
+        # PEP 421, Python 3.3
+        name = sys.implementation.name
+    else:
+        name = platform.python_implementation()
+    return name.lower()
+
+
 # FIXME: use version_info format: (int, int)
 def interpreter_version(python, _cache={}):
     """Return the interpreter version for the given Python interpreter.
@@ -136,14 +146,7 @@ def virtualenv_name():
     data = sys.executable + sys.version
 
     version = sys.version_info
-    if hasattr(sys, 'implementation'):
-        # PEP 421, Python 3.3
-        implementation = sys.implementation.name.lower()
-    elif hasattr(sys, 'pypy_version_info'):
-        version = sys.pypy_version_info
-        implementation = 'pypy'
-    else:
-        implementation = 'cpython'
+    implementation = python_implementation()
 
     if not isinstance(data, bytes):
         data = data.encode('utf-8')
