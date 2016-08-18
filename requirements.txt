@@ -1,5 +1,5 @@
 six
-perf>=0.7
+perf>=0.7.4
 # FIXME: reenable it, need Python.h?
 # psutil
 
