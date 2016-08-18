@@ -133,7 +133,7 @@ def run_cmd(cmd):
 
 
 def virtualenv_name():
-    text = sys.executable + sys.version
+    data = sys.executable + sys.version
 
     version = sys.version_info
     if hasattr(sys, 'implementation'):
@@ -145,9 +145,11 @@ def virtualenv_name():
     else:
         implementation = 'cpython'
 
-    if not isinstance(text, bytes):
-        text = text .encode('utf-8')
-    sha1 = hashlib.sha1(text).hexdigest()
+    if not isinstance(data, bytes):
+        data = data.encode('utf-8')
+    with open(os.path.join(ROOT_DIR, 'requirements.txt'), 'rb') as fp:
+        data += fp.read()
+    sha1 = hashlib.sha1(data).hexdigest()
 
     return ('%s%s.%s-%s'
             % (implementation, version.major, version.minor, sha1[:12]))
