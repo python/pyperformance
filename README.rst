@@ -128,7 +128,6 @@ Available Benchmarks
 - spambayes - run a canned mailbox through a SpamBayes ham/spam classifier.
 - startup - collection of microbenchmarks focused on Python interpreter
             start-up time:
-    - bzr_startup - get Bazaar's help screen.
     - hg_startup - get Mercurial's help screen.
     - normal_startup - start Python, then exit immediately.
     - startup_nosite - start Python with the -S option, then exit immediately.

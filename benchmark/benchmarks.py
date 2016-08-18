@@ -163,28 +163,6 @@ def BM_hg_startup(*args, **kwargs):
     return SimpleBenchmark(MeasureHgStartup, *args, **kwargs)
 
 
-def MeasureBzrStartup(python, options):
-    venv = get_virtualenv()
-    bzr_bin = os.path.join(venv, 'bin', 'bzr')
-    bzr_env = BuildEnv(None, options.inherit_env)
-
-    if options.debug_single_sample:
-        trials = 1
-    elif options.rigorous:
-        trials = 200
-    elif options.fast:
-        trials = 10
-    else:
-        trials = 100
-
-    command = python + [bzr_bin, "help"]
-    return MeasureCommand("bzr_startup", command, trials, bzr_env, options.track_memory)
-
-@VersionRange(None, '2.7')
-def BM_bzr_startup(*args, **kwargs):
-    return SimpleBenchmark(MeasureBzrStartup, *args, **kwargs)
-
-
 def MeasureChameleon(python, options):
     bm_path = Relative("performance/bm_chameleon.py")
     return MeasureGeneric(python, options, bm_path)
@@ -825,7 +803,7 @@ BENCH_GROUPS = {"default": ["2to3", "chameleon", "django", "nbody",
                             "tornado_http", "fastpickle", "fastunpickle",
                             "regex_v8", "json_dump_v2", "json_load"],
                 "startup": ["normal_startup", "startup_nosite",
-                            "bzr_startup", "hg_startup"],
+                            "hg_startup"],
                 "regex": ["regex_v8", "regex_effbot", "regex_compile"],
                 "threading": ["threaded_count", "iterative_count"],
                 "serialize": ["slowpickle", "slowunpickle",  # Not for Python 3
