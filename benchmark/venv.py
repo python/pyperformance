@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import division, with_statement, print_function
 
 import hashlib
 import os

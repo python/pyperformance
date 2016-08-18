@@ -1,3 +1,5 @@
+from __future__ import division, with_statement, print_function
+
 import argparse
 import sys
 
