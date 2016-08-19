@@ -1,4 +1,4 @@
-from __future__ import division, with_statement, print_function
+from __future__ import division, with_statement, print_function, absolute_import
 
 import hashlib
 import os
@@ -162,35 +162,67 @@ def create_virtualenv():
     root = ROOT_DIR
     venv_name = virtualenv_name()
     venv_path = os.path.join(root, 'venv', venv_name)
-    venv_python = os.path.join(venv_path, 'bin', 'python')
+
+    try:
+        import venv
+        venv_python = create_virtualenv_py3(venv, venv_path)
+    except ImportError:
+        venv_python = create_virtualenv_py2(venv_path)
+
+    # upgrade setuptools and pip to make sure that they support environment
+    # marks in requirements.txt
+    # FIXME: maybe use setuptools>=X pip>=Y to avoid useless upgrade?
+    # FIXME: what is the minimum version supporting env markers?
+    requirements = os.path.join(root, 'requirements.txt')
+    cmd = [venv_python, '-m', 'pip',
+           'install', '-U', 'setuptools>=18.5', 'pip>=6.0']
+    run_cmd(cmd)
+
+    requirements = os.path.join(root, 'requirements.txt')
+    cmd = [venv_python, '-m', 'pip', 'install', '-r', requirements]
+    run_cmd(cmd)
+    return venv_python
+
+
+def create_virtualenv_py2(venv_path):
+    # venv puts the python executable under Scripts instead of bin on windows
+    if os.name == "nt":
+        python_executable = os.path.basename(sys.executable)
+        venv_python = os.path.join(venv_path, 'Scripts', python_executable)
+    else:
+        venv_python = os.path.join(venv_path, 'bin', 'python')
+
     if os.path.exists(venv_path):
         return venv_python
 
     print("Creating the virtual environment %s" % venv_path)
     try:
-        if sys.version_info >= (3, 3):
-            cmd = [sys.executable, '-m', 'venv', venv_path]
-        else:
-            cmd = ['virtualenv', '-p', sys.executable, venv_path]
-        run_cmd(cmd)
-
-        # upgrade setuptools and pip to make sure that they support environment
-        # marks in requirements.txt
-        # FIXME: maybe use setuptools>=X pip>=Y to avoid useless upgrade?
-        # FIXME: what is the minimum version supporting env markers?
-        requirements = os.path.join(root, 'requirements.txt')
-        cmd = [venv_python, '-m', 'pip', 'install', '-U', 'setuptools', 'pip']
-        run_cmd(cmd)
-
-        requirements = os.path.join(root, 'requirements.txt')
-        cmd = [venv_python, '-m', 'pip', 'install', '-r', requirements]
-        run_cmd(cmd)
+        run_cmd(['virtualenv', '-p', sys.executable, venv_path])
     except:
         if os.path.exists(venv_path):
             shutil.rmtree(venv_path)
         raise
 
     return venv_python
+
+
+def create_virtualenv_py3(venv, venv_path):
+    class BenchmarkEnv(venv.EnvBuilder):
+        def post_setup(self, context):
+            self.executable_name = context.env_exe
+
+    virtualenv = BenchmarkEnv(with_pip=True)
+
+    venv_path = os.path.join(ROOT_DIR, 'venv', virtualenv_name())
+    print("Creating the virtual environment %s" % venv_path)
+    try:
+        virtualenv.create(venv_path)
+    except:
+        if os.path.exists(venv_path):
+            shutil.rmtree(venv_path)
+        raise
+
+    return virtualenv.executable_name
 
 
 def exec_in_virtualenv(options):
