@@ -801,7 +801,7 @@ BENCH_FUNCS = _FindAllBenchmarks(globals())
 # If you update the default group, be sure to update the module docstring, too.
 # An "all" group which includes every benchmark perf.py knows about is generated
 # automatically.
-BENCH_GROUPS = {"default": ["2to3", "chameleon", "django", "nbody",
+BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
                             "tornado_http", "fastpickle", "fastunpickle",
                             "regex_v8", "json_dump_v2", "json_load"],
                 "startup": ["normal_startup", "startup_nosite",
@@ -819,7 +819,7 @@ BENCH_GROUPS = {"default": ["2to3", "chameleon", "django", "nbody",
                 "calls": ["call_simple", "call_method", "call_method_slots",
                           "call_method_unknown"],
                 "math": ["float", "nbody", "pidigits"],
-                "template" : ["django", "mako"],
+                "template" : ["django_template", "mako"],
                 "logging": ["silent_logging", "simple_logging",
                             "formatted_logging"],
                 # These are removed from the "all" group
