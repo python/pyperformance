@@ -134,6 +134,11 @@ def parse_args():
     if options.action in ('run', 'run_compare') and options.debug_single_sample:
         options.fast = True
 
+    if not options.action:
+        # an action is mandatory
+        parser.print_help()
+        sys.exit(1)
+
     return (parser, options)
 
 
@@ -156,5 +161,5 @@ def main():
         bench_funcs, bench_groups = get_benchmark_groups()
         cmd_list(options, bench_funcs, bench_groups)
     else:
-        parser.print_usage()
+        parser.print_help()
         sys.exit(1)
