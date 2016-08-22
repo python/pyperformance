@@ -115,7 +115,9 @@ if __name__ == "__main__":
 
     runner.bench_sample_func(benchmark, logger)
 
-    if benchmark is not bench_no_output:
-        assert len(sio.getvalue()) > 0
-    else:
-        assert len(sio.getvalue()) == 0
+    # benchmark are only run in worker processes
+    if runner.args.worker:
+        if benchmark is not bench_no_output:
+            assert len(sio.getvalue()) > 0
+        else:
+            assert len(sio.getvalue()) == 0
