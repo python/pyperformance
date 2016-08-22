@@ -5,8 +5,6 @@ This project is intended to be an authoritative source of benchmarks for all
 Python implementations. The focus is on real-world benchmarks, rather than
 synthetic benchmarks, using whole applications when possible.
 
-Bug tracker: http://bugs.python.org/issue?@template=item&components=Benchmarks
-
 
 Docstring
 ---------
