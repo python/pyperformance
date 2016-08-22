@@ -184,13 +184,13 @@ def BM_Tornado_Http(*args, **kwargs):
     return SimpleBenchmark(MeasureTornadoHttp, *args, **kwargs)
 
 
-def MeasureDjango(python, options):
-    bm_path = Relative("performance/bm_django.py")
+def MeasureDjangoTemplate(python, options):
+    bm_path = Relative("performance/bm_django_template.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange('2.7', None)
-def BM_Django(*args, **kwargs):
-    return SimpleBenchmark(MeasureDjango, *args, **kwargs)
+def BM_Django_Template(*args, **kwargs):
+    return SimpleBenchmark(MeasureDjangoTemplate, *args, **kwargs)
 
 
 def MeasureFloat(python, options):

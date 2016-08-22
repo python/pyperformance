@@ -1,13 +1,8 @@
 #!/usr/bin/python
 
-"""Wrapper script for testing the performance of the Django template system.
+"""Test the performance of the Django template system.
 
-This is intended to support Unladen Swallow's perf.py
-
-This will have Django generate a 100x100 table as many times as you
-specify (via the -n flag). The raw times to generate the template will be
-dumped to stdout. This is more convenient for Unladen Swallow's uses: it
-allows us to keep all our stats in perf.py.
+This will have Django generate a 100x100 HTML table.
 """
 
 from six.moves import xrange
@@ -41,7 +36,7 @@ if __name__ == "__main__":
     django.conf.settings.configure()
     django.setup()
 
-    runner = perf.text_runner.TextRunner(name='django')
+    runner = perf.text_runner.TextRunner(name='django_template')
     runner.metadata['description'] = "Django template"
     runner.metadata['django_version'] = django.__version__
     runner.bench_sample_func(test_django)
