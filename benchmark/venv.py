@@ -176,10 +176,9 @@ def create_virtualenv():
 
         # upgrade setuptools and pip to make sure that they support environment
         # marks in requirements.txt
-        # FIXME: maybe use setuptools>=X pip>=Y to avoid useless upgrade?
-        # FIXME: what is the minimum version supporting env markers?
         requirements = os.path.join(root, 'requirements.txt')
-        cmd = [venv_python, '-m', 'pip', 'install', '-U', 'setuptools', 'pip']
+        cmd = [venv_python, '-m', 'pip',
+               'install', '-U', 'setuptools>=18.5', 'pip>=6.0']
         run_cmd(cmd)
 
         requirements = os.path.join(root, 'requirements.txt')
