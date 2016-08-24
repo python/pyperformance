@@ -150,7 +150,8 @@ def virtualenv_name():
 
     if not isinstance(data, bytes):
         data = data.encode('utf-8')
-    with open(os.path.join(ROOT_DIR, 'requirements.txt'), 'rb') as fp:
+    filename = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
+    with open(filename, 'rb') as fp:
         data += fp.read()
     sha1 = hashlib.sha1(data).hexdigest()
 
@@ -180,12 +181,11 @@ def create_virtualenv():
 
         # upgrade setuptools and pip to make sure that they support environment
         # marks in requirements.txt
-        requirements = os.path.join(root, 'requirements.txt')
         cmd = [venv_python, '-m', 'pip',
                'install', '-U', 'setuptools>=18.5', 'pip>=6.0']
         run_cmd(cmd)
 
-        requirements = os.path.join(root, 'requirements.txt')
+        requirements = os.path.join(root, 'performance', 'requirements.txt')
         cmd = [venv_python, '-m', 'pip', 'install', '-r', requirements]
         run_cmd(cmd)
     except:

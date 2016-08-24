@@ -62,8 +62,9 @@ def main():
         'w3_tr_html5.html',
     ]
     data = {
+        'performance': ['requirements.txt'],
         'performance.benchmarks.data': data_files,
-        'performance.benchmarks.data.2to3': ['README'],
+        'performance.benchmarks.data.2to3': ['README', '*.txt'],
         'performance.benchmarks.pybench': ['LICENSE', 'README'],
     }
 

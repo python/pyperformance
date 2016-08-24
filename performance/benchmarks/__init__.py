@@ -1,5 +1,6 @@
 from __future__ import division, with_statement, print_function, absolute_import
 
+import glob
 import logging
 import os
 import subprocess
@@ -125,6 +126,7 @@ def MeasureCommand(name, command, iterations, env, track_memory):
 
 def Measure2to3(python, options):
     target = Relative('data', '2to3')
+    pyfiles = glob.glob(os.path.join(target, '*.py.txt'))
     env = BuildEnv(None, inherit_env=options.inherit_env)
 
     # This can be compressed, but it's harder to understand.
@@ -137,7 +139,7 @@ def Measure2to3(python, options):
     else:
         trials = 10
 
-    command = python + ["-m", "lib2to3", "-f", "all", target]
+    command = python + ["-m", "lib2to3", "-f", "all"] + pyfiles
     return MeasureCommand("2to3", command, trials, env, options.track_memory)
 
 @VersionRange()
