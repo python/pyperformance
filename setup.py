@@ -3,12 +3,9 @@
 # Prepare a release:
 #
 #  - git pull --rebase
-#  - update version in setup.py
-#  - set release date in changelog
-#  - run tests:
-#    python2 runtests.py
-#    python3 runtests.py
-#    pypy runtests.py
+#  - update version in setup.py and performance/__init__.py
+#  - set release date in changelog (README.rst)
+#  - run tests: tox
 #  - git commit -a -m "prepare release x.y"
 #  - git push
 #
@@ -25,7 +22,7 @@
 #  - git commit -a -m "post-release"
 #  - git push
 
-VERSION = '0.0'
+VERSION = '0.1'
 
 DESCRIPTION = 'Python benchmark suite'
 CLASSIFIERS = [

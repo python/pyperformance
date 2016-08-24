@@ -23,7 +23,7 @@ Actions::
     list                List benchmarks of the running Python
     list_groups         List benchmark groups of the running Python
 
-Most important options of the ``run`` command::
+Options of the ``run`` command::
 
   -r, --rigorous        Spend longer running tests to get more accurate
                         results
@@ -46,7 +46,7 @@ Most important options of the ``run`` command::
   --append FILENAME     Add runs to an existing file, or create it if it
                         doesn't exist
 
-``compare`` options::
+Options of the ``compare`` command::
 
   -v, --verbose         Print more output
   -O STYLE, --output_style STYLE
@@ -181,12 +181,19 @@ Available Benchmarks
 Changelog
 =========
 
+Version 0.1 (2016-08-24)
+------------------------
+
+- First release after the conversion to the perf module and move to GitHub
+
+
+History
+-------
+
 Projected moved to https://github.com/python/benchmarks in August 2016. Files
 reorganized, benchmarks patched to use the perf module to run benchmark in
 multiple processes.
 
-Projected moved to https://hg.python.org/benchmarks and developed there between
-Dec 2008 and Feb 2016.
-
-Project started by Collin Winter and Jeffrey Yasskin for the Unladen Swallow
-project.
+Project started in December 2008 by Collin Winter and Jeffrey Yasskin for the
+Unladen Swallow project. The project was hosted at
+https://hg.python.org/benchmarks until Feb 2016
