@@ -213,6 +213,7 @@ Changelog
 Version 0.1.1
 -------------
 
+* Fix the creation of the virtual environment
 * Add -p/--python command line option
 * Add __main__ module to be able to run: python3 -m performance
 
