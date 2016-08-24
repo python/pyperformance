@@ -1,0 +1,11 @@
+include .travis.yml
+include COPYING
+include MANIFEST.in
+include README.rst
+include requirements.txt
+include runtests.py
+include tox.ini
+
+include performance/bm_*.py
+include performance/data/*
+include performance/data/2to3/*

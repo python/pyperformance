@@ -1,6 +1,17 @@
-*.swp
+# Python cached bytecode files
 *.pyc
 *.pyo
 *.pyd
+
+# Temporary files, usually created by text editors (vim)
+*.swp
 *~
+
+# Created by setup.py sdist
+build/
+dist/
+performance.egg-info/
+
+# Created by bench.py script
 venv/
+
