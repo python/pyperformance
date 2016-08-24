@@ -1,9 +1,10 @@
 from __future__ import division, with_statement, print_function, absolute_import
 
 import argparse
+import os.path
 import sys
 
-from performance.venv import exec_in_virtualenv
+from performance.venv import exec_in_virtualenv, which
 
 
 def ParseEnvVars(option, opt_str, value, parser):
@@ -130,6 +131,9 @@ def parse_args():
                           help=("Option for internal usage only, don't use "
                                 "it directly. Notice that we are already "
                                 "inside the virtual environment."))
+        cmd.add_argument("-p", "--python",
+                          help="Python executable (default: use running Python)",
+                          default=sys.executable)
 
     options = parser.parse_args()
 
@@ -140,6 +144,9 @@ def parse_args():
         # an action is mandatory
         parser.print_help()
         sys.exit(1)
+
+    options.python = which(options.python)
+    options.python = os.path.realpath(options.python)
 
     return (parser, options)
 

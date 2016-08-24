@@ -1,11 +1,11 @@
 from __future__ import division, with_statement, print_function, absolute_import
 
-import hashlib
 import os
 import platform
 import shutil
 import subprocess
 import sys
+import textwrap
 
 try:
     # Python 3.3
@@ -142,28 +142,53 @@ def run_cmd(cmd):
     print("")
 
 
-def virtualenv_name():
-    data = sys.executable + sys.version
+def virtualenv_name(python):
+    script = textwrap.dedent("""
+        import hashlib
+        import platform
+        import sys
 
-    version = sys.version_info
-    implementation = python_implementation()
+        data = sys.executable + sys.version
+        requirements = sys.argv[1]
 
-    if not isinstance(data, bytes):
-        data = data.encode('utf-8')
-    filename = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
-    with open(filename, 'rb') as fp:
-        data += fp.read()
-    sha1 = hashlib.sha1(data).hexdigest()
+        version = sys.version_info
 
-    return ('%s%s.%s-%s'
-            % (implementation, version.major, version.minor, sha1[:12]))
+        if hasattr(sys, 'implementation'):
+            # PEP 421, Python 3.3
+            implementation = sys.implementation.name
+        else:
+            implementation = platform.python_implementation()
+        implementation = implementation.lower()
+
+        if not isinstance(data, bytes):
+            data = data.encode('utf-8')
+        with open(requirements, 'rb') as fp:
+            data += fp.read()
+        sha1 = hashlib.sha1(data).hexdigest()
+
+        name = ('%s%s.%s-%s'
+                % (implementation, version.major, version.minor, sha1[:12]))
+        print(name)
+    """)
+
+    requirements = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
+    cmd = (python, '-c', script, requirements)
+    proc = subprocess.Popen(cmd,
+                            stdout=subprocess.PIPE,
+                            universal_newlines=True)
+    stdout = proc.communicate()[0]
+    if proc.returncode:
+        print("ERROR: failed to create the name of the virtual environment")
+        sys.exit(1)
+
+    return stdout.rstrip()
 
 
-def create_virtualenv():
-    venv_name = virtualenv_name()
+def create_virtualenv(python):
+    venv_name = virtualenv_name(python)
     venv_path = os.path.join('venv', venv_name)
     if os.name == "nt":
-        python_executable = os.path.basename(sys.executable)
+        python_executable = os.path.basename(python)
         venv_python = os.path.join(venv_path, 'Scripts', python_executable)
     else:
         venv_python = os.path.join(venv_path, 'bin', 'python')
@@ -175,7 +200,7 @@ def create_virtualenv():
         # On Python 3.3 and newer, the venv module could be used, but it looks
         # like it doesn't work when run from a virtual environment on Fedora:
         # ensurepip fails with an error.
-        cmd = ['virtualenv', '-p', sys.executable, venv_path]
+        cmd = ['virtualenv', '-p', python, venv_path]
         run_cmd(cmd)
 
         # upgrade setuptools and pip to make sure that they support environment
@@ -197,6 +222,6 @@ def create_virtualenv():
 
 
 def exec_in_virtualenv(options):
-    venv_python = create_virtualenv()
+    venv_python = create_virtualenv(options.python)
     args = [venv_python, "-m", "performance"] + sys.argv[1:] + ["--inside-venv"]
     os.execv(args[0], args)

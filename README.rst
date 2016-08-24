@@ -27,10 +27,10 @@ Run benchmarks
 
 Commands to compare Python 2 and Python 3 performances::
 
-    python2 pyperformance run --rigorous -b all -o py2.json
-    python3 pyperformance run --rigorous -b all -o py3.json
+    pyperformance run --python=python2 --rigorous -b all -o py2.json
+    pyperformance run --python=python3 --rigorous -b all -o py3.json
 
-    python3 pyperformance compare py2.json py3.json
+    pyperformance compare py2.json py3.json
 
 Actions::
 
@@ -41,6 +41,8 @@ Actions::
 
 Options of the ``run`` command::
 
+  -p PYTHON, --python PYTHON
+                        Python executable (default: use running Python)
   -r, --rigorous        Spend longer running tests to get more accurate
                         results
   -f, --fast            Get rough answers quickly
@@ -208,10 +210,16 @@ Available Benchmarks
 Changelog
 =========
 
+Version 0.1.1
+-------------
+
+* Add -p/--python command line option
+* Add __main__ module to be able to run: python3 -m performance
+
 Version 0.1 (2016-08-24)
 ------------------------
 
-- First release after the conversion to the perf module and move to GitHub
+* First release after the conversion to the perf module and move to GitHub
 
 
 History
