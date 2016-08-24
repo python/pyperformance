@@ -210,10 +210,11 @@ Available Benchmarks
 Changelog
 =========
 
-Version 0.1.1
--------------
+Version 0.1.1 (2016-08-24)
+--------------------------
 
 * Fix the creation of the virtual environment
+* Rename pybenchmarks script to pyperformance
 * Add -p/--python command line option
 * Add __main__ module to be able to run: python3 -m performance
 
