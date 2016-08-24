@@ -99,14 +99,21 @@ performance jitter while collecting memory measurements, only memory usage is
 reported in the final report.
 
 If --args is passed, it specifies extra arguments to pass to the test
-python binaries. For example,
+python binaries. For example::
+
   pybenchmarks run_compare --args="-A -B,-C -D" base_python changed_python
-will run benchmarks like
+
+will run benchmarks like::
+
   base_python -A -B the_benchmark.py
   changed_python -C -D the_benchmark.py
-while
+
+while::
+
   pybenchmarks run_compare --args="-A -B" base_python changed_python
-will pass the same arguments to both pythons:
+
+will pass the same arguments to both pythons::
+
   base_python -A -B the_benchmark.py
   changed_python -A -B the_benchmark.py
 
@@ -167,13 +174,17 @@ Available Benchmarks
 - spambayes - run a canned mailbox through a SpamBayes ham/spam classifier.
 - startup - collection of microbenchmarks focused on Python interpreter
             start-up time:
+
     - hg_startup - get Mercurial's help screen.
     - normal_startup - start Python, then exit immediately.
     - startup_nosite - start Python with the -S option, then exit immediately.
+
 - threading - collection of microbenchmarks for Python's threading support.
               These benchmarks come in pairs: an iterative version
               (iterative_foo), and a multithreaded version (threaded_foo).
+
     - threaded_count, iterative_count - spin in a while loop, counting down from a large number.
+
 - unpack_sequence - microbenchmark for unpacking lists and tuples.
 - unpickle - use the cPickle module to unpickle a variety of datasets.
 
