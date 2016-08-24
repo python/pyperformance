@@ -172,10 +172,10 @@ def create_virtualenv():
 
     print("Creating the virtual environment %s" % venv_path)
     try:
-        if sys.version_info >= (3, 3):
-            cmd = [sys.executable, '-m', 'venv', venv_path]
-        else:
-            cmd = ['virtualenv', '-p', sys.executable, venv_path]
+        # On Python 3.3 and newer, the venv module could be used, but it looks
+        # like it doesn't work when run from a virtual environment on Fedora:
+        # ensurepip fails with an error.
+        cmd = ['virtualenv', '-p', sys.executable, venv_path]
         run_cmd(cmd)
 
         # upgrade setuptools and pip to make sure that they support environment

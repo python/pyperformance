@@ -79,6 +79,7 @@ def main():
         'classifiers': CLASSIFIERS,
         'packages': packages,
         'package_data': data,
+        'install_requires': ["virtualenv"],
         'entry_points': {
             'console_scripts': ['pybenchmarks=performance.cli:main']
         }
