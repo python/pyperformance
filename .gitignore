@@ -12,7 +12,7 @@ build/
 dist/
 performance.egg-info/
 
-# Created by the pybenchmarks script
+# Created by the pyperformance script
 venv/
 
 # Created by the tox program

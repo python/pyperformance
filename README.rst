@@ -27,10 +27,10 @@ Run benchmarks
 
 Commands to compare Python 2 and Python 3 performances::
 
-    python2 pybenchmarks run --rigorous -b all -o py2.json
-    python3 pybenchmarks run --rigorous -b all -o py3.json
+    python2 pyperformance run --rigorous -b all -o py2.json
+    python3 pyperformance run --rigorous -b all -o py3.json
 
-    python3 pybenchmarks compare py2.json py3.json
+    python3 pyperformance compare py2.json py3.json
 
 Actions::
 
@@ -90,7 +90,7 @@ Notes
 
 Tool for comparing the performance of two Python implementations.
 
-pybenchmarks will run Student's two-tailed T test on the benchmark results at the 95%
+pyperformance will run Student's two-tailed T test on the benchmark results at the 95%
 confidence level to indicate whether the observed difference is statistically
 significant.
 
@@ -98,7 +98,7 @@ Omitting the -b option will result in the default group of benchmarks being run
 This currently consists of: 2to3, django, nbody, slowpickle,
 slowunpickle, spambayes. Omitting -b is the same as specifying `-b default`.
 
-To run every benchmark pybenchmarks knows about, use `-b all`. To see a full list of
+To run every benchmark pyperformance knows about, use `-b all`. To see a full list of
 all available benchmarks, use `--help`.
 
 Negative benchmarks specifications are also supported: `-b -2to3` will run every
@@ -107,7 +107,7 @@ benchmark in the default group except for 2to3 (this is the same as
 templates benchmark. Negative groups (e.g., `-b -default`) are not supported.
 Positive benchmarks are parsed before the negative benchmarks are subtracted.
 
-If --track_memory is passed, pybenchmarks will continuously sample the benchmark's
+If --track_memory is passed, pyperformance will continuously sample the benchmark's
 memory usage, then give you the maximum usage and a link to a Google Chart of
 the benchmark's memory usage over time. This currently only works on Linux
 2.6.16 and higher or Windows with PyWin32. Because --track_memory introduces
@@ -117,7 +117,7 @@ reported in the final report.
 If --args is passed, it specifies extra arguments to pass to the test
 python binaries. For example::
 
-  pybenchmarks run_compare --args="-A -B,-C -D" base_python changed_python
+  pyperformance run_compare --args="-A -B,-C -D" base_python changed_python
 
 will run benchmarks like::
 
@@ -126,7 +126,7 @@ will run benchmarks like::
 
 while::
 
-  pybenchmarks run_compare --args="-A -B" base_python changed_python
+  pyperformance run_compare --args="-A -B" base_python changed_python
 
 will pass the same arguments to both pythons::
 

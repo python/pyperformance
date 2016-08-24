@@ -5,7 +5,7 @@ include MANIFEST.in
 include README.rst
 include requirements.txt
 include runtests.py
-include pybenchmarks
+include pyperformance
 include tox.ini
 
 include performance/bm_*.py

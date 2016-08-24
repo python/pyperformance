@@ -28,7 +28,7 @@ def main():
         os.chdir(root)
 
     python = sys.executable
-    script = 'pybenchmarks'
+    script = 'pyperformance'
 
     if os.path.exists('venv'):
         print("Remove venv directory")
