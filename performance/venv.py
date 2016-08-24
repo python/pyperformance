@@ -7,6 +7,8 @@ import subprocess
 import sys
 import textwrap
 
+import performance
+
 try:
     # Python 3.3
     from shutil import which
@@ -148,10 +150,12 @@ def virtualenv_name(python):
         import platform
         import sys
 
-        data = sys.executable + sys.version
-        requirements = sys.argv[1]
+        performance_version = sys.argv[1]
+        requirements = sys.argv[2]
 
-        version = sys.version_info
+        data = performance_version + sys.executable + sys.version
+
+        pyver= sys.version_info
 
         if hasattr(sys, 'implementation'):
             # PEP 421, Python 3.3
@@ -167,12 +171,12 @@ def virtualenv_name(python):
         sha1 = hashlib.sha1(data).hexdigest()
 
         name = ('%s%s.%s-%s'
-                % (implementation, version.major, version.minor, sha1[:12]))
+                % (implementation, pyver.major, pyver.minor, sha1[:12]))
         print(name)
     """)
 
     requirements = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
-    cmd = (python, '-c', script, requirements)
+    cmd = (python, '-c', script, performance.__version__, requirements)
     proc = subprocess.Popen(cmd,
                             stdout=subprocess.PIPE,
                             universal_newlines=True)
@@ -209,8 +213,20 @@ def create_virtualenv(python):
                'install', '-U', 'setuptools>=18.5', 'pip>=6.0']
         run_cmd(cmd)
 
+        # install requirements
         requirements = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
         cmd = [venv_python, '-m', 'pip', 'install', '-r', requirements]
+        run_cmd(cmd)
+
+
+        version =  performance.__version__
+        if version.endswith('dev'):
+            # install performance inside the virtual environment
+            cmd = [venv_python, '-m', 'pip', 'install', '-e', ROOT_DIR]
+        else:
+            # install performance inside the virtual environment
+            cmd = [venv_python, '-m', 'pip',
+                   'install', 'performance==%s' % version]
         run_cmd(cmd)
     except:
         if os.path.exists(venv_path):
