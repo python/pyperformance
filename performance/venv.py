@@ -198,5 +198,5 @@ def create_virtualenv():
 
 def exec_in_virtualenv(options):
     venv_python = create_virtualenv()
-    args = [venv_python] + sys.argv + ["--inside-venv"]
+    args = [venv_python, "-m", "performance"] + sys.argv[1:] + ["--inside-venv"]
     os.execv(args[0], args)
