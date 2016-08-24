@@ -1,18 +1,11 @@
-# pip and setuptools must be installed before installing these dependencies
+# Note: pip and setuptools are installed/upgraded by performance/venv.py
 
-# pip 6.0 or newer is required to support environment markers
-pip>=6.0
-# html5lib requires setuptools 18.5 or newer
-setuptools>=18.5
-
-
-# bench.py dependencies
+# pybenchmarks dependencies
 
 six
 perf>=0.7.4
 # FIXME: reenable it, need Python.h?
 # psutil
-
 
 # Benchmarks dependencies
 
