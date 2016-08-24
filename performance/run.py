@@ -19,8 +19,8 @@ except ImportError:
 import perf
 import statistics
 
-from benchmark.venv import interpreter_version, which, ROOT_DIR
-from benchmark.compare import BaseBenchmarkResult, compare_results
+from performance.venv import interpreter_version, which, ROOT_DIR
+from performance.compare import BaseBenchmarkResult, compare_results
 
 
 try:
@@ -32,10 +32,6 @@ except ImportError:
 else:
     def GetChildUserTime():
         return resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime
-
-
-def Relative(path):
-    return os.path.join(ROOT_DIR, path)
 
 
 def check_taskset():

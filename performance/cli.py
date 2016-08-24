@@ -3,7 +3,7 @@ from __future__ import division, with_statement, print_function, absolute_import
 import argparse
 import sys
 
-from benchmark.venv import exec_in_virtualenv
+from performance.venv import exec_in_virtualenv
 
 
 def ParseEnvVars(option, opt_str, value, parser):
@@ -148,9 +148,9 @@ def main():
     if not options.inside_venv:
         exec_in_virtualenv(options)
 
-    from benchmark.run import cmd_run, cmd_list
-    from benchmark.compare import cmd_compare
-    from benchmark.benchmarks import get_benchmark_groups
+    from performance.run import cmd_run, cmd_list
+    from performance.compare import cmd_compare
+    from performance.benchmarks import get_benchmark_groups
 
     if options.action in ('run', 'run_compare'):
         bench_funcs, bench_groups = get_benchmark_groups()

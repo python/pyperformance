@@ -3,8 +3,8 @@
 
 __author__ = "jyasskin@google.com (Jeffrey Yasskin)"
 
-import benchmark.cli
+import performance.cli
 
 
 if __name__ == "__main__":
-    benchmark.cli.main()
+    performance.cli.main()

@@ -8,13 +8,17 @@ import time
 import perf
 
 
-from benchmark.venv import get_virtualenv
-from benchmark.run import (MeasureGeneric, BuildEnv, SimpleBenchmark,
-                           BenchmarkError, RemovePycs, CallAndCaptureOutput,
-                           GetChildUserTime, Relative)
+from performance.venv import get_virtualenv, ROOT_DIR
+from performance.run import (MeasureGeneric, BuildEnv, SimpleBenchmark,
+                            BenchmarkError, RemovePycs, CallAndCaptureOutput,
+                            GetChildUserTime)
 
 
 info = logging.info
+
+
+def Relative(*path):
+    return os.path.join(ROOT_DIR, 'performance', 'benchmarks', *path)
 
 
 # Decorators for giving ranges of supported Python versions.
@@ -33,7 +37,7 @@ def BM_PyBench(python, options):
     if options.track_memory:
         return BenchmarkError("Benchmark does not report memory usage yet")
 
-    PYBENCH_PATH = Relative("performance/pybench/pybench.py")
+    PYBENCH_PATH = Relative("pybench", "pybench.py")
 
     args = [PYBENCH_PATH,
             '--with-gc',
@@ -120,7 +124,7 @@ def MeasureCommand(name, command, iterations, env, track_memory):
 
 
 def Measure2to3(python, options):
-    target = os.path.join(Relative("performance"), 'data', '2to3')
+    target = Relative('data', '2to3')
     env = BuildEnv(None, inherit_env=options.inherit_env)
 
     # This can be compressed, but it's harder to understand.
@@ -166,7 +170,7 @@ def BM_hg_startup(*args, **kwargs):
 
 
 def MeasureChameleon(python, options):
-    bm_path = Relative("performance/bm_chameleon.py")
+    bm_path = Relative("bm_chameleon.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange('2.7', None)
@@ -175,7 +179,7 @@ def BM_Chameleon(*args, **kwargs):
 
 
 def MeasureTornadoHttp(python, options):
-    bm_path = Relative("performance/bm_tornado_http.py")
+    bm_path = Relative("bm_tornado_http.py")
     return MeasureGeneric(python, options, bm_path)
 
 
@@ -185,7 +189,7 @@ def BM_Tornado_Http(*args, **kwargs):
 
 
 def MeasureDjangoTemplate(python, options):
-    bm_path = Relative("performance/bm_django_template.py")
+    bm_path = Relative("bm_django_template.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange('2.7', None)
@@ -194,7 +198,7 @@ def BM_Django_Template(*args, **kwargs):
 
 
 def MeasureFloat(python, options):
-    bm_path = Relative("performance/bm_float.py")
+    bm_path = Relative("bm_float.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -203,7 +207,7 @@ def BM_Float(*args, **kwargs):
 
 
 def MeasureMako(python, options):
-    bm_path = Relative("performance/bm_mako.py")
+    bm_path = Relative("bm_mako.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -212,7 +216,7 @@ def BM_mako(*args, **kwargs):
 
 
 def MeasurePathlib(python, options):
-    bm_path = Relative("performance/bm_pathlib.py")
+    bm_path = Relative("bm_pathlib.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -231,7 +235,7 @@ def MeasurePickle(python, options, extra_args):
     Returns:
         RawData instance.
     """
-    bm_path = Relative("performance/bm_pickle.py")
+    bm_path = Relative("bm_pickle.py")
     return MeasureGeneric(python, options, bm_path, extra_args=extra_args)
 
 
@@ -294,7 +298,7 @@ def MeasureEtree(python, options, extra_args):
     Returns:
         RawData instance.
     """
-    bm_path = Relative("performance/bm_elementtree.py")
+    bm_path = Relative("bm_elementtree.py")
     return MeasureGeneric(python, options, bm_path, extra_args=extra_args)
 
 @VersionRange()
@@ -329,7 +333,7 @@ def MeasureJSON(python, options, extra_args):
     Returns:
         RawData instance.
     """
-    bm_path = Relative("performance/bm_json.py")
+    bm_path = Relative("bm_json.py")
     return MeasureGeneric(python, options, bm_path, extra_args=extra_args)
 
 
@@ -362,7 +366,7 @@ def BM_JSON_Load(python, options):
 
 
 def MeasureJSONDumpV2(python, options):
-    bm_path = Relative("performance/bm_json_v2.py")
+    bm_path = Relative("bm_json_v2.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -380,7 +384,7 @@ def MeasureNQueens(python, options):
     Returns:
         RawData instance.
     """
-    bm_path = Relative("performance/bm_nqueens.py")
+    bm_path = Relative("bm_nqueens.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -389,7 +393,7 @@ def BM_NQueens(*args, **kwargs):
 
 
 def MeasureChaos(python, options):
-    bm_path = Relative("performance/bm_chaos.py")
+    bm_path = Relative("bm_chaos.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -398,7 +402,7 @@ def BM_Chaos(*args, **kwargs):
 
 
 def MeasureFannkuch(python, options):
-    bm_path = Relative("performance/bm_fannkuch.py")
+    bm_path = Relative("bm_fannkuch.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -407,7 +411,7 @@ def BM_Fannkuch(*args, **kwargs):
 
 
 def MeasureGo(python, options):
-    bm_path = Relative("performance/bm_go.py")
+    bm_path = Relative("bm_go.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -416,7 +420,7 @@ def BM_Go(*args, **kwargs):
 
 
 def MeasureMeteorContest(python, options):
-    bm_path = Relative("performance/bm_meteor_contest.py")
+    bm_path = Relative("bm_meteor_contest.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -425,7 +429,7 @@ def BM_Meteor_Contest(*args, **kwargs):
 
 
 def MeasureSpectralNorm(python, options):
-    bm_path = Relative("performance/bm_spectral_norm.py")
+    bm_path = Relative("bm_spectral_norm.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -434,7 +438,7 @@ def BM_Spectral_Norm(*args, **kwargs):
 
 
 def MeasureTelco(python, options):
-    bm_path = Relative("performance/bm_telco.py")
+    bm_path = Relative("bm_telco.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -443,7 +447,7 @@ def BM_Telco(*args, **kwargs):
 
 
 def MeasureHexiom2(python, options):
-    bm_path = Relative("performance/bm_hexiom2.py")
+    bm_path = Relative("bm_hexiom2.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -452,7 +456,7 @@ def BM_Hexiom2(*args, **kwargs):
 
 
 def MeasureRaytrace(python, options):
-    bm_path = Relative("performance/bm_raytrace.py")
+    bm_path = Relative("bm_raytrace.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -471,7 +475,7 @@ def MeasureLogging(python, options, extra_args):
     Returns:
         RawData instance.
     """
-    bm_path = Relative("performance/bm_logging.py")
+    bm_path = Relative("bm_logging.py")
     return MeasureGeneric(python, options, bm_path, extra_args=extra_args)
 
 
@@ -613,17 +617,17 @@ def RegexBenchmark(python, options, bm_path):
 
 @VersionRange()
 def BM_regex_v8(python, options):
-    bm_path = "performance/bm_regex_v8.py"
+    bm_path = "bm_regex_v8.py"
     return RegexBenchmark(python, options, bm_path)
 
 @VersionRange()
 def BM_regex_effbot(python, options):
-    bm_path = "performance/bm_regex_effbot.py"
+    bm_path = "bm_regex_effbot.py"
     return RegexBenchmark(python, options, bm_path)
 
 @VersionRange()
 def BM_regex_compile(python, options):
-    bm_path = "performance/bm_regex_compile.py"
+    bm_path = "bm_regex_compile.py"
     return RegexBenchmark(python, options, bm_path)
 
 
@@ -638,7 +642,7 @@ def MeasureThreading(python, options, bm_name):
     Returns:
         RawData instance.
     """
-    bm_path = Relative("performance/bm_threading.py")
+    bm_path = Relative("bm_threading.py")
     return MeasureGeneric(python, options, bm_path, extra_args=[bm_name])
 
 
@@ -667,7 +671,7 @@ def MeasureUnpackSequence(python, options):
     Returns:
         RawData instance.
     """
-    bm_path = Relative("performance/bm_unpack_sequence.py")
+    bm_path = Relative("bm_unpack_sequence.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -676,7 +680,7 @@ def BM_unpack_sequence(*args, **kwargs):
 
 
 def MeasureCallSimple(python, options):
-    bm_path = Relative("performance/bm_call_simple.py")
+    bm_path = Relative("bm_call_simple.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -685,7 +689,7 @@ def BM_call_simple(*args, **kwargs):
 
 
 def MeasureCallMethod(python, options):
-    bm_path = Relative("performance/bm_call_method.py")
+    bm_path = Relative("bm_call_method.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -694,7 +698,7 @@ def BM_call_method(*args, **kwargs):
 
 
 def MeasureCallMethodUnknown(python, options):
-    bm_path = Relative("performance/bm_call_method_unknown.py")
+    bm_path = Relative("bm_call_method_unknown.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -703,7 +707,7 @@ def BM_call_method_unknown(*args, **kwargs):
 
 
 def MeasureCallMethodSlots(python, options):
-    bm_path = Relative("performance/bm_call_method_slots.py")
+    bm_path = Relative("bm_call_method_slots.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -721,7 +725,7 @@ def MeasureNbody(python, options):
     Returns:
         RawData instance.
     """
-    bm_path = Relative("performance/bm_nbody.py")
+    bm_path = Relative("bm_nbody.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -739,9 +743,8 @@ def MeasureSpamBayes(python, options):
     Returns:
         RawData instance.
     """
-    pypath = os.pathsep.join([Relative("lib/spambayes"), Relative("lib/lockfile")])
-    bm_path = Relative("performance/bm_spambayes.py")
-    bm_env = BuildEnv({"PYTHONPATH": pypath}, options.inherit_env)
+    bm_path = Relative("bm_spambayes.py")
+    bm_env = BuildEnv(None, options.inherit_env)
     return MeasureGeneric(python, options, bm_path, bm_env)
 
 @VersionRange(None, '2.7')
@@ -750,7 +753,7 @@ def BM_spambayes(*args, **kwargs):
 
 
 def MeasureHtml5lib(python, options):
-    bm_path = Relative("performance/bm_html5lib.py")
+    bm_path = Relative("bm_html5lib.py")
     bm_env = BuildEnv(None, options.inherit_env)
     return MeasureGeneric(python, options, bm_path, bm_env)
 
@@ -760,7 +763,7 @@ def BM_html5lib(*args, **kwargs):
 
 
 def MeasureRichards(python, options):
-    bm_path = Relative("performance/bm_richards.py")
+    bm_path = Relative("bm_richards.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
@@ -779,7 +782,7 @@ def MeasurePiDigits(python, options):
     Returns:
         RawData instance.
     """
-    bm_path = Relative("performance/bm_pidigits.py")
+    bm_path = Relative("bm_pidigits.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
