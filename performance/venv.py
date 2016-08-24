@@ -162,7 +162,11 @@ def create_virtualenv():
     root = ROOT_DIR
     venv_name = virtualenv_name()
     venv_path = os.path.join(root, 'venv', venv_name)
-    venv_python = os.path.join(venv_path, 'bin', 'python')
+    if os.name == "nt":
+        python_executable = os.path.basename(sys.executable)
+        venv_python = os.path.join(venv_path, 'Scripts', python_executable)
+    else:
+        venv_python = os.path.join(venv_path, 'bin', 'python')
     if os.path.exists(venv_path):
         return venv_python
 
