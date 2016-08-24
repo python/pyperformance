@@ -1,26 +1,80 @@
-The Grand Unified Python Benchmark Suite
-########################################
+##########################
+The Python Benchmark Suite
+##########################
 
 This project is intended to be an authoritative source of benchmarks for all
 Python implementations. The focus is on real-world benchmarks, rather than
 synthetic benchmarks, using whole applications when possible.
 
+Run benchmarks
+==============
 
-Docstring
----------
+Commands to compare Python 2 and Python 3 performances::
+
+    python2 pybenchmarks run --rigorous -b all -o py2.json
+    python3 pybenchmarks run --rigorous -b all -o py3.json
+
+    python3 pybenchmarks compare py2.json py3.json
+
+Actions::
+
+    run                 Run benchmarks on the running python
+    compare             Compare two benchmark files
+    list                List benchmarks of the running Python
+    list_groups         List benchmark groups of the running Python
+
+Most important options of the ``run`` command::
+
+  -r, --rigorous        Spend longer running tests to get more accurate
+                        results
+  -f, --fast            Get rough answers quickly
+  -b BM_LIST, --benchmarks BM_LIST
+                        Comma-separated list of benchmarks to run. Can contain
+                        both positive and negative arguments:
+                        --benchmarks=run_this,also_this,-not_this. If there
+                        are no positive arguments, we'll run all benchmarks
+                        except the negative arguments. Otherwise we run only
+                        the positive arguments.
+  --affinity CPU_LIST   Specify CPU affinity for benchmark runs. This way,
+                        benchmarks can be forced to run on a given CPU to
+                        minimize run to run variation. This uses the taskset
+                        command.
+  -o FILENAME, --output FILENAME
+                        Run the benchmarks on only one interpreter and write
+                        benchmark into FILENAME. Provide only baseline_python,
+                        not changed_python.
+  --append FILENAME     Add runs to an existing file, or create it if it
+                        doesn't exist
+
+``compare`` options::
+
+  -v, --verbose         Print more output
+  -O STYLE, --output_style STYLE
+                        What style the benchmark output should take. Valid
+                        options are 'normal' and 'table'. Default is normal.
+
+
+How to get stable benchmarks
+============================
+
+Advices helping to get make stable benchmarks:
+
+* Use the ``--rigorous`` option to the ``run`` command
+* On Linux with multiple CPU cores: use CPU isolation, see ``isolcpus`` kernel
+  option
+* On Linux, use nohz_full kernel option (especially on isolated CPUs)
+* On a laptop: plug the power cable.
+* For modern Intel CPUs: disable Turbo Boost
+
+Note: ASRL must *not* be disabled!
+
+
+Notes
+=====
 
 Tool for comparing the performance of two Python implementations.
 
-Typical usage looks like
-
-./bench.py run_compare -b 2to3,django control/python experiment/python
-
-This will run the 2to3 and Django template benchmarks, using `control/python`
-as the baseline and `experiment/python` as the experiment. The --fast and
---rigorous options can be used to vary the duration/accuracy of the run. Run
---help to get a full list of options that can be passed to -b.
-
-bench.py will run Student's two-tailed T test on the benchmark results at the 95%
+pybenchmarks will run Student's two-tailed T test on the benchmark results at the 95%
 confidence level to indicate whether the observed difference is statistically
 significant.
 
@@ -28,7 +82,7 @@ Omitting the -b option will result in the default group of benchmarks being run
 This currently consists of: 2to3, django, nbody, slowpickle,
 slowunpickle, spambayes. Omitting -b is the same as specifying `-b default`.
 
-To run every benchmark bench.py knows about, use `-b all`. To see a full list of
+To run every benchmark pybenchmarks knows about, use `-b all`. To see a full list of
 all available benchmarks, use `--help`.
 
 Negative benchmarks specifications are also supported: `-b -2to3` will run every
@@ -37,7 +91,7 @@ benchmark in the default group except for 2to3 (this is the same as
 templates benchmark. Negative groups (e.g., `-b -default`) are not supported.
 Positive benchmarks are parsed before the negative benchmarks are subtracted.
 
-If --track_memory is passed, bench.py will continuously sample the benchmark's
+If --track_memory is passed, pybenchmarks will continuously sample the benchmark's
 memory usage, then give you the maximum usage and a link to a Google Chart of
 the benchmark's memory usage over time. This currently only works on Linux
 2.6.16 and higher or Windows with PyWin32. Because --track_memory introduces
@@ -46,32 +100,19 @@ reported in the final report.
 
 If --args is passed, it specifies extra arguments to pass to the test
 python binaries. For example,
-  bench.py run_compare --args="-A -B,-C -D" base_python changed_python
+  pybenchmarks run_compare --args="-A -B,-C -D" base_python changed_python
 will run benchmarks like
   base_python -A -B the_benchmark.py
   changed_python -C -D the_benchmark.py
 while
-  bench.py run_compare --args="-A -B" base_python changed_python
+  pybenchmarks run_compare --args="-A -B" base_python changed_python
 will pass the same arguments to both pythons:
   base_python -A -B the_benchmark.py
   changed_python -A -B the_benchmark.py
 
 
-Quickstart Guide
-----------------
-
-Not all benchmarks are created equal: some of the benchmarks listed below are
-more useful than others. If you're interested in overall system performance,
-the best guide is this:
-
-    $ python bench.py run_compare -r -b default /control/python /test/python
-
-That will run the benchmarks we consider the most important headline indicators
-of performance. There's an additional collection of whole-app benchmarks that
-are important, but take longer to run:
-
-    $ python bench.py run_compare -r -b apps /control/python /test/python
-
+Benchmarks
+==========
 
 Notable Benchmark groups
 ------------------------
@@ -94,7 +135,7 @@ Available Benchmarks
     - call_method - positional arguments-only method calls.
     - call_method_slots - method calls on classes that use __slots__.
     - call_method_unknown - method calls where the receiver cannot be predicted.
-- django - use the Django template system to build a 150x150-cell HTML table.
+- django_template - use the Django template system to build a 150x150-cell HTML table.
 - fastpickle - use the cPickle module to pickle a variety of datasets.
 - fastunnpickle - use the cPickle module to unnpickle a variety of datasets.
 - float - artificial, floating point-heavy benchmark originally used by Factor.
@@ -137,35 +178,8 @@ Available Benchmarks
 - unpickle - use the cPickle module to unpickle a variety of datasets.
 
 
-Benchmarks
-----------
-
-performance/ directory contains both macro- and micro-benchmarks for Python
-implementations.
-
-Macro(ish)benchmarks:
-    - bm_django.py: assess Django template performance.
-    - bm_pickle.py: test picking/unpickling performance.
-    - bm_spitfire.py: assess Spitfire template performance.
-    - gcbench.py: GC benchmark (allocate and deallocate lots of objects).
-      Copied from PyPy's pypy/translator/goal/gcbench.py, r60845.
-
-
-Microbenchmarks:
-    - bm_ai.py: solvers for alphametics and N-Queens problems. These are
-      classified as "micro" because they're dominated by a single function.
-    - tuple_gc_hell.py: stress the GC by allocating lots of tuples.
-
-
-Crap benchmarks used for historical comparisons:
-    - pybench/: PyBench 2.0 benchmark suite.
-    - pystone.py: standard PyStone benchmark.
-    - richards.py: standard Richards benchmark.
-      Copied from PyPy's pypy/translator/goal/richards.py, r60845.
-
-
 Changelog
----------
+=========
 
 Projected moved to https://github.com/python/benchmarks in August 2016. Files
 reorganized, benchmarks patched to use the perf module to run benchmark in
