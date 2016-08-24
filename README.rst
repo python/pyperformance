@@ -163,3 +163,16 @@ Crap benchmarks used for historical comparisons:
     - richards.py: standard Richards benchmark.
       Copied from PyPy's pypy/translator/goal/richards.py, r60845.
 
+
+Changelog
+---------
+
+Projected moved to https://github.com/python/benchmarks in August 2016. Files
+reorganized, benchmarks patched to use the perf module to run benchmark in
+multiple processes.
+
+Projected moved to https://hg.python.org/benchmarks and developed there between
+Dec 2008 and Feb 2016.
+
+Project started by Collin Winter and Jeffrey Yasskin for the Unladen Swallow
+project.
