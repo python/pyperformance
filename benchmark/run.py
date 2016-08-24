@@ -1,4 +1,4 @@
-from __future__ import division, with_statement, print_function
+from __future__ import division, with_statement, print_function, absolute_import
 
 import contextlib
 import csv
