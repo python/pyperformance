@@ -6,6 +6,7 @@
 #  - update version in setup.py and performance/__init__.py
 #  - set release date in changelog (README.rst)
 #  - run tests: tox
+#  - update performance dependency in performance/requirements.txt
 #  - git commit -a -m "prepare release x.y"
 #  - git push
 #
@@ -22,7 +23,7 @@
 #  - git commit -a -m "post-release"
 #  - git push
 
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
 DESCRIPTION = 'Python benchmark suite'
 CLASSIFIERS = [
