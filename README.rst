@@ -6,6 +6,22 @@ This project is intended to be an authoritative source of benchmarks for all
 Python implementations. The focus is on real-world benchmarks, rather than
 synthetic benchmarks, using whole applications when possible.
 
+* GitHub: https://github.com/python/benchmarks (source code, issues)
+* PyPI: https://pypi.python.org/pypi/performance
+
+Other Python Benchmarks:
+
+* CPython: `speed.python.org <https://speed.python.org/>`_ uses the
+  `old Python benchmarks (hg.python.org/benchmarks)
+  <https://hg.python.org/benchmarks>`_
+* PyPy: `speed.pypy.org <http://speed.pypy.org/>`_
+  uses `PyPy benchmarks <https://bitbucket.org/pypy/benchmarks>`_
+* Pyston: `pyston-perf <https://github.com/dropbox/pyston-perf>`_
+* `Numba benchmarks <http://numba.pydata.org/numba-benchmark/>`_
+* Cython: `Cython Demos/benchmarks
+  <https://github.com/cython/cython/tree/master/Demos/benchmarks>`_
+
+
 Run benchmarks
 ==============
 
