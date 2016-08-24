@@ -28,7 +28,7 @@ def main():
         os.chdir(root)
 
     python = sys.executable
-    bench = 'bench.py'
+    script = 'pybenchmarks'
 
     if os.path.exists('venv'):
         print("Remove venv directory")
@@ -36,15 +36,15 @@ def main():
         shutil.rmtree('venv')
 
     # The first command creates the virtual environment
-    run_bench(python, bench, 'list')
+    run_bench(python, script, 'list')
 
-    run_bench(python, bench, 'list_groups')
+    run_bench(python, script, 'list_groups')
 
     # -b all: check that *all* benchmark work
     #
     # --debug-single-sample: benchmark results don't matter, we only
     # check that running benchmarks don't fail.
-    run_bench(python, bench, 'run', '-b', 'all', '--debug-single-sample')
+    run_bench(python, script, 'run', '-b', 'all', '--debug-single-sample')
 
 
 if __name__ == "__main__":
