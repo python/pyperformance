@@ -101,19 +101,21 @@ def parse_args():
     cmd.add_argument("baseline_filename", metavar="baseline_file.json")
     cmd.add_argument("changed_filename", metavar="changed_file.json")
 
-    # run_compare
-    cmd = subparsers.add_parser('run_compare',
-                                help='Run benchmarks on two python versions '
-                                     'and compare them')
-    cmds.append(cmd)
-    _add_run_options(cmd)
-    _add_compare_options(cmd)
-    cmd.add_argument("baseline_python")
-    cmd.add_argument("changed_python")
-    cmd.add_argument("--base-output", metavar="FILENAME",
-                      help="Save benchmarks of the baseline python.")
-    cmd.add_argument("--changed-output", metavar="FILENAME",
-                      help="Save benchmarks of the changed python.")
+    # FIXME: repair run_compare mode
+    if 0:
+        # run_compare
+        cmd = subparsers.add_parser('run_compare',
+                                    help='Run benchmarks on two python versions '
+                                         'and compare them')
+        cmds.append(cmd)
+        _add_run_options(cmd)
+        _add_compare_options(cmd)
+        cmd.add_argument("baseline_python")
+        cmd.add_argument("changed_python")
+        cmd.add_argument("--base-output", metavar="FILENAME",
+                          help="Save benchmarks of the baseline python.")
+        cmd.add_argument("--changed-output", metavar="FILENAME",
+                          help="Save benchmarks of the changed python.")
 
     # list
     cmd = subparsers.add_parser('list', help='List benchmarks of the running Python')
