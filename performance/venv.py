@@ -160,9 +160,8 @@ def virtualenv_name():
 
 
 def create_virtualenv():
-    root = ROOT_DIR
     venv_name = virtualenv_name()
-    venv_path = os.path.join(root, 'venv', venv_name)
+    venv_path = os.path.join('venv', venv_name)
     if os.name == "nt":
         python_executable = os.path.basename(sys.executable)
         venv_python = os.path.join(venv_path, 'Scripts', python_executable)
@@ -185,11 +184,15 @@ def create_virtualenv():
                'install', '-U', 'setuptools>=18.5', 'pip>=6.0']
         run_cmd(cmd)
 
-        requirements = os.path.join(root, 'performance', 'requirements.txt')
+        requirements = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
         cmd = [venv_python, '-m', 'pip', 'install', '-r', requirements]
+        run_cmd(cmd)
+
+        cmd = [venv_python, '-m', 'pip', 'install', '-e', ROOT_DIR]
         run_cmd(cmd)
     except:
         if os.path.exists(venv_path):
+            print("ERROR: Remove virtual environment %s" % venv_path)
             shutil.rmtree(venv_path)
         raise
 
