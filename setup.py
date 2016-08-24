@@ -70,6 +70,7 @@ def main():
     options = {
         'name': 'performance',
         'version': VERSION,
+        'author': 'Collin Winter and Jeffrey Yasskin',
         'license': 'MIT license',
         'description': DESCRIPTION,
         'long_description': long_description,
@@ -78,7 +79,7 @@ def main():
         'packages': packages,
         'package_data': data,
         'entry_points': {
-            'console_scripts': ['bench.py=performance.cli:main']
+            'console_scripts': ['pybenchmarks=performance.cli:main']
         }
         # Note: the performance package has no direct external dependencies:
         # it installs dependencies itself by creating virtual environments
