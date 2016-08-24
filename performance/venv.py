@@ -187,9 +187,6 @@ def create_virtualenv():
         requirements = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
         cmd = [venv_python, '-m', 'pip', 'install', '-r', requirements]
         run_cmd(cmd)
-
-        cmd = [venv_python, '-m', 'pip', 'install', '-e', ROOT_DIR]
-        run_cmd(cmd)
     except:
         if os.path.exists(venv_path):
             print("ERROR: Remove virtual environment %s" % venv_path)
