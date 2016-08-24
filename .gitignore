@@ -12,6 +12,8 @@ build/
 dist/
 performance.egg-info/
 
-# Created by bench.py script
+# Created by the pybenchmarks script
 venv/
 
+# Created by the tox program
+.tox/
