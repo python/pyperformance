@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 """Benchmark script for testing the performance of ElementTree.
 

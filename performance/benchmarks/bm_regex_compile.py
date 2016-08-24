@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 """Benchmark how quickly Python's regex implementation can compile regexes.
 

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 """Test the performance of the Django template system.
 

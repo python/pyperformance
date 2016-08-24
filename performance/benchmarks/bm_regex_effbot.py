@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 """Benchmarks for Python's regex engine.
 

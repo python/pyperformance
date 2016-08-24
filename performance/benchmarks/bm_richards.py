@@ -1,4 +1,3 @@
-#! /usr/bin/env python2.4
 
 """perf.py wrapper for the classic Richards benchmark.
 

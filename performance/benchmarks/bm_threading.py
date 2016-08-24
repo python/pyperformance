@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 """Some simple microbenchmarks for Python's threading support.
 

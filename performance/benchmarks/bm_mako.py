@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 """
 Benchmark for test the performance of Mako templates engine.

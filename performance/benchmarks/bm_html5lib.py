@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Wrapper script for testing the performance of the html5lib HTML 5 parser.
 
 The input data is the spec document for HTML 5, written in HTML 5.

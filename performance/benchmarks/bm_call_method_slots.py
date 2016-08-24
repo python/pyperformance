@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 """Microbenchmark for method call overhead on types that define __slots__.
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 """N-body benchmark from the Computer Language Benchmarks Game.
 

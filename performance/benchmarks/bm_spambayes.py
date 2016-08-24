@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 """Wrapper script for testing the performance of SpamBayes.
 

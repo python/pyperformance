@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 """Script for testing the performance of json parsing and serialization.
 

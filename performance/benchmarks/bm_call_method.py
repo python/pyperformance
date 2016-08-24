@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 """Microbenchmark for method call overhead.
 

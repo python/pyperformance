@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 """Test the performance of simple HTTP serving and client using the Tornado
 framework.

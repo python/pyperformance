@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 """Simple, brute-force N-Queens solver."""
 
