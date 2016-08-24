@@ -5,7 +5,4 @@ python:
 install:
     - pip install -U 'setuptools>=18.5' 'pip>=6.0'
 script:
-    # The first command creates the virtual environment
-    - python bench.py list
-    - python bench.py list_groups
-    - python bench.py run --debug-single-sample -b all
+    - python runtests.py
