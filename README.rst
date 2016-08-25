@@ -29,6 +29,9 @@ Other Python Benchmarks:
 * Cython: `Cython Demos/benchmarks
   <https://github.com/cython/cython/tree/master/Demos/benchmarks>`_
 
+See also the `Python perf module <http://perf.readthedocs.io/>`_: "toolkit to
+write, run, analyze and modify benchmarks" (performance uses it).
+
 
 Run benchmarks
 ==============
