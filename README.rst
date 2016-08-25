@@ -85,7 +85,14 @@ How to get stable benchmarks
 
 Advices helping to get make stable benchmarks:
 
-* Use the ``--rigorous`` option to the ``run`` command
+* Compile Python using LTO (Link Time Optimization) and PGO (profile guided optimizations)::
+
+    ./configure --with-lto
+    make profile-opt
+
+  You should get the ``-flto`` option on GCC for example.
+
+* Use the ``--rigorous`` option of the ``run`` command
 * On Linux with multiple CPU cores: use CPU isolation, see ``isolcpus`` kernel
   option
 * On Linux, use nohz_full kernel option (especially on isolated CPUs)
