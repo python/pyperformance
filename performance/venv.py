@@ -240,4 +240,12 @@ def create_virtualenv(python):
 def exec_in_virtualenv(options):
     venv_python = create_virtualenv(options.python)
     args = [venv_python, "-m", "performance"] + sys.argv[1:] + ["--inside-venv"]
-    os.execv(args[0], args)
+    # os.execv() is buggy on windows, which is why we use run_cmd/subprocess
+    # on windows. 
+    # * https://bugs.python.org/issue19124
+    # * https://github.com/python/benchmarks/issues/5
+    if os.name == "nt":
+        run_cmd(args)
+        sys.exit(0)
+    else:
+        os.execv(args[0], args)
