@@ -260,13 +260,20 @@ def create_virtualenv(python, venv_path):
         cmd = [venv_python, '-m', 'pip', 'install', '-r', requirements]
         run_cmd(cmd)
 
+        # psutil is a C extension written for CPython
+        if python_implementation() == 'cpython':
+            # try to install psutil
+            cmd = [venv_python, '-m', 'pip', 'install', '-U', 'psutil']
+            exitcode = run_cmd_nocheck(cmd)
+            if exitcode:
+                print("WARNING: failed to install psutil")
+                print()
 
+        # install performance inside the virtual environment
         version =  performance.__version__
         if version.endswith('dev'):
-            # install performance inside the virtual environment
             cmd = [venv_python, '-m', 'pip', 'install', '-e', ROOT_DIR]
         else:
-            # install performance inside the virtual environment
             cmd = [venv_python, '-m', 'pip',
                    'install', 'performance==%s' % version]
         run_cmd(cmd)
