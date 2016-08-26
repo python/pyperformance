@@ -239,11 +239,14 @@ Changelog
 Version 0.1.2
 -------------
 
-* Fix pybench benchmark (update to perf 0.7.4 API)
-* Add ``venv`` command
 * Windows is now supported
-* The creation of the virtual environment now also tries virtualenv and venv
-  Python modules, not only the virtualenv command.
+* Add a new ``venv`` command to show, create, recrete or remove the virtual
+  environment.
+* Fix pybench benchmark (update to perf 0.7.4 API)
+* performance now tries to install the ``psutil`` module on CPython for better
+  system metrics in metadata and CPU pinning on Python 2.
+* The creation of the virtual environment now also tries ``virtualenv`` and
+  ``venv`` Python modules, not only the virtualenv command.
 * The development version of performance now installs performance
   with "pip install -e <path_to_performance>"
 
