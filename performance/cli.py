@@ -5,7 +5,7 @@ import os.path
 import sys
 
 import performance
-from performance.venv import exec_in_virtualenv, which
+from performance.venv import exec_in_virtualenv, which, cmd_venv
 
 
 def ParseEnvVars(option, opt_str, value, parser):
@@ -127,6 +127,14 @@ def parse_args():
     cmd = subparsers.add_parser('list_groups', help='List benchmark groups of the running Python')
     cmds.append(cmd)
 
+    # venv
+    cmd = subparsers.add_parser('venv',
+                                help='Actions on the virtual environment')
+    cmd.add_argument("venv_action", nargs="?",
+                     choices=('show', 'create', 'recreate', 'remove'),
+                     default='show')
+    cmds.append(cmd)
+
     for cmd in cmds:
         cmd.add_argument("--inside-venv", action="store_true",
                           help=("Option for internal usage only, don't use "
@@ -154,6 +162,10 @@ def parse_args():
 
 def _main():
     parser, options = parse_args()
+
+    if options.action == 'venv':
+        cmd_venv(options)
+        sys.exit()
 
     if not options.inside_venv:
         exec_in_virtualenv(options)

@@ -30,14 +30,9 @@ def main():
     python = sys.executable
     script = 'pyperformance'
 
-    if os.path.exists('venv'):
-        print("Remove venv directory")
-        print()
-        shutil.rmtree('venv')
-
-    # The first command creates the virtual environment
+    run_bench(python, script, 'venv', 'recreate')
+    run_bench(python, script, 'venv')
     run_bench(python, script, 'list')
-
     run_bench(python, script, 'list_groups')
 
     # -b all: check that *all* benchmark work
@@ -45,6 +40,8 @@ def main():
     # --debug-single-sample: benchmark results don't matter, we only
     # check that running benchmarks don't fail.
     run_bench(python, script, 'run', '-b', 'all', '--debug-single-sample')
+
+    run_bench(python, script, 'venv', 'remove')
 
 
 if __name__ == "__main__":

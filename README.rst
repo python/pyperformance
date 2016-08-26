@@ -49,6 +49,7 @@ Actions::
     compare             Compare two benchmark files
     list                List benchmarks of the running Python
     list_groups         List benchmark groups of the running Python
+    venv                Actions on the virtual environment
 
 Options of the ``run`` command::
 
@@ -81,6 +82,13 @@ Options of the ``compare`` command::
   -O STYLE, --output_style STYLE
                         What style the benchmark output should take. Valid
                         options are 'normal' and 'table'. Default is normal.
+
+Actions of the ``env`` command::
+
+  show      Display the path to the virtual environment and it's status (created or not)
+  create    Create the virtual environment
+  recreate  Force the recreation of the the virtual environment
+  remove    Remove the virtual environment
 
 
 How to get stable benchmarks
@@ -232,6 +240,7 @@ Version 0.1.2
 -------------
 
 * Fix pybench benchmark (update to perf 0.7.4 API)
+* Add ``venv`` command
 * Windows is now supported
 * The creation of the virtual environment now also tries virtualenv and venv
   Python modules, not only the virtualenv command.

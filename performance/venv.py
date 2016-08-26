@@ -149,7 +149,8 @@ def run_cmd(cmd):
         sys.exit(exitcode)
     print("")
 
-def virtualenv_name(python):
+
+def virtualenv_path(python):
     script = textwrap.dedent("""
         import hashlib
         import platform
@@ -190,7 +191,8 @@ def virtualenv_name(python):
         print("ERROR: failed to create the name of the virtual environment")
         sys.exit(1)
 
-    return stdout.rstrip()
+    venv_name = stdout.rstrip()
+    return os.path.join('venv', venv_name)
 
 
 def _create_virtualenv(python, venv_path):
@@ -232,9 +234,7 @@ def _create_virtualenv(python, venv_path):
     print("%s -m pip install -U virtualenv" % python)
     sys.exit(1)
 
-def create_virtualenv(python):
-    venv_name = virtualenv_name(python)
-    venv_path = os.path.join('venv', venv_name)
+def create_virtualenv(python, venv_path):
     if os.name == "nt":
         python_executable = os.path.basename(python)
         venv_python = os.path.join(venv_path, 'Scripts', python_executable)
@@ -281,7 +281,9 @@ def create_virtualenv(python):
 
 
 def exec_in_virtualenv(options):
-    venv_python = create_virtualenv(options.python)
+    venv_path = virtualenv_path(options.python)
+    venv_python = create_virtualenv(options.python, venv_path)
+
     args = [venv_python, "-m", "performance"] + sys.argv[1:] + ["--inside-venv"]
     # os.execv() is buggy on windows, which is why we use run_cmd/subprocess
     # on windows.
@@ -292,3 +294,41 @@ def exec_in_virtualenv(options):
         sys.exit(0)
     else:
         os.execv(args[0], args)
+
+
+def cmd_venv(options):
+    action = options.venv_action
+
+    venv_path = virtualenv_path(options.python)
+
+    if action in ('create', 'recreate'):
+        recreated = False
+        if action == 'recreate' and os.path.exists(venv_path):
+            recreated = True
+            shutil.rmtree(venv_path)
+            print("The old virtual environment %s has been removed" % venv_path)
+            print()
+
+        if not os.path.exists(venv_path):
+            create_virtualenv(options.python, venv_path)
+            print()
+            what = 'recreated' if recreated else 'created'
+            print("The virtual environment %s has been %s" % (venv_path, what))
+        else:
+            print("The virtual environment %s already exists" % venv_path)
+
+    elif action == 'remove':
+        if os.path.exists(venv_path):
+            shutil.rmtree(venv_path)
+            print("The virtual environment %s has been removed" % venv_path)
+        else:
+            print("The virtual environment %s does not exist" % venv_path)
+
+    else:
+        # show command
+        text = "Virtual environment path: %s" % venv_path
+        if os.path.exists(venv_path):
+            text += " (already created)"
+        else:
+            text += " (not created yet)"
+        print(text)
