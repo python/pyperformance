@@ -6,15 +6,16 @@ The Python Benchmark Suite
    :alt: Latest release on the Python Cheeseshop (PyPI)
    :target: https://pypi.python.org/pypi/performance
 
-.. image:: https://travis-ci.org/python/benchmarks.svg?branch=master
+.. image:: https://travis-ci.org/python/performance.svg?branch=master
    :alt: Build status of perf on Travis CI
-   :target: https://travis-ci.org/python/benchmarks
+   :target: https://travis-ci.org/python/performance
 
-This project is intended to be an authoritative source of benchmarks for all
-Python implementations. The focus is on real-world benchmarks, rather than
-synthetic benchmarks, using whole applications when possible.
+The ``performance`` project is intended to be an authoritative source of
+benchmarks for all Python implementations. The focus is on real-world
+benchmarks, rather than synthetic benchmarks, using whole applications when
+possible.
 
-* GitHub: https://github.com/python/benchmarks (source code, issues)
+* GitHub: https://github.com/python/performance (source code, issues)
 * PyPI: https://pypi.python.org/pypi/performance
 
 Other Python Benchmarks:
@@ -40,8 +41,11 @@ Commands to compare Python 2 and Python 3 performances::
 
     pyperformance run --python=python2 --rigorous -b all -o py2.json
     pyperformance run --python=python3 --rigorous -b all -o py3.json
-
     pyperformance compare py2.json py3.json
+
+Note: ``python3 -m performance ...`` syntax works as well (ex: ``python3 -m
+performance run -o py3.json``), but requires to install performance on each
+tested Python version.
 
 Actions::
 
@@ -249,6 +253,8 @@ Version 0.1.2
   ``venv`` Python modules, not only the virtualenv command.
 * The development version of performance now installs performance
   with "pip install -e <path_to_performance>"
+* The GitHub project was renamed from ``python/benchmarks``
+  to ``python/performance``.
 
 Version 0.1.1 (2016-08-24)
 --------------------------
@@ -267,7 +273,7 @@ Version 0.1 (2016-08-24)
 History
 -------
 
-Projected moved to https://github.com/python/benchmarks in August 2016. Files
+Projected moved to https://github.com/python/performance in August 2016. Files
 reorganized, benchmarks patched to use the perf module to run benchmark in
 multiple processes.
 
