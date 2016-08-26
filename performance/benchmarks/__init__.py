@@ -586,7 +586,9 @@ def BM_normal_startup(python, options):
 
 @VersionRange()
 def BM_startup_nosite(python, options):
-    if options.rigorous:
+    if options.debug_single_sample:
+        num_loops = 1
+    elif options.rigorous:
         num_loops = 200
     elif options.fast:
         num_loops = 10
