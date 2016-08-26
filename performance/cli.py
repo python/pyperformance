@@ -4,6 +4,7 @@ import argparse
 import os.path
 import sys
 
+import performance
 from performance.venv import exec_in_virtualenv, which
 
 
@@ -162,6 +163,8 @@ def _main():
     from performance.benchmarks import get_benchmark_groups
 
     if options.action in ('run', 'run_compare'):
+        print("Python benchmark suite %s" % performance.__version__)
+        print()
         bench_funcs, bench_groups = get_benchmark_groups()
         cmd_run(parser, options, bench_funcs, bench_groups)
     elif options.action == 'compare':
