@@ -1,5 +1,6 @@
 from __future__ import division, with_statement, print_function, absolute_import
 
+import errno
 import os
 import platform
 import shutil
@@ -205,7 +206,17 @@ def create_virtualenv(python):
         # like it doesn't work when run from a virtual environment on Fedora:
         # ensurepip fails with an error.
         cmd = ['virtualenv', '-p', python, venv_path]
-        run_cmd(cmd)
+        try:
+            run_cmd(cmd)
+        except OSError as exc:
+            if exc.errno != errno.ENOENT:
+                raise
+
+            print("ERROR: failed to run virtualenv (file not found)")
+            print()
+            print("Make sure that virtualenv is installed:")
+            print("%s -m pip install -U virtualenv" % sys.executable)
+            sys.exit(1)
 
         # upgrade setuptools and pip to make sure that they support environment
         # marks in requirements.txt
@@ -241,7 +252,7 @@ def exec_in_virtualenv(options):
     venv_python = create_virtualenv(options.python)
     args = [venv_python, "-m", "performance"] + sys.argv[1:] + ["--inside-venv"]
     # os.execv() is buggy on windows, which is why we use run_cmd/subprocess
-    # on windows. 
+    # on windows.
     # * https://bugs.python.org/issue19124
     # * https://github.com/python/benchmarks/issues/5
     if os.name == "nt":
