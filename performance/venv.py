@@ -249,8 +249,10 @@ def create_virtualenv(python):
 
         # upgrade setuptools and pip to make sure that they support environment
         # marks in requirements.txt
+        #
+        # Install also wheel for faster creation of the virtual environment.
         cmd = [venv_python, '-m', 'pip',
-               'install', '-U', 'setuptools>=18.5', 'pip>=6.0']
+               'install', '-U', 'setuptools>=18.5', 'pip>=6.0', 'wheel']
         run_cmd(cmd)
 
         # install requirements
