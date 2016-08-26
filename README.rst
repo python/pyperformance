@@ -228,6 +228,12 @@ Available Benchmarks
 Changelog
 =========
 
+Version 0.1.2
+-------------
+
+* Support Windows: exec_in_virtualenv() now uses run_cmd() rather than
+  os.execv()
+
 Version 0.1.1 (2016-08-24)
 --------------------------
 

@@ -151,7 +151,7 @@ def parse_args():
     return (parser, options)
 
 
-def main():
+def _main():
     parser, options = parse_args()
 
     if not options.inside_venv:
@@ -171,4 +171,12 @@ def main():
         cmd_list(options, bench_funcs, bench_groups)
     else:
         parser.print_help()
+        sys.exit(1)
+
+
+def main():
+    try:
+        _main()
+    except KeyboardInterrupt:
+        print("Benchmark suite interrupted: exit!")
         sys.exit(1)

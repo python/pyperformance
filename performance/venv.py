@@ -130,7 +130,7 @@ def get_virtualenv():
     return venv
 
 
-def run_cmd(cmd):
+def run_cmd_nocheck(cmd):
     print("Execute: %s" % ' '.join(cmd))
     proc = subprocess.Popen(cmd)
     try:
@@ -139,11 +139,15 @@ def run_cmd(cmd):
         proc.kill()
         proc.wait()
         raise
-    exitcode = proc.returncode
+
+    return proc.returncode
+
+
+def run_cmd(cmd):
+    exitcode = run_cmd_nocheck(cmd)
     if exitcode:
         sys.exit(exitcode)
     print("")
-
 
 def virtualenv_name(python):
     script = textwrap.dedent("""
@@ -189,6 +193,45 @@ def virtualenv_name(python):
     return stdout.rstrip()
 
 
+def _create_virtualenv(python, venv_path):
+    # On Python 3.3 and newer, the venv module could be used, but it looks
+    # like it doesn't work when run from a virtual environment on Fedora:
+    # ensurepip fails with an error. First, try to use the virtualenv command.
+
+    # Case 1: try virtualenv command
+    cmd = ['virtualenv', '-p', python, venv_path]
+    try:
+        run_cmd(cmd)
+        return
+    except OSError as exc:
+        if exc.errno != errno.ENOENT:
+            raise
+
+    print("Command failed: virtualenv program not found!")
+    print()
+
+    # Case 2: try python -m virtualenv
+    cmd = [python, '-m', 'virtualenv', venv_path]
+    exitcode = run_cmd_nocheck(cmd)
+    if not exitcode:
+        return
+    print("%s -m virtualenv failed!" % os.path.basename(python))
+    print()
+
+    # Case 3: try python -m venv
+    cmd = [python, '-m', 'venv', venv_path]
+    exitcode = run_cmd_nocheck(cmd)
+    if not exitcode:
+        return
+    print("%s -m venv failed!" % os.path.basename(python))
+
+    print()
+    print("ERROR: failed to create the virtual environment")
+    print()
+    print("Make sure that virtualenv is installed:")
+    print("%s -m pip install -U virtualenv" % python)
+    sys.exit(1)
+
 def create_virtualenv(python):
     venv_name = virtualenv_name(python)
     venv_path = os.path.join('venv', venv_name)
@@ -202,21 +245,7 @@ def create_virtualenv(python):
 
     print("Creating the virtual environment %s" % venv_path)
     try:
-        # On Python 3.3 and newer, the venv module could be used, but it looks
-        # like it doesn't work when run from a virtual environment on Fedora:
-        # ensurepip fails with an error.
-        cmd = ['virtualenv', '-p', python, venv_path]
-        try:
-            run_cmd(cmd)
-        except OSError as exc:
-            if exc.errno != errno.ENOENT:
-                raise
-
-            print("ERROR: failed to run virtualenv (file not found)")
-            print()
-            print("Make sure that virtualenv is installed:")
-            print("%s -m pip install -U virtualenv" % sys.executable)
-            sys.exit(1)
+        _create_virtualenv(python, venv_path)
 
         # upgrade setuptools and pip to make sure that they support environment
         # marks in requirements.txt
@@ -241,6 +270,7 @@ def create_virtualenv(python):
         run_cmd(cmd)
     except:
         if os.path.exists(venv_path):
+            print()
             print("ERROR: Remove virtual environment %s" % venv_path)
             shutil.rmtree(venv_path)
         raise
