@@ -231,8 +231,12 @@ Changelog
 Version 0.1.2
 -------------
 
-* Support Windows: exec_in_virtualenv() now uses run_cmd() rather than
-  os.execv()
+* Fix pybench benchmark (update to perf 0.7.4 API)
+* Windows is now supported
+* The creation of the virtual environment now also tries virtualenv and venv
+  Python modules, not only the virtualenv command.
+* The development version of performance now installs performance
+  with "pip install -e <path_to_performance>"
 
 Version 0.1.1 (2016-08-24)
 --------------------------
