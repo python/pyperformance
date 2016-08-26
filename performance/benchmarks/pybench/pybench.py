@@ -176,11 +176,13 @@ class Test:
         self.runner = runner
         self.bench = perf.Benchmark()
         self.loops = self.runner.args.loops
+        self._calibrate_warmups = None
 
     def calibrate_test(self, runner):
         if self.loops:
             return
-        self.loops = runner._calibrate_sample_func(self.test)
+        # FIXME: don't use private methods of the perf modume!
+        self.loops, self._calibrate_warmups = runner._calibrate(self.bench, self.test)
 
     def run(self, runner, rounds):
 
@@ -194,12 +196,14 @@ class Test:
         total_loops = loops * self.inner_loops
 
         warmups = []
+        if self._calibrate_warmups:
+            warmups.extend(self._calibrate_warmups)
         samples = []
         for i in range(rounds):
             dt = self.test(loops)
             dt /= total_loops
             if i < runner.args.warmups:
-                warmups.append(dt)
+                warmups.append((loops, dt))
             else:
                 samples.append(dt)
 
