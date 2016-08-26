@@ -149,7 +149,10 @@ def BM_2to3(*args, **kwargs):
 
 def MeasureHgStartup(python, options):
     venv = get_virtualenv()
-    hg_bin = os.path.join(venv, 'bin', 'hg')
+    if os.name == 'nt':
+        hg_bin = os.path.join(venv, 'Scripts', 'hg')
+    else:
+        hg_bin = os.path.join(venv, 'bin', 'hg')
 
     if options.debug_single_sample:
         trials = 1
