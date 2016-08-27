@@ -19,11 +19,11 @@
 #
 # After the release:
 #
-#  - set version to n+1
+#  - set version to n+1 and add sufix "dev"
 #  - git commit -a -m "post-release"
 #  - git push
 
-VERSION = '0.1.2'
+VERSION = '0.1.3dev'
 
 DESCRIPTION = 'Python benchmark suite'
 CLASSIFIERS = [
