@@ -240,8 +240,8 @@ Available Benchmarks
 Changelog
 =========
 
-Version 0.1.2
--------------
+Version 0.1.2 (2016-08-27)
+--------------------------
 
 * Windows is now supported
 * Add a new ``venv`` command to show, create, recrete or remove the virtual
