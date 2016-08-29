@@ -55,10 +55,14 @@ Actions::
     list_groups         List benchmark groups of the running Python
     venv                Actions on the virtual environment
 
+run
+---
+
 Options of the ``run`` command::
 
   -p PYTHON, --python PYTHON
                         Python executable (default: use running Python)
+  --venv VENV           Path to the virtual environment
   -r, --rigorous        Spend longer running tests to get more accurate
                         results
   -f, --fast            Get rough answers quickly
@@ -80,6 +84,9 @@ Options of the ``run`` command::
   --append FILENAME     Add runs to an existing file, or create it if it
                         doesn't exist
 
+compare
+-------
+
 Options of the ``compare`` command::
 
   -v, --verbose         Print more output
@@ -87,7 +94,16 @@ Options of the ``compare`` command::
                         What style the benchmark output should take. Valid
                         options are 'normal' and 'table'. Default is normal.
 
-Actions of the ``env`` command::
+venv
+----
+
+Options of the ``venv`` command::
+
+  -p PYTHON, --python PYTHON
+                        Python executable (default: use running Python)
+  --venv VENV           Path to the virtual environment
+
+Actions of the ``venv`` command::
 
   show      Display the path to the virtual environment and it's status (created or not)
   create    Create the virtual environment
@@ -239,6 +255,11 @@ Available Benchmarks
 
 Changelog
 =========
+
+Version 0.1.3
+-------------
+
+* Add the ``--venv`` command line option
 
 Version 0.1.2 (2016-08-27)
 --------------------------

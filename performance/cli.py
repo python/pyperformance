@@ -143,6 +143,8 @@ def parse_args():
         cmd.add_argument("-p", "--python",
                           help="Python executable (default: use running Python)",
                           default=sys.executable)
+        cmd.add_argument("--venv",
+                          help="Path to the virtual environment")
 
     options = parser.parse_args()
 

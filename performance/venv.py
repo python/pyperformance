@@ -150,7 +150,10 @@ def run_cmd(cmd):
     print("")
 
 
-def virtualenv_path(python):
+def virtualenv_path(options):
+    if options.venv:
+        return options.venv
+
     script = textwrap.dedent("""
         import hashlib
         import platform
@@ -181,6 +184,7 @@ def virtualenv_path(python):
         print(name)
     """)
 
+    python = options.python
     requirements = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
     cmd = (python, '-c', script, performance.__version__, requirements)
     proc = subprocess.Popen(cmd,
@@ -288,7 +292,7 @@ def create_virtualenv(python, venv_path):
 
 
 def exec_in_virtualenv(options):
-    venv_path = virtualenv_path(options.python)
+    venv_path = virtualenv_path(options)
     venv_python = create_virtualenv(options.python, venv_path)
 
     args = [venv_python, "-m", "performance"] + sys.argv[1:] + ["--inside-venv"]
@@ -306,7 +310,7 @@ def exec_in_virtualenv(options):
 def cmd_venv(options):
     action = options.venv_action
 
-    venv_path = virtualenv_path(options.python)
+    venv_path = virtualenv_path(options)
 
     if action in ('create', 'recreate'):
         recreated = False
@@ -334,8 +338,16 @@ def cmd_venv(options):
     else:
         # show command
         text = "Virtual environment path: %s" % venv_path
-        if os.path.exists(venv_path):
+        created = os.path.exists(venv_path)
+        if created:
             text += " (already created)"
         else:
             text += " (not created yet)"
         print(text)
+        if not created:
+            print()
+            print("Command to create it:")
+            cmd = "%s -m performance venv create" % options.python
+            if options.venv:
+                cmd += " --venv=%s" % options.venv
+            print(cmd)
