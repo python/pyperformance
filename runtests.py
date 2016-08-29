@@ -5,8 +5,9 @@ import os.path
 import shutil
 import subprocess
 import sys
+import tempfile
 
-def run_bench(*cmd):
+def run_cmd(cmd):
     print("Execute: %s" % ' '.join(cmd))
     proc = subprocess.Popen(cmd)
     try:
@@ -21,7 +22,7 @@ def run_bench(*cmd):
     print("")
 
 
-def main():
+def _main(venv):
     # Move to the root directly
     root = os.path.dirname(__file__)
     if root:
@@ -30,7 +31,11 @@ def main():
     python = sys.executable
     script = 'pyperformance'
 
-    run_bench(python, script, 'venv', 'recreate')
+    def run_bench(*cmd):
+        cmd = cmd + ('--venv', venv)
+        run_cmd(cmd)
+
+    run_bench(python, script, 'venv', 'create')
     run_bench(python, script, 'venv')
     run_bench(python, script, 'list')
     run_bench(python, script, 'list_groups')
@@ -42,6 +47,16 @@ def main():
     run_bench(python, script, 'run', '-b', 'all', '--debug-single-sample')
 
     run_bench(python, script, 'venv', 'remove')
+
+
+def main():
+    tmpdir = tempfile.mkdtemp()
+    try:
+        venv = os.path.join(tmpdir, 'testenv')
+        _main(venv)
+    finally:
+        if os.path.exists(tmpdir):
+            shutil.rmtree(tmpdir)
 
 
 if __name__ == "__main__":
