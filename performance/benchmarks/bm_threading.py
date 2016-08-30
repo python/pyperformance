@@ -78,6 +78,8 @@ if __name__ == "__main__":
     runner.argparser.add_argument("benchmark", choices=sorted(benchmarks))
     options = runner.parse_args()
 
+    runner.name += "/%s" % options.benchmark
+
     bench_func = benchmarks[options.benchmark]
 
     sys.setcheckinterval(options.check_interval)
