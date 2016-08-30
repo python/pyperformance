@@ -9,7 +9,7 @@ import time
 import perf
 
 
-from performance.venv import get_virtualenv, ROOT_DIR
+from performance.venv import ROOT_DIR
 from performance.run import (MeasureGeneric, BuildEnv, SimpleBenchmark,
                             BenchmarkError, RemovePycs, CallAndCaptureOutput,
                             GetChildUserTime)
@@ -147,31 +147,10 @@ def BM_2to3(*args, **kwargs):
     return SimpleBenchmark(Measure2to3, *args, **kwargs)
 
 
-def MeasureHgStartup(python, options):
-    venv = get_virtualenv()
-    if os.name == 'nt':
-        hg_bin = os.path.join(venv, 'Scripts', 'hg')
-    else:
-        hg_bin = os.path.join(venv, 'bin', 'hg')
-
-    if options.debug_single_sample:
-        trials = 1
-    elif options.rigorous:
-        trials = 1000
-    elif options.fast:
-        trials = 100
-    else:
-        trials = 500
-
-    command = python + [hg_bin, "help"]
-    # FIXME: make env parameter of MeasureCommand optional
-    env = None
-    # FIXME: add mercurial version to metadata
-    return MeasureCommand("hg_startup", command, trials, env, options.track_memory)
-
 @VersionRange(None, '2.7')
-def BM_hg_startup(*args, **kwargs):
-    return SimpleBenchmark(MeasureHgStartup, *args, **kwargs)
+def BM_hg_startup(python, options):
+    bm_path = Relative("bm_hg_startup.py")
+    return MeasureGeneric(python, options, bm_path)
 
 
 def MeasureChameleon(python, options):

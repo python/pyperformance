@@ -114,20 +114,36 @@ def interpreter_version(python, _cache={}):
     return version
 
 
-def get_virtualenv():
+def _get_virtualenv():
+    return venv
+
+
+def get_venv_program(program):
     bin_path = os.path.dirname(sys.executable)
+    bin_path = os.path.realpath(bin_path)
+
     if not os.path.isabs(bin_path):
         print("ERROR: Python executable path is not absolute: %s"
               % sys.executable)
         sys.exit(1)
+
     if not os.path.exists(os.path.join(bin_path, 'activate')):
         print("ERROR: Unable to get the virtual environment of "
               "the Python executable %s" % sys.executable)
         sys.exit(1)
 
-    venv = os.path.dirname(bin_path)
-    venv = os.path.realpath(venv)
-    return venv
+    if os.name == 'nt':
+        path = os.path.join(bin_path, program)
+    else:
+        path = os.path.join(bin_path, program)
+
+    if not os.path.exists(path):
+        print("ERROR: Unable to get the program %r "
+              "from the virtual environment %r"
+              % (program, bin_path))
+        sys.exit(1)
+
+    return path
 
 
 def run_cmd_nocheck(cmd):
