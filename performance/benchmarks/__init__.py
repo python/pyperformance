@@ -63,88 +63,10 @@ def BM_PyBench(python, options):
         return BenchmarkError(exc)
 
 
-def MeasureCommand(name, command, iterations, env, track_memory):
-    """Helper function to run arbitrary commands multiple times.
-
-    Differences from MeasureGeneric():
-        - MeasureGeneric() works with the performance/bm_*.py scripts.
-        - MeasureCommand() does not echo every command run; it is intended for
-          high-volume commands, like startup benchmarks
-
-    Args:
-        command: list of strings to be passed to Popen.
-        iterations: number of times to run the command.
-        env: environment vars dictionary.
-        track_memory: bool to indicate whether to track memory usage.
-
-    Returns:
-        RawData instance. Note that we take instrumentation data from the final
-        run; merging instrumentation data between multiple runs is
-        prohibitively difficult at this point.
-
-    Raises:
-        RuntimeError: if the command failed.
-    """
-    # FIXME: collect metadata in worker processes
-    bench = perf.Benchmark()
-    with open(os.devnull, "wb") as dev_null:
-        RemovePycs()
-
-        # Priming run (create pyc files, etc).
-        CallAndCaptureOutput(command, env=env)
-
-        an_s = "s"
-        if iterations == 1:
-            an_s = ""
-        info("Running `%s` %d time%s", " ".join(command), iterations, an_s)
-
-        times = []
-        for _ in range(iterations):
-            # FIXME: use perf.perf_counter()?
-            start_time = GetChildUserTime()
-            subproc = subprocess.Popen(command,
-                                       stdout=dev_null,
-                                       stderr=subprocess.PIPE,
-                                       env=env)
-            _, stderr = subproc.communicate()
-            if subproc.returncode != 0:
-                raise RuntimeError("Benchmark died: " + stderr)
-            end_time = GetChildUserTime()
-            elapsed = end_time - start_time
-            assert elapsed != 0
-            times.append(elapsed)
-
-    # FIXME: track_memory
-    # FIXME: use at least 1 warmup
-    run = perf.Run(times,
-                   metadata={'name': name},
-                   # FIXME: collect metadata in the worker
-                   collect_metadata=False)
-    bench.add_run(run)
-    return bench
-
-
-def Measure2to3(python, options):
-    target = Relative('data', '2to3')
-    pyfiles = glob.glob(os.path.join(target, '*.py.txt'))
-    env = BuildEnv(None, inherit_env=options.inherit_env)
-
-    # This can be compressed, but it's harder to understand.
-    if options.debug_single_sample:
-        trials = 1
-    elif options.fast:
-        trials = 5
-    elif options.rigorous:
-        trials = 25
-    else:
-        trials = 10
-
-    command = python + ["-m", "lib2to3", "-f", "all"] + pyfiles
-    return MeasureCommand("2to3", command, trials, env, options.track_memory)
-
 @VersionRange()
-def BM_2to3(*args, **kwargs):
-    return SimpleBenchmark(Measure2to3, *args, **kwargs)
+def BM_2to3(python, options):
+    bm_path = Relative("bm_2to3.py")
+    return MeasureGeneric(python, options, bm_path)
 
 
 @VersionRange(None, '2.7')

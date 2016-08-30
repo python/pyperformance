@@ -26,10 +26,6 @@ def get_hg_version(hg_bin):
     return stdout.splitlines()[0]
 
 
-def run(command):
-    subprocess.Popen
-
-
 def bench_startup(loops, command):
     with open(os.devnull, "rb") as devnull_in:
         with open(os.devnull, "wb") as devnull_out:
