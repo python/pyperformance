@@ -130,7 +130,7 @@ Advices helping to get make stable benchmarks:
 * On a laptop: plug the power cable.
 * For modern Intel CPUs: disable Turbo Boost
 
-Note: ASRL must *not* be disabled!
+Note: ASLR must *not* be disabled! (it's enabled by default on Linux)
 
 
 Notes
@@ -289,6 +289,14 @@ Version 0.1 (2016-08-24)
 ------------------------
 
 * First release after the conversion to the perf module and move to GitHub
+* Removed benchmarks
+
+  - django_v2, django_v3
+  - rietveld
+  - spitfire (and psyco): Spitfire is not available on PyPI
+  - pystone
+  - gcbench
+  - tuple_gc_hell
 
 
 History
