@@ -35,6 +35,7 @@ def main(loops):
     return perf.perf_counter() - t0
 
 if __name__ == '__main__':
-    runner = perf.text_runner.TextRunner(name='json_v2')
-    runner.metadata['description'] = "Test the performance of the JSON benchmark"
+    runner = perf.text_runner.TextRunner(name='json_dump_v2')
+    runner.metadata['description'] = ("Test the performance of "
+                                      "the JSON serializing")
     runner.bench_sample_func(main)

@@ -265,7 +265,7 @@ def BM_JSON_Load(python, options):
 
 
 def MeasureJSONDumpV2(python, options):
-    bm_path = Relative("bm_json_v2.py")
+    bm_path = Relative("bm_json_dump_v2.py")
     return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
