@@ -172,181 +172,96 @@ def BM_Tornado_Http(*args, **kwargs):
     return SimpleBenchmark(MeasureTornadoHttp, *args, **kwargs)
 
 
-def MeasureDjangoTemplate(python, options):
+@VersionRange('2.7', None)
+def BM_Django_Template(python, options):
     bm_path = Relative("bm_django_template.py")
     return MeasureGeneric(python, options, bm_path)
 
-@VersionRange('2.7', None)
-def BM_Django_Template(*args, **kwargs):
-    return SimpleBenchmark(MeasureDjangoTemplate, *args, **kwargs)
 
-
-def MeasureFloat(python, options):
+@VersionRange()
+def BM_Float(python, options):
     bm_path = Relative("bm_float.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_Float(*args, **kwargs):
-    return SimpleBenchmark(MeasureFloat, *args, **kwargs)
-
-
-def MeasureMako(python, options):
+def BM_mako(python, options):
     bm_path = Relative("bm_mako.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_mako(*args, **kwargs):
-    return SimpleBenchmark(MeasureMako, *args, **kwargs)
-
-
-def MeasurePathlib(python, options):
+def BM_pathlib(python, options):
     bm_path = Relative("bm_pathlib.py")
     return MeasureGeneric(python, options, bm_path)
 
-@VersionRange()
-def BM_pathlib(*args, **kwargs):
-    return SimpleBenchmark(MeasurePathlib, *args, **kwargs)
 
-
-def MeasurePickle(python, options, extra_args):
-    """Test the performance of Python's pickle implementations.
-
-    Args:
-        python: prefix of a command line for the Python binary.
-        options: optparse.Values instance.
-        extra_args: list of arguments to append to the command line.
-
-    Returns:
-        RawData instance.
-    """
+def _PickleBenchmark(python, options, *extra_args):
     bm_path = Relative("bm_pickle.py")
-    return MeasureGeneric(python, options, bm_path, extra_args=extra_args)
-
-
-def _PickleBenchmark(python, options, extra_args):
-    """Test the performance of Python's pickle implementations.
-
-    Args:
-        python: prefix of a command line for the Python binary.
-        options: optparse.Values instance.
-        extra_args: list of arguments to append to the command line.
-
-    Returns:
-        Summary of whether the experiemental Python is better/worse than the
-        baseline.
-    """
-    return SimpleBenchmark(MeasurePickle, python, options, extra_args)
+    return MeasureGeneric(python, options, bm_path,
+                          extra_args=list(extra_args))
 
 @VersionRange()
 def BM_FastPickle(python, options):
-    args = ["--use_cpickle", "pickle"]
-    return _PickleBenchmark(python, options, args)
+    return _PickleBenchmark(python, options, "--use_cpickle", "pickle")
 
 @VersionRange()
 def BM_FastUnpickle(python, options):
-    args = ["--use_cpickle", "unpickle"]
-    return _PickleBenchmark(python, options, args)
+    return _PickleBenchmark(python, options, "--use_cpickle", "unpickle")
 
 @VersionRange()
 def BM_Pickle_List(python, options):
-    args = ["--use_cpickle", "pickle_list"]
-    return _PickleBenchmark(python, options, args)
+    return _PickleBenchmark(python, options, "--use_cpickle", "pickle_list")
 
 @VersionRange()
 def BM_Unpickle_List(python, options):
-    args = ["--use_cpickle", "unpickle_list"]
-    return _PickleBenchmark(python, options, args)
+    return _PickleBenchmark(python, options, "--use_cpickle", "unpickle_list")
 
 @VersionRange()
 def BM_Pickle_Dict(python, options):
-    args = ["--use_cpickle", "pickle_dict"]
-    return _PickleBenchmark(python, options, args)
+    return _PickleBenchmark(python, options, "--use_cpickle", "pickle_dict")
 
 @VersionRange(None, '2.7')   # 3.x doesn't have slow pickle
 def BM_SlowPickle(python, options):
-    return _PickleBenchmark(python, options, ["pickle"])
+    return _PickleBenchmark(python, options, "pickle")
 
 @VersionRange(None, '2.7')
 def BM_SlowUnpickle(python, options):
-    return _PickleBenchmark(python, options, ["unpickle"])
+    return _PickleBenchmark(python, options, "unpickle")
 
 
-def MeasureEtree(python, options, extra_args):
-    """Test the performance of Python's (c)ElementTree implementations.
-
-    Args:
-        python: prefix of a command line for the Python binary.
-        options: optparse.Values instance.
-        extra_args: list of arguments to append to the command line.
-
-    Returns:
-        RawData instance.
-    """
+def MeasureEtree(python, options, arg):
     bm_path = Relative("bm_elementtree.py")
-    return MeasureGeneric(python, options, bm_path, extra_args=extra_args)
+    return MeasureGeneric(python, options, bm_path, extra_args=[arg])
 
 @VersionRange()
 def BM_ETree_Parse(python, options):
-    extra_args = ['parse']
-    return SimpleBenchmark(MeasureEtree, python, options, extra_args)
+    return MeasureEtree(python, options, 'parse')
 
 @VersionRange()
 def BM_ETree_IterParse(python, options):
-    extra_args = ['iterparse']
-    return SimpleBenchmark(MeasureEtree, python, options, extra_args)
+    return MeasureEtree(python, options, 'iterparse')
 
 @VersionRange()
 def BM_ETree_Generate(python, options):
-    extra_args = ['generate']
-    return SimpleBenchmark(MeasureEtree, python, options, extra_args)
+    return MeasureEtree(python, options, 'generate')
 
 @VersionRange()
 def BM_ETree_Process(python, options):
-    extra_args = ['process']
-    return SimpleBenchmark(MeasureEtree, python, options, extra_args)
+    return MeasureEtree(python, options, 'process')
 
 
-def MeasureJSON(python, options, extra_args):
-    """Test the performance of Python's json implementation.
-
-    Args:
-        python: prefix of a command line for the Python binary.
-        options: optparse.Values instance.
-        extra_args: list of arguments to append to the command line.
-
-    Returns:
-        RawData instance.
-    """
+def _JSONBenchmark(python, options, arg):
     bm_path = Relative("bm_json.py")
-    return MeasureGeneric(python, options, bm_path, extra_args=extra_args)
-
-
-def _JSONBenchmark(python, options, extra_args):
-    """Test the performance of Python's json implementation.
-
-    Args:
-        base_python: prefix of a command line for the reference
-                Python binary.
-        changed_python: prefix of a command line for the
-                experimental Python binary.
-        options: optparse.Values instance.
-        extra_args: list of arguments to append to the command line.
-
-    Returns:
-        Summary of whether the experiemental Python is better/worse than the
-        baseline.
-    """
-    return SimpleBenchmark(MeasureJSON, python, options, extra_args)
+    return MeasureGeneric(python, options, bm_path, extra_args=[arg])
 
 @VersionRange()
 def BM_JSON_Dump(python, options):
-    args = ["json_dump"]
-    return _JSONBenchmark(python, options, args)
+    return _JSONBenchmark(python, options, "json_dump")
 
 @VersionRange()
 def BM_JSON_Load(python, options):
-    args = ["json_load"]
-    return _JSONBenchmark(python, options, args)
+    return _JSONBenchmark(python, options, "json_load")
 
 
 def MeasureJSONDumpV2(python, options):
