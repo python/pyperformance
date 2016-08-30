@@ -153,23 +153,16 @@ def BM_hg_startup(python, options):
     return MeasureGeneric(python, options, bm_path)
 
 
-def MeasureChameleon(python, options):
-    bm_path = Relative("bm_chameleon.py")
-    return MeasureGeneric(python, options, bm_path)
-
 @VersionRange('2.7', None)
-def BM_Chameleon(*args, **kwargs):
-    return SimpleBenchmark(MeasureChameleon, *args, **kwargs)
-
-
-def MeasureTornadoHttp(python, options):
-    bm_path = Relative("bm_tornado_http.py")
+def BM_Chameleon(python, options):
+    bm_path = Relative("bm_chameleon.py")
     return MeasureGeneric(python, options, bm_path)
 
 
 @VersionRange()
-def BM_Tornado_Http(*args, **kwargs):
-    return SimpleBenchmark(MeasureTornadoHttp, *args, **kwargs)
+def BM_Tornado_Http(python, options):
+    bm_path = Relative("bm_tornado_http.py")
+    return MeasureGeneric(python, options, bm_path)
 
 
 @VersionRange('2.7', None)
@@ -264,151 +257,81 @@ def BM_JSON_Load(python, options):
     return _JSONBenchmark(python, options, "json_load")
 
 
-def MeasureJSONDumpV2(python, options):
+@VersionRange()
+def BM_JSON_Dump_V2(python, options):
     bm_path = Relative("bm_json_dump_v2.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_JSON_Dump_V2(*args, **kwargs):
-    return SimpleBenchmark(MeasureJSONDumpV2, *args, **kwargs)
-
-
-def MeasureNQueens(python, options):
-    """Test the performance of an N-Queens solver.
-
-    Args:
-        python: prefix of a command line for the Python binary.
-        options: optparse.Values instance.
-
-    Returns:
-        RawData instance.
-    """
+def BM_NQueens(python, options):
     bm_path = Relative("bm_nqueens.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_NQueens(*args, **kwargs):
-    return SimpleBenchmark(MeasureNQueens, *args, **kwargs)
-
-
-def MeasureChaos(python, options):
+def BM_Chaos(python, options):
     bm_path = Relative("bm_chaos.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_Chaos(*args, **kwargs):
-    return SimpleBenchmark(MeasureChaos, *args, **kwargs)
-
-
-def MeasureFannkuch(python, options):
+def BM_Fannkuch(python, options):
     bm_path = Relative("bm_fannkuch.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_Fannkuch(*args, **kwargs):
-    return SimpleBenchmark(MeasureFannkuch, *args, **kwargs)
-
-
-def MeasureGo(python, options):
+def BM_Go(python, options):
     bm_path = Relative("bm_go.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_Go(*args, **kwargs):
-    return SimpleBenchmark(MeasureGo, *args, **kwargs)
-
-
-def MeasureMeteorContest(python, options):
+def BM_Meteor_Contest(python, options):
     bm_path = Relative("bm_meteor_contest.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_Meteor_Contest(*args, **kwargs):
-    return SimpleBenchmark(MeasureMeteorContest, *args, **kwargs)
-
-
-def MeasureSpectralNorm(python, options):
+def BM_Spectral_Norm(python, options):
     bm_path = Relative("bm_spectral_norm.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_Spectral_Norm(*args, **kwargs):
-    return SimpleBenchmark(MeasureSpectralNorm, *args, **kwargs)
-
-
-def MeasureTelco(python, options):
+def BM_Telco(python, options):
     bm_path = Relative("bm_telco.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_Telco(*args, **kwargs):
-    return SimpleBenchmark(MeasureTelco, *args, **kwargs)
-
-
-def MeasureHexiom2(python, options):
+def BM_Hexiom2(python, options):
     bm_path = Relative("bm_hexiom2.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_Hexiom2(*args, **kwargs):
-    return SimpleBenchmark(MeasureHexiom2, *args, **kwargs)
-
-
-def MeasureRaytrace(python, options):
+def BM_Raytrace(python, options):
     bm_path = Relative("bm_raytrace.py")
     return MeasureGeneric(python, options, bm_path)
 
-@VersionRange()
-def BM_Raytrace(*args, **kwargs):
-    return SimpleBenchmark(MeasureRaytrace, *args, **kwargs)
 
-
-def MeasureLogging(python, options, extra_args):
-    """Test the performance of Python's logging module.
-
-    Args:
-        python: prefix of a command line for the Python binary.
-        options: optparse.Values instance.
-        extra_args: list of arguments to append to the command line.
-
-    Returns:
-        RawData instance.
-    """
+def _LoggingBenchmark(python, options, arg):
     bm_path = Relative("bm_logging.py")
-    return MeasureGeneric(python, options, bm_path, extra_args=extra_args)
-
-
-def _LoggingBenchmark(python, options, extra_args):
-    """Test the performance of Python's logging module.
-
-    Args:
-        base_python: prefix of a command line for the reference
-                Python binary.
-        changed_python: prefix of a command line for the
-                experimental Python binary.
-        options: optparse.Values instance.
-        extra_args: list of arguments to append to the command line.
-
-    Returns:
-        Summary of whether the experiemental Python is better/worse than the
-        baseline.
-    """
-    return SimpleBenchmark(MeasureLogging, python, options, extra_args)
+    return MeasureGeneric(python, options, bm_path, extra_args=[arg])
 
 @VersionRange()
 def BM_Silent_Logging(python, options):
-    args = ["no_output"]
-    return _LoggingBenchmark(python, options, args)
+    return _LoggingBenchmark(python, options, "no_output")
 
 @VersionRange()
 def BM_Simple_Logging(python, options):
-    args = ["simple_output"]
-    return _LoggingBenchmark(python, options, args)
+    return _LoggingBenchmark(python, options, "simple_output")
 
 @VersionRange()
 def BM_Formatted_Logging(python, options):
-    args = ["formatted_output"]
-    return _LoggingBenchmark(python, options, args)
+    return _LoggingBenchmark(python, options, "formatted_output")
 
 
 @VersionRange()
@@ -422,197 +345,92 @@ def BM_startup_nosite(python, options):
     return MeasureGeneric(python, options, bm_path, extra_args=["--no-site"])
 
 
-def MeasureRegexPerformance(python, options, bm_path):
-    """Test the performance of Python's regex engine.
-
-    Args:
-        python: prefix of a command line for the Python binary.
-        options: optparse.Values instance.
-        bm_path: relative path; which benchmark script to run.
-
-    Returns:
-        RawData instance.
-    """
-    return MeasureGeneric(python, options, Relative(bm_path))
-
-
-def RegexBenchmark(python, options, bm_path):
-    return SimpleBenchmark(MeasureRegexPerformance,
-                           python, options, bm_path)
-
 @VersionRange()
 def BM_regex_v8(python, options):
-    bm_path = "bm_regex_v8.py"
-    return RegexBenchmark(python, options, bm_path)
+    return MeasureGeneric(python, options, Relative("bm_regex_v8.py"))
 
 @VersionRange()
 def BM_regex_effbot(python, options):
-    bm_path = "bm_regex_effbot.py"
-    return RegexBenchmark(python, options, bm_path)
+    return MeasureGeneric(python, options, Relative("bm_regex_effbot.py"))
 
 @VersionRange()
 def BM_regex_compile(python, options):
-    bm_path = "bm_regex_compile.py"
-    return RegexBenchmark(python, options, bm_path)
-
-
-def MeasureThreading(python, options, bm_name):
-    """Test the performance of Python's threading support.
-
-    Args:
-        python: prefix of a command line for the Python binary.
-        options: optparse.Values instance.
-        bm_name: name of the threading benchmark to run.
-
-    Returns:
-        RawData instance.
-    """
-    bm_path = Relative("bm_threading.py")
-    return MeasureGeneric(python, options, bm_path, extra_args=[bm_name])
+    return MeasureGeneric(python, options, Relative("bm_regex_compile.py"))
 
 
 def ThreadingBenchmark(python, options, bm_name):
-    return SimpleBenchmark(MeasureThreading,
-                           python, options, bm_name)
+    bm_path = Relative("bm_threading.py")
+    return MeasureGeneric(python, options, bm_path, extra_args=[bm_name])
 
 @VersionRange()
 def BM_threaded_count(python, options):
-    bm_name = "threaded_count"
-    return ThreadingBenchmark(python, options, bm_name)
+    return ThreadingBenchmark(python, options, "threaded_count")
 
 @VersionRange()
 def BM_iterative_count(python, options):
-    bm_name = "iterative_count"
-    return ThreadingBenchmark(python, options, bm_name)
+    return ThreadingBenchmark(python, options, "iterative_count")
 
 
-def MeasureUnpackSequence(python, options):
-    """Test the performance of sequence unpacking.
-
-    Args:
-        python: prefix of a command line for the Python binary.
-        options: optparse.Values instance.
-
-    Returns:
-        RawData instance.
-    """
+@VersionRange()
+def BM_unpack_sequence(python, options):
     bm_path = Relative("bm_unpack_sequence.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_unpack_sequence(*args, **kwargs):
-    return SimpleBenchmark(MeasureUnpackSequence, *args, **kwargs)
-
-
-def MeasureCallSimple(python, options):
+def BM_call_simple(python, options):
     bm_path = Relative("bm_call_simple.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_call_simple(*args, **kwargs):
-    return SimpleBenchmark(MeasureCallSimple, *args, **kwargs)
-
-
-def MeasureCallMethod(python, options):
+def BM_call_method(python, options):
     bm_path = Relative("bm_call_method.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_call_method(*args, **kwargs):
-    return SimpleBenchmark(MeasureCallMethod, *args, **kwargs)
-
-
-def MeasureCallMethodUnknown(python, options):
+def BM_call_method_unknown(python, options):
     bm_path = Relative("bm_call_method_unknown.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_call_method_unknown(*args, **kwargs):
-    return SimpleBenchmark(MeasureCallMethodUnknown, *args, **kwargs)
-
-
-def MeasureCallMethodSlots(python, options):
+def BM_call_method_slots(python, options):
     bm_path = Relative("bm_call_method_slots.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_call_method_slots(*args, **kwargs):
-    return SimpleBenchmark(MeasureCallMethodSlots, *args, **kwargs)
-
-
-def MeasureNbody(python, options):
-    """Test the performance of math operations using an n-body benchmark.
-
-    Args:
-        python: prefix of a command line for the Python binary.
-        options: optparse.Values instance.
-
-    Returns:
-        RawData instance.
-    """
+def BM_nbody(python, options):
     bm_path = Relative("bm_nbody.py")
     return MeasureGeneric(python, options, bm_path)
 
-@VersionRange()
-def BM_nbody(*args, **kwargs):
-    return SimpleBenchmark(MeasureNbody, *args, **kwargs)
 
-
-def MeasureSpamBayes(python, options):
-    """Test the performance of the SpamBayes spam filter and its tokenizer.
-
-    Args:
-        python: prefix of a command line for the Python binary.
-        options: optparse.Values instance.
-
-    Returns:
-        RawData instance.
-    """
+@VersionRange(None, '2.7')
+def BM_spambayes(python, options):
     bm_path = Relative("bm_spambayes.py")
     bm_env = BuildEnv(None, options.inherit_env)
     return MeasureGeneric(python, options, bm_path, bm_env)
 
+
 @VersionRange(None, '2.7')
-def BM_spambayes(*args, **kwargs):
-    return SimpleBenchmark(MeasureSpamBayes, *args, **kwargs)
-
-
-def MeasureHtml5lib(python, options):
+def BM_html5lib(python, options):
     bm_path = Relative("bm_html5lib.py")
     bm_env = BuildEnv(None, options.inherit_env)
     return MeasureGeneric(python, options, bm_path, bm_env)
 
-@VersionRange(None, '2.7')
-def BM_html5lib(*args, **kwargs):
-    return SimpleBenchmark(MeasureHtml5lib, *args, **kwargs)
 
-
-def MeasureRichards(python, options):
+@VersionRange()
+def BM_richards(python, options):
     bm_path = Relative("bm_richards.py")
     return MeasureGeneric(python, options, bm_path)
 
+
 @VersionRange()
-def BM_richards(*args, **kwargs):
-    return SimpleBenchmark(MeasureRichards, *args, **kwargs)
-
-
-def MeasurePiDigits(python, options):
-    """Test the performance of big integer arithmetic by calculating the
-    first digits of PI.
-
-    Args:
-        python: prefix of a command line for the Python binary.
-        options: optparse.Values instance.
-
-    Returns:
-        RawData instance.
-    """
+def BM_pidigits(python, options):
     bm_path = Relative("bm_pidigits.py")
     return MeasureGeneric(python, options, bm_path)
-
-@VersionRange()
-def BM_pidigits(*args, **kwargs):
-    return SimpleBenchmark(MeasurePiDigits, *args, **kwargs)
 
 
 ### End benchmarks, begin main entry point support.
