@@ -32,7 +32,9 @@ def test_django(loops):
 
 
 if __name__ == "__main__":
-    django.conf.settings.configure()
+    django.conf.settings.configure(TEMPLATES=[{
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    }])
     django.setup()
 
     runner = perf.text_runner.TextRunner(name='django_template')

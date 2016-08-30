@@ -8,7 +8,7 @@ perf==0.7.4
 # Benchmarks dependencies
 
 Chameleon==2.22                           # chameleon
-Django==1.9                               # django_template
+Django==1.10                              # django_template
 Mako==1.0.4                               # mako
 Mercurial==3.9; python_version < '3.0'    # hg_startup
 html5lib==0.999999999                     # html5lib
