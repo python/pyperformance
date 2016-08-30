@@ -145,15 +145,15 @@ def bench_json_load(loops):
     return perf.perf_counter() - t0
 
 
-def prepare_subprocess_args(runner, args):
-    args.append(runner.args.benchmark)
+def prepare_cmd(runner, cmd):
+    cmd.append(runner.args.benchmark)
 
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='json', inner_loops=20)
     runner.metadata['description'] = ("Test the performance of "
                                       "JSON (de)serializing.")
-    runner.prepare_subprocess_args = prepare_subprocess_args
+    runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("benchmark",
                                   choices=("json_dump", "json_load"))
 

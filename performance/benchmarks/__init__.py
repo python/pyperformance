@@ -517,91 +517,15 @@ def BM_Formatted_Logging(python, options):
     return _LoggingBenchmark(python, options, args)
 
 
-def _StartupPython(command, mem_usage, track_memory, inherit_env):
-    # FIXME: reimplement track_memory
-    startup_env = BuildEnv(inherit_env=inherit_env)
-    subprocess.check_call(command, env=startup_env)
-
-
-def MeasureStartup(name, python, cmd_opts, num_loops, track_memory, inherit_env):
-    times = []
-    work = "pass"
-    if track_memory:
-        # Without this, Python may start and exit before the memory sampler
-        # thread has time to work. We can't just do 'time.sleep(x)', because
-        # under -S, 'import time' fails.
-        work = "i = 0\nwhile i < 200000: i += 1"
-    command = python + cmd_opts + ["-c", work]
-    mem_usage = []
-    inner_loops = 20
-    info("Running `%s` %d x %d times", " ".join(command), num_loops, inner_loops)
-    for _ in range(num_loops):
-        t0 = time.time()
-        # repeated 20 times
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        _StartupPython(command, mem_usage, track_memory, inherit_env)
-        t1 = time.time()
-        times.append((t1 - t0) / inner_loops)
-    if not track_memory:
-      mem_usage = None
-    # FIXME: mem_usage
-    bench = perf.Benchmark()
-    run = perf.Run(times,
-                   metadata={'name': name, 'inner_loops': inner_loops},
-                   # FIXME: collect metadata in the worker
-                   collect_metadata=False)
-    bench.add_run(run)
-    return bench
-
 @VersionRange()
 def BM_normal_startup(python, options):
-    if options.debug_single_sample:
-        num_loops = 1
-    elif options.rigorous:
-        num_loops = 100
-    elif options.fast:
-        num_loops = 5
-    else:
-        num_loops = 50
-
-    opts = []
-    name = 'normal_startup'
-    return MeasureStartup(name, python, opts, num_loops,
-                          options.track_memory, options.inherit_env)
+    bm_path = Relative("bm_startup.py")
+    return MeasureGeneric(python, options, bm_path)
 
 @VersionRange()
 def BM_startup_nosite(python, options):
-    if options.debug_single_sample:
-        num_loops = 1
-    elif options.rigorous:
-        num_loops = 200
-    elif options.fast:
-        num_loops = 10
-    else:
-        num_loops = 100
-
-    opts = ["-S"]
-    name = 'startup_nosite'
-    return MeasureStartup(name, python, opts, num_loops,
-                          options.track_memory, options.inherit_env)
+    bm_path = Relative("bm_startup.py")
+    return MeasureGeneric(python, options, bm_path, extra_args=["--no-site"])
 
 
 def MeasureRegexPerformance(python, options, bm_path):
