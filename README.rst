@@ -267,6 +267,8 @@ Version 0.1.3
   ``taskset`` command
 * Put more installer and optional requirements into
   ``performance/requirements.txt``
+* Cached ``.pyc`` files are not more removed before running a benchmark.
+  Use ``venv recreate`` command to update a virtual environment if required.
 
 Version 0.1.2 (2016-08-27)
 --------------------------

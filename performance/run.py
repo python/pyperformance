@@ -116,17 +116,6 @@ def ChangeDir(new_cwd):
         os.chdir(former_cwd)
 
 
-def RemovePycs():
-    if sys.platform == "win32":
-        for root, dirs, files in os.walk('.'):
-            for name in files:
-                if name.endswith('.pyc') or name.endswith('.pyo'):
-                    os.remove(os.path.join(root, name))
-    else:
-        subprocess.check_call(["find", ".", "-name", "*.py[co]",
-                               "-exec", "rm", "-f", "{}", ";"])
-
-
 def LogCall(command):
     command = list(map(str, command))
     logging.info("Running `%s`", " ".join(command))
@@ -263,7 +252,6 @@ def run_perf_script(python, options, bm_path, extra_args=[]):
 
     bench_args.append("--stdout")
 
-    RemovePycs()
     command = python + bench_args + extra_args
     stdout = CallAndCaptureOutput(command, hide_stderr=not options.verbose)
 

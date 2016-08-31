@@ -11,7 +11,7 @@ import perf
 
 from performance.venv import ROOT_DIR
 from performance.run import (run_perf_script, BuildEnv, SimpleBenchmark,
-                            BenchmarkError, RemovePycs, CallAndCaptureOutput,
+                            BenchmarkError, CallAndCaptureOutput,
                             GetChildUserTime)
 
 
@@ -56,7 +56,6 @@ def BM_PyBench(python, options):
     args.append('--stdout')
 
     try:
-        RemovePycs()
         cmd = python + args
         stdout = CallAndCaptureOutput(cmd, inherit_env=options.inherit_env,
                                       hide_stderr=False)
