@@ -261,6 +261,12 @@ Version 0.1.3
 -------------
 
 * Add the ``--venv`` command line option
+* Convert Python startup, Mercurial startup and 2to3 benchmarks to perf scripts
+  (bm_startup.py, bm_hg_startup.py and bm_2to3.py)
+* Pass the ``--affinity`` option to perf scripts rather than using the
+  ``taskset`` command
+* Put more installer and optional requirements into
+  ``performance/requirements.txt``
 
 Version 0.1.2 (2016-08-27)
 --------------------------
