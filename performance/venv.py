@@ -163,7 +163,7 @@ def run_cmd(cmd):
     exitcode = run_cmd_nocheck(cmd)
     if exitcode:
         sys.exit(exitcode)
-    print("")
+    print()
 
 
 def virtualenv_path(options):
@@ -254,6 +254,42 @@ def _create_virtualenv(python, venv_path):
     print("%s -m pip install -U virtualenv" % python)
     sys.exit(1)
 
+
+class Requirements:
+    def __init__(self, filename, installer, optional):
+        # pre-requirements (setuptools, pip)
+        self.installer = []
+
+        # requirements
+        self.req = []
+
+        # optional requirements
+        self.optional = []
+
+        with open(filename) as fp:
+            for line in fp.readlines():
+                # strip comment
+                line = line.partition('#')[0]
+                line = line.rstrip()
+                if not line:
+                    continue
+
+                # strip env markers
+                req = line.partition(';')[0]
+
+                # strip version
+                req = req.partition('==')[0]
+                req = req.partition('>=')[0]
+                print("req: %r" % req, "line: %r "% line)
+
+                if req in installer:
+                    self.installer.append(line)
+                elif req in optional:
+                    self.optional.append(line)
+                else:
+                    self.req.append(line)
+
+
 def create_virtualenv(python, venv_path):
     if os.name == "nt":
         python_executable = os.path.basename(python)
@@ -263,27 +299,30 @@ def create_virtualenv(python, venv_path):
     if os.path.exists(venv_path):
         return venv_python
 
+    filename = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
+    req = Requirements(filename, ['setuptools', 'pip', 'wheel'], ['psutil'])
+
     print("Creating the virtual environment %s" % venv_path)
     try:
         _create_virtualenv(python, venv_path)
 
-        # upgrade setuptools and pip to make sure that they support environment
-        # marks in requirements.txt
-        #
-        # Install also wheel for faster creation of the virtual environment.
-        cmd = [venv_python, '-m', 'pip',
-               'install', '-U', 'setuptools>=18.5', 'pip>=6.0', 'wheel']
+        # upgrade installer dependencies (ex: pip)
+        cmd = [venv_python, '-m', 'pip', 'install', '-U']
+        cmd.extend(req.installer)
         run_cmd(cmd)
 
         # install requirements
-        requirements = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
-        cmd = [venv_python, '-m', 'pip', 'install', '-r', requirements]
+        cmd = [venv_python, '-m', 'pip', 'install']
+        cmd.extend(req.req)
         run_cmd(cmd)
 
+        # install optional requirements (psutil)
+        #
         # psutil is a C extension written for CPython
         if python_implementation() == 'cpython':
             # try to install psutil
-            cmd = [venv_python, '-m', 'pip', 'install', '-U', 'psutil']
+            cmd = [venv_python, '-m', 'pip', 'install', '-U']
+            cmd.extend(req.optional)
             exitcode = run_cmd_nocheck(cmd)
             if exitcode:
                 print("WARNING: failed to install psutil")
@@ -338,7 +377,7 @@ def cmd_venv(options):
 
         if not os.path.exists(venv_path):
             create_virtualenv(options.python, venv_path)
-            print()
+
             what = 'recreated' if recreated else 'created'
             print("The virtual environment %s has been %s" % (venv_path, what))
         else:
