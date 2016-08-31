@@ -5,7 +5,7 @@ import subprocess
 
 import perf
 
-
+import performance
 from performance.venv import ROOT_DIR
 from performance.run import (run_perf_script,
                             BenchmarkError, CallAndCaptureOutput)
@@ -31,6 +31,7 @@ def BM_PyBench(python, options):
     #if options.track_memory:
     #    return BenchmarkError("Benchmark does not report memory usage yet")
 
+    version = performance.__version__
     PYBENCH_PATH = Relative("pybench", "pybench.py")
 
     args = [PYBENCH_PATH,
@@ -52,7 +53,11 @@ def BM_PyBench(python, options):
         cmd = python + args
         stdout = CallAndCaptureOutput(cmd, inherit_env=options.inherit_env,
                                       hide_stderr=False)
-        return perf.BenchmarkSuite.loads(stdout)
+
+        suite = perf.BenchmarkSuite.loads(stdout)
+        for benchmark in suite:
+            benchmark.update_metadata({'performance_version': version})
+        return suite
     except subprocess.CalledProcessError as exc:
         return BenchmarkError(exc)
 

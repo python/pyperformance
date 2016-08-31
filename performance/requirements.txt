@@ -13,7 +13,7 @@ wheel
 # Dependencies of the performance module
 
 six==1.10.0
-perf==0.7.4
+perf==0.7.5
 
 # Benchmarks dependencies
 

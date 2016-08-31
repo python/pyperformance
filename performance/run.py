@@ -13,6 +13,7 @@ except ImportError:
 
 import perf
 
+import performance
 from performance.venv import interpreter_version, which
 from performance.compare import BaseBenchmarkResult, compare_results
 
@@ -132,7 +133,9 @@ def run_perf_script(python, options, bm_path, extra_args=[]):
     command = python + bench_args + extra_args
     stdout = CallAndCaptureOutput(command, hide_stderr=not options.verbose)
 
-    return perf.Benchmark.loads(stdout)
+    bench = perf.Benchmark.loads(stdout)
+    bench.update_metadata({'performance_version': performance.__version__})
+    return bench
 
 
 def ParsePythonArgsOption(python_args_opt):
