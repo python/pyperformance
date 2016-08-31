@@ -262,7 +262,6 @@ def bench_to_data(bench1, bench2):
         pass
     ns = Namespace()
     ns.benchmark_name = name
-    ns.track_memory = False
 
     bench1 = RawData(bench1.get_samples(), [], inst_output=None)
     bench2 = RawData(bench2.get_samples(), [], inst_output=None)

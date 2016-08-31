@@ -422,9 +422,6 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
     if action_run:
         if base_args != changed_args:
             parser.error('provide args for only one interpreter in raw mode')
-        if options.track_memory:
-            # XXX this might be worth fixing someday?
-            parser.error('raw mode is not compatible with memory tracking')
         if options.csv:
             parser.error('raw mode does not support csv output')
     base_cmd_prefix = [base] + base_args
@@ -434,10 +431,6 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
         changed_cmd_prefix = None
 
     logging.basicConfig(level=logging.INFO)
-
-    if options.track_memory:
-        print("FIXME: --track_memory option is currently broken")
-        sys.exit(1)
 
     should_run = ParseBenchmarksOption(options.benchmarks, bench_groups,
                                        options.fast or options.debug_single_sample,

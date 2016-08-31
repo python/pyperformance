@@ -23,8 +23,9 @@ def _add_run_options(cmd):
                       help="Debug: fastest mode, only collect a single sample")
     cmd.add_argument("-v", "--verbose", action="store_true",
                       help="Print more output")
-    cmd.add_argument("-m", "--track_memory", action="store_true",
-                      help="Track memory usage. This only works on Linux.")
+    # FIXME: reimplement this feature
+    #cmd.add_argument("-m", "--track_memory", action="store_true",
+    #                  help="Track memory usage. This only works on Linux.")
 
     cmd.add_argument("-a", "--args", default="",
                       help=("Pass extra arguments to the python binaries."
