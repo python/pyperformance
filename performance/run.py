@@ -269,29 +269,7 @@ def CallAndCaptureOutput(command, env=None, inherit_env=[], hide_stderr=True):
     return stdout
 
 
-def MeasureGeneric(python, options, bm_path, bm_env=None,
-                   extra_args=[]):
-    """Abstract measurement function for Unladen's bm_* scripts.
-
-    Based on the values of options.fast/rigorous, will pass -n {5,50,100} to
-    the benchmark script. MeasureGeneric takes care of parsing out the running
-    times from the memory usage data.
-
-    Args:
-        python: start of the argv list for running Python.
-        options: optparse.Values instance.
-        bm_path: path to the benchmark script.
-        bm_env: optional environment dict. If this is unspecified or None,
-            use an empty enviroment.
-        extra_args: optional list of command line args to be given to the
-            benchmark script.
-
-    Returns:
-        RawData instance.
-    """
-    if bm_env is None:
-        bm_env = {}
-
+def run_perf_script(python, options, bm_path, extra_args=[]):
     bench_args = [bm_path, "--stdout"]
     if options.debug_single_sample:
         bench_args.append('--debug-single-sample')
@@ -305,11 +283,8 @@ def MeasureGeneric(python, options, bm_path, bm_env=None,
 
     RemovePycs()
     command = python + bench_args + extra_args
-    stdout = CallAndCaptureOutput(command, bm_env,
-                                  inherit_env=options.inherit_env,
-                                  hide_stderr=not options.verbose)
+    stdout = CallAndCaptureOutput(command, hide_stderr=not options.verbose)
 
-    # FIXME: what about mem_usage? store stderr?
     return perf.Benchmark.loads(stdout)
 
 

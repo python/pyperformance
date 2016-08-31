@@ -10,7 +10,7 @@ import perf
 
 
 from performance.venv import ROOT_DIR
-from performance.run import (MeasureGeneric, BuildEnv, SimpleBenchmark,
+from performance.run import (run_perf_script, BuildEnv, SimpleBenchmark,
                             BenchmarkError, RemovePycs, CallAndCaptureOutput,
                             GetChildUserTime)
 
@@ -66,54 +66,54 @@ def BM_PyBench(python, options):
 @VersionRange()
 def BM_2to3(python, options):
     bm_path = Relative("bm_2to3.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange(None, '2.7')
 def BM_hg_startup(python, options):
     bm_path = Relative("bm_hg_startup.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange('2.7', None)
 def BM_Chameleon(python, options):
     bm_path = Relative("bm_chameleon.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_Tornado_Http(python, options):
     bm_path = Relative("bm_tornado_http.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange('2.7', None)
 def BM_Django_Template(python, options):
     bm_path = Relative("bm_django_template.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_Float(python, options):
     bm_path = Relative("bm_float.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_mako(python, options):
     bm_path = Relative("bm_mako.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_pathlib(python, options):
     bm_path = Relative("bm_pathlib.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 def _PickleBenchmark(python, options, *extra_args):
     bm_path = Relative("bm_pickle.py")
-    return MeasureGeneric(python, options, bm_path,
+    return run_perf_script(python, options, bm_path,
                           extra_args=list(extra_args))
 
 @VersionRange()
@@ -147,7 +147,7 @@ def BM_SlowUnpickle(python, options):
 
 def MeasureEtree(python, options, arg):
     bm_path = Relative("bm_elementtree.py")
-    return MeasureGeneric(python, options, bm_path, extra_args=[arg])
+    return run_perf_script(python, options, bm_path, extra_args=[arg])
 
 @VersionRange()
 def BM_ETree_Parse(python, options):
@@ -168,7 +168,7 @@ def BM_ETree_Process(python, options):
 
 def _JSONBenchmark(python, options, arg):
     bm_path = Relative("bm_json.py")
-    return MeasureGeneric(python, options, bm_path, extra_args=[arg])
+    return run_perf_script(python, options, bm_path, extra_args=[arg])
 
 @VersionRange()
 def BM_JSON_Dump(python, options):
@@ -182,66 +182,66 @@ def BM_JSON_Load(python, options):
 @VersionRange()
 def BM_JSON_Dump_V2(python, options):
     bm_path = Relative("bm_json_dump_v2.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_NQueens(python, options):
     bm_path = Relative("bm_nqueens.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_Chaos(python, options):
     bm_path = Relative("bm_chaos.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_Fannkuch(python, options):
     bm_path = Relative("bm_fannkuch.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_Go(python, options):
     bm_path = Relative("bm_go.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_Meteor_Contest(python, options):
     bm_path = Relative("bm_meteor_contest.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_Spectral_Norm(python, options):
     bm_path = Relative("bm_spectral_norm.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_Telco(python, options):
     bm_path = Relative("bm_telco.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_Hexiom2(python, options):
     bm_path = Relative("bm_hexiom2.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_Raytrace(python, options):
     bm_path = Relative("bm_raytrace.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 def _LoggingBenchmark(python, options, arg):
     bm_path = Relative("bm_logging.py")
-    return MeasureGeneric(python, options, bm_path, extra_args=[arg])
+    return run_perf_script(python, options, bm_path, extra_args=[arg])
 
 @VersionRange()
 def BM_Silent_Logging(python, options):
@@ -259,30 +259,30 @@ def BM_Formatted_Logging(python, options):
 @VersionRange()
 def BM_normal_startup(python, options):
     bm_path = Relative("bm_startup.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 @VersionRange()
 def BM_startup_nosite(python, options):
     bm_path = Relative("bm_startup.py")
-    return MeasureGeneric(python, options, bm_path, extra_args=["--no-site"])
+    return run_perf_script(python, options, bm_path, extra_args=["--no-site"])
 
 
 @VersionRange()
 def BM_regex_v8(python, options):
-    return MeasureGeneric(python, options, Relative("bm_regex_v8.py"))
+    return run_perf_script(python, options, Relative("bm_regex_v8.py"))
 
 @VersionRange()
 def BM_regex_effbot(python, options):
-    return MeasureGeneric(python, options, Relative("bm_regex_effbot.py"))
+    return run_perf_script(python, options, Relative("bm_regex_effbot.py"))
 
 @VersionRange()
 def BM_regex_compile(python, options):
-    return MeasureGeneric(python, options, Relative("bm_regex_compile.py"))
+    return run_perf_script(python, options, Relative("bm_regex_compile.py"))
 
 
 def ThreadingBenchmark(python, options, bm_name):
     bm_path = Relative("bm_threading.py")
-    return MeasureGeneric(python, options, bm_path, extra_args=[bm_name])
+    return run_perf_script(python, options, bm_path, extra_args=[bm_name])
 
 @VersionRange()
 def BM_threaded_count(python, options):
@@ -296,63 +296,61 @@ def BM_iterative_count(python, options):
 @VersionRange()
 def BM_unpack_sequence(python, options):
     bm_path = Relative("bm_unpack_sequence.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_call_simple(python, options):
     bm_path = Relative("bm_call_simple.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_call_method(python, options):
     bm_path = Relative("bm_call_method.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_call_method_unknown(python, options):
     bm_path = Relative("bm_call_method_unknown.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_call_method_slots(python, options):
     bm_path = Relative("bm_call_method_slots.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_nbody(python, options):
     bm_path = Relative("bm_nbody.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange(None, '2.7')
 def BM_spambayes(python, options):
     bm_path = Relative("bm_spambayes.py")
-    bm_env = BuildEnv(None, options.inherit_env)
-    return MeasureGeneric(python, options, bm_path, bm_env)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange(None, '2.7')
 def BM_html5lib(python, options):
     bm_path = Relative("bm_html5lib.py")
-    bm_env = BuildEnv(None, options.inherit_env)
-    return MeasureGeneric(python, options, bm_path, bm_env)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_richards(python, options):
     bm_path = Relative("bm_richards.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 @VersionRange()
 def BM_pidigits(python, options):
     bm_path = Relative("bm_pidigits.py")
-    return MeasureGeneric(python, options, bm_path)
+    return run_perf_script(python, options, bm_path)
 
 
 ### End benchmarks, begin main entry point support.
