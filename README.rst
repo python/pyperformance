@@ -271,6 +271,8 @@ Version 0.1.3
   Use ``venv recreate`` command to update a virtual environment if required.
 * The broken ``--track_memory`` option has been removed. It will be added back
   when it will be fixed.
+* Add performance version to metadata
+* Upgrade perf dependency to 0.7.5
 
 Version 0.1.2 (2016-08-27)
 --------------------------
