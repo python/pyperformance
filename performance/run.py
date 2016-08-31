@@ -34,30 +34,6 @@ else:
         return resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime
 
 
-def check_taskset():
-    """Check the taskset command is available.
-
-    Taskset specifies CPU affinity for a given workload, meaning that we can
-    run the benchmarks on a given core to minimize run to run variation.
-
-    Return None on success. Return an error message on error.
-    """
-    with open(os.devnull, "wb") as dev_null:
-        # Try to pin a temporary Python process to CPU #0
-        command = ["taskset", "--cpu-list", "0",
-                   sys.executable, "-c", "pass"]
-        try:
-            exitcode = subprocess.call(command,
-                                       stdout=dev_null, stderr=dev_null)
-        except OSError as exc:
-            return ("Command taskset not found: %s" % exc)
-
-    if exitcode != 0:
-        return ("Command taskset failed with exit code %s" % exitcode)
-
-    return None
-
-
 class BenchmarkError(BaseBenchmarkResult):
     """Object representing the error from a failed benchmark run."""
 
@@ -270,7 +246,8 @@ def CallAndCaptureOutput(command, env=None, inherit_env=[], hide_stderr=True):
 
 
 def run_perf_script(python, options, bm_path, extra_args=[]):
-    bench_args = [bm_path, "--stdout"]
+    bench_args = [bm_path]
+
     if options.debug_single_sample:
         bench_args.append('--debug-single-sample')
     elif options.rigorous:
@@ -280,6 +257,11 @@ def run_perf_script(python, options, bm_path, extra_args=[]):
 
     if options.verbose:
         bench_args.append('--verbose')
+
+    if options.affinity:
+        bench_args.append('--affinity=%s' % options.affinity)
+
+    bench_args.append("--stdout")
 
     RemovePycs()
     command = python + bench_args + extra_args
@@ -462,20 +444,6 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
         changed_cmd_prefix = [changed] + changed_args
     else:
         changed_cmd_prefix = None
-
-    # FIXME: use --affinity of perf
-    # FIXME: need to convert startup tests to the perf module
-    if options.affinity:
-        err_msg = check_taskset()
-        if err_msg:
-            print("ERROR: Option --affinity not available. %s" % err_msg,
-                  file=sys.stderr)
-            sys.exit(1)
-
-        taskset_prefix = ["taskset", "--cpu-list", options.affinity]
-        base_cmd_prefix = taskset_prefix + base_cmd_prefix
-        if run_compare:
-            changed_cmd_prefix = taskset_prefix + changed_cmd_prefix
 
     logging.basicConfig(level=logging.INFO)
 

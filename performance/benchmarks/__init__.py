@@ -42,8 +42,7 @@ def BM_PyBench(python, options):
 
     args = [PYBENCH_PATH,
             '--with-gc',
-            '--with-syscheck',
-            '--stdout']
+            '--with-syscheck']
     if options.debug_single_sample:
         args.append("--debug-single-sample")
     elif options.fast:
@@ -52,6 +51,9 @@ def BM_PyBench(python, options):
         args.append("--rigorous")
     if options.verbose:
         args.append('-v')
+    if options.affinity:
+        args.append('--affinity=%s' % options.affinity)
+    args.append('--stdout')
 
     try:
         RemovePycs()

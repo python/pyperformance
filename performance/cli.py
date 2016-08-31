@@ -60,8 +60,7 @@ def _add_run_options(cmd):
     cmd.add_argument("--affinity", metavar="CPU_LIST", default=None,
                       help=("Specify CPU affinity for benchmark runs. This "
                             "way, benchmarks can be forced to run on a given "
-                            "CPU to minimize run to run variation. This uses "
-                            "the taskset command."))
+                            "CPU to minimize run to run variation."))
 
 
 def _add_compare_options(cmd):
