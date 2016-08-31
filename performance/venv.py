@@ -276,7 +276,6 @@ class Requirements:
                 # strip version
                 req = req.partition('==')[0]
                 req = req.partition('>=')[0]
-                print("req: %r" % req, "line: %r "% line)
 
                 if req in installer:
                     self.installer.append(line)
