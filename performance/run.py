@@ -1,37 +1,20 @@
 from __future__ import division, with_statement, print_function, absolute_import
 
-import contextlib
 import csv
 import logging
-import math
 import os.path
 import platform
 import subprocess
 import sys
-import tempfile
-import time
 try:
     import multiprocessing
 except ImportError:
     multiprocessing = None
 
-# Third party imports
 import perf
-import statistics
 
-from performance.venv import interpreter_version, which, ROOT_DIR
+from performance.venv import interpreter_version, which
 from performance.compare import BaseBenchmarkResult, compare_results
-
-
-try:
-    import resource
-except ImportError:
-    # Approximate child time using wall clock time.
-    def GetChildUserTime():
-        return time.time()
-else:
-    def GetChildUserTime():
-        return resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime
 
 
 class BenchmarkError(BaseBenchmarkResult):
@@ -47,89 +30,10 @@ class BenchmarkError(BaseBenchmarkResult):
 ### Utility functions
 
 
-def SimpleBenchmark(benchmark_function, python, options,
-                    *args, **kwargs):
-    """Abstract out the body for most simple benchmarks.
-
-    Example usage:
-        def BenchmarkSomething(*args, **kwargs):
-            return SimpleBenchmark(MeasureSomething, *args, **kwargs)
-
-    The *args, **kwargs style is recommended so as to minimize the number of
-    places that have to be changed if we update benchmark arguments.
-
-    Args:
-        benchmark_function: callback that takes (python_path, options) and
-            returns a RawData instance.
-        python: path to the Python binary.
-        options: optparse.Values instance.
-        *args, **kwargs: will be passed through to benchmark_function.
-
-    Returns:
-        A BenchmarkResult object if the benchmark runs succeeded.
-        A BenchmarkError object if either benchmark run failed.
-    """
-    try:
-        return benchmark_function(python, options, *args, **kwargs)
-    except subprocess.CalledProcessError as e:
-        return BenchmarkError(e)
-
-
-def _FormatData(num):
-    return str(round(num, 2))
-
-def SummarizeData(data, points=100, summary_func=max):
-    """Summarize a large data set using a smaller number of points.
-
-    This will divide up the original data set into `points` windows,
-    using `summary_func` to summarize each window into a single point.
-
-    Args:
-        data: the original data set, as a list.
-        points: optional; how many summary points to take. Default is 100.
-        summary_func: optional; function to use when summarizing each window.
-            Default is the max() built-in.
-
-    Returns:
-        List of summary data points.
-    """
-    window_size = int(math.ceil(len(data) / points))
-    if window_size == 1:
-        return data
-
-    summary_points = []
-    start = 0
-    while start < len(data):
-        end = min(start + window_size, len(data))
-        summary_points.append(summary_func(data[start:end]))
-        start = end
-    return summary_points
-
-
-@contextlib.contextmanager
-def ChangeDir(new_cwd):
-    former_cwd = os.getcwd()
-    os.chdir(new_cwd)
-    try:
-        yield
-    finally:
-        os.chdir(former_cwd)
-
-
 def LogCall(command):
     command = list(map(str, command))
     logging.info("Running `%s`", " ".join(command))
     return command
-
-
-@contextlib.contextmanager
-def TemporaryFilename(prefix):
-    fd, name = tempfile.mkstemp(prefix=prefix)
-    os.close(fd)
-    try:
-        yield name
-    finally:
-        os.remove(name)
 
 
 def BuildEnv(env=None, inherit_env=[]):
@@ -166,33 +70,6 @@ def BuildEnv(env=None, inherit_env=[]):
             if k in os.environ and k not in fixed_env:
                 fixed_env[k] = os.environ[k]
     return fixed_env
-
-
-class RawBenchmarkResult(dict):
-
-    def __init__(self, average, min=None, max=None, std_dev=None):
-        self['average'] = average
-        if min is not None:
-            self['min'] = min
-        if max is not None:
-            self['max'] = max
-        if std_dev is not None:
-            self['std_dev'] = std_dev
-
-    def __str__(self):
-        return '\n'.join('%s: %s' % i for i in sorted(self.items()))
-
-
-def FormatRawData(bm_data, options):
-    # XXX implement track_memory handling?
-    times = sorted(bm_data.runtimes)
-    average = statistics.median(times)
-    mn = mx = std = None
-    if len(times) > 1:
-        mn = times[0]
-        mx = times[-1]
-        std = statistics.stdev(times)
-    return RawBenchmarkResult(average, mn, mx, std)
 
 
 def CallAndCaptureOutput(command, env=None, inherit_env=[], hide_stderr=True):
@@ -276,12 +153,6 @@ def ParsePythonArgsOption(python_args_opt):
         logging.warning("Didn't expect two or more commas in --args flag: %s",
                         python_args_opt)
     return base_args, changed_args
-
-
-def ParseOutputStyle(option, opt_str, value, parser):
-    if value not in ("normal", "table"):
-        parser.error("Invalid output style: %r" % value)
-    parser.values.output_style = value
 
 
 def _ExpandBenchmarkName(bm_name, bench_groups):

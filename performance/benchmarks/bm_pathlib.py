@@ -6,14 +6,13 @@ calls.
 """
 
 # Python imports
-import itertools
 import os
 import shutil
 import sys
 import tempfile
 
 import perf.text_runner
-from six.moves import xrange, zip as izip
+from six.moves import xrange
 
 if sys.version_info >= (3, 4):
     import pathlib

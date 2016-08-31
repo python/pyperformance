@@ -20,7 +20,6 @@ from decimal import ROUND_HALF_EVEN, ROUND_DOWN, Decimal, getcontext, Context
 import io
 import os
 from struct import unpack
-import tempfile
 
 import perf.text_runner
 import six

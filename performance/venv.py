@@ -114,10 +114,6 @@ def interpreter_version(python, _cache={}):
     return version
 
 
-def _get_virtualenv():
-    return venv
-
-
 def get_venv_program(program):
     bin_path = os.path.dirname(sys.executable)
     bin_path = os.path.realpath(bin_path)

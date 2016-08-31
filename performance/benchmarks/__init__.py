@@ -1,21 +1,14 @@
 from __future__ import division, with_statement, print_function, absolute_import
 
-import glob
-import logging
 import os
 import subprocess
-import time
 
 import perf
 
 
 from performance.venv import ROOT_DIR
-from performance.run import (run_perf_script, BuildEnv, SimpleBenchmark,
-                            BenchmarkError, CallAndCaptureOutput,
-                            GetChildUserTime)
-
-
-info = logging.info
+from performance.run import (run_perf_script,
+                            BenchmarkError, CallAndCaptureOutput)
 
 
 def Relative(*path):
@@ -35,8 +28,8 @@ def VersionRange(minver=None, maxver=None):
 
 @VersionRange()
 def BM_PyBench(python, options):
-    if options.track_memory:
-        return BenchmarkError("Benchmark does not report memory usage yet")
+    #if options.track_memory:
+    #    return BenchmarkError("Benchmark does not report memory usage yet")
 
     PYBENCH_PATH = Relative("pybench", "pybench.py")
 
