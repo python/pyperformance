@@ -1,4 +1,6 @@
-# pre-requirements
+# Installer requirements
+# ----------------------
+#
 # Note: the list of pre-requirements is hardcoded in performance/venv.py
 
 # html5lib requires setuptools 18.5 or newer
@@ -10,12 +12,19 @@ pip>=6.0
 wheel
 
 
-# Dependencies of the performance module
+# perf dependencies
+# -----------------
 
 six==1.10.0
 perf==0.7.5
 
+
 # Benchmarks dependencies
+# -----------------------
+#
+# When one of these dependencies is upgraded, the performance major version
+# should be increased to respect semantic versionning. Comparison between
+# performance results of two different major versions is not reliable.
 
 Chameleon==2.22                           # chameleon
 Django==1.10                              # django_template
@@ -26,11 +35,16 @@ pathlib2==2.1.0; python_version < '3.4'   # pathlib
 spambayes==1.1b2; python_version < '3.0'  # spambayes
 tornado==4.4.1                            # tornado_http
 
+
 # Optional dependencies
+# ---------------------
+#
 # Note: the list of optional dependencies is hardcoded in performance/venv.py
 
-psutil   # Note: venv.py only installs it on CPython
+# Note: venv.py only installs psutil on CPython
+psutil
 
 
+#----------------------------
 # performance module is also reinstalled inside the virtual environment
 # by performance/venv.py

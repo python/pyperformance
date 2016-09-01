@@ -257,9 +257,10 @@ Available Benchmarks
 Changelog
 =========
 
-Version 0.1.3
--------------
+Version 0.2
+-----------
 
+* Update Django dependency to 1.10
 * Add the ``--venv`` command line option
 * Convert Python startup, Mercurial startup and 2to3 benchmarks to perf scripts
   (bm_startup.py, bm_hg_startup.py and bm_2to3.py)
