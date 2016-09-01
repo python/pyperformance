@@ -20,6 +20,7 @@ from struct import unpack
 import os.path
 
 import perf
+from six.moves import xrange
 
 
 def rel_path(*path):
@@ -35,15 +36,14 @@ def run(cls, loops=1):
 
     values = []
     with open(filename, "rb") as infil:
-        for _ in range(20000):
+        for _ in xrange(20000):
             datum = infil.read(8)
             if datum == '': break
             n, =  unpack('>Q', datum)
             values.append(n)
 
     start = perf.perf_counter()
-
-    for _ in range(loops):
+    for _ in xrange(loops):
         sumT = cls()   # sum of total prices
         sumB = cls()   # sum of basic tax
         sumD = cls()   # sum of 'distance' tax
