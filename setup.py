@@ -6,8 +6,7 @@
 #  - venv/cpython2<tab>/bin/python -m pip list --outdated
 #  - update performance/requirements.txt
 #  - increase performance major version of a benchmark dependency is upgraded
-#
-# See also pipdeptree tool, useful for indirect dependencies.
+#  - (see also pip-tools and pipdeptree tools)
 #
 # Prepare a release:
 #
