@@ -1,3 +1,4 @@
+* Remove performance.egg-info when running tests?
 * pybench: calibrate once in the main process, then pass the number of loops
   to workers? Or rewrite pybench as N subenchmarks?
 * Warning or error if two performance results were produced with two different
