@@ -295,7 +295,9 @@ def create_virtualenv(python, venv_path):
         return venv_python
 
     filename = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
-    req = Requirements(filename, ['setuptools', 'pip', 'wheel'], ['psutil'])
+    requirements = Requirements(filename,
+                                ['setuptools', 'pip', 'wheel'],
+                                ['psutil'])
 
     print("Creating the virtual environment %s" % venv_path)
     try:
@@ -303,24 +305,20 @@ def create_virtualenv(python, venv_path):
 
         # upgrade installer dependencies (ex: pip)
         cmd = [venv_python, '-m', 'pip', 'install', '-U']
-        cmd.extend(req.installer)
+        cmd.extend(requirements.installer)
         run_cmd(cmd)
 
         # install requirements
         cmd = [venv_python, '-m', 'pip', 'install']
-        cmd.extend(req.req)
+        cmd.extend(requirements.req)
         run_cmd(cmd)
 
-        # install optional requirements (psutil)
-        #
-        # psutil is a C extension written for CPython
-        if python_implementation() == 'cpython':
-            # try to install psutil
-            cmd = [venv_python, '-m', 'pip', 'install', '-U']
-            cmd.extend(req.optional)
+        # install optional requirements
+        for req in requirements.optional:
+            cmd = [venv_python, '-m', 'pip', 'install', '-U', req]
             exitcode = run_cmd_nocheck(cmd)
             if exitcode:
-                print("WARNING: failed to install psutil")
+                print("WARNING: failed to install %s" % req)
                 print()
 
         # install performance inside the virtual environment

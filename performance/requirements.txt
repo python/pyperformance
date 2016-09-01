@@ -24,7 +24,7 @@ perf==0.7.5
 #
 # When one of these dependencies is upgraded, the performance major version
 # should be increased to respect semantic versionning. Comparison between
-# performance results of two different major versions is not reliable.
+# two performance results of two different major versions is not reliable.
 
 Chameleon==2.22                           # chameleon
 Django==1.10                              # django_template
@@ -41,7 +41,6 @@ tornado==4.4.1                            # tornado_http
 #
 # Note: the list of optional dependencies is hardcoded in performance/venv.py
 
-# Note: venv.py only installs psutil on CPython
 psutil
 
 
