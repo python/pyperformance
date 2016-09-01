@@ -166,23 +166,13 @@ performance jitter while collecting memory measurements, only memory usage is
 reported in the final report.
 
 If --args is passed, it specifies extra arguments to pass to the test
-python binaries. For example::
+python binary. For example::
 
-  pyperformance run_compare --args="-A -B,-C -D" base_python changed_python
+  pyperformance run --args="-arg1 -arg2" --python=python3
 
 will run benchmarks like::
 
-  base_python -A -B the_benchmark.py
-  changed_python -C -D the_benchmark.py
-
-while::
-
-  pyperformance run_compare --args="-A -B" base_python changed_python
-
-will pass the same arguments to both pythons::
-
-  base_python -A -B the_benchmark.py
-  changed_python -A -B the_benchmark.py
+  python3 -arg1 -arg2 the_benchmark.py
 
 
 Benchmarks
@@ -258,6 +248,13 @@ Available Benchmarks
 
 Changelog
 =========
+
+Version 0.2.1
+-------------
+
+* Add ``--csv`` option to the ``compare`` command
+* Fix "compare -O table" output format
+* Freeze indirect dependencies in requirements.txt
 
 Version 0.2 (2016-09-01)
 ------------------------

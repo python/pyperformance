@@ -1,6 +1,5 @@
 from __future__ import division, with_statement, print_function, absolute_import
 
-import csv
 import logging
 import os.path
 import platform
@@ -138,26 +137,6 @@ def run_perf_script(python, options, bm_path, extra_args=[]):
     return bench
 
 
-def ParsePythonArgsOption(python_args_opt):
-    """Parses the --args option.
-
-    Args:
-        python_args_opt: the string passed to the -a option on the command line.
-
-    Returns:
-        A pair of lists: (base_python_args, changed_python_args).
-    """
-    args_pair = python_args_opt.split(",")
-    base_args = args_pair[0].split()  # On whitespace.
-    changed_args = base_args
-    if len(args_pair) == 2:
-        changed_args = args_pair[1].split()
-    elif len(args_pair) > 2:
-        logging.warning("Didn't expect two or more commas in --args flag: %s",
-                        python_args_opt)
-    return base_args, changed_args
-
-
 def _ExpandBenchmarkName(bm_name, bench_groups):
     """Recursively expand name benchmark names.
 
@@ -176,7 +155,7 @@ def _ExpandBenchmarkName(bm_name, bench_groups):
         yield bm_name
 
 
-def ParseBenchmarksOption(benchmarks_opt, bench_groups, fast=False, raw=False):
+def ParseBenchmarksOption(benchmarks_opt, bench_groups, fast=False):
     """Parses and verifies the --benchmarks option.
 
     Args:
@@ -213,22 +192,18 @@ def ParseBenchmarksOption(benchmarks_opt, bench_groups, fast=False, raw=False):
     return should_run
 
 
-def FilterBenchmarks(benchmarks, bench_funcs, base_python, changed_python):
+def FilterBenchmarks(benchmarks, bench_funcs, python):
     """Filters out benchmarks not supported by both Pythons.
 
     Args:
         benchmarks: a set() of benchmark names
         bench_funcs: dict mapping benchmark names to functions
-        base_python, changed_python: the interpereter commands (as lists)
+        python: the interpereter commands (as lists)
 
     Returns:
         The filtered set of benchmark names
     """
-    basever = interpreter_version(base_python)
-    if changed_python:
-        changedver = interpreter_version(changed_python)
-    else:
-        changedver = None
+    basever = interpreter_version(python)
     for bm in list(benchmarks):
         minver, maxver = getattr(bench_funcs[bm], '_range', ('2.0', '4.0'))
         if not minver <= basever <= maxver:
@@ -236,10 +211,6 @@ def FilterBenchmarks(benchmarks, bench_funcs, base_python, changed_python):
             logging.info("Skipping benchmark %s; not compatible with "
                          "Python %s" % (bm, basever))
             continue
-        if changedver is not None and not minver <= changedver <= maxver:
-            benchmarks.discard(bm)
-            logging.info("Skipping benchmark %s; not compatible with "
-                         "Python %s" % (bm, changedver))
     return benchmarks
 
 
@@ -257,65 +228,34 @@ def check_existing(filename):
 
 
 def cmd_run(parser, options, bench_funcs, bench_groups):
-    action_run = (options.action == 'run')
-    run_compare = (not action_run)
+    print("Python benchmark suite %s" % performance.__version__)
+    print()
 
-    if action_run:
-        base = sys.executable
-        changed = None
-    else:
-        # options.action == 'run_compare'
-        base = options.baseline_python
-        changed = options.changed_python
+    base = sys.executable
 
     # Get the full path since child processes are run in an empty environment
     # without the PATH variable
     base = which(base)
-    if run_compare:
-        changed = which(changed)
 
-    if action_run:
-        if options.output:
-            check_existing(options.output)
-    else:
-        if options.base_output:
-            check_existing(options.base_output)
-        if options.changed_output:
-            check_existing(options.changed_output)
+    if options.output:
+        check_existing(options.output)
 
     options.base_binary = base
-    if run_compare:
-        options.changed_binary = changed
 
     if not options.control_label:
         options.control_label = options.base_binary
-    if run_compare and not options.experiment_label:
-        options.experiment_label = options.changed_binary
 
-    base_args, changed_args = ParsePythonArgsOption(options.args)
-    if action_run:
-        if base_args != changed_args:
-            parser.error('provide args for only one interpreter in raw mode')
-        if options.csv:
-            parser.error('raw mode does not support csv output')
+    base_args = options.args.split()
     base_cmd_prefix = [base] + base_args
-    if run_compare:
-        changed_cmd_prefix = [changed] + changed_args
-    else:
-        changed_cmd_prefix = None
 
     logging.basicConfig(level=logging.INFO)
 
     should_run = ParseBenchmarksOption(options.benchmarks, bench_groups,
-                                       options.fast or options.debug_single_sample,
-                                       action_run)
+                                       options.fast or options.debug_single_sample)
 
-    should_run = FilterBenchmarks(should_run, bench_funcs,
-                                  base_cmd_prefix, changed_cmd_prefix)
+    should_run = FilterBenchmarks(should_run, bench_funcs, base_cmd_prefix)
 
     base_suite = perf.BenchmarkSuite()
-    if run_compare:
-        changed_suite = perf.BenchmarkSuite()
     to_run = list(sorted(should_run))
     run_count = str(len(to_run))
     for index, name in enumerate(to_run):
@@ -332,10 +272,6 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
             else:
                 dest_suite.add_benchmark(bench)
 
-        if run_compare:
-            bench = func(changed_cmd_prefix, options)
-            add_bench(changed_suite, bench)
-
         bench = func(base_cmd_prefix, options)
         add_bench(base_suite, bench)
 
@@ -344,34 +280,19 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
     if multiprocessing:
         print("Total CPU cores:", multiprocessing.cpu_count())
 
-    if action_run:
-        if options.output:
-            base_suite.dump(options.output)
+    if options.output:
+        base_suite.dump(options.output)
 
-        if options.append:
-            perf.add_runs(options.append, base_suite)
+    if options.append:
+        perf.add_runs(options.append, base_suite)
 
-        display_suite(base_suite)
-    else:
-        if options.base_output:
-            base_suite.dump(options.base_output)
-        if options.changed_output:
-            changed_suite.dump(options.changed_output)
-
-        results = compare_results(base_suite, changed_suite, options)
-
-        if options.csv:
-            with open(options.csv, "w") as f:
-                writer = csv.writer(f)
-                writer.writerow(['Benchmark', 'Base', 'Changed'])
-                for name, result in results:
-                    writer.writerow([name] + result.as_csv())
+    display_suite(base_suite)
 
 
 def cmd_list(options, bench_funcs, bench_groups):
     funcs = bench_groups['all']
     python = [sys.executable]
-    all_funcs = FilterBenchmarks(set(funcs), bench_funcs, python, python)
+    all_funcs = FilterBenchmarks(set(funcs), bench_funcs, python)
 
     if options.action == 'list':
         print("%s benchmarks:" % len(all_funcs))
@@ -389,5 +310,3 @@ def cmd_list(options, bench_funcs, bench_groups):
             for func in sorted(funcs):
                 print("- %s" % func)
             print()
-
-

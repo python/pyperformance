@@ -4,7 +4,6 @@ import argparse
 import os.path
 import sys
 
-import performance
 from performance.venv import exec_in_virtualenv, which, cmd_venv
 
 
@@ -28,13 +27,8 @@ def _add_run_options(cmd):
     #                  help="Track memory usage. This only works on Linux.")
 
     cmd.add_argument("-a", "--args", default="",
-                      help=("Pass extra arguments to the python binaries."
-                            " If there is a comma in this option's value, the"
-                            " arguments before the comma (interpreted as a"
-                            " space-separated list) are passed to the baseline"
-                            " python, and the arguments after are passed to the"
-                            " changed python. If there's no comma, the same"
-                            " options are passed to both."))
+                      help=("Pass extra arguments (interpreted as a "
+                            "space-separated list) to the python binary."))
     cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default="",
                       help=("Comma-separated list of benchmarks to run.  Can"
                             " contain both positive and negative arguments:"
@@ -47,11 +41,6 @@ def _add_run_options(cmd):
                       help=("Comma-separated list of environment variable names"
                             " that are inherited from the parent environment"
                             " when running benchmarking subprocesses."))
-    cmd.add_argument("--csv", metavar="CSV_FILE",
-                      action="store", default=None,
-                      help=("Name of a file the results will be written to,"
-                            " as a three-column CSV file containing minimum"
-                            " runtimes for each benchmark."))
     cmd.add_argument("-C", "--control_label", metavar="LABEL",
                       action="store", default="",
                       help="Optional label for the control binary")
@@ -71,6 +60,11 @@ def _add_compare_options(cmd):
                       help=("What style the benchmark output should take."
                             " Valid options are 'normal' and 'table'."
                             " Default is normal."))
+    cmd.add_argument("--csv", metavar="CSV_FILE",
+                     action="store", default=None,
+                     help=("Name of a file the results will be written to,"
+                           " as a three-column CSV file containing minimum"
+                           " runtimes for each benchmark."))
 
 
 def parse_args():
@@ -103,22 +97,6 @@ def parse_args():
     cmd.add_argument("baseline_filename", metavar="baseline_file.json")
     cmd.add_argument("changed_filename", metavar="changed_file.json")
 
-    # FIXME: repair run_compare mode
-    if 0:
-        # run_compare
-        cmd = subparsers.add_parser('run_compare',
-                                    help='Run benchmarks on two python versions '
-                                         'and compare them')
-        cmds.append(cmd)
-        _add_run_options(cmd)
-        _add_compare_options(cmd)
-        cmd.add_argument("baseline_python")
-        cmd.add_argument("changed_python")
-        cmd.add_argument("--base-output", metavar="FILENAME",
-                          help="Save benchmarks of the baseline python.")
-        cmd.add_argument("--changed-output", metavar="FILENAME",
-                          help="Save benchmarks of the changed python.")
-
     # list
     cmd = subparsers.add_parser('list', help='List benchmarks of the running Python')
     cmds.append(cmd)
@@ -148,7 +126,7 @@ def parse_args():
 
     options = parser.parse_args()
 
-    if options.action in ('run', 'run_compare') and options.debug_single_sample:
+    if options.action == 'run' and options.debug_single_sample:
         options.fast = True
 
     if not options.action:
@@ -176,9 +154,7 @@ def _main():
     from performance.compare import cmd_compare
     from performance.benchmarks import get_benchmark_groups
 
-    if options.action in ('run', 'run_compare'):
-        print("Python benchmark suite %s" % performance.__version__)
-        print()
+    if options.action == 'run':
         bench_funcs, bench_groups = get_benchmark_groups()
         cmd_run(parser, options, bench_funcs, bench_groups)
     elif options.action == 'compare':

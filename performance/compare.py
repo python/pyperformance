@@ -1,5 +1,7 @@
 from __future__ import division, with_statement, print_function, absolute_import
 
+import csv
+
 import perf
 import statistics
 
@@ -269,7 +271,10 @@ def bench_to_data(bench1, bench2):
     return (name, result)
 
 
-def compare_results(base_suite, changed_suite, options):
+def compare_results(options):
+    base_suite = perf.BenchmarkSuite.load(options.baseline_filename)
+    changed_suite = perf.BenchmarkSuite.load(options.changed_filename)
+
     # FIXME: work on suites, not results
     results = []
     common = set(base_suite.get_benchmark_names()) & set(changed_suite.get_benchmark_names())
@@ -297,8 +302,8 @@ def compare_results(base_suite, changed_suite, options):
             print(result)
     elif options.output_style == "table":
         if shown:
-            print(FormatOutputAsTable(options.control_label,
-                                      options.experiment_label,
+            print(FormatOutputAsTable(options.baseline_filename,
+                                      options.changed_filename,
                                       shown))
     else:
         raise ValueError("Invalid output_style: %r" % options.output_style)
@@ -325,6 +330,11 @@ def compare_results(base_suite, changed_suite, options):
 
 
 def cmd_compare(options):
-    base_suite = perf.BenchmarkSuite.load(options.baseline_filename)
-    changed_suite = perf.BenchmarkSuite.load(options.changed_filename)
-    compare_results(base_suite, changed_suite, options)
+    results = compare_results(options)
+
+    if options.csv:
+        with open(options.csv, "w") as f:
+            writer = csv.writer(f)
+            writer.writerow(['Benchmark', 'Base', 'Changed'])
+            for name, result in results:
+                writer.writerow([name] + result.as_csv())
