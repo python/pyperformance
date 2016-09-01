@@ -67,9 +67,8 @@ def run(cls, loops=1):
     return perf.perf_counter() - start
 
 
-def run_bench(n, backend_class):
-    run(backend_class, loops=2)  # warmup
-    return run(backend_class, n)
+def run_bench(loops, backend_class):
+    return run(backend_class, loops)
 
 
 def find_benchmark_class(impl_name):
