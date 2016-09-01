@@ -1,6 +1,7 @@
 from __future__ import division, with_statement, print_function, absolute_import
 
 import csv
+import os.path
 
 import perf
 import statistics
@@ -272,6 +273,8 @@ def bench_to_data(bench1, bench2):
 
 
 def compare_results(options):
+    base_label = os.path.basename(options.baseline_filename)
+    changed_label = os.path.basename(options.changed_filename)
     base_suite = perf.BenchmarkSuite.load(options.baseline_filename)
     changed_suite = perf.BenchmarkSuite.load(options.changed_filename)
 
@@ -302,8 +305,8 @@ def compare_results(options):
             print(result)
     elif options.output_style == "table":
         if shown:
-            print(FormatOutputAsTable(options.baseline_filename,
-                                      options.changed_filename,
+            print(FormatOutputAsTable(base_label,
+                                      changed_label,
                                       shown))
     else:
         raise ValueError("Invalid output_style: %r" % options.output_style)
