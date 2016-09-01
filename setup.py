@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+# Update dependencies:
+#
+#  - python2 -m perforamnce venv create
+#  - venv/cpython2<tab>/bin/python -m pip list --outdated
+#  - update performance/requirements.txt
+#  - increase performance major version of a benchmark dependency is upgraded
+#
 # Prepare a release:
 #
 #  - git pull --rebase
