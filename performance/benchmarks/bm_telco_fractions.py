@@ -43,6 +43,7 @@ def run(cls, loops=1):
             values.append(n)
 
     start = perf.perf_counter()
+    results = set()
     for _ in xrange(loops):
         sumT = cls()   # sum of total prices
         sumB = cls()   # sum of basic tax
@@ -64,7 +65,12 @@ def run(cls, loops=1):
 
             sumT += t
 
-    return perf.perf_counter() - start
+        results.add(str(sumT))
+
+    time = perf.perf_counter() - start
+
+    assert len(results) == 1
+    return time
 
 
 def run_bench(loops, backend_class):
