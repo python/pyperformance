@@ -1,7 +1,7 @@
 # Installer requirements
 # ----------------------
 #
-# Note: the list of pre-requirements is hardcoded in performance/venv.py
+# The list of installer requirements is hardcoded in performance/venv.py
 
 # html5lib requires setuptools 18.5 or newer
 setuptools>=18.5
@@ -12,8 +12,8 @@ pip>=6.0
 wheel
 
 
-# perf dependencies
-# -----------------
+# performance dependencies
+# ------------------------
 
 six==1.10.0
 perf==0.7.5
@@ -39,11 +39,13 @@ tornado==4.4.1                            # tornado_http
 # Optional dependencies
 # ---------------------
 #
-# Note: the list of optional dependencies is hardcoded in performance/venv.py
+# The list of optional dependencies is hardcoded in performance/venv.py
 
 psutil
 
 
-#----------------------------
-# performance module is also reinstalled inside the virtual environment
+# performance
+# -----------
+#
+# The performance module is installed inside the virtual environment
 # by performance/venv.py
