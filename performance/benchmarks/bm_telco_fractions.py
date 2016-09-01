@@ -2,8 +2,8 @@
 
 """ Telco Benchmark for measuring the performance of Fraction calculations
 
-http://www2.hursley.ibm.com/decimal/telco.html
-http://www2.hursley.ibm.com/decimal/telcoSpec.html
+http://speleotrove.com/decimal/telco.html
+http://speleotrove.com/decimal/telcoSpec.html
 
 A call type indicator, c, is set from the bottom (least significant) bit of the duration (hence c is 0 or 1).
 A r, r, is determined from the call type. Those calls with c=0 have a low r: 0.0013; the remainder (‘distance calls’) have a ‘premium’ r: 0.00894. (The rates are, very roughly, in Euros or dollarates per second.)
