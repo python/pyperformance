@@ -253,7 +253,7 @@ Version 0.2.1
 -------------
 
 * Add ``--csv`` option to the ``compare`` command
-* Fix "compare -O table" output format
+* Fix ``compare -O table`` output format
 * Freeze indirect dependencies in requirements.txt
 
 Version 0.2 (2016-09-01)

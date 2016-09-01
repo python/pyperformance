@@ -50,6 +50,12 @@ def _main(venv):
 
 
 def main():
+    # Unit tests
+    cmd = [sys.executable,
+           os.path.join('performance', 'tests', 'test_compare.py')]
+    run_cmd(cmd)
+
+    # Functional tests
     tmpdir = tempfile.mkdtemp()
     try:
         venv = os.path.join(tmpdir, 'perf_test_venv')
