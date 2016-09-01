@@ -26,7 +26,7 @@ perf==0.7.5
 # should be increased to respect semantic versionning. Comparison between
 # two performance results of two different major versions is not reliable.
 
-Chameleon==2.22                           # chameleon
+Chameleon==2.24                           # chameleon
 Django==1.10                              # django_template
 Mako==1.0.4                               # mako
 Mercurial==3.9; python_version < '3.0'    # hg_startup

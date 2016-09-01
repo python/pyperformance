@@ -261,6 +261,7 @@ Version 0.2
 -----------
 
 * Update Django dependency to 1.10
+* Update Chameleon dependency to 2.24
 * Add the ``--venv`` command line option
 * Convert Python startup, Mercurial startup and 2to3 benchmarks to perf scripts
   (bm_startup.py, bm_hg_startup.py and bm_2to3.py)
@@ -273,7 +274,7 @@ Version 0.2
 * The broken ``--track_memory`` option has been removed. It will be added back
   when it will be fixed.
 * Add performance version to metadata
-* Upgrade perf dependency to 0.7.5
+* Upgrade perf dependency to 0.7.5 to get ``Benchmark.update_metadata()``
 
 Version 0.1.2 (2016-08-27)
 --------------------------
