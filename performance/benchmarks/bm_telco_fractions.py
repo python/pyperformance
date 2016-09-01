@@ -67,18 +67,21 @@ def run(cls, loops=1):
     return perf.perf_counter() - start
 
 
-def run_bench(n, impl):
-    if impl == 'fractions':
-        from fractions import Fraction as backend_class
-    elif impl == 'quicktions':
-        from quicktions import Fraction as backend_class
-    elif impl == 'decimal':
-        from decimal import Decimal as backend_class
-    else:
-        raise ValueError("Invalid class name: '%s'" % impl)
-
+def run_bench(n, backend_class):
     run(backend_class, loops=2)  # warmup
     return run(backend_class, n)
+
+
+def find_benchmark_class(impl_name):
+    if impl_name == 'fractions':
+        from fractions import Fraction as backend_class
+    elif impl_name == 'quicktions':
+        from quicktions import Fraction as backend_class
+    elif impl_name == 'decimal':
+        from decimal import Decimal as backend_class
+    else:
+        raise ValueError("Invalid class name: '%s'" % impl_name)
+    return backend_class
 
 
 def prepare_subprocess_args(runner, args):
@@ -97,4 +100,6 @@ if __name__ == "__main__":
 
     options = runner.parse_args()
     runner.name += "/%s" % options.backend
-    runner.bench_sample_func(run_bench, options.backend)
+    backend_class = find_benchmark_class(options.backend)
+
+    runner.bench_sample_func(run_bench, backend_class)
