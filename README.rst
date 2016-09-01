@@ -257,8 +257,8 @@ Available Benchmarks
 Changelog
 =========
 
-Version 0.2
------------
+Version 0.2 (2016-09-01)
+------------------------
 
 * Update Django dependency to 1.10
 * Update Chameleon dependency to 2.24
@@ -269,7 +269,7 @@ Version 0.2
   ``taskset`` command
 * Put more installer and optional requirements into
   ``performance/requirements.txt``
-* Cached ``.pyc`` files are not more removed before running a benchmark.
+* Cached ``.pyc`` files are no more removed before running a benchmark.
   Use ``venv recreate`` command to update a virtual environment if required.
 * The broken ``--track_memory`` option has been removed. It will be added back
   when it will be fixed.
