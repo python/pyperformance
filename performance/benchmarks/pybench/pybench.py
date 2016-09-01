@@ -323,7 +323,7 @@ class Benchmark:
             test.calibrate_test(self.runner)
             if self.verbose:
                 # FIXME: remove overhead
-                print('%30s:  %s' % (name, test.bench.loops))
+                print('%30s:  %s' % (name, test.loops))
         if self.verbose:
             print()
             print('Done with the calibration.')
