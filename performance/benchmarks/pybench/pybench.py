@@ -412,7 +412,6 @@ class MyTextRunner(perf.text_runner.TextRunner):
             run_suite = self._spawn_worker()
             dt = perf.monotonic_clock() - start
 
-
             for run_bench in run_suite.get_benchmarks():
                 suite._add_benchmark_runs(run_bench)
                 #print("Process %s: %s: %s" % (process, run_bench.get_name(), run_bench))

@@ -17,6 +17,10 @@ from performance.venv import interpreter_version, which
 from performance.compare import BaseBenchmarkResult, compare_results
 
 
+class BenchmarkException(Exception):
+    pass
+
+
 class BenchmarkError(BaseBenchmarkResult):
     """Object representing the error from a failed benchmark run."""
 
@@ -126,6 +130,8 @@ def run_perf_script(python, options, bm_path, extra_args=[]):
 
     if options.affinity:
         bench_args.append('--affinity=%s' % options.affinity)
+    if options.track_memory:
+        bench_args.append('--track-memory')
 
     bench_args.append("--stdout")
 
@@ -272,7 +278,12 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
             else:
                 dest_suite.add_benchmark(bench)
 
-        bench = func(base_cmd_prefix, options)
+        try:
+            bench = func(base_cmd_prefix, options)
+        except Exception as exc:
+            print("ERROR: Benchmark %s failed: %s" % (name, exc))
+            sys.exit(1)
+
         add_bench(base_suite, bench)
 
     print()

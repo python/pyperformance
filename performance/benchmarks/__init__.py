@@ -8,7 +8,7 @@ import perf
 import performance
 from performance.venv import ROOT_DIR
 from performance.run import (run_perf_script,
-                            BenchmarkError, CallAndCaptureOutput)
+                             BenchmarkException, CallAndCaptureOutput)
 
 
 def Relative(*path):
@@ -28,8 +28,8 @@ def VersionRange(minver=None, maxver=None):
 
 @VersionRange()
 def BM_PyBench(python, options):
-    #if options.track_memory:
-    #    return BenchmarkError("Benchmark does not report memory usage yet")
+    if options.track_memory:
+        raise BenchmarkException("pybench does not report memory usage")
 
     version = performance.__version__
     PYBENCH_PATH = Relative("pybench", "pybench.py")
@@ -47,6 +47,8 @@ def BM_PyBench(python, options):
         args.append('-v')
     if options.affinity:
         args.append('--affinity=%s' % options.affinity)
+    if options.track_memory:
+        args.append('--track-memory')
     args.append('--stdout')
 
     try:

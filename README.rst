@@ -69,6 +69,7 @@ Options of the ``run`` command::
   -r, --rigorous        Spend longer running tests to get more accurate
                         results
   -f, --fast            Get rough answers quickly
+  -m, --track-memory    Track memory usage. This only works on Linux.
   -b BM_LIST, --benchmarks BM_LIST
                         Comma-separated list of benchmarks to run. Can contain
                         both positive and negative arguments:
@@ -255,6 +256,7 @@ Version 0.2.1
 * Add ``--csv`` option to the ``compare`` command
 * Fix ``compare -O table`` output format
 * Freeze indirect dependencies in requirements.txt
+* ``run``: add ``--track-memory`` option to track the memory peak usage
 
 Version 0.2 (2016-09-01)
 ------------------------
