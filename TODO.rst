@@ -4,7 +4,6 @@
 * Warning or error if two performance results were produced with two different
   performance major versions (ex: 0.3.x vs 0.2.x). Note: performance 0.1.x
   didn't store its version in results :-/
-* Freeze indirect dependencies like webencodings
 * reimplement the run_compare command: implement as run ref, run changed,
   compare
 * bench.py -b threading doesn't run anything

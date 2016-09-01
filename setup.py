@@ -7,6 +7,8 @@
 #  - update performance/requirements.txt
 #  - increase performance major version of a benchmark dependency is upgraded
 #
+# See also pipdeptree tool, useful for indirect dependencies.
+#
 # Prepare a release:
 #
 #  - git pull --rebase

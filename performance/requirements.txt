@@ -12,6 +12,31 @@ pip>=6.0
 wheel
 
 
+# Indirect dependencies
+# ---------------------
+#
+# Freeze indirect dependencies to get a more reproductible test environment
+
+# tornado 4.4.1 dependencies
+backports-abc==0.4
+singledispatch==3.4.0.3
+certifi==2016.8.31
+
+# spambayes 1.1b2 dependencies
+lockfile==0.12.2; python_version < '3.0'
+pydns==2.3.6; python_version < '3.0'
+
+# Mako 1.0.4 dependencies
+MarkupSafe==0.23
+
+# html5lib 0.999999999 dependencies
+webencodings==0.5
+
+# perf dependencies (docutils is needed by statistics)
+statistics==1.0.3.5; python_version < '3.4'
+docutils==0.12
+
+
 # performance dependencies
 # ------------------------
 
@@ -29,7 +54,7 @@ perf==0.7.5
 Chameleon==2.24                           # chameleon
 Django==1.10                              # django_template
 Mako==1.0.4                               # mako
-Mercurial==3.9; python_version < '3.0'    # hg_startup
+mercurial==3.9; python_version < '3.0'    # hg_startup
 html5lib==0.999999999                     # html5lib
 pathlib2==2.1.0; python_version < '3.4'   # pathlib
 spambayes==1.1b2; python_version < '3.0'  # spambayes
@@ -41,7 +66,7 @@ tornado==4.4.1                            # tornado_http
 #
 # The list of optional dependencies is hardcoded in performance/venv.py
 
-psutil
+psutil==4.3.0
 
 
 # performance
