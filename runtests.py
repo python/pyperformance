@@ -52,7 +52,7 @@ def _main(venv):
 def main():
     tmpdir = tempfile.mkdtemp()
     try:
-        venv = os.path.join(tmpdir, 'testenv')
+        venv = os.path.join(tmpdir, 'perf_test_venv')
         _main(venv)
     finally:
         if os.path.exists(tmpdir):
