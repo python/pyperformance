@@ -30,6 +30,8 @@ Other Python Benchmarks:
 * `Numba benchmarks <http://numba.pydata.org/numba-benchmark/>`_
 * Cython: `Cython Demos/benchmarks
   <https://github.com/cython/cython/tree/master/Demos/benchmarks>`_
+* pythran: `numpy-benchmarks
+  <https://github.com/serge-sans-paille/numpy-benchmarks>`_
 
 See also the `Python perf module <http://perf.readthedocs.io/>`_: "toolkit to
 write, run, analyze and modify benchmarks" (performance uses it).
