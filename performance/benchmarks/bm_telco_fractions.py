@@ -16,6 +16,8 @@ The total price, t, is converted to a string, s.
 
 """
 
+from __future__ import absolute_import
+
 from struct import unpack
 import os.path
 
