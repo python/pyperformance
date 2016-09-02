@@ -227,15 +227,9 @@ def BM_Telco(python, options):
 
 
 @VersionRange()
-def BM_Telco_Fractions(python, options):
-    bm_path = Relative("bm_telco_fractions.py")
+def BM_Fractions(python, options):
+    bm_path = Relative("bm_fractions.py")
     return run_perf_script(python, options, bm_path, extra_args=['fractions'])
-
-
-@VersionRange()
-def BM_Telco_Decimal(python, options):
-    bm_path = Relative("bm_telco_fractions.py")
-    return run_perf_script(python, options, bm_path, extra_args=['decimal'])
 
 
 @VersionRange()

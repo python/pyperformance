@@ -97,8 +97,8 @@ def prepare_subprocess_args(runner, args):
 
 if __name__ == "__main__":
     import perf.text_runner
-    runner = perf.text_runner.TextRunner(name='telco')
-    runner.metadata['description'] = "Telco fractions benchmark"
+    runner = perf.text_runner.TextRunner(name='fractions')
+    runner.metadata['description'] = "Fractions benchmark adapted from the telco decimal benchmark"
     runner.prepare_subprocess_args = prepare_subprocess_args
 
     parser = runner.argparser
