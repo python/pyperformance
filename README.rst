@@ -257,6 +257,7 @@ Version 0.2.1
 * Fix ``compare -O table`` output format
 * Freeze indirect dependencies in requirements.txt
 * ``run``: add ``--track-memory`` option to track the memory peak usage
+* Update perf dependency to 0.7.6 to support memory tracking
 
 Version 0.2 (2016-09-01)
 ------------------------

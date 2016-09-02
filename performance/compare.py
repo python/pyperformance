@@ -25,6 +25,7 @@ def _FormatPerfDataForTable(base_label, changed_label, results):
     table = [("Benchmark", base_label, changed_label, "Change", "Significance")]
 
     for (bench_name, result) in results:
+        # FIXME: use bench.format_sample(), not str()
         table.append((bench_name,
                       # Limit the precision for conciseness in the table.
                       str(round(result.avg_base, 2)),

@@ -1,4 +1,7 @@
+* bm_pidigits: don't use nested functions like gen_x()
 * Remove performance.egg-info when running tests?
+* Remove deprecated threading tests?
+* Remove json_dump and rename json_dump to json_dump_v2?
 * pybench: calibrate once in the main process, then pass the number of loops
   to workers? Or rewrite pybench as N subenchmarks?
 * Warning or error if two performance results were produced with two different
