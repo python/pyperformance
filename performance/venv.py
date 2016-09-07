@@ -78,9 +78,7 @@ except ImportError:
         return None
 
 
-PERF_ROOT =  os.path.realpath(os.path.dirname(__file__))
-# FIXME: Remove ROOT_DIR
-ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
+PERFORMANCE_ROOT =  os.path.realpath(os.path.dirname(__file__))
 
 
 def python_implementation():
@@ -199,7 +197,7 @@ def virtualenv_path(options):
     """)
 
     python = options.python
-    requirements = os.path.join(PERF_ROOT, 'requirements.txt')
+    requirements = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
     cmd = (python, '-c', script, performance.__version__, requirements)
     proc = subprocess.Popen(cmd,
                             stdout=subprocess.PIPE,
@@ -300,7 +298,7 @@ class Requirements:
 
 
 def is_build_dir():
-    root_dir = os.path.join(PERF_ROOT, '..')
+    root_dir = os.path.join(PERFORMANCE_ROOT, '..')
     if not os.path.exists(os.path.join(root_dir, 'performance')):
         return False
     return os.path.exists(os.path.join(root_dir, 'setup.py'))
@@ -317,7 +315,7 @@ def create_virtualenv(python, venv_path):
     if os.path.exists(venv_path):
         return venv_python
 
-    filename = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
+    filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
     requirements = Requirements(filename,
                                 ['setuptools', 'pip', 'wheel'],
                                 ['psutil'])
@@ -347,7 +345,8 @@ def create_virtualenv(python, venv_path):
 
         # install performance inside the virtual environment
         if is_build_dir():
-            cmd = [venv_python, '-m', 'pip', 'install', '-e', ROOT_DIR]
+            root_dir = os.path.join(PERFORMANCE_ROOT, '..')
+            cmd = [venv_python, '-m', 'pip', 'install', '-e', root_dir]
         else:
             version =  performance.__version__
             cmd = [venv_python, '-m', 'pip',

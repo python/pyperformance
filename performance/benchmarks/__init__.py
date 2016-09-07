@@ -6,13 +6,13 @@ import subprocess
 import perf
 
 import performance
-from performance.venv import ROOT_DIR
+from performance.venv import PERFORMANCE_ROOT
 from performance.run import (run_perf_script,
                              BenchmarkException, CallAndCaptureOutput)
 
 
 def Relative(*path):
-    return os.path.join(ROOT_DIR, 'performance', 'benchmarks', *path)
+    return os.path.join(PERFORMANCE_ROOT, 'benchmarks', *path)
 
 
 # Decorators for giving ranges of supported Python versions.
