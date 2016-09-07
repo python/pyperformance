@@ -36,6 +36,11 @@ def _main(venv):
         run_cmd(cmd)
 
     run_bench(python, script, 'venv', 'create')
+
+    egg_info = "performance.egg-info"
+    print("Remove directory %s" % egg_info)
+    shutil.rmtree(egg_info)
+
     run_bench(python, script, 'venv')
     run_bench(python, script, 'list')
     run_bench(python, script, 'list_groups')
