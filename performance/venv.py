@@ -78,6 +78,8 @@ except ImportError:
         return None
 
 
+PERF_ROOT =  os.path.realpath(os.path.dirname(__file__))
+# FIXME: Remove ROOT_DIR
 ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 
 
@@ -197,7 +199,7 @@ def virtualenv_path(options):
     """)
 
     python = options.python
-    requirements = os.path.join(ROOT_DIR, 'performance', 'requirements.txt')
+    requirements = os.path.join(PERF_ROOT, 'requirements.txt')
     cmd = (python, '-c', script, performance.__version__, requirements)
     proc = subprocess.Popen(cmd,
                             stdout=subprocess.PIPE,
@@ -297,6 +299,13 @@ class Requirements:
                     self.req.append(line)
 
 
+def is_build_dir():
+    root_dir = os.path.join(PERF_ROOT, '..')
+    if not os.path.exists(os.path.join(root_dir, 'performance')):
+        return False
+    return os.path.exists(os.path.join(root_dir, 'setup.py'))
+
+
 def create_virtualenv(python, venv_path):
     if os.name == "nt":
         python_executable = os.path.basename(python)
@@ -337,10 +346,10 @@ def create_virtualenv(python, venv_path):
                 print()
 
         # install performance inside the virtual environment
-        version =  performance.__version__
-        if version.endswith('dev'):
+        if is_build_dir():
             cmd = [venv_python, '-m', 'pip', 'install', '-e', ROOT_DIR]
         else:
+            version =  performance.__version__
             cmd = [venv_python, '-m', 'pip',
                    'install', 'performance==%s' % version]
         run_cmd(cmd)
