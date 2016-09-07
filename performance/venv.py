@@ -211,6 +211,14 @@ def virtualenv_path(options):
     return os.path.join('venv', venv_name)
 
 
+def safe_rmtree(path):
+    if not os.path.exists(path):
+        return
+
+    print("Remove directory %s" % path)
+    shutil.rmtree(path)
+
+
 def _create_virtualenv(python, venv_path):
     # On Python 3.3 and newer, the venv module could be used, but it looks
     # like it doesn't work when run from a virtual environment on Fedora:
@@ -219,11 +227,13 @@ def _create_virtualenv(python, venv_path):
     # Case 1: try virtualenv command
     cmd = ['virtualenv', '-p', python, venv_path]
     try:
-        run_cmd(cmd)
-        return
+        exitcode = run_cmd_nocheck(cmd)
+        if not exitcode:
+            return
     except OSError as exc:
         if exc.errno != errno.ENOENT:
             raise
+    safe_rmtree(venv_path)
 
     print("Command failed: virtualenv program not found!")
     print()
@@ -233,6 +243,7 @@ def _create_virtualenv(python, venv_path):
     exitcode = run_cmd_nocheck(cmd)
     if not exitcode:
         return
+    safe_rmtree(venv_path)
     print("%s -m virtualenv failed!" % os.path.basename(python))
     print()
 
@@ -241,6 +252,7 @@ def _create_virtualenv(python, venv_path):
     exitcode = run_cmd_nocheck(cmd)
     if not exitcode:
         return
+    safe_rmtree(venv_path)
     print("%s -m venv failed!" % os.path.basename(python))
 
     print()
@@ -330,10 +342,8 @@ def create_virtualenv(python, venv_path):
                    'install', 'performance==%s' % version]
         run_cmd(cmd)
     except:
-        if os.path.exists(venv_path):
-            print()
-            print("ERROR: Remove virtual environment %s" % venv_path)
-            shutil.rmtree(venv_path)
+        print()
+        safe_rmtree(venv_path)
         raise
 
     return venv_python

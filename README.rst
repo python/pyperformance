@@ -258,6 +258,8 @@ Version 0.2.1
 * Freeze indirect dependencies in requirements.txt
 * ``run``: add ``--track-memory`` option to track the memory peak usage
 * Update perf dependency to 0.7.6 to support memory tracking
+* If ``virtualenv`` command fail, try another command to create the virtual
+  environment: catch ``virtualenv`` error
 
 Version 0.2 (2016-09-01)
 ------------------------
