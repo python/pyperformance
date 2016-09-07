@@ -260,6 +260,9 @@ Version 0.2.1
 * Update perf dependency to 0.7.7 to support memory tracking
 * If ``virtualenv`` command fail, try another command to create the virtual
   environment: catch ``virtualenv`` error
+* The first command to upgrade pip to version ``>= 6.0`` now uses the ``pip``
+  binary rather than ``python -m pip`` to support pip 1.0 which doesn't support
+  ``python -m pip`` CLI.
 
 Version 0.2 (2016-09-01)
 ------------------------

@@ -301,8 +301,10 @@ def create_virtualenv(python, venv_path):
     if os.name == "nt":
         python_executable = os.path.basename(python)
         venv_python = os.path.join(venv_path, 'Scripts', python_executable)
+        venv_pip = os.path.join(venv_path, 'Scripts', 'pip')
     else:
         venv_python = os.path.join(venv_path, 'bin', 'python')
+        venv_pip = os.path.join(venv_path, 'bin', 'pip')
     if os.path.exists(venv_path):
         return venv_python
 
@@ -315,8 +317,9 @@ def create_virtualenv(python, venv_path):
     try:
         _create_virtualenv(python, venv_path)
 
-        # upgrade installer dependencies (ex: pip)
-        cmd = [venv_python, '-m', 'pip', 'install', '-U']
+        # upgrade installer dependencies (ex: pip. Use venv/bin/pip rather than
+        # venv/bin/python -m pip, because pip 1.0 doesn't support "-m pip" CLI.
+        cmd = [venv_pip, 'install', '-U']
         cmd.extend(requirements.installer)
         run_cmd(cmd)
 
