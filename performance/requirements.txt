@@ -2,6 +2,8 @@
 # ----------------------
 #
 # The list of installer requirements is hardcoded in performance/venv.py
+#
+# Note: installer requirements are also used in .travis.yml
 
 # html5lib requires setuptools 18.5 or newer
 setuptools>=18.5
