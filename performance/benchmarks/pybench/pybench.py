@@ -409,7 +409,7 @@ class MyTextRunner(perf.text_runner.TextRunner):
 
         for process in range(1, nprocess + 1):
             start = perf.monotonic_clock()
-            run_suite = self._spawn_worker()
+            run_suite = self._spawn_worker_suite()
             dt = perf.monotonic_clock() - start
 
             for run_bench in run_suite.get_benchmarks():

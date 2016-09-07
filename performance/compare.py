@@ -3,8 +3,11 @@ from __future__ import division, with_statement, print_function, absolute_import
 import csv
 import os.path
 
-import perf
 import statistics
+
+import perf
+# FIXME: don't use private modules!
+from perf._utils import format_timedeltas
 
 
 def _FormatPerfDataForTable(base_label, changed_label, results):
@@ -156,7 +159,7 @@ class BenchmarkResult(BaseBenchmarkResult):
                   self.avg_changed, self.std_changed)
         # FIXME: don't use perf private function
         # FIXME: reuse perf.Benchmark.format()
-        text = "%s +- %s -> %s +- %s" % perf._format_timedeltas(values)
+        text = "%s +- %s -> %s +- %s" % format_timedeltas(values)
         return ("Median +- Std dev: %s: %s\n%s"
                  % (text, self.delta_avg, self.t_msg))
 
