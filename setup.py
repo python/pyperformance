@@ -2,7 +2,7 @@
 
 # Update dependencies:
 #
-#  - python2 -m perforamnce venv create
+#  - python2 -m performance venv create
 #  - venv/cpython2<tab>/bin/python -m pip list --outdated
 #  - update performance/requirements.txt
 #  - increase performance major version of a benchmark dependency is upgraded

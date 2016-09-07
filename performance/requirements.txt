@@ -52,9 +52,9 @@ perf==0.7.7
 # two performance results of two different major versions is not reliable.
 
 Chameleon==2.24                           # chameleon
-Django==1.10                              # django_template
+Django==1.10.1                            # django_template
 Mako==1.0.4                               # mako
-mercurial==3.9; python_version < '3.0'    # hg_startup
+mercurial==3.9.1; python_version < '3.0'  # hg_startup
 html5lib==0.999999999                     # html5lib
 pathlib2==2.1.0; python_version < '3.4'   # pathlib
 spambayes==1.1b2; python_version < '3.0'  # spambayes
@@ -66,7 +66,7 @@ tornado==4.4.1                            # tornado_http
 #
 # The list of optional dependencies is hardcoded in performance/venv.py
 
-psutil==4.3.0
+psutil==4.3.1
 
 
 # performance
