@@ -1,6 +1,5 @@
 * pybench: don't use private perf submodules/functions
 * performance.compare: don't use private perf submodules/functions
-* bm_pidigits: don't use nested functions like gen_x()
 * Remove deprecated threading tests?
 * Remove json_dump and rename json_dump to json_dump_v2?
 * pybench: calibrate once in the main process, then pass the number of loops
