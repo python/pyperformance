@@ -12,8 +12,7 @@
 #
 #  - git pull --rebase
 #  - run tests: tox
-#  - update version in setup.py and performance/__init__.py:
-#    remove "dev" suffix from version
+#  - maybe update version in setup.py and performance/__init__.py
 #  - set release date in changelog (README.rst)
 #  - git commit -a -m "prepare release x.y"
 #  - git push
@@ -27,11 +26,11 @@
 #
 # After the release:
 #
-#  - set version to n+1 and add sufix "dev"
+#  - set version to n+1
 #  - git commit -a -m "post-release"
 #  - git push
 
-VERSION = '0.2.1dev'
+VERSION = '0.2.1'
 
 DESCRIPTION = 'Python benchmark suite'
 CLASSIFIERS = [
