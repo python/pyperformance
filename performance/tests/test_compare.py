@@ -32,10 +32,19 @@ class CompareTests(unittest.TestCase):
         cmd = [sys.executable, '-m', 'performance', 'venv', 'create']
         run_cmd(cmd)
 
-    def compare(self, *args):
+    def compare(self, *args, **kw):
+        dataset = kw.get('dataset', 'py')
+
+        if dataset == 'mem':
+            file1 = 'mem1.json'
+            file2 = 'mem2.json'
+        else:
+            file1 = 'py2.json'
+            file2 = 'py3.json'
+
         cmd = [sys.executable, '-m', 'performance', 'compare',
-               os.path.join(DATA_DIR, 'py2.json'),
-               os.path.join(DATA_DIR, 'py3.json')]
+               os.path.join(DATA_DIR, file1),
+               os.path.join(DATA_DIR, file2)]
         cmd.extend(args)
         proc = subprocess.Popen(cmd,
                                 stdout=subprocess.PIPE,
@@ -51,6 +60,13 @@ class CompareTests(unittest.TestCase):
 
         '''))
 
+    def test_compare_single_sample(self):
+        stdout = self.compare(dataset='mem')
+        self.assertEqual(stdout, textwrap.dedent('''
+            ### call_simple ###
+            8085504 sec -> 8089600 sec: 1.00x slower
+        '''))
+
     def test_csv(self):
         with tempfile.NamedTemporaryFile("w") as tmp:
             stdout = self.compare("--csv", tmp.name)
@@ -60,7 +76,7 @@ class CompareTests(unittest.TestCase):
 
             self.assertEqual(csv, textwrap.dedent('''
                 Benchmark,Base,Changed
-                call_simple,0.011193,0.013267
+                call_simple,0.011432,0.013635
             ''').lstrip())
 
     def test_compare_table(self):

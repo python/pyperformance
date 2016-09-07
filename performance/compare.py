@@ -6,8 +6,6 @@ import os.path
 import statistics
 
 import perf
-# FIXME: don't use private modules!
-from perf._utils import format_timedeltas
 
 
 def _FormatPerfDataForTable(base_label, changed_label, results):
@@ -91,22 +89,6 @@ def FormatOutputAsTable(base_label, changed_label, results):
     return "\n".join(output)
 
 
-class RawData(object):
-    """Raw data from a benchmark run.
-
-    Attributes:
-        runtimes: list of floats, one per iteration.
-        mem_usage: list of ints, memory usage in kilobytes.
-        inst_output: output from Unladen's --with-instrumentation build. This is
-            the empty string if there was no instrumentation output.
-    """
-
-    def __init__(self, runtimes, mem_usage, inst_output=""):
-        self.runtimes = runtimes
-        self.mem_usage = mem_usage
-        self.inst_output = inst_output
-
-
 class BaseBenchmarkResult(object):
     always_display = True
 
@@ -118,16 +100,23 @@ class BaseBenchmarkResult(object):
 
 
 class SimpleBenchmarkResult(BaseBenchmarkResult):
-    """Object representing result data from a successful benchmark run."""
+    def __init__(self, base, changed):
+        self.base = base
 
-    def __init__(self, base_time, changed_time, time_delta):
-        self.base_time    = base_time
-        self.changed_time = changed_time
-        self.time_delta   = time_delta
+        base_times = base.get_samples()
+        changed_times = changed.get_samples()
+
+        self.base_time = base_times[0]
+        self.changed_time = changed_times[0]
 
     def __str__(self):
-        return ("%(base_time)f -> %(changed_time)f: %(time_delta)s"
-                % self.__dict__)
+        # FIXME: don't use private function
+        format_sample = self.base._format_sample
+        time_delta = TimeDelta(self.base_time, self.changed_time)
+        return ("%s -> %s: %s"
+                % (format_sample(self.base_time),
+                   format_sample(self.changed_time),
+                   time_delta))
 
     def as_csv(self):
         # Base, changed
@@ -138,34 +127,52 @@ class SimpleBenchmarkResult(BaseBenchmarkResult):
 class BenchmarkResult(BaseBenchmarkResult):
     """An object representing data from a succesful benchmark run."""
 
-    def __init__(self, min_base, min_changed, delta_min, avg_base,
-                 avg_changed, delta_avg, t_msg, std_base, std_changed,
-                 delta_std, is_significant):
-        self.min_base      = min_base
-        self.min_changed   = min_changed
-        self.delta_min     = delta_min
+    def __init__(self, base, changed):
+        # Why do we need to sort?
+        base_times = sorted(base.get_samples())
+        changed_times = sorted(changed.get_samples())
+
+        self.base = base
+        self.changed = changed
+        self.min_base      = min(base_times)
+        self.min_changed   = max(base_times)
+        self.delta_min     = TimeDelta(self.min_base, self.min_changed)
         # FIXME: rename avg to median
-        self.avg_base      = avg_base
-        self.avg_changed   = avg_changed
-        self.delta_avg     = delta_avg
+        self.avg_base      = statistics.median(base_times)
+        self.avg_changed   = statistics.median(changed_times)
+        self.delta_avg     = TimeDelta(self.avg_base, self.avg_changed)
+        self.std_base      = statistics.stdev(base_times, self.avg_base)
+        self.std_changed   = statistics.stdev(changed_times, self.avg_changed)
+        self.delta_std     = QuantityDelta(self.std_base, self.std_changed)
+
+        t_msg = "Not significant\n"
+        significant = False
+        # Due to inherent measurement imprecisions, variations of less than 1%
+        # are automatically considered insignificant. This helps present
+        # a clear picture to the user.
+        if abs(self.avg_base - self.avg_changed) > (self.avg_base + self.avg_changed) * 0.01:
+            significant, t_score = perf.is_significant(base_times, changed_times)
+            if significant:
+                t_msg = "Significant (t=%.2f)\n" % t_score
+
         self.t_msg         = t_msg
-        self.std_base      = std_base
-        self.std_changed   = std_changed
-        self.delta_std     = delta_std
-        self.always_display = is_significant
+        self.always_display = significant
 
     def __str__(self):
-        values = (self.avg_base, self.std_base,
-                  self.avg_changed, self.std_changed)
-        # FIXME: don't use perf private function
-        # FIXME: reuse perf.Benchmark.format()
-        text = "%s +- %s -> %s +- %s" % format_timedeltas(values)
+        base_stdev = statistics.stdev(self.base.get_samples())
+        changed_stdev = statistics.stdev(self.changed.get_samples())
+        values = (self.base.median(), base_stdev,
+                  self.changed.median(), changed_stdev )
+        # FIXME: don't use perf private method
+        text = "%s +- %s -> %s +- %s" % self.base._format_samples(values)
         return ("Median +- Std dev: %s: %s\n%s"
                  % (text, self.delta_avg, self.t_msg))
 
     def as_csv(self):
         # Min base, min changed
-        return ["%f" % self.min_base, "%f" % self.min_changed]
+        base = self.base.median()
+        changed = self.changed.median()
+        return ["%f" % base, "%f" % changed]
 
 
 def TimeDelta(old, new):
@@ -190,90 +197,24 @@ def QuantityDelta(old, new):
         return "no change"
 
 
-def CompareMultipleRuns(base_times, changed_times, options):
-    """Compare multiple control vs experiment runs of the same benchmark.
-
-    Args:
-        base_times: iterable of float times (control).
-        changed_times: iterable of float times (experiment).
-        options: optparse.Values instance.
-
-    Returns:
-        A BenchmarkResult object, summarizing the difference between the two
-        runs; or a SimpleBenchmarkResult object, if there was only one data
-        point per run.
-    """
-    assert len(base_times) == len(changed_times)
-    if len(base_times) == 1:
-        # With only one data point, we can't do any of the interesting stats
-        # below.
-        base_time, changed_time = base_times[0], changed_times[0]
-        time_delta = TimeDelta(base_time, changed_time)
-        return SimpleBenchmarkResult(base_time, changed_time, time_delta)
-
-    base_times = sorted(base_times)
-    changed_times = sorted(changed_times)
-
-    min_base, min_changed = base_times[0], changed_times[0]
-    avg_base = statistics.median(base_times)
-    avg_changed = statistics.median(changed_times)
-    std_base = statistics.stdev(base_times, avg_base)
-    std_changed = statistics.stdev(changed_times, avg_changed)
-    delta_min = TimeDelta(min_base, min_changed)
-    delta_avg = TimeDelta(avg_base, avg_changed)
-    delta_std = QuantityDelta(std_base, std_changed)
-
-    t_msg = "Not significant\n"
-    significant = False
-    # Due to inherent measurement imprecisions, variations of less than 1%
-    # are automatically considered insignificant. This helps present
-    # a clear picture to the user.
-    if abs(avg_base - avg_changed) > (avg_base + avg_changed) * 0.01:
-        significant, t_score = perf.is_significant(base_times, changed_times)
-        if significant:
-            t_msg = "Significant (t=%.2f)\n" % t_score
-
-    return BenchmarkResult(min_base, min_changed, delta_min, avg_base,
-                           avg_changed, delta_avg, t_msg, std_base,
-                           std_changed, delta_std, significant)
-
-
-# FIXME: remove this function?
-def CompareBenchmarkData(base_data, exp_data, options):
-    """Compare performance and memory usage.
-
-    Args:
-        base_data: RawData instance for the control binary.
-        exp_data: RawData instance for the experimental binary.
-        options: optparse.Values instance.
-
-    Returns:
-        Something that implements a __str__() method:
-
-        - BenchmarkResult: summarizes the difference between the two runs.
-        - SimpleBenchmarkResult: if there was only one data point per run.
-        - BenchmarkError: if something went wrong.
-    """
-    return CompareMultipleRuns(base_data.runtimes, exp_data.runtimes, options)
-
-
 # FIXME: remove this function
-def bench_to_data(bench1, bench2):
-    name = bench1.get_name()
-    name2 = bench2.get_name()
+def bench_to_data(base, changed):
+    name = base.get_name()
+    name2 = changed.get_name()
     if name2 != name:
         raise ValueError("not the same benchmark: %s != %s"
                          % (name, name2))
 
-    class Namespace:
-        pass
-    ns = Namespace()
-    ns.benchmark_name = name
+    if base.get_nsample() != changed.get_nsample():
+        raise RuntimeError("base and changed don't have "
+                           "the same number of samples")
 
-    bench1 = RawData(bench1.get_samples(), [], inst_output=None)
-    bench2 = RawData(bench2.get_samples(), [], inst_output=None)
-    result = CompareBenchmarkData(bench1, bench2, ns)
-    return (name, result)
+    if base.get_nsample() == 1:
+        result = SimpleBenchmarkResult(base, changed)
+    else:
+        result = BenchmarkResult(base, changed)
+
+    return result
 
 
 def compare_results(options):
@@ -288,19 +229,17 @@ def compare_results(options):
     for name in sorted(common):
         base_bench = base_suite.get_benchmark(name)
         changed_bench = changed_suite.get_benchmark(name)
-        name, result = bench_to_data(base_bench, changed_bench)
-        results.append((name, result))
+        result = bench_to_data(base_bench, changed_bench)
+        results.append(result)
 
     hidden = []
-    if not options.verbose:
-        shown = []
-        for name, result in results:
-            if result.always_display:
-                shown.append((name, result))
-            else:
-                hidden.append((name, result))
-    else:
-        shown = results
+    shown = []
+    for result in results:
+        name = result.base.get_name()
+        if result.always_display or options.verbose:
+            shown.append((name, result))
+        else:
+            hidden.append((name, result))
 
     if options.output_style == "normal":
         for name, result in shown:
@@ -343,5 +282,6 @@ def cmd_compare(options):
         with open(options.csv, "w") as f:
             writer = csv.writer(f)
             writer.writerow(['Benchmark', 'Base', 'Changed'])
-            for name, result in results:
+            for result in results:
+                name = result.base.get_name()
                 writer.writerow([name] + result.as_csv())
