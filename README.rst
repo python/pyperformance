@@ -250,20 +250,23 @@ Available Benchmarks
 Changelog
 =========
 
-Version 0.2.1
--------------
+Version 0.2.1 (2016-09-10)
+--------------------------
 
 * Add ``--csv`` option to the ``compare`` command
 * Fix ``compare -O table`` output format
 * Freeze indirect dependencies in requirements.txt
 * ``run``: add ``--track-memory`` option to track the memory peak usage
-* Update perf dependency to 0.7.7 to support memory tracking
+* Update perf dependency to 0.7.8 to support memory tracking and the new
+  ``--inherit-environ`` command line option
 * If ``virtualenv`` command fail, try another command to create the virtual
   environment: catch ``virtualenv`` error
 * The first command to upgrade pip to version ``>= 6.0`` now uses the ``pip``
   binary rather than ``python -m pip`` to support pip 1.0 which doesn't support
   ``python -m pip`` CLI.
 * Update Django (1.10.1), Mercurial (3.9.1) and psutil (4.3.1)
+* Rename ``--inherit_env`` command line option to ``--inherit-environ`` and fix
+  it
 
 Version 0.2 (2016-09-01)
 ------------------------

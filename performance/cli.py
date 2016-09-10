@@ -7,9 +7,9 @@ import sys
 from performance.venv import exec_in_virtualenv, which, cmd_venv
 
 
-def ParseEnvVars(option, opt_str, value, parser):
-    """Parser callback to --inherit_env var names."""
-    parser.values.inherit_env = [v for v in value.split(",") if v]
+def comma_separated(values):
+    values = [value.strip() for value in values.split(',')]
+    return list(filter(None, values))
 
 
 def _add_run_options(cmd):
@@ -34,8 +34,8 @@ def _add_run_options(cmd):
                             " there are no positive arguments, we'll run all"
                             " benchmarks except the negative arguments. "
                             " Otherwise we run only the positive arguments."))
-    cmd.add_argument("--inherit_env", metavar="VAR_LIST",
-                      type=ParseEnvVars, default=[],
+    cmd.add_argument("--inherit-environ", metavar="VAR_LIST",
+                      type=comma_separated,
                       help=("Comma-separated list of environment variable names"
                             " that are inherited from the parent environment"
                             " when running benchmarking subprocesses."))

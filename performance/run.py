@@ -40,58 +40,7 @@ def LogCall(command):
     return command
 
 
-def BuildEnv(env=None, inherit_env=[]):
-    """Massage an environment variables dict for the host platform.
-
-    Massaging performed (in this order):
-    - Add any variables named in inherit_env.
-    - Copy PYTHONPATH to JYTHONPATH to support Jython.
-    - Copy PYTHONPATH to IRONPYTHONPATH to support IronPython.
-    - Win32 requires certain env vars to be set.
-
-    Args:
-        env: optional; environment variables dict. If this is omitted, start
-            with an empty environment.
-        inherit_env: optional; iterable of strings, each the name of an
-            environment variable to inherit from os.environ, for any
-            interpreter as well as for Jython specifically.
-
-    Returns:
-        A copy of `env`, possibly with modifications.
-    """
-    if env is None:
-        env = {}
-    fixed_env = env.copy()
-    for varname in inherit_env:
-        fixed_env[varname] = os.environ[varname]
-    if "PYTHONPATH" in fixed_env:
-        fixed_env["JYTHONPATH"] = fixed_env["PYTHONPATH"]
-        fixed_env["IRONPYTHONPATH"] = fixed_env["PYTHONPATH"]
-    if sys.platform == "win32":
-        # Win32 requires certain environment variables be present,
-        # as does Jython under Windows.
-        for k in ("COMSPEC", "SystemRoot", "TEMP", "PATH"):
-            if k in os.environ and k not in fixed_env:
-                fixed_env[k] = os.environ[k]
-    return fixed_env
-
-
-def CallAndCaptureOutput(command, env=None, inherit_env=[], hide_stderr=True):
-    """Run the given command, capturing stdout.
-
-    Args:
-        command: the command to run as a list, one argument per element.
-        env: optional; environment variables to set.
-        inherit_env: optional; iterable of strings, each the name of an
-            environment variable to inherit from os.environ.
-
-    Returns:
-        stdout where stdout is the captured stdout as a string.
-
-    Raises:
-        RuntimeError: if the command failed. The value of the exception will
-        be the error message from the command.
-    """
+def CallAndCaptureOutput(command, hide_stderr=True):
     if hasattr(subprocess, 'DEVNULL'):
         stderr = subprocess.DEVNULL
     else:
@@ -102,7 +51,6 @@ def CallAndCaptureOutput(command, env=None, inherit_env=[], hide_stderr=True):
         kw = {}
     proc = subprocess.Popen(LogCall(command),
                                stdout=subprocess.PIPE,
-                               env=BuildEnv(env, inherit_env),
                                universal_newlines=True,
                                **kw)
     stdout, stderr = proc.communicate()
@@ -115,24 +63,27 @@ def CallAndCaptureOutput(command, env=None, inherit_env=[], hide_stderr=True):
     return stdout
 
 
-def run_perf_script(python, options, bm_path, extra_args=[]):
-    bench_args = [bm_path]
-
+def copy_perf_options(cmd, options):
     if options.debug_single_sample:
-        bench_args.append('--debug-single-sample')
+        cmd.append('--debug-single-sample')
     elif options.rigorous:
-        bench_args.append('--rigorous')
+        cmd.append('--rigorous')
     elif options.fast:
-        bench_args.append('--fast')
+        cmd.append('--fast')
 
     if options.verbose:
-        bench_args.append('--verbose')
+        cmd.append('--verbose')
 
     if options.affinity:
-        bench_args.append('--affinity=%s' % options.affinity)
+        cmd.append('--affinity=%s' % options.affinity)
     if options.track_memory:
-        bench_args.append('--track-memory')
+        cmd.append('--track-memory')
+    if options.inherit_environ:
+        cmd.append('--inherit-environ=%s' % ','.join(options.inherit_environ))
 
+def run_perf_script(python, options, bm_path, extra_args=[]):
+    bench_args = [bm_path]
+    copy_perf_options(bench_args, options)
     bench_args.append("--stdout")
 
     command = python + bench_args + extra_args

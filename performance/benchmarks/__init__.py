@@ -7,7 +7,7 @@ import perf
 
 import performance
 from performance.venv import PERFORMANCE_ROOT
-from performance.run import (run_perf_script,
+from performance.run import (run_perf_script, copy_perf_options,
                              BenchmarkException, CallAndCaptureOutput)
 
 
@@ -37,24 +37,12 @@ def BM_PyBench(python, options):
     args = [PYBENCH_PATH,
             '--with-gc',
             '--with-syscheck']
-    if options.debug_single_sample:
-        args.append("--debug-single-sample")
-    elif options.fast:
-        args.append("--fast")
-    elif options.rigorous:
-        args.append("--rigorous")
-    if options.verbose:
-        args.append('-v')
-    if options.affinity:
-        args.append('--affinity=%s' % options.affinity)
-    if options.track_memory:
-        args.append('--track-memory')
+    copy_perf_options(args, options)
     args.append('--stdout')
 
     try:
         cmd = python + args
-        stdout = CallAndCaptureOutput(cmd, inherit_env=options.inherit_env,
-                                      hide_stderr=False)
+        stdout = CallAndCaptureOutput(cmd, hide_stderr=False)
 
         suite = perf.BenchmarkSuite.loads(stdout)
         for benchmark in suite:

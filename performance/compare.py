@@ -26,7 +26,6 @@ def _FormatPerfDataForTable(base_label, changed_label, results):
     table = [("Benchmark", base_label, changed_label, "Change", "Significance")]
 
     for (bench_name, result) in results:
-        # FIXME: use bench.format_sample(), not str()
         table.append((bench_name,
                       # Limit the precision for conciseness in the table.
                       str(round(result.avg_base, 2)),
@@ -110,8 +109,7 @@ class SimpleBenchmarkResult(BaseBenchmarkResult):
         self.changed_time = changed_times[0]
 
     def __str__(self):
-        # FIXME: don't use private function
-        format_sample = self.base._format_sample
+        format_sample = self.base.format_sample
         time_delta = TimeDelta(self.base_time, self.changed_time)
         return ("%s -> %s: %s"
                 % (format_sample(self.base_time),
@@ -163,8 +161,7 @@ class BenchmarkResult(BaseBenchmarkResult):
         changed_stdev = statistics.stdev(self.changed.get_samples())
         values = (self.base.median(), base_stdev,
                   self.changed.median(), changed_stdev )
-        # FIXME: don't use perf private method
-        text = "%s +- %s -> %s +- %s" % self.base._format_samples(values)
+        text = "%s +- %s -> %s +- %s" % self.base.format_samples(values)
         return ("Median +- Std dev: %s: %s\n%s"
                  % (text, self.delta_avg, self.t_msg))
 

@@ -9,4 +9,3 @@
   didn't store its version in results :-/
 * bench.py -b threading doesn't run anything
 * fastpickle: use accelerator by default, as bm_elementtree
-* Remove completly or reimplement inherit_env
