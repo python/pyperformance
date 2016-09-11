@@ -219,6 +219,8 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
         func = bench_funcs[name]
         print("[%s/%s] %s..." %
               (str(index+1).rjust(len(run_count)), run_count, name))
+        sys.stdout.flush()
+
         options.benchmark_name = name  # Easier than threading this everywhere.
 
         def add_bench(dest_suite, bench):
