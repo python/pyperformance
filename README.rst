@@ -250,6 +250,12 @@ Available Benchmarks
 Changelog
 =========
 
+Version 0.2.2
+-------------
+
+* CPython issue #26383; csv output: don't truncate digits for timings shorter
+  than 1 us
+
 Version 0.2.1 (2016-09-10)
 --------------------------
 

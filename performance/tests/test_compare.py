@@ -76,7 +76,7 @@ class CompareTests(unittest.TestCase):
 
             self.assertEqual(csv, textwrap.dedent('''
                 Benchmark,Base,Changed
-                call_simple,0.011432,0.013635
+                call_simple,0.01143,0.01363
             ''').lstrip())
 
     def test_compare_table(self):

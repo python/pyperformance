@@ -8,6 +8,19 @@ import statistics
 import perf
 
 
+def format_csv(value):
+    abs_value = abs(value)
+    # keep at least 3 significant digits, but also try to avoid too many zeros
+    if abs_value >= 1.0:
+        return "%.2f" % value
+    elif abs_value >= 1e-3:
+        return "%.5f" % value
+    elif abs_value >= 1e-6:
+        return "%.8f" % value
+    else:
+        return "%.11f" % value
+
+
 def _FormatPerfDataForTable(base_label, changed_label, results):
     """Prepare performance data for tabular output.
 
@@ -118,7 +131,8 @@ class SimpleBenchmarkResult(BaseBenchmarkResult):
 
     def as_csv(self):
         # Base, changed
-        return ["%f" % self.base_time, "%f" % self.changed_time]
+        return [format_csv(self.base_time),
+                format_csv(self.changed_time)]
 
 
 # FIXME: use perf module, remove this class
@@ -169,7 +183,7 @@ class BenchmarkResult(BaseBenchmarkResult):
         # Min base, min changed
         base = self.base.median()
         changed = self.changed.median()
-        return ["%f" % base, "%f" % changed]
+        return [format_csv(base), format_csv(changed)]
 
 
 def TimeDelta(old, new):
