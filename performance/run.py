@@ -41,10 +41,6 @@ def LogCall(command):
 
 
 def CallAndCaptureOutput(command, hide_stderr=True):
-    if hasattr(subprocess, 'DEVNULL'):
-        stderr = subprocess.DEVNULL
-    else:
-        stderr = subprocess.PIPE
     if hide_stderr:
         kw = {'stderr': subprocess.PIPE}
     else:
@@ -53,7 +49,20 @@ def CallAndCaptureOutput(command, hide_stderr=True):
                                stdout=subprocess.PIPE,
                                universal_newlines=True,
                                **kw)
-    stdout, stderr = proc.communicate()
+    try:
+        stdout, stderr = proc.communicate()
+    except:
+        proc.stdout.close()
+        if proc.stderr:
+            proc.stderr.close()
+        try:
+            proc.kill()
+        except OSError:
+            # process already exited
+            pass
+        proc.wait()
+        raise
+
     if proc.returncode != 0:
         if hide_stderr:
             sys.stderr.flush()
