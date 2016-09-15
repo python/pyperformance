@@ -33,8 +33,9 @@ Other Python Benchmarks:
 * pythran: `numpy-benchmarks
   <https://github.com/serge-sans-paille/numpy-benchmarks>`_
 
-See also the `Python perf module <http://perf.readthedocs.io/>`_: "toolkit to
-write, run, analyze and modify benchmarks" (performance uses it).
+See also the `Python speed mailing list
+<https://mail.python.org/mailman/listinfo/speed>`_ and the `Python perf module
+<http://perf.readthedocs.io/>`_ (used by performance).
 
 
 Run benchmarks
