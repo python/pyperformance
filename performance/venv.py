@@ -230,12 +230,13 @@ def _create_virtualenv(python, venv_path):
         exitcode = run_cmd_nocheck(cmd)
         if not exitcode:
             return
+        print("virtualenv failed!")
     except OSError as exc:
         if exc.errno != errno.ENOENT:
             raise
+        print("virtualenv program not found!")
     safe_rmtree(venv_path)
 
-    print("Command failed: virtualenv program not found!")
     print()
 
     # Case 2: try python -m virtualenv
