@@ -270,7 +270,7 @@ Version 0.2.2
   output using the unit
 * compare: Fix the table output if benchmarks only contain a single sample
 * Remove unused -C/--control_label and -E/--experiment_label options
-* Update perf dependency to 0.7.9 to get Benchmark.get_unit() and
+* Update perf dependency to 0.7.10 to get Benchmark.get_unit() and
   BenchmarkSuite.get_metadata()
 
 Version 0.2.1 (2016-09-10)

@@ -43,7 +43,7 @@ docutils==0.12
 # ------------------------
 
 six==1.10.0
-perf==0.7.9
+perf==0.7.10
 
 
 # Benchmarks dependencies
