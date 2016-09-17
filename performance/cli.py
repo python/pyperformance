@@ -39,12 +39,6 @@ def _add_run_options(cmd):
                       help=("Comma-separated list of environment variable names"
                             " that are inherited from the parent environment"
                             " when running benchmarking subprocesses."))
-    cmd.add_argument("-C", "--control_label", metavar="LABEL",
-                      action="store", default="",
-                      help="Optional label for the control binary")
-    cmd.add_argument("-E", "--experiment_label", metavar="LABEL",
-                      action="store", default="",
-                      help="Optional label for the experiment binary")
     cmd.add_argument("--affinity", metavar="CPU_LIST", default=None,
                       help=("Specify CPU affinity for benchmark runs. This "
                             "way, benchmarks can be forced to run on a given "

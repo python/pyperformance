@@ -13,8 +13,7 @@ except ImportError:
 import perf
 
 import performance
-from performance.venv import interpreter_version, which
-from performance.compare import BenchmarkResult, compare_results
+from performance.venv import interpreter_version
 
 
 class BenchmarkException(Exception):
@@ -171,48 +170,8 @@ def FilterBenchmarks(benchmarks, bench_funcs, python):
     return benchmarks
 
 
-def display_suite(bench_suite):
-    for bench in bench_suite.get_benchmarks():
-        print()
-        print("### %s ###" % bench.get_name())
-        print(bench)
-
-
-def check_existing(filename):
-    if os.path.exists(filename):
-        print("ERROR: the output file %s already exists!" % filename)
-        sys.exit(1)
-
-
-def cmd_run(parser, options, bench_funcs, bench_groups):
-    print("Python benchmark suite %s" % performance.__version__)
-    print()
-
-    base = sys.executable
-
-    # Get the full path since child processes are run in an empty environment
-    # without the PATH variable
-    base = which(base)
-
-    if options.output:
-        check_existing(options.output)
-
-    options.base_binary = base
-
-    if not options.control_label:
-        options.control_label = options.base_binary
-
-    base_args = options.args.split()
-    base_cmd_prefix = [base] + base_args
-
-    logging.basicConfig(level=logging.INFO)
-
-    should_run = ParseBenchmarksOption(options.benchmarks, bench_groups,
-                                       options.fast or options.debug_single_sample)
-
-    should_run = FilterBenchmarks(should_run, bench_funcs, base_cmd_prefix)
-
-    base_suite = perf.BenchmarkSuite()
+def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
+    suite = perf.BenchmarkSuite()
     to_run = list(sorted(should_run))
     run_count = str(len(to_run))
     for index, name in enumerate(to_run):
@@ -220,8 +179,6 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
         print("[%s/%s] %s..." %
               (str(index+1).rjust(len(run_count)), run_count, name))
         sys.stdout.flush()
-
-        options.benchmark_name = name  # Easier than threading this everywhere.
 
         def add_bench(dest_suite, bench):
             if isinstance(bench, perf.BenchmarkSuite):
@@ -232,12 +189,37 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
                 dest_suite.add_benchmark(bench)
 
         try:
-            bench = func(base_cmd_prefix, options)
+            bench = func(cmd_prefix, options)
         except Exception as exc:
             print("ERROR: Benchmark %s failed: %s" % (name, exc))
             sys.exit(1)
 
-        add_bench(base_suite, bench)
+        add_bench(suite, bench)
+
+    return suite
+
+
+def cmd_run(parser, options, bench_funcs, bench_groups):
+    logging.basicConfig(level=logging.INFO)
+
+    print("Python benchmark suite %s" % performance.__version__)
+    print()
+
+    if options.output and os.path.exists(options.output):
+        print("ERROR: the output file %s already exists!" % options.output)
+        sys.exit(1)
+
+    if not os.path.isabs(sys.executable):
+        print("ERROR: sys.executable is not an absolute path")
+        sys.exit(1)
+    cmd_prefix = [sys.executable] + options.args.split()
+
+    should_run = ParseBenchmarksOption(options.benchmarks, bench_groups,
+                                       options.fast or options.debug_single_sample)
+
+    should_run = FilterBenchmarks(should_run, bench_funcs, cmd_prefix)
+
+    suite = run_benchmarks(bench_funcs, should_run, cmd_prefix, options)
 
     print()
     print("Report on %s" % " ".join(platform.uname()))
@@ -245,12 +227,15 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
         print("Total CPU cores:", multiprocessing.cpu_count())
 
     if options.output:
-        base_suite.dump(options.output)
+        suite.dump(options.output)
 
     if options.append:
-        perf.add_runs(options.append, base_suite)
+        perf.add_runs(options.append, suite)
 
-    display_suite(base_suite)
+    for bench in suite.get_benchmarks():
+        print()
+        print("### %s ###" % bench.get_name())
+        print(bench)
 
 
 def cmd_list(options, bench_funcs, bench_groups):
