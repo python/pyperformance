@@ -159,9 +159,49 @@ def quantity_delta(base, changed):
         return "no change"
 
 
+def display_suite_metadata(suite, title=None):
+    metadata = suite.get_metadata()
+    empty = True
+    for key, fmt in (
+        ('platform', "Report on %s"),
+        ('cpu_count', "Number of logical CPUs: %s"),
+        ('python_version', "Python version: %s"),
+    ):
+        if key not in metadata:
+            continue
+
+        empty = False
+        if title:
+            print(title)
+            print("=" * len(title))
+            print()
+            title = None
+
+        text = fmt % metadata[key]
+        print(text)
+
+    if not empty:
+        print()
+
+
+def display_benchmark_suite(suite):
+    display_suite_metadata(suite)
+
+    for bench in suite.get_benchmarks():
+        print("### %s ###" % bench.get_name())
+        print(bench)
+        print()
+
+
+def cmd_show(options):
+    suite = perf.BenchmarkSuite.load(options.filename)
+    display_benchmark_suite(suite)
+
+
 def compare_results(options):
     base_label = os.path.basename(options.baseline_filename)
     changed_label = os.path.basename(options.changed_filename)
+
     base_suite = perf.BenchmarkSuite.load(options.baseline_filename)
     changed_suite = perf.BenchmarkSuite.load(options.changed_filename)
 
@@ -183,6 +223,9 @@ def compare_results(options):
             shown.append((name, result))
         else:
             hidden.append((name, result))
+
+    display_suite_metadata(base_suite, title=base_label)
+    display_suite_metadata(changed_suite, title=changed_label)
 
     if options.output_style == "normal":
         for name, result in shown:

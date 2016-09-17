@@ -42,6 +42,13 @@ def _main(venv):
     shutil.rmtree(egg_info)
 
     run_bench(python, script, 'venv')
+
+    for filename in (
+        os.path.join('performance', 'tests', 'data', 'py2.json'),
+        os.path.join('performance', 'tests', 'data', 'mem1.json'),
+    ):
+        run_bench(python, script, 'show', filename)
+
     run_bench(python, script, 'list')
     run_bench(python, script, 'list_groups')
 

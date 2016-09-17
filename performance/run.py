@@ -13,6 +13,7 @@ except ImportError:
 import perf
 
 import performance
+from performance.compare import display_benchmark_suite
 from performance.venv import interpreter_version
 
 
@@ -199,28 +200,6 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
     print()
 
     return suite
-
-
-def display_benchmark_suite(suite):
-    metadata = suite.get_metadata()
-    for key, fmt in (
-        ('platform', "Report on %s"),
-        ('cpu_count', "Number of logical CPUs: %s"),
-        ('python_version', "Python version: %s"),
-    ):
-        if key in metadata:
-            text = fmt % metadata[key]
-            print(text)
-
-    for bench in suite.get_benchmarks():
-        print()
-        print("### %s ###" % bench.get_name())
-        print(bench)
-
-
-def cmd_show(options):
-    suite = perf.BenchmarkSuite.load(options.filename)
-    display_benchmark_suite(suite)
 
 
 def cmd_run(parser, options, bench_funcs, bench_groups):

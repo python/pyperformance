@@ -153,8 +153,8 @@ def _main():
     if not options.inside_venv:
         exec_in_virtualenv(options)
 
-    from performance.run import cmd_run, cmd_show, cmd_list
-    from performance.compare import cmd_compare
+    from performance.run import cmd_run, cmd_list
+    from performance.compare import cmd_compare, cmd_show
     from performance.benchmarks import get_benchmark_groups
 
     if options.action == 'run':
