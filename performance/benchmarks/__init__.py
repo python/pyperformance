@@ -49,7 +49,7 @@ def BM_PyBench(python, options):
             benchmark.update_metadata({'performance_version': version})
         return suite
     except subprocess.CalledProcessError as exc:
-        return BenchmarkError(exc)
+        return BenchmarkException(exc)
 
 
 @VersionRange()

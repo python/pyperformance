@@ -8,6 +8,16 @@ import statistics
 import perf
 
 
+def average(bench):
+    return bench.median()
+
+
+def stdev(bench):
+    center = average(bench)
+    samples = bench.get_samples()
+    return statistics.stdev(samples, center)
+
+
 def format_csv(value):
     abs_value = abs(value)
     # keep at least 3 significant digits, but also try to avoid too many zeros
@@ -39,12 +49,16 @@ def _FormatPerfDataForTable(base_label, changed_label, results):
     table = [("Benchmark", base_label, changed_label, "Change", "Significance")]
 
     for (bench_name, result) in results:
+        avg_base = average(result.base)
+        avg_changed = average(result.changed)
+        delta_avg = time_delta(result.base, result.changed)
+        msg = t_msg(result.base, result.changed)[0]
         table.append((bench_name,
                       # Limit the precision for conciseness in the table.
-                      str(round(result.avg_base, 2)),
-                      str(round(result.avg_changed, 2)),
-                      result.delta_avg,
-                      result.t_msg.strip()))
+                      str(round(avg_base, 2)),
+                      str(round(avg_changed, 2)),
+                      delta_avg,
+                      msg))
 
     return table
 
@@ -62,10 +76,8 @@ def FormatOutputAsTable(base_label, changed_label, results):
     Returns:
         A string holding the desired ASCII-art table.
     """
-    if isinstance(results[0][1], BenchmarkResult):
-        table = _FormatPerfDataForTable(base_label, changed_label, results)
-    else:
-        raise TypeError("Unknown result type: %r" % type(results[0][1]))
+
+    table = _FormatPerfDataForTable(base_label, changed_label, results)
 
     # Columns with None values are skipped
     skipped_cols = set()
@@ -101,92 +113,84 @@ def FormatOutputAsTable(base_label, changed_label, results):
     return "\n".join(output)
 
 
-class BaseBenchmarkResult(object):
-    always_display = True
+def t_msg(base, changed):
+    if base.get_nsample() < 2 or changed.get_nsample() < 2:
+        return ("(benchmark only contains a single sample)", True)
 
-    def __str__(self):
-        raise NotImplementedError
+    avg_base = average(base)
+    avg_changed = average(changed)
 
-    def as_csv(self):
-        raise NotImplementedError
+    msg = "Not significant"
+    significant = False
 
-
-class SimpleBenchmarkResult(BaseBenchmarkResult):
-    def __init__(self, base, changed):
-        self.base = base
-
+    # Due to inherent measurement imprecisions, variations of less than 1%
+    # are automatically considered insignificant. This helps present
+    # a clear picture to the user.
+    if abs(avg_base - avg_changed) > (avg_base + avg_changed) * 0.01:
         base_times = base.get_samples()
         changed_times = changed.get_samples()
 
-        self.base_time = base_times[0]
-        self.changed_time = changed_times[0]
+        significant, t_score = perf.is_significant(base_times, changed_times)
+        if significant:
+            msg = "Significant (t=%.2f)" % t_score
 
-    def __str__(self):
-        format_sample = self.base.format_sample
-        time_delta = TimeDelta(self.base_time, self.changed_time)
-        return ("%s -> %s: %s"
-                % (format_sample(self.base_time),
-                   format_sample(self.changed_time),
-                   time_delta))
-
-    def as_csv(self):
-        # Base, changed
-        return [format_csv(self.base_time),
-                format_csv(self.changed_time)]
+    return (msg, significant)
 
 
-# FIXME: use perf module, remove this class
-class BenchmarkResult(BaseBenchmarkResult):
+class BenchmarkResult(object):
     """An object representing data from a succesful benchmark run."""
 
     def __init__(self, base, changed):
-        # Why do we need to sort?
-        base_times = sorted(base.get_samples())
-        changed_times = sorted(changed.get_samples())
+        if base.get_nsample() != changed.get_nsample():
+            raise RuntimeError("base and changed don't have "
+                               "the same number of samples")
 
         self.base = base
         self.changed = changed
-        self.min_base      = min(base_times)
-        self.min_changed   = max(base_times)
-        self.delta_min     = TimeDelta(self.min_base, self.min_changed)
-        # FIXME: rename avg to median
-        self.avg_base      = statistics.median(base_times)
-        self.avg_changed   = statistics.median(changed_times)
-        self.delta_avg     = TimeDelta(self.avg_base, self.avg_changed)
-        self.std_base      = statistics.stdev(base_times, self.avg_base)
-        self.std_changed   = statistics.stdev(changed_times, self.avg_changed)
-        self.delta_std     = QuantityDelta(self.std_base, self.std_changed)
 
-        t_msg = "Not significant\n"
-        significant = False
-        # Due to inherent measurement imprecisions, variations of less than 1%
-        # are automatically considered insignificant. This helps present
-        # a clear picture to the user.
-        if abs(self.avg_base - self.avg_changed) > (self.avg_base + self.avg_changed) * 0.01:
-            significant, t_score = perf.is_significant(base_times, changed_times)
-            if significant:
-                t_msg = "Significant (t=%.2f)\n" % t_score
-
-        self.t_msg         = t_msg
-        self.always_display = significant
+    def always_display(self):
+        msg, significant = t_msg(self.base, self.changed)
+        return significant
 
     def __str__(self):
-        base_stdev = statistics.stdev(self.base.get_samples())
-        changed_stdev = statistics.stdev(self.changed.get_samples())
-        values = (self.base.median(), base_stdev,
-                  self.changed.median(), changed_stdev )
-        text = "%s +- %s -> %s +- %s" % self.base.format_samples(values)
-        return ("Median +- Std dev: %s: %s\n%s"
-                 % (text, self.delta_avg, self.t_msg))
+        if self.base.get_nsample() > 1:
+            base_stdev = stdev(self.base)
+            changed_stdev = stdev(self.changed)
+            values = (average(self.base), base_stdev,
+                      average(self.changed), changed_stdev)
+            text = "%s +- %s -> %s +- %s" % self.base.format_samples(values)
 
-    def as_csv(self):
-        # Min base, min changed
-        base = self.base.median()
-        changed = self.changed.median()
-        return [format_csv(base), format_csv(changed)]
+            msg = t_msg(self.base, self.changed)[0]
+            delta_avg = time_delta(self.base, self.changed)
+            return ("Median +- Std dev: %s: %s\n%s"
+                     % (text, delta_avg, msg))
+        else:
+            format_sample = self.base.format_sample
+            base = average(self.base)
+            changed = average(self.changed)
+            delta_avg = time_delta(self.base, self.changed)
+            return ("%s -> %s: %s"
+                    % (format_sample(base),
+                       format_sample(changed),
+                       delta_avg))
 
 
+# FIXME: remove this function
 def TimeDelta(old, new):
+    if old == 0 or new == 0:
+        return "incomparable (one result was zero)"
+    if new > old:
+        return "%.2fx slower" % (new / old)
+    elif new < old:
+        return "%.2fx faster" % (old / new)
+    else:
+        return "no change"
+
+
+def time_delta(base, changed):
+    old = average(base)
+    new = average(changed)
+
     if old == 0 or new == 0:
         return "incomparable (one result was zero)"
     if new > old:
@@ -216,16 +220,7 @@ def bench_to_data(base, changed):
         raise ValueError("not the same benchmark: %s != %s"
                          % (name, name2))
 
-    if base.get_nsample() != changed.get_nsample():
-        raise RuntimeError("base and changed don't have "
-                           "the same number of samples")
-
-    if base.get_nsample() == 1:
-        result = SimpleBenchmarkResult(base, changed)
-    else:
-        result = BenchmarkResult(base, changed)
-
-    return result
+    return BenchmarkResult(base, changed)
 
 
 def compare_results(options):
@@ -247,16 +242,17 @@ def compare_results(options):
     shown = []
     for result in results:
         name = result.base.get_name()
-        if result.always_display or options.verbose:
+        if result.always_display() or options.verbose:
             shown.append((name, result))
         else:
             hidden.append((name, result))
 
     if options.output_style == "normal":
         for name, result in shown:
-            print()
             print("###", name, "###")
             print(result)
+            print()
+
     elif options.output_style == "table":
         if shown:
             print(FormatOutputAsTable(base_label,
@@ -295,4 +291,7 @@ def cmd_compare(options):
             writer.writerow(['Benchmark', 'Base', 'Changed'])
             for result in results:
                 name = result.base.get_name()
-                writer.writerow([name] + result.as_csv())
+                base = average(result.base)
+                changed = average(result.changed)
+                row = [name, format_csv(base), format_csv(changed)]
+                writer.writerow(row)

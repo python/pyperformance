@@ -58,14 +58,15 @@ class CompareTests(unittest.TestCase):
             Median +- Std dev: 11.4 ms +- 2.1 ms -> 13.6 ms +- 1.3 ms: 1.19x slower
             Significant (t=-3.38)
 
-        '''))
+        ''').lstrip())
 
     def test_compare_single_sample(self):
         stdout = self.compare(dataset='mem')
         self.assertEqual(stdout, textwrap.dedent('''
             ### call_simple ###
             8085504 sec -> 8089600 sec: 1.00x slower
-        '''))
+
+        ''').lstrip())
 
     def test_csv(self):
         with tempfile.NamedTemporaryFile("w") as tmp:
@@ -87,6 +88,16 @@ class CompareTests(unittest.TestCase):
             +=============+==========+==========+==============+=======================+
             | call_simple | 0.01     | 0.01     | 1.19x slower | Significant (t=-3.38) |
             +-------------+----------+----------+--------------+-----------------------+
+        ''').lstrip())
+
+    def test_compare_table_single_sample(self):
+        stdout = self.compare("-O", "table", dataset='mem')
+        self.assertEqual(stdout, textwrap.dedent('''
+            +-------------+-----------+-----------+--------------+-------------------------------------------+
+            | Benchmark   | mem1.json | mem2.json | Change       | Significance                              |
+            +=============+===========+===========+==============+===========================================+
+            | call_simple | 8085504.0 | 8089600.0 | 1.00x slower | (benchmark only contains a single sample) |
+            +-------------+-----------+-----------+--------------+-------------------------------------------+
         ''').lstrip())
 
 

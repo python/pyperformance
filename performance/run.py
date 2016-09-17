@@ -14,21 +14,12 @@ import perf
 
 import performance
 from performance.venv import interpreter_version, which
-from performance.compare import BaseBenchmarkResult, compare_results
+from performance.compare import BenchmarkResult, compare_results
 
 
 class BenchmarkException(Exception):
     pass
 
-
-class BenchmarkError(BaseBenchmarkResult):
-    """Object representing the error from a failed benchmark run."""
-
-    def __init__(self, e):
-        self.msg = str(e)
-
-    def __str__(self):
-        return self.msg
 
 
 ### Utility functions
