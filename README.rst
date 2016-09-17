@@ -54,6 +54,7 @@ tested Python version.
 Actions::
 
     run                 Run benchmarks on the running python
+    show                Display a benchmark file
     compare             Compare two benchmark files
     list                List benchmarks of the running Python
     list_groups         List benchmark groups of the running Python
@@ -88,6 +89,14 @@ Options of the ``run`` command::
                         not changed_python.
   --append FILENAME     Add runs to an existing file, or create it if it
                         doesn't exist
+
+show
+----
+
+Usage::
+
+    show FILENAME
+
 
 compare
 -------
@@ -254,12 +263,13 @@ Changelog
 Version 0.2.2
 -------------
 
+* Add a new ``show`` command to display a benchmark files
 * CPython issue #26383; csv output: don't truncate digits for timings shorter
   than 1 us
-* compare: Fix the table output if benchmarks only contain a single sample
-* Remove unused -C/--control_label and -E/--experiment_label options
 * compare: Use sample unit of benchmarks, format values in the table
   output using the unit
+* compare: Fix the table output if benchmarks only contain a single sample
+* Remove unused -C/--control_label and -E/--experiment_label options
 * Update perf dependency to 0.7.9 to get Benchmark.get_unit() and
   BenchmarkSuite.get_metadata()
 

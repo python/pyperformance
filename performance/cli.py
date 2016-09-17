@@ -80,6 +80,11 @@ def parse_args():
                       help="Add runs to an existing file, or create it "
                            "if it doesn't exist")
 
+    # show
+    cmd = subparsers.add_parser('show', help='Display a benchmark file')
+    cmd.add_argument("filename", metavar="FILENAME")
+    cmds.append(cmd)
+
     # compare
     cmd = subparsers.add_parser('compare', help='Compare two benchmark files')
     cmds.append(cmd)
@@ -148,13 +153,15 @@ def _main():
     if not options.inside_venv:
         exec_in_virtualenv(options)
 
-    from performance.run import cmd_run, cmd_list
+    from performance.run import cmd_run, cmd_show, cmd_list
     from performance.compare import cmd_compare
     from performance.benchmarks import get_benchmark_groups
 
     if options.action == 'run':
         bench_funcs, bench_groups = get_benchmark_groups()
         cmd_run(parser, options, bench_funcs, bench_groups)
+    elif options.action == 'show':
+        cmd_show(options)
     elif options.action == 'compare':
         cmd_compare(options)
     elif options.action in ('list', 'list_groups'):

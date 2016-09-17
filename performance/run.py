@@ -196,7 +196,31 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
 
         add_bench(suite, bench)
 
+    print()
+
     return suite
+
+
+def display_benchmark_suite(suite):
+    metadata = suite.get_metadata()
+    for key, fmt in (
+        ('platform', "Report on %s"),
+        ('cpu_count', "Number of logical CPUs: %s"),
+        ('python_version', "Python version: %s"),
+    ):
+        if key in metadata:
+            text = fmt % metadata[key]
+            print(text)
+
+    for bench in suite.get_benchmarks():
+        print()
+        print("### %s ###" % bench.get_name())
+        print(bench)
+
+
+def cmd_show(options):
+    suite = perf.BenchmarkSuite.load(options.filename)
+    display_benchmark_suite(suite)
 
 
 def cmd_run(parser, options, bench_funcs, bench_groups):
@@ -221,21 +245,13 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
 
     suite = run_benchmarks(bench_funcs, should_run, cmd_prefix, options)
 
-    print()
-    print("Report on %s" % " ".join(platform.uname()))
-    if multiprocessing:
-        print("Total CPU cores:", multiprocessing.cpu_count())
-
     if options.output:
         suite.dump(options.output)
 
     if options.append:
         perf.add_runs(options.append, suite)
 
-    for bench in suite.get_benchmarks():
-        print()
-        print("### %s ###" % bench.get_name())
-        print(bench)
+    display_benchmark_suite(suite)
 
 
 def cmd_list(options, bench_funcs, bench_groups):
