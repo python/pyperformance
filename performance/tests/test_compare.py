@@ -64,7 +64,7 @@ class CompareTests(unittest.TestCase):
         stdout = self.compare(dataset='mem')
         self.assertEqual(stdout, textwrap.dedent('''
             ### call_simple ###
-            8085504 sec -> 8089600 sec: 1.00x slower
+            7896.0 kB -> 7900.0 kB: 1.00x larger
 
         ''').lstrip())
 
@@ -86,7 +86,7 @@ class CompareTests(unittest.TestCase):
             +-------------+----------+----------+--------------+-----------------------+
             | Benchmark   | py2.json | py3.json | Change       | Significance          |
             +=============+==========+==========+==============+=======================+
-            | call_simple | 0.01     | 0.01     | 1.19x slower | Significant (t=-3.38) |
+            | call_simple | 11.4 ms  | 13.6 ms  | 1.19x slower | Significant (t=-3.38) |
             +-------------+----------+----------+--------------+-----------------------+
         ''').lstrip())
 
@@ -96,7 +96,7 @@ class CompareTests(unittest.TestCase):
             +-------------+-----------+-----------+--------------+-------------------------------------------+
             | Benchmark   | mem1.json | mem2.json | Change       | Significance                              |
             +=============+===========+===========+==============+===========================================+
-            | call_simple | 8085504.0 | 8089600.0 | 1.00x slower | (benchmark only contains a single sample) |
+            | call_simple | 7896.0 kB | 7900.0 kB | 1.00x larger | (benchmark only contains a single sample) |
             +-------------+-----------+-----------+--------------+-------------------------------------------+
         ''').lstrip())
 

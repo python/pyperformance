@@ -18,45 +18,19 @@ def stdev(bench):
     return statistics.stdev(samples, center)
 
 
-def format_csv(value):
-    abs_value = abs(value)
-    # keep at least 3 significant digits, but also try to avoid too many zeros
-    if abs_value >= 1.0:
-        return "%.2f" % value
-    elif abs_value >= 1e-3:
-        return "%.5f" % value
-    elif abs_value >= 1e-6:
-        return "%.8f" % value
-    else:
-        return "%.11f" % value
-
-
 def _FormatPerfDataForTable(base_label, changed_label, results):
-    """Prepare performance data for tabular output.
-
-    Args:
-        base_label: label for the control binary.
-        changed_label: label for the experimental binary.
-        results: iterable of (bench_name, result) 2-tuples where bench_name is
-            the name of the benchmark being reported; and result is a
-            BenchmarkResult object.
-
-    Returns:
-        A list of 6-tuples, where each tuple corresponds to a row in the output
-        table, and each item in the tuples corresponds to a cell in the output
-        table.
-    """
     table = [("Benchmark", base_label, changed_label, "Change", "Significance")]
 
     for (bench_name, result) in results:
+        format_sample = result.base.format_sample
         avg_base = average(result.base)
         avg_changed = average(result.changed)
-        delta_avg = time_delta(result.base, result.changed)
+        delta_avg = quantity_delta(result.base, result.changed)
         msg = t_msg(result.base, result.changed)[0]
         table.append((bench_name,
                       # Limit the precision for conciseness in the table.
-                      str(round(avg_base, 2)),
-                      str(round(avg_changed, 2)),
+                      format_sample(avg_base),
+                      format_sample(avg_changed),
                       delta_avg,
                       msg))
 
@@ -64,19 +38,6 @@ def _FormatPerfDataForTable(base_label, changed_label, results):
 
 
 def FormatOutputAsTable(base_label, changed_label, results):
-    """Format a benchmark result in a PEP-fiendly ASCII-art table.
-
-    Args:
-        base_label: label to use for the baseline binary.
-        changed_label: label to use for the experimental binary.
-        results: list of (bench_name, result) 2-tuples, where bench_name is the
-            name of the just-run benchmark; and result is a BenchmarkResult
-            object.
-
-    Returns:
-        A string holding the desired ASCII-art table.
-    """
-
     table = _FormatPerfDataForTable(base_label, changed_label, results)
 
     # Columns with None values are skipped
@@ -141,16 +102,18 @@ class BenchmarkResult(object):
     """An object representing data from a succesful benchmark run."""
 
     def __init__(self, base, changed):
+        name = base.get_name()
+        name2 = changed.get_name()
+        if name2 != name:
+            raise ValueError("not the same benchmark: %s != %s"
+                             % (name, name2))
+
         if base.get_nsample() != changed.get_nsample():
             raise RuntimeError("base and changed don't have "
                                "the same number of samples")
 
         self.base = base
         self.changed = changed
-
-    def always_display(self):
-        msg, significant = t_msg(self.base, self.changed)
-        return significant
 
     def __str__(self):
         if self.base.get_nsample() > 1:
@@ -161,66 +124,39 @@ class BenchmarkResult(object):
             text = "%s +- %s -> %s +- %s" % self.base.format_samples(values)
 
             msg = t_msg(self.base, self.changed)[0]
-            delta_avg = time_delta(self.base, self.changed)
+            delta_avg = quantity_delta(self.base, self.changed)
             return ("Median +- Std dev: %s: %s\n%s"
                      % (text, delta_avg, msg))
         else:
             format_sample = self.base.format_sample
             base = average(self.base)
             changed = average(self.changed)
-            delta_avg = time_delta(self.base, self.changed)
+            delta_avg = quantity_delta(self.base, self.changed)
             return ("%s -> %s: %s"
                     % (format_sample(base),
                        format_sample(changed),
                        delta_avg))
 
 
-# FIXME: remove this function
-def TimeDelta(old, new):
-    if old == 0 or new == 0:
-        return "incomparable (one result was zero)"
-    if new > old:
-        return "%.2fx slower" % (new / old)
-    elif new < old:
-        return "%.2fx faster" % (old / new)
-    else:
-        return "no change"
-
-
-def time_delta(base, changed):
+def quantity_delta(base, changed):
     old = average(base)
     new = average(changed)
+    is_time = (base.get_unit() == 'second')
 
     if old == 0 or new == 0:
         return "incomparable (one result was zero)"
     if new > old:
-        return "%.2fx slower" % (new / old)
+        if is_time:
+            return "%.2fx slower" % (new / old)
+        else:
+            return "%.2fx larger" % (new / old)
     elif new < old:
-        return "%.2fx faster" % (old / new)
+        if is_time:
+            return "%.2fx faster" % (old / new)
+        else:
+            return "%.2fx smaller" % (old / new)
     else:
         return "no change"
-
-
-def QuantityDelta(old, new):
-    if old == 0 or new == 0:
-        return "incomparable (one result was zero)"
-    if new > old:
-        return "%.4fx larger" % (new / old)
-    elif new < old:
-        return "%.4fx smaller" % (old / new)
-    else:
-        return "no change"
-
-
-# FIXME: remove this function
-def bench_to_data(base, changed):
-    name = base.get_name()
-    name2 = changed.get_name()
-    if name2 != name:
-        raise ValueError("not the same benchmark: %s != %s"
-                         % (name, name2))
-
-    return BenchmarkResult(base, changed)
 
 
 def compare_results(options):
@@ -229,20 +165,21 @@ def compare_results(options):
     base_suite = perf.BenchmarkSuite.load(options.baseline_filename)
     changed_suite = perf.BenchmarkSuite.load(options.changed_filename)
 
-    # FIXME: work on suites, not results
     results = []
     common = set(base_suite.get_benchmark_names()) & set(changed_suite.get_benchmark_names())
     for name in sorted(common):
         base_bench = base_suite.get_benchmark(name)
         changed_bench = changed_suite.get_benchmark(name)
-        result = bench_to_data(base_bench, changed_bench)
+        result = BenchmarkResult(base_bench, changed_bench)
         results.append(result)
 
     hidden = []
     shown = []
     for result in results:
         name = result.base.get_name()
-        if result.always_display() or options.verbose:
+
+        significant = t_msg(result.base, result.changed)[0]
+        if significant or options.verbose:
             shown.append((name, result))
         else:
             hidden.append((name, result))
@@ -282,16 +219,33 @@ def compare_results(options):
     return results
 
 
+def format_csv(value):
+    abs_value = abs(value)
+    # keep at least 3 significant digits, but also try to avoid too many zeros
+    if abs_value >= 1.0:
+        return "%.2f" % value
+    elif abs_value >= 1e-3:
+        return "%.5f" % value
+    elif abs_value >= 1e-6:
+        return "%.8f" % value
+    else:
+        return "%.11f" % value
+
+
+def write_csv(results, filename):
+    with open(filename, "w") as f:
+        writer = csv.writer(f)
+        writer.writerow(['Benchmark', 'Base', 'Changed'])
+        for result in results:
+            name = result.base.get_name()
+            base = average(result.base)
+            changed = average(result.changed)
+            row = [name, format_csv(base), format_csv(changed)]
+            writer.writerow(row)
+
+
 def cmd_compare(options):
     results = compare_results(options)
 
     if options.csv:
-        with open(options.csv, "w") as f:
-            writer = csv.writer(f)
-            writer.writerow(['Benchmark', 'Base', 'Changed'])
-            for result in results:
-                name = result.base.get_name()
-                base = average(result.base)
-                changed = average(result.changed)
-                row = [name, format_csv(base), format_csv(changed)]
-                writer.writerow(row)
+        write_csv(results, options.csv)

@@ -1,3 +1,5 @@
+* Don't use PYTHONPATH by default when creating the venv: add --inherit-environ
+  to be more explicit and avoid surprises
 * pybench: don't use private perf submodules/functions
 * performance.compare: don't use private perf submodules/functions
 * Remove deprecated threading tests?
