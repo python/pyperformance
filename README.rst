@@ -260,8 +260,8 @@ Available Benchmarks
 Changelog
 =========
 
-Version 0.2.2
--------------
+Version 0.2.2 (2016-09-19)
+--------------------------
 
 * Add a new ``show`` command to display a benchmark files
 * Issue #11: Display Python version in compare. Display also the performance
