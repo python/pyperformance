@@ -163,9 +163,10 @@ def display_suite_metadata(suite, title=None):
     metadata = suite.get_metadata()
     empty = True
     for key, fmt in (
+        ('performance_version', "Performance version: %s"),
+        ('python_version', "Python version: %s"),
         ('platform', "Report on %s"),
         ('cpu_count', "Number of logical CPUs: %s"),
-        ('python_version', "Python version: %s"),
     ):
         if key not in metadata:
             continue
