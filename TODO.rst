@@ -1,3 +1,9 @@
+* Add benchmarks from the PyPy benchmark suite:
+  https://bitbucket.org/pypy/benchmarks
+  and convince PyPy to use performance :-)
+* Add benchmarks from the Pyston benchmark suite:
+  https://github.com/dropbox/pyston-perf
+  and convince Pyston to use performance :-)
 * Don't use PYTHONPATH by default when creating the venv: add --inherit-environ
   to be more explicit and avoid surprises
 * pybench: don't use private perf submodules/functions
