@@ -217,6 +217,12 @@ def BM_Telco(python, options):
 
 
 @VersionRange()
+def BM_Fractions(python, options):
+    bm_path = Relative("bm_fractions.py")
+    return run_perf_script(python, options, bm_path, extra_args=['fractions'])
+
+
+@VersionRange()
 def BM_Hexiom2(python, options):
     bm_path = Relative("bm_hexiom2.py")
     return run_perf_script(python, options, bm_path)
