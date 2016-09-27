@@ -138,13 +138,18 @@ Advices helping to get make stable benchmarks:
   You should get the ``-flto`` option on GCC for example.
 
 * Use the ``--rigorous`` option of the ``run`` command
-* On Linux with multiple CPU cores: use CPU isolation, see ``isolcpus`` kernel
-  option
-* On Linux, use nohz_full kernel option (especially on isolated CPUs)
+* On Linux with multiple CPU cores: use CPU isolation, see ``isolcpus`` and
+  ``rcu_nocbs`` kernel option
 * On a laptop: plug the power cable.
 * For modern Intel CPUs: disable Turbo Boost
 
-Note: ASLR must *not* be disabled! (it's enabled by default on Linux)
+Notes:
+
+* If nohz_full kernel option is used, the CPU frequency must be fixed,
+  otherwise the CPU frequency will be instable. See `Bug 1378529: intel_pstate
+  driver doesn't support NOHZ_FULL
+  <https://bugzilla.redhat.com/show_bug.cgi?id=1378529>`_.
+* ASLR must *not* be disabled manually! (it's enabled by default on Linux)
 
 
 Notes
