@@ -31,7 +31,6 @@ Different from performance?
 
 Todo:
 
-* ai
 * bm_dulwich_log
 * bm_krakatau
 * bm_mdp
@@ -74,6 +73,7 @@ Deliberate choice to not add it:
 
 Done:
 
+* ai (called bm_nqueens in performance)
 * bm_chameleon
 * bm_mako
 * chaos
