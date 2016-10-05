@@ -268,7 +268,7 @@ Changelog
 Version 0.2.2 (2016-09-19)
 --------------------------
 
-* Add a new ``show`` command to display a benchmark files
+* Add a new ``show`` command to display a benchmark file
 * Issue #11: Display Python version in compare. Display also the performance
   version.
 * CPython issue #26383; csv output: don't truncate digits for timings shorter

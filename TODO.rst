@@ -18,6 +18,79 @@
 * html5lib: 1 warmup, 3 runs: run 2 is always 10% slower!?
 
 
+Port PyPy benchmarks
+====================
+
+Repository: https://bitbucket.org/pypy/benchmarks/
+
+Different from performance?
+
+* json_bench
+* nbody_modified
+* raytrace-simple
+
+Todo:
+
+* ai
+* bm_dulwich_log
+* bm_krakatau
+* bm_mdp
+* crypto_pyaes
+* deltablue
+* eparse
+* genshi_text
+* genshi_xml
+* pyflate-fast
+* pypy_interp
+* pyxl_bench
+* scimark_fft
+* scimark_lu
+* scimark_montecarlo
+* scimark_sor
+* scimark_sparsematmult
+* spambayes
+* sphinx
+* sqlalchemy_declarative
+* sqlalchemy_imperative
+* sqlitesynth
+* sympy_expand
+* sympy_integrate
+* sympy_str
+* sympy_sum
+* trans2_annotate
+* trans2_backendopt
+* trans2_database
+* trans2_rtype
+* trans2_source
+* twisted_iteration
+* twisted_names
+* twisted_pb
+* twisted_tcp
+
+Deliberate choice to not add it:
+
+* slowspitfire, spitfire, spitfire_cstringio: not on PyPI
+* rietveld: not on PyPy
+
+Done:
+
+* bm_chameleon
+* bm_mako
+* chaos
+* django (called django_template in performance)
+* fannkuch
+* float
+* go
+* hexiom2
+* html5lib
+* meteor-contest
+* nqueens
+* pidigits
+* richards
+* spectral-norm
+* telco
+
+
 pybench
 =======
 
