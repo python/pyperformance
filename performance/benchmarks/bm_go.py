@@ -449,6 +449,7 @@ def main(loops):
 
     return perf.perf_counter() - t0
 
+
 if __name__ == "__main__":
     kw = {}
     if perf.python_has_jit():
