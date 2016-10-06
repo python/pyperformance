@@ -194,72 +194,101 @@ will run benchmarks like::
 Benchmarks
 ==========
 
-Notable Benchmark groups
-------------------------
+Available Groups
+----------------
 
-Like individual benchmarks (see "Available benchmarks" below), benchmarks
-group are allowed after the `-b` option.
+Like individual benchmarks (see "Available benchmarks" below), benchmarks group
+are allowed after the `-b` option. Use ``python3 -m performance list_groups``
+to list groups and their benchmarks.
 
-- 2n3 - benchmarks compatible with both Python 2 and Python 3
-- apps - "high-level" applicative benchmarks
-- serialize - various serialization libraries
-- template - various third-party template engines
+Available benchmark groups:
+
+* ``2n3``: Benchmarks compatible with both Python 2 and Python 3
+* ``all``: Group including all benchmarks
+* ``apps``: "High-level" applicative benchmarks (2to3, Chameleon, Tornado HTTP)
+* ``calls``: Microbenchmarks on function and method calls
+* ``default``: Group of benchmarks run by default by the ``run`` command
+* ``etree``: XML ElementTree
+* ``logging``: Benchmarks on the ``logging`` module
+* ``math``: Float and integers
+* ``regex``: Collection of regular expression benchmarks
+* ``serialize``: Benchmarks on ``pickle`` and ``json`` modules
+* ``startup``: Collection of microbenchmarks focused on Python interpreter
+  start-up time.
+* ``template``: Templating libraries
+
+There is also a disabled ``threading`` group: collection of microbenchmarks for
+Python's threading support. These benchmarks come in pairs: an iterative
+version (iterative_foo), and a multithreaded version (threaded_foo).
 
 
 Available Benchmarks
 --------------------
 
-- 2to3 - have the 2to3 tool translate itself.
-- calls - collection of function and method call microbenchmarks:
-    - call_simple - positional arguments-only function calls.
-    - call_method - positional arguments-only method calls.
-    - call_method_slots - method calls on classes that use __slots__.
-    - call_method_unknown - method calls where the receiver cannot be predicted.
-- django_template - use the Django template system to build a 150x150-cell HTML table.
-- fastpickle - use the cPickle module to pickle a variety of datasets.
-- fastunnpickle - use the cPickle module to unnpickle a variety of datasets.
-- float - artificial, floating point-heavy benchmark originally used by Factor.
-- html5lib - parse the HTML 5 spec using html5lib.
-- html5lib_warmup - like html5lib, but gives the JIT a chance to warm up by
-                    doing the iterations in the same process.
-- mako - use the Mako template system to build a 150x150-cell HTML table.
-- nbody - the N-body Shootout benchmark. Microbenchmark for floating point
-          operations.
-- nqueens - small solver for the N-Queens problem.
-- pickle - use the cPickle and pure-Python pickle modules to pickle and unpickle
-           a variety of datasets.
-- pickle_dict - microbenchmark; use the cPickle module to pickle a lot of dicts.
-- pickle_list - microbenchmark; use the cPickle module to pickle a lot of lists.
-- pybench - run the standard Python PyBench benchmark suite. This is considered
-            an unreliable, unrepresentative benchmark; do not base decisions
-            off it. It is included only for completeness.
-- regex - collection of regex benchmarks:
-    - regex_compile - stress the performance of Python's regex compiler, rather
-                      than the regex execution speed.
-    - regex_effbot - some of the original benchmarks used to tune mainline
-                     Python's current regex engine.
-    - regex_v8 - Python port of V8's regex benchmark.
-- richards - the classic Richards benchmark.
-- slowpickle - use the pure-Python pickle module to pickle a variety of
-               datasets.
-- slowunpickle - use the pure-Python pickle module to unpickle a variety of
-                 datasets.
-- spambayes - run a canned mailbox through a SpamBayes ham/spam classifier.
-- startup - collection of microbenchmarks focused on Python interpreter
-            start-up time:
+- ``2to3`` - have the 2to3 tool translate itself.
+- ``call_method`` - positional arguments-only method calls.
+- ``call_method_slots`` - method calls on classes that use __slots__.
+- ``call_method_unknown`` - method calls where the receiver cannot be predicted.
+- ``call_simple`` - positional arguments-only function calls.
+- ``chameleon``
+- ``chaos``
+- ``django_template`` - use the Django template system to build a 150x150-cell
+  HTML table.
+- ``etree_generate``
+- ``etree_iterparse``
+- ``etree_parse``
+- ``etree_process``
+- ``fannkuch``
+- ``fastpickle`` - use the cPickle module to pickle a variety of datasets.
+- ``fastunpickle`` - use the cPickle module to unnpickle a variety of datasets.
+- ``float`` - artificial, floating point-heavy benchmark originally used
+  by Factor.
+- ``formatted_logging``
+- ``go``
+- ``hexiom2``
+- ``hg_startup`` - get Mercurial's help screen.
+- ``html5lib`` - parse the HTML 5 spec using html5lib.
+- ``json_dump_v2``
+- ``json_load``
+- ``mako`` - use the Mako template system to build a 150x150-cell HTML table.
+- ``meteor_contest``
+- ``nbody`` - the N-body Shootout benchmark. Microbenchmark for floating point
+  operations.
+- ``normal_startup``
+- ``nqueens`` - small solver for the N-Queens problem.
+- ``pathlib``
+- ``pickle_dict`` - microbenchmark; use the cPickle module to pickle a lot of dicts.
+- ``pickle_list`` - microbenchmark; use the cPickle module to pickle a lot of lists.
+- ``pidigits``
+- ``pybench`` - run the standard Python PyBench benchmark suite. This is
+  considered an unreliable, unrepresentative benchmark; do not base decisions
+  off it. It is included only for completeness.
+- ``raytrace``
+- ``regex_compile`` - stress the performance of Python's regex compiler,
+  rather than the regex execution speed.
+- ``regex_effbot`` - some of the original benchmarks used to tune mainline
+  Python's current regex engine.
+- ``regex_v8`` - Python port of V8's regex benchmark.
+- ``richards`` - the classic Richards benchmark.
+- ``silent_logging``
+- ``simple_logging``
+- ``slowpickle`` - use the pure-Python pickle module to pickle a variety of
+  datasets.
+- ``slowunpickle`` - use the pure-Python pickle module to unpickle a variety
+  of datasets.
+- ``spambayes`` - run a canned mailbox through a SpamBayes ham/spam classifier.
+- ``spectral_norm``
+- ``startup_nosite``
+- ``telco``
+- ``tornado_http``
+- ``unpack_sequence`` - microbenchmark for unpacking lists and tuples.
+- ``unpickle_list``
 
-    - hg_startup - get Mercurial's help screen.
-    - normal_startup - start Python, then exit immediately.
-    - startup_nosite - start Python with the -S option, then exit immediately.
+There are also two disabled benchmarks:
 
-- threading - collection of microbenchmarks for Python's threading support.
-              These benchmarks come in pairs: an iterative version
-              (iterative_foo), and a multithreaded version (threaded_foo).
-
-    - threaded_count, iterative_count - spin in a while loop, counting down from a large number.
-
-- unpack_sequence - microbenchmark for unpacking lists and tuples.
-- unpickle - use the cPickle module to unpickle a variety of datasets.
+- ``threaded_count`` - spin in a while loop, counting down from a large number
+  in a thread.
+- ``iterative_count`` - spin in a while loop, counting down from a large number.
 
 
 Changelog

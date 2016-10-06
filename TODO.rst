@@ -1,3 +1,5 @@
+* Fix confusion on benchmark names between the list command,
+  benchmarks/__init__.py names and benchmark resulting names
 * Add benchmarks from the PyPy benchmark suite:
   https://bitbucket.org/pypy/benchmarks
   and convince PyPy to use performance :-)
