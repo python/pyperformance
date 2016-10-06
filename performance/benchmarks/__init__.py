@@ -429,7 +429,12 @@ def BM_scimark_FFT(python, options):
     return run_perf_script(python, options, bm_path, extra_args=['FFT'])
 
 
-# End benchmarks, begin main entry point support.
+def BM_dulwich_log(python, options):
+    bm_path = Relative("bm_dulwich_log.py")
+    return run_perf_script(python, options, bm_path)
+
+
+### End benchmarks, begin main entry point support.
 
 def _FindAllBenchmarks(namespace):
     return dict((name[3:].lower(), func)

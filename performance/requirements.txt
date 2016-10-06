@@ -59,6 +59,7 @@ perf==0.7.12
 Chameleon==2.25                           # bm_chameleon
 Django==1.10.2                            # bm_django_template
 Mako==1.0.4                               # bm_mako
+dulwich==0.14.1                           # dulwich_log
 mercurial==3.9.1; python_version < '3.0'  # bm_hg_startup
 html5lib==0.999999999                     # bm_html5lib
 pathlib2==2.1.0; python_version < '3.4'   # bm_pathlib

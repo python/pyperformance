@@ -237,6 +237,8 @@ Available Benchmarks
 - ``detablue`` - DeltaBlue benchmark
 - ``django_template`` - use the Django template system to build a 150x150-cell
   HTML table.
+- ``dulwich_log``: Iterate on commits of the asyncio Git repository using
+  the Dulwich module
 - ``etree_generate``
 - ``etree_iterparse``
 - ``etree_parse``
@@ -327,6 +329,8 @@ Version 0.2.3
 * Add ``sympy``: Benchmark on SymPy
 * Add ``scimark`` benchmark
 * Add ``detablue``: DeltaBlue benchmark
+* Add ``dulwich_log``: Iterate on commits of the asyncio Git repository using
+  the Dulwich module
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results
 * Rename ``hexiom2`` benchmark to  ``hexiom``
