@@ -373,7 +373,7 @@ def main(loops):
     for i in range_it:
 
         c = PpmCanvas(100, 100, 'test_raytrace')
-        #c = PpmCanvas(640, 480, 'test_raytrace_big')
+        # c = PpmCanvas(640, 480, 'test_raytrace_big')
         s = Scene()
         s.addLight(Point(30, 30, 10))
         s.addLight(Point(-10, 100, 30))

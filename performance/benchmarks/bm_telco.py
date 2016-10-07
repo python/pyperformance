@@ -1,4 +1,4 @@
-#-*- coding: UTF-8 -*-
+# coding: UTF-8
 """ Telco Benchmark for measuring the performance of decimal calculations
 
 http://www2.hursley.ibm.com/decimal/telco.html

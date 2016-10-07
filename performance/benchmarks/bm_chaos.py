@@ -70,7 +70,7 @@ class Spline(object):
     def __init__(self, points, degree=3, knots=None):
         """Creates a Spline. points is a list of GVector, degree is the
 degree of the Spline."""
-        if knots == None:
+        if knots is None:
             self.knots = GetKnots(points, degree)
         else:
             if len(points) > len(knots) - degree + 1:

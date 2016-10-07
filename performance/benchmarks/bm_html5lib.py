@@ -5,8 +5,6 @@ The spec was pulled from http://svn.whatwg.org/webapps/index.
 """
 from __future__ import with_statement
 
-__author__ = "collinwinter@google.com (Collin Winter)"
-
 import StringIO
 import io
 import os.path
@@ -14,6 +12,9 @@ import os.path
 import html5lib
 import perf.text_runner
 from six.moves import xrange
+
+
+__author__ = "collinwinter@google.com (Collin Winter)"
 
 
 def bench_html5lib(loops, html_file):

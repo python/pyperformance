@@ -1,10 +1,10 @@
 
 """Simple, brute-force N-Queens solver."""
 
-__author__ = "collinwinter@google.com (Collin Winter)"
-
 import perf.text_runner
 from six.moves import xrange
+
+__author__ = "collinwinter@google.com (Collin Winter)"
 
 
 # Pure-Python implementation of itertools.permutations().

@@ -12,10 +12,10 @@ modified from the Shootout version:
 # Contributed by Kevin Carson.
 # Modified by Tupteq, Fredrik Johansson, and Daniel Nanz.
 
-__contact__ = "collinwinter@google.com (Collin Winter)"
-
 import perf.text_runner
 from six.moves import xrange
+
+__contact__ = "collinwinter@google.com (Collin Winter)"
 
 
 def combinations(l):

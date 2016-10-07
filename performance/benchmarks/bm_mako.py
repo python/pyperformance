@@ -8,8 +8,6 @@ Includes:
     -forloops
 """
 
-__author__ = "virhilo@gmail.com (Lukasz Fidosz)"
-
 import sys
 
 import perf.text_runner
@@ -21,6 +19,8 @@ import mako
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
+
+__author__ = "virhilo@gmail.com (Lukasz Fidosz)"
 
 LOREM_IPSUM = """Quisque lobortis hendrerit posuere. Curabitur
 aliquet consequat sapien molestie pretium. Nunc adipiscing luc

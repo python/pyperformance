@@ -4,19 +4,16 @@
 Run a canned mailbox through a SpamBayes ham/spam classifier.
 """
 
-__author__ = "skip.montanaro@gmail.com (Skip Montanaro)"
-__contact__ = "collinwinter@google.com (Collin Winter)"
-
-
-# Python imports
 import os.path
 
-# SpamBayes imports
 from spambayes import hammie, mboxutils
 
-# Local imports
 import perf.text_runner
 from six.moves import xrange
+
+
+__author__ = "skip.montanaro@gmail.com (Skip Montanaro)"
+__contact__ = "collinwinter@google.com (Collin Winter)"
 
 
 def test_spambayes(loops, messages, ham_classifier):

@@ -14,19 +14,17 @@ highly-efficient encoding for the n-1 following copies.
 
 from __future__ import division
 
-__author__ = "collinwinter@google.com (Collin Winter)"
-
-# Python imports
 import datetime
 import random
 import sys
 
-# Local imports
 import perf.text_runner
 import six
 from six.moves import xrange
 if six.PY3:
     long = int
+
+__author__ = "collinwinter@google.com (Collin Winter)"
 
 
 DICT = {

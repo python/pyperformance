@@ -142,7 +142,7 @@ def main(loops):
         solutions = []
         solve(SOLVE_ARG, 0, free, curr_board, pieces_left, solutions)
         # print len(solutions),  'solutions found\n'
-        #for i in (0, -1): print_board(solutions[i])
+        # for i in (0, -1): print_board(solutions[i])
 
     return perf.perf_counter() - t0
 

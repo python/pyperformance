@@ -426,7 +426,7 @@ def solve_step(prev, strategy, order, output, first=False):
         return solved(pos, output)
     else:
         for move in moves:
-            #print("Trying (%d, %d)" % (move[0], move[1]))
+            # print("Trying (%d, %d)" % (move[0], move[1]))
             ret = OPEN
             new_pos = pos.clone()
             play_move(new_pos, move)

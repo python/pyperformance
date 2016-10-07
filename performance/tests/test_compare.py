@@ -71,7 +71,7 @@ class CompareTests(unittest.TestCase):
 
     def test_csv(self):
         with tempfile.NamedTemporaryFile("w") as tmp:
-            stdout = self.compare("--csv", tmp.name)
+            self.compare("--csv", tmp.name)
 
             with io.open(tmp.name, "r") as fp:
                 csv = fp.read()

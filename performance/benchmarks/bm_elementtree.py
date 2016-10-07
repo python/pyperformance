@@ -8,21 +8,20 @@ parse a generated XML file, search it, create new XML trees from
 it and serialise the result.
 """
 
-__author__ = "stefan_ml@behnel.de (Stefan Behnel)"
-
-FALLBACK_ETMODULE = 'xml.etree.ElementTree'
-
-# Python imports
 import io
 import os
 import sys
 import tempfile
 from collections import defaultdict
 
-# Local imports
 import perf.text_runner
 import six
 from six.moves import xrange
+
+
+__author__ = "stefan_ml@behnel.de (Stefan Behnel)"
+
+FALLBACK_ETMODULE = 'xml.etree.ElementTree'
 
 
 def build_xml_tree(etree):
