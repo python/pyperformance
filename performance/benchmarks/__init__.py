@@ -1,18 +1,13 @@
 from __future__ import division, with_statement, print_function, absolute_import
 
-import os
 import subprocess
 
 import perf
 
 import performance
-from performance.venv import PERFORMANCE_ROOT
 from performance.run import (run_perf_script, copy_perf_options,
-                             BenchmarkException, CallAndCaptureOutput)
-
-
-def Relative(*path):
-    return os.path.join(PERFORMANCE_ROOT, 'benchmarks', *path)
+                             BenchmarkException, CallAndCaptureOutput,
+                             Relative)
 
 
 # Decorators for giving ranges of supported Python versions.
@@ -52,49 +47,40 @@ def BM_PyBench(python, options):
 
 
 def BM_2to3(python, options):
-    bm_path = Relative("bm_2to3.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "2to3")
 
 
 @VersionRange(None, '2.7')
 def BM_hg_startup(python, options):
-    bm_path = Relative("bm_hg_startup.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "hg_startup")
 
 
 def BM_Chameleon(python, options):
-    bm_path = Relative("bm_chameleon.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "chameleon")
 
 
 def BM_Tornado_Http(python, options):
-    bm_path = Relative("bm_tornado_http.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "tornado_http")
 
 
 def BM_Django_Template(python, options):
-    bm_path = Relative("bm_django_template.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "django_template")
 
 
 def BM_Float(python, options):
-    bm_path = Relative("bm_float.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "float")
 
 
 def BM_mako(python, options):
-    bm_path = Relative("bm_mako.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "mako")
 
 
 def BM_pathlib(python, options):
-    bm_path = Relative("bm_pathlib.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "pathlib")
 
 
 def _PickleBenchmark(python, options, *extra_args):
-    bm_path = Relative("bm_pickle.py")
-    return run_perf_script(python, options, bm_path,
+    return run_perf_script(python, options, "pickle",
                            extra_args=list(extra_args))
 
 
@@ -129,8 +115,7 @@ def BM_SlowUnpickle(python, options):
 
 
 def MeasureEtree(python, options, arg):
-    bm_path = Relative("bm_elementtree.py")
-    return run_perf_script(python, options, bm_path, extra_args=[arg])
+    return run_perf_script(python, options, "elementtree", extra_args=[arg])
 
 
 def BM_ETree_Parse(python, options):
@@ -150,8 +135,7 @@ def BM_ETree_Process(python, options):
 
 
 def _JSONBenchmark(python, options, arg):
-    bm_path = Relative("bm_json.py")
-    return run_perf_script(python, options, bm_path, extra_args=[arg])
+    return run_perf_script(python, options, "json", extra_args=[arg])
 
 
 def BM_JSON_Dump(python, options):
@@ -163,58 +147,47 @@ def BM_JSON_Load(python, options):
 
 
 def BM_JSON_Dump_V2(python, options):
-    bm_path = Relative("bm_json_dump_v2.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "json_dump_v2")
 
 
 def BM_NQueens(python, options):
-    bm_path = Relative("bm_nqueens.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "nqueens")
 
 
 def BM_Chaos(python, options):
-    bm_path = Relative("bm_chaos.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "chaos")
 
 
 def BM_Fannkuch(python, options):
-    bm_path = Relative("bm_fannkuch.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "fannkuch")
 
 
 def BM_Go(python, options):
-    bm_path = Relative("bm_go.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "go")
 
 
 def BM_Meteor_Contest(python, options):
-    bm_path = Relative("bm_meteor_contest.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "meteor_contest")
 
 
 def BM_Spectral_Norm(python, options):
-    bm_path = Relative("bm_spectral_norm.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "spectral_norm")
 
 
 def BM_Telco(python, options):
-    bm_path = Relative("bm_telco.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "telco")
 
 
 def BM_Hexiom(python, options):
-    bm_path = Relative("bm_hexiom.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "hexiom")
 
 
 def BM_Raytrace(python, options):
-    bm_path = Relative("bm_raytrace.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "raytrace")
 
 
 def _LoggingBenchmark(python, options, arg):
-    bm_path = Relative("bm_logging.py")
-    return run_perf_script(python, options, bm_path, extra_args=[arg])
+    return run_perf_script(python, options, "logging", extra_args=[arg])
 
 
 def BM_Silent_Logging(python, options):
@@ -230,30 +203,27 @@ def BM_Formatted_Logging(python, options):
 
 
 def BM_normal_startup(python, options):
-    bm_path = Relative("bm_startup.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "startup")
 
 
 def BM_startup_nosite(python, options):
-    bm_path = Relative("bm_startup.py")
-    return run_perf_script(python, options, bm_path, extra_args=["--no-site"])
+    return run_perf_script(python, options, "startup", extra_args=["--no-site"])
 
 
 def BM_regex_v8(python, options):
-    return run_perf_script(python, options, Relative("bm_regex_v8.py"))
+    return run_perf_script(python, options, "regex_v8")
 
 
 def BM_regex_effbot(python, options):
-    return run_perf_script(python, options, Relative("bm_regex_effbot.py"))
+    return run_perf_script(python, options, "regex_effbot")
 
 
 def BM_regex_compile(python, options):
-    return run_perf_script(python, options, Relative("bm_regex_compile.py"))
+    return run_perf_script(python, options, "regex_compile")
 
 
 def ThreadingBenchmark(python, options, bm_name):
-    bm_path = Relative("bm_threading.py")
-    return run_perf_script(python, options, bm_path, extra_args=[bm_name])
+    return run_perf_script(python, options, "threading", extra_args=[bm_name])
 
 
 def BM_threaded_count(python, options):
@@ -265,125 +235,101 @@ def BM_iterative_count(python, options):
 
 
 def BM_unpack_sequence(python, options):
-    bm_path = Relative("bm_unpack_sequence.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "unpack_sequence")
 
 
 def BM_call_simple(python, options):
-    bm_path = Relative("bm_call_simple.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "call_simple")
 
 
 def BM_call_method(python, options):
-    bm_path = Relative("bm_call_method.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "call_method")
 
 
 def BM_call_method_unknown(python, options):
-    bm_path = Relative("bm_call_method_unknown.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "call_method_unknown")
 
 
 def BM_call_method_slots(python, options):
-    bm_path = Relative("bm_call_method_slots.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "call_method_slots")
 
 
 def BM_nbody(python, options):
-    bm_path = Relative("bm_nbody.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "nbody")
 
 
 @VersionRange(None, '2.7')
 def BM_spambayes(python, options):
-    bm_path = Relative("bm_spambayes.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "spambayes")
 
 
 def BM_html5lib(python, options):
-    bm_path = Relative("bm_html5lib.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "html5lib")
 
 
 def BM_richards(python, options):
-    bm_path = Relative("bm_richards.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "richards")
 
 
 def BM_pidigits(python, options):
-    bm_path = Relative("bm_pidigits.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "pidigits")
 
 
 def BM_crypto_pyaes(python, options):
-    bm_path = Relative("bm_crypto_pyaes.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "crypto_pyaes")
 
 
 def BM_sympy_expand(python, options):
-    bm_path = Relative("bm_sympy.py")
-    return run_perf_script(python, options, bm_path, extra_args=['expand'])
+    return run_perf_script(python, options, "sympy", extra_args=['expand'])
 
 
 def BM_sympy_integrate(python, options):
-    bm_path = Relative("bm_sympy.py")
-    return run_perf_script(python, options, bm_path, extra_args=['integrate'])
+    return run_perf_script(python, options, "sympy", extra_args=['integrate'])
 
 
 def BM_sympy_str(python, options):
-    bm_path = Relative("bm_sympy.py")
-    return run_perf_script(python, options, bm_path, extra_args=['str'])
+    return run_perf_script(python, options, "sympy", extra_args=['str'])
 
 
 def BM_sympy_sum(python, options):
-    bm_path = Relative("bm_sympy.py")
-    return run_perf_script(python, options, bm_path, extra_args=['sum'])
+    return run_perf_script(python, options, "sympy", extra_args=['sum'])
 
 
 def BM_deltablue(python, options):
-    bm_path = Relative("bm_deltablue.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "deltablue")
 
 
 def BM_scimark_SOR(python, options):
-    bm_path = Relative("bm_scimark.py")
-    return run_perf_script(python, options, bm_path, extra_args=['SOR'])
+    return run_perf_script(python, options, "scimark", extra_args=['SOR'])
 
 
 def BM_scimark_SparseMatMult(python, options):
-    bm_path = Relative("bm_scimark.py")
-    return run_perf_script(python, options, bm_path, extra_args=['SparseMatMult'])
+    return run_perf_script(python, options, "scimark", extra_args=['SparseMatMult'])
 
 
 def BM_scimark_MonteCarlo(python, options):
-    bm_path = Relative("bm_scimark.py")
-    return run_perf_script(python, options, bm_path, extra_args=['MonteCarlo'])
+    return run_perf_script(python, options, "scimark", extra_args=['MonteCarlo'])
 
 
 def BM_scimark_LU(python, options):
-    bm_path = Relative("bm_scimark.py")
-    return run_perf_script(python, options, bm_path, extra_args=['LU'])
+    return run_perf_script(python, options, "scimark", extra_args=['LU'])
 
 
 def BM_scimark_FFT(python, options):
-    bm_path = Relative("bm_scimark.py")
-    return run_perf_script(python, options, bm_path, extra_args=['FFT'])
+    return run_perf_script(python, options, "scimark", extra_args=['FFT'])
 
 
 def BM_dulwich_log(python, options):
-    bm_path = Relative("bm_dulwich_log.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "dulwich_log")
 
 
 @VersionRange(None, '2.7')
 def BM_pyflate(python, options):
-    bm_path = Relative("bm_pyflate.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "pyflate")
 
 
 def BM_sqlite_synth(python, options):
-    bm_path = Relative("bm_sqlite_synth.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "sqlite_synth")
 
 
 # End benchmarks, begin main entry point support.

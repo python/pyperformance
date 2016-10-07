@@ -13,7 +13,7 @@ import perf
 
 import performance
 from performance.compare import display_benchmark_suite
-from performance.venv import interpreter_version
+from performance.venv import interpreter_version, PERFORMANCE_ROOT
 
 
 class BenchmarkException(Exception):
@@ -21,6 +21,10 @@ class BenchmarkException(Exception):
 
 
 # Utility functions
+
+
+def Relative(*path):
+    return os.path.join(PERFORMANCE_ROOT, 'benchmarks', *path)
 
 
 def LogCall(command):
@@ -80,7 +84,8 @@ def copy_perf_options(cmd, options):
         cmd.append('--inherit-environ=%s' % ','.join(options.inherit_environ))
 
 
-def run_perf_script(python, options, bm_path, extra_args=[]):
+def run_perf_script(python, options, name, extra_args=[]):
+    bm_path = Relative("bm_%s.py" % name)
     bench_args = [bm_path]
     copy_perf_options(bench_args, options)
     bench_args.append("--stdout")

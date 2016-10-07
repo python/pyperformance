@@ -1,4 +1,12 @@
+TODO
+====
+
 * Run pep8 on Travis
+* Run PyPy on Travis
+* python3 -m performance list: list Python 2 benchmarks, but mention that
+  they are incompatible with Python 3?
+* performance/benchmarks/__init__.py: don't hardcode benchmarks for search for
+  glob.glob("performance/benchmarks/bm_*.py")
 * Port bm_pyflate to Python 3?
 * Fix installation dulwich on PyPy to be able to upgrade it
 * venv.py: open text files in script creating the hash, read also setup.py
