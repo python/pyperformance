@@ -304,6 +304,7 @@ Available Benchmarks
     ignored
 
 - ``mako`` - use the Mako template system to build a 150x150-cell HTML table.
+- ``mdp`` - battle with damages and topological sorting of nodes in a graph
 - ``meteor_contest`` - solver for Meteor Puzzle board
 - ``nbody`` - the N-body Shootout benchmark. Microbenchmark for floating point
   operations.
@@ -387,6 +388,8 @@ Changelog
 Version 0.4.1
 -------------
 
+* Add ``mdp`` benchmark: battle with damages and topological sorting of nodes
+  in a graph
 * The ``default`` benchmark group now include all benchmarks but ``pybench``
 * Remove deprecated benchmarks: ``threading_threaded_count`` and
   ``threading_iterative_count``. It wasn't possible to run them anyway.

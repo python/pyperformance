@@ -35,7 +35,6 @@ Different from performance?
 
 Todo:
 
-* mdp: https://github.com/python/performance/pull/14
 * pypy_interp
 * pyxl_bench
 
@@ -85,6 +84,7 @@ Done:
 * go
 * hexiom2
 * html5lib
+* mdp
 * meteor-contest
 * nbody_modified (called nbody in performance)
 * nqueens
