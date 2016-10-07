@@ -16,27 +16,27 @@
 Number_of_rounds = 10
 
 # Import tests
-from Arithmetic import *
-from Calls import *
-from Constructs import *
-from Lookups import *
-from Instances import *
+from Arithmetic import *   # noqa
+from Calls import *   # noqa
+from Constructs import *   # noqa
+from Lookups import *   # noqa
+from Instances import *   # noqa
 try:
-    from NewInstances import *
+    from NewInstances import *   # noqa
 except ImportError:
     pass
-from Lists import *
-from Tuples import *
-from Dict import *
-from Exceptions import *
+from Lists import *   # noqa
+from Tuples import *   # noqa
+from Dict import *   # noqa
+from Exceptions import *   # noqa
 try:
-    from With import *
+    from With import *   # noqa
 except SyntaxError:
     pass
-from Imports import *
-from Strings import *
-from Numbers import *
+from Imports import *   # noqa
+from Strings import *   # noqa
+from Numbers import *   # noqa
 try:
-    from Unicode import *
+    from Unicode import *   # noqa
 except (ImportError, SyntaxError):
     pass

@@ -4,8 +4,9 @@ from six.moves import xrange
 from pybench import Test
 
 # First imports:
-import os
-import package.submodule
+import os                  # noqa
+import package.submodule   # noqa
+
 
 class SecondImport(Test):
 
@@ -18,35 +19,35 @@ class SecondImport(Test):
         t0 = perf.perf_counter()
 
         for _ in range_it:
-            import os
-            import os
-            import os
-            import os
-            import os
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
 
-            import os
-            import os
-            import os
-            import os
-            import os
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
 
-            import os
-            import os
-            import os
-            import os
-            import os
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
 
-            import os
-            import os
-            import os
-            import os
-            import os
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
 
-            import os
-            import os
-            import os
-            import os
-            import os
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
+            import os   # noqa
 
         return perf.perf_counter() - t0
 
@@ -62,35 +63,35 @@ class SecondPackageImport(Test):
         t0 = perf.perf_counter()
 
         for _ in range_it:
-            import package
-            import package
-            import package
-            import package
-            import package
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
 
-            import package
-            import package
-            import package
-            import package
-            import package
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
 
-            import package
-            import package
-            import package
-            import package
-            import package
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
 
-            import package
-            import package
-            import package
-            import package
-            import package
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
 
-            import package
-            import package
-            import package
-            import package
-            import package
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
+            import package   # noqa
 
         return perf.perf_counter() - t0
 
@@ -106,34 +107,34 @@ class SecondSubmoduleImport(Test):
         t0 = perf.perf_counter()
 
         for _ in range_it:
-            import package.submodule
-            import package.submodule
-            import package.submodule
-            import package.submodule
-            import package.submodule
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
 
-            import package.submodule
-            import package.submodule
-            import package.submodule
-            import package.submodule
-            import package.submodule
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
 
-            import package.submodule
-            import package.submodule
-            import package.submodule
-            import package.submodule
-            import package.submodule
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
 
-            import package.submodule
-            import package.submodule
-            import package.submodule
-            import package.submodule
-            import package.submodule
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
 
-            import package.submodule
-            import package.submodule
-            import package.submodule
-            import package.submodule
-            import package.submodule
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
+            import package.submodule   # noqa
 
         return perf.perf_counter() - t0

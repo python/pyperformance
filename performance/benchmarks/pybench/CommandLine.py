@@ -19,11 +19,7 @@ Copyright (c), 2000-2006, eGenix.com Software GmbH (info@egenix.com)
 See the documentation for further information on copyrights,
 or contact the author. All Rights Reserved.
 """
-
 __version__ = '1.2'
-
-import sys
-import traceback
 
 ### Application baseclass
 
