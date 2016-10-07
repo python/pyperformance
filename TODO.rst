@@ -36,7 +36,6 @@ Todo:
 
 * dulwich_log: https://github.com/python/performance/pull/13
 * mdp
-* crypto_pyaes
 * deltablue
 * eparse
 * genshi_text
@@ -80,6 +79,7 @@ Done:
 * bm_chameleon
 * bm_mako
 * chaos
+* crypto_pyaes
 * django (called django_template in performance)
 * fannkuch
 * float

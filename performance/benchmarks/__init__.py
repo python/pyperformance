@@ -363,6 +363,12 @@ def BM_pidigits(python, options):
     return run_perf_script(python, options, bm_path)
 
 
+@VersionRange()
+def BM_crypto_pyaes(python, options):
+    bm_path = Relative("bm_crypto_pyaes.py")
+    return run_perf_script(python, options, bm_path)
+
+
 # End benchmarks, begin main entry point support.
 
 def _FindAllBenchmarks(namespace):

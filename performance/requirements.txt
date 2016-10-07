@@ -59,6 +59,7 @@ Mako==1.0.4                               # mako
 mercurial==3.9.1; python_version < '3.0'  # hg_startup
 html5lib==0.999999999                     # html5lib
 pathlib2==2.1.0; python_version < '3.4'   # pathlib
+pyaes==1.6.0                              # crypto_pyaes
 spambayes==1.1b2; python_version < '3.0'  # spambayes
 tornado==4.4.1                            # tornado_http
 
