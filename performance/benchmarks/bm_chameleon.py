@@ -21,9 +21,10 @@ def main(loops):
     table = [dict(a=1, b=2, c=3, d=4, e=5, f=6, g=7, h=8, i=9, j=10)
              for x in range(500)]
     options = {'table': table}
+    range_it = six.moves.xrange(loops)
     start = perf.perf_counter()
 
-    for _ in range(loops):
+    for _ in range_it:
         tmpl(options=options)
 
     return perf.perf_counter() - start
