@@ -8,7 +8,3 @@ include requirements.txt
 include runtests.py
 include pyperformance
 include tox.ini
-
-include performance/bm_*.py
-include performance/data/*
-include performance/data/2to3/*

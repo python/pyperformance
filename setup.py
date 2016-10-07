@@ -59,6 +59,8 @@ def main():
         'performance.benchmarks.data.2to3',
         'performance.benchmarks.pybench',
         'performance.benchmarks.pybench.package',
+        'performance.tests',
+        'performance.tests.data',
     ]
     data_files = [
         'spambayes_hammie.pkl',
@@ -71,6 +73,7 @@ def main():
         'performance.benchmarks.data': data_files,
         'performance.benchmarks.data.2to3': ['README', '*.txt'],
         'performance.benchmarks.pybench': ['LICENSE', 'README'],
+        'performance.tests.data': ['*.json'],
     }
 
     options = {
