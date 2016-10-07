@@ -308,6 +308,7 @@ Version 0.2.3
 * Add ``sympy``: Benchmark on SymPy
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results
+* Rename ``hexiom2`` benchmark to  ``hexiom``
 * Update dependencies
 
 

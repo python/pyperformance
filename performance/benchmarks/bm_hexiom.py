@@ -1,4 +1,7 @@
-"""Benchmark from Laurent Vaucher.
+"""
+Solver of Hexiom board game.
+
+Benchmark from Laurent Vaucher.
 
 Source: https://github.com/slowfrog/hexiom : hexiom2.py, level36.txt
 
@@ -11,7 +14,7 @@ import perf.text_runner
 from six.moves import xrange, StringIO
 from six import u as u_lit, text_type
 
-# 2016-07-07: CPython 3.6 takes ~25 ms to solve the board
+# 2016-07-07: CPython 3.6 takes ~25 ms to solve the board level 25
 DEFAULT_LEVEL = 25
 
 
@@ -653,9 +656,8 @@ if __name__ == "__main__":
     if perf.python_has_jit():
         # PyPy needs more samples to warmup its JIT
         kw['warmups'] = 15
-    runner = perf.text_runner.TextRunner(name='hexiom2', **kw)
-    runner.metadata[
-        'description'] = "Test the performance of the hexiom2 benchmark"
+    runner = perf.text_runner.TextRunner(name='hexiom', **kw)
+    runner.metadata['description'] = "Solver of Hexiom board game"
     levels = sorted(LEVELS)
     runner.argparser.add_argument("--level", type=int,
                                   choices=levels,
