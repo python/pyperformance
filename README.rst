@@ -291,7 +291,7 @@ Available Benchmarks
 - ``scimark_LU`` - scimark: `LU decomposition
   <https://en.wikipedia.org/wiki/LU_decomposition>`_ benchmark
 - ``scimark_FFT`` - scimark: `Fast Fourier transform (FFT)
-   <https://en.wikipedia.org/wiki/Fast_Fourier_transform>`_ benchmark
+  <https://en.wikipedia.org/wiki/Fast_Fourier_transform>`_ benchmark
 - ``silent_logging``
 - ``simple_logging``
 - ``slowpickle`` - use the pure-Python pickle module to pickle a variety of
