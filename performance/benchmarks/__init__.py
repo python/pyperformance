@@ -342,6 +342,12 @@ def BM_pidigits(python, options):
     return run_perf_script(python, options, bm_path)
 
 
+@VersionRange()
+def BM_dulwich_log(python, options):
+    bm_path = Relative("bm_dulwich_log.py")
+    return run_perf_script(python, options, bm_path)
+
+
 ### End benchmarks, begin main entry point support.
 
 def _FindAllBenchmarks(namespace):
