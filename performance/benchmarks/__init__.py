@@ -393,6 +393,12 @@ def BM_sympy_sum(python, options):
     return run_perf_script(python, options, bm_path, extra_args=['sum'])
 
 
+@VersionRange()
+def BM_deltablue(python, options):
+    bm_path = Relative("bm_deltablue.py")
+    return run_perf_script(python, options, bm_path)
+
+
 # End benchmarks, begin main entry point support.
 
 def _FindAllBenchmarks(namespace):

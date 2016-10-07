@@ -234,6 +234,7 @@ Available Benchmarks
 - ``chaos`` - create chaosgame-like fractals
 - ``crypto_pyaes`` - benchmark a pure-Python implementation of the AES
   block-cipher in CTR mode using the pyaes module.
+- ``detablue`` - DeltaBlue benchmark
 - ``django_template`` - use the Django template system to build a 150x150-cell
   HTML table.
 - ``etree_generate``
@@ -312,6 +313,7 @@ Version 0.2.3
 * Add ``crypto_pyaes``: Benchmark a pure-Python implementation of the AES
   block-cipher in CTR mode using the pyaes module (version 1.6.0).
 * Add ``sympy``: Benchmark on SymPy
+* Add ``detablue``: DeltaBlue benchmark
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results
 * Rename ``hexiom2`` benchmark to  ``hexiom``

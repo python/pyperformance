@@ -38,7 +38,6 @@ Todo:
 
 * dulwich_log: https://github.com/python/performance/pull/13
 * mdp
-* deltablue
 * genshi_text
 * genshi_xml
 * krakatau: https://github.com/Storyyeller/Krakatau is not on PyPI, but it seems actively developed
@@ -78,6 +77,7 @@ Done:
 * bm_mako
 * chaos
 * crypto_pyaes
+* deltablue
 * django (called django_template in performance)
 * fannkuch
 * float
