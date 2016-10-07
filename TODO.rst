@@ -1,4 +1,5 @@
 * Run pep8 on Travis
+* Fix installation dulwich on PyPy to be able to upgrade it
 * venv.py: open text files in script creating the hash, read also setup.py
   content?
 * Fix confusion on benchmark names between the list command,
