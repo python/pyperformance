@@ -410,22 +410,22 @@ class UCTNode:
         return maxchild
 
 
-def user_move(board):
-    while True:
-        text = raw_input('?').strip()
-        if text == 'p':
-            return PASS
-        if text == 'q':
-            raise EOFError
-        try:
-            x, y = [int(i) for i in text.split()]
-        except ValueError:
-            continue
-        if not (0 <= x < SIZE and 0 <= y < SIZE):
-            continue
-        pos = to_pos(x, y)
-        if board.useful(pos):
-            return pos
+# def user_move(board):
+#     while True:
+#         text = six.moves.input('?').strip()
+#         if text == 'p':
+#             return PASS
+#         if text == 'q':
+#             raise EOFError
+#         try:
+#             x, y = [int(i) for i in text.split()]
+#         except ValueError:
+#             continue
+#         if not (0 <= x < SIZE and 0 <= y < SIZE):
+#             continue
+#         pos = to_pos(x, y)
+#         if board.useful(pos):
+#             return pos
 
 
 def computer_move(board):
