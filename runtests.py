@@ -31,6 +31,11 @@ def _main(venv):
 
     python = sys.executable
     script = 'pyperformance'
+    if os.name == "nt":
+        python_executable = os.path.basename(python)
+        venv_python = os.path.join(venv, 'Scripts', python_executable)
+    else:
+        venv_python = os.path.join(venv, 'bin', 'python')
 
     def run_bench(*cmd):
         cmd = cmd + ('--venv', venv)
@@ -53,11 +58,17 @@ def _main(venv):
     run_bench(python, script, 'list')
     run_bench(python, script, 'list_groups')
 
+    json = os.path.join(venv, 'bench.json')
+
     # -b all: check that *all* benchmark work
     #
     # --debug-single-sample: benchmark results don't matter, we only
     # check that running benchmarks don't fail.
-    run_bench(python, script, 'run', '-b', 'all', '--debug-single-sample')
+    run_bench(python, script, 'run', '-b', 'all', '--debug-single-sample',
+              '-o', json)
+
+    # Display slowest benchmarks
+    run_cmd((venv_python, '-m', 'perf', 'slowest', json))
 
     run_bench(python, script, 'venv', 'remove')
 
