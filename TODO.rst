@@ -33,14 +33,14 @@ Different from performance?
 
 Todo:
 
-* bm_dulwich_log
-* bm_krakatau
-* bm_mdp
+* dulwich_log: https://github.com/python/performance/pull/13
+* mdp
 * crypto_pyaes
 * deltablue
 * eparse
 * genshi_text
 * genshi_xml
+* krakatau: https://github.com/Storyyeller/Krakatau is not on PyPI, but it seems actively developed
 * pyflate-fast
 * pypy_interp
 * pyxl_bench
