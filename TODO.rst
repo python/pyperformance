@@ -51,7 +51,17 @@ Todo:
 * genshi_xml
 * pypy_interp
 * pyxl_bench
+
+  PyPI version 1.0: https://pypi.python.org/pypi/pyxl (2012)
+  Old repo: https://github.com/awable/pyxl (last commit: Feb 2013)
+  Python2: https://github.com/dropbox/pyxl (latest commit: Aug 2016)
+  Python3: https://github.com/gvanrossum/pyxl3 (latest commit: Apr 2016)
+
 * sphinx
+
+  benchmarks.py: invoke sphinx-build.py on lib/cpython-doc/
+  cpython-doc/: 24 MB
+
 * sqlalchemy_declarative
 * sqlalchemy_imperative
 * trans2_annotate
