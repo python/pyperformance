@@ -1,4 +1,5 @@
 * Run pep8 on Travis
+* Port bm_pyflate to Python 3?
 * Fix installation dulwich on PyPy to be able to upgrade it
 * venv.py: open text files in script creating the hash, read also setup.py
   content?

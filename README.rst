@@ -338,6 +338,7 @@ Version 0.2.3
 * Add ``sqlite_synth`` benchmark: Benchmark Python aggregate for SQLite
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results
+* Port ``html5lib`` benchmark to Python 3
 * Rename ``hexiom2`` benchmark to  ``hexiom``
 * Update dependencies
 

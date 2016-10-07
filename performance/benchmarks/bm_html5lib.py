@@ -5,12 +5,12 @@ The spec was pulled from http://svn.whatwg.org/webapps/index.
 """
 from __future__ import with_statement
 
-import StringIO
 import io
 import os.path
 
 import html5lib
 import perf.text_runner
+import six
 from six.moves import xrange
 
 
@@ -35,6 +35,6 @@ if __name__ == "__main__":
     filename = os.path.join(os.path.dirname(__file__),
                             "data", "w3_tr_html5.html")
     with io.open(filename, "rb") as fp:
-        html_file = StringIO.StringIO(fp.read())
+        html_file = six.BytesIO(fp.read())
 
     runner.bench_sample_func(bench_html5lib, html_file)

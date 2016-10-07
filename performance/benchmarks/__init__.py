@@ -300,7 +300,6 @@ def BM_spambayes(python, options):
     return run_perf_script(python, options, bm_path)
 
 
-@VersionRange(None, '2.7')
 def BM_html5lib(python, options):
     bm_path = Relative("bm_html5lib.py")
     return run_perf_script(python, options, bm_path)
