@@ -13,8 +13,10 @@ import math
 import perf.text_runner
 from six.moves import reduce
 
+
 class GVector(object):
-    def __init__(self, x = 0, y = 0, z = 0):
+
+    def __init__(self, x=0, y=0, z=0):
         self.x = x
         self.y = y
         self.z = z
@@ -49,21 +51,23 @@ class GVector(object):
                     self.z * l1 + other.z * l2)
         return v
 
-
     def __str__(self):
         return "<%f, %f, %f>" % (self.x, self.y, self.z)
 
     def __repr__(self):
         return "GVector(%f, %f, %f)" % (self.x, self.y, self.z)
 
+
 def GetKnots(points, degree):
     knots = [0] * degree + range(1, len(points) - degree)
     knots += [len(points) - degree] * degree
     return knots
 
+
 class Spline(object):
     """Class for representing B-Splines and NURBS of arbitrary degree"""
-    def __init__(self, points, degree = 3, knots = None):
+
+    def __init__(self, points, degree=3, knots=None):
         """Creates a Spline. points is a list of GVector, degree is the
 degree of the Spline."""
         if knots == None:
@@ -117,7 +121,7 @@ degree of the Spline."""
                 I = ii
                 break
         else:
-             I = dom[1] - 1
+            I = dom[1] - 1
         return I
 
     def __len__(self):
@@ -128,6 +132,7 @@ degree of the Spline."""
 
 
 class Chaosgame(object):
+
     def __init__(self, splines, thickness=0.1):
         self.splines = splines
         self.thickness = thickness
@@ -150,7 +155,6 @@ class Chaosgame(object):
             self.num_trafos.append(max(1, int(length / maxlength * 1.5)))
         self.num_total = reduce(operator.add, self.num_trafos, 0)
 
-
     def get_random_trafo(self):
         r = random.randrange(int(self.num_total) + 1)
         l = 0
@@ -170,17 +174,17 @@ class Chaosgame(object):
         seg_length = length / self.num_trafos[trafo[0]]
         t = start + seg_length * trafo[1] + seg_length * x
         basepoint = self.splines[trafo[0]](t)
-        if t + 1/50000 > end:
-            neighbour = self.splines[trafo[0]](t - 1/50000)
+        if t + 1 / 50000 > end:
+            neighbour = self.splines[trafo[0]](t - 1 / 50000)
             derivative = neighbour - basepoint
         else:
-            neighbour = self.splines[trafo[0]](t + 1/50000)
+            neighbour = self.splines[trafo[0]](t + 1 / 50000)
             derivative = basepoint - neighbour
         if derivative.Mag() != 0:
             basepoint.x += derivative.y / derivative.Mag() * (y - 0.5) * \
-                           self.thickness
+                self.thickness
             basepoint.y += -derivative.x / derivative.Mag() * (y - 0.5) * \
-                           self.thickness
+                self.thickness
         else:
             print("r", end='')
         self.truncate(basepoint)
@@ -244,7 +248,7 @@ def main(loops):
             GVector(2.366800, 3.233460, 0.000000),
             GVector(2.366800, 3.233460, 0.000000)],
             3, [0, 0, 0, 1, 1, 1])
-        ]
+    ]
     c = Chaosgame(splines, 0.25)
     return c.create_image_chaos(1000, 1200, loops)
 

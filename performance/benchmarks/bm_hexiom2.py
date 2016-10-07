@@ -17,20 +17,23 @@ DEFAULT_LEVEL = 25
 
 ##################################
 class Dir(object):
+
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-DIRS = [ Dir(1, 0),
-         Dir(-1, 0),
-         Dir(0, 1),
-         Dir(0, -1),
-         Dir(1, 1),
-         Dir(-1, -1) ]
+DIRS = [Dir(1, 0),
+        Dir(-1, 0),
+        Dir(0, 1),
+        Dir(0, -1),
+        Dir(1, 1),
+        Dir(-1, -1)]
 
 EMPTY = 7
 
 ##################################
+
+
 class Done(object):
     MIN_CHOICE_STRATEGY = 0
     MAX_CHOICE_STRATEGY = 1
@@ -41,7 +44,8 @@ class Done(object):
 
     def __init__(self, count, empty=False):
         self.count = count
-        self.cells = None if empty else [[0, 1, 2, 3, 4, 5, 6, EMPTY] for i in xrange(count)]
+        self.cells = None if empty else [
+            [0, 1, 2, 3, 4, 5, 6, EMPTY] for i in xrange(count)]
 
     def clone(self):
         ret = Done(self.count, True)
@@ -117,11 +121,11 @@ class Done(object):
         return -1
 
     def next_cell_max_neighbors(self, pos):
-        maxn = -1;
-        maxi = -1;
+        maxn = -1
+        maxi = -1
         for i in xrange(self.count):
             if not self.already_done(i):
-                cells_around = pos.hex.get_by_id(i).links;
+                cells_around = pos.hex.get_by_id(i).links
                 n = sum(1 if (self.already_done(nid) and (self[nid][0] != EMPTY)) else 0
                         for nid in cells_around)
                 if n > maxn:
@@ -130,18 +134,17 @@ class Done(object):
         return maxi
 
     def next_cell_min_neighbors(self, pos):
-        minn = 7;
-        mini = -1;
+        minn = 7
+        mini = -1
         for i in xrange(self.count):
             if not self.already_done(i):
-                cells_around = pos.hex.get_by_id(i).links;
+                cells_around = pos.hex.get_by_id(i).links
                 n = sum(1 if (self.already_done(nid) and (self[nid][0] != EMPTY)) else 0
                         for nid in cells_around)
                 if n < minn:
                     minn = n
                     mini = i
         return mini
-
 
     def next_cell(self, pos, strategy=HIGHEST_VALUE_STRATEGY):
         if strategy == Done.HIGHEST_VALUE_STRATEGY:
@@ -160,14 +163,20 @@ class Done(object):
             raise Exception("Wrong strategy: %d" % strategy)
 
 ##################################
+
+
 class Node(object):
+
     def __init__(self, pos, id, links):
         self.pos = pos
         self.id = id
         self.links = links
 
 ##################################
+
+
 class Hex(object):
+
     def __init__(self, size):
         self.size = size
         self.count = 3 * size * (size - 1) + 1
@@ -211,7 +220,8 @@ class Hex(object):
 
 ##################################
 class Pos(object):
-    def __init__(self, hex, tiles, done = None):
+
+    def __init__(self, hex, tiles, done=None):
         self.hex = hex
         self.tiles = tiles
         self.done = Done(hex.count) if done is None else done
@@ -220,7 +230,9 @@ class Pos(object):
         return Pos(self.hex, self.tiles, self.done.clone())
 
 ##################################
-def constraint_pass(pos, last_move = None):
+
+
+def constraint_pass(pos, last_move=None):
     changed = False
     left = pos.tiles[:]
     done = pos.done
@@ -232,7 +244,7 @@ def constraint_pass(pos, last_move = None):
         if not done.already_done(i):
             vmax = 0
             vmin = 0
-            cells_around = pos.hex.get_by_id(i).links;
+            cells_around = pos.hex.get_by_id(i).links
             for nid in cells_around:
                 if done.already_done(nid):
                     if done[nid][0] != EMPTY:
@@ -276,7 +288,7 @@ def constraint_pass(pos, last_move = None):
             empties = 0
             filled = 0
             unknown = []
-            cells_around = pos.hex.get_by_id(i).links;
+            cells_around = pos.hex.get_by_id(i).links
             for nid in cells_around:
                 if done.already_done(nid):
                     if done[nid][0] == EMPTY:
@@ -291,7 +303,7 @@ def constraint_pass(pos, last_move = None):
                         if EMPTY in done[u]:
                             done.set_done(u, EMPTY)
                             changed = True
-                        #else:
+                        # else:
                         #    raise Exception("Houston, we've got a problem")
                 elif num == filled + len(unknown):
                     for u in unknown:
@@ -303,6 +315,7 @@ def constraint_pass(pos, last_move = None):
 ASCENDING = 1
 DESCENDING = -1
 
+
 def find_moves(pos, strategy, order):
     done = pos.done
     cell_id = done.next_cell(pos, strategy)
@@ -313,14 +326,17 @@ def find_moves(pos, strategy, order):
         return [(cell_id, v) for v in done[cell_id]]
     else:
         # Try higher values first and EMPTY last
-        moves = list(reversed([(cell_id, v) for v in done[cell_id] if v != EMPTY]))
+        moves = list(reversed([(cell_id, v)
+                               for v in done[cell_id] if v != EMPTY]))
         if EMPTY in done[cell_id]:
             moves.append((cell_id, EMPTY))
         return moves
 
+
 def play_move(pos, move):
     (cell_id, i) = move
     pos.done.set_done(cell_id, i)
+
 
 def print_pos(pos, output):
     hex = pos.hex
@@ -332,7 +348,8 @@ def print_pos(pos, output):
             pos2 = (x, y)
             id = hex.get_by_pos(pos2).id
             if done.already_done(id):
-                c = text_type(done[id][0]) if done[id][0] != EMPTY else u_lit(".")
+                c = text_type(done[id][0]) if done[id][
+                    0] != EMPTY else u_lit(".")
             else:
                 c = u_lit("?")
             print(u_lit("%s ") % c, end=u_lit(""), file=output)
@@ -344,7 +361,8 @@ def print_pos(pos, output):
             pos2 = (x, ry)
             id = hex.get_by_pos(pos2).id
             if done.already_done(id):
-                c = text_type(done[id][0]) if done[id][0] != EMPTY else u_lit(".")
+                c = text_type(done[id][0]) if done[id][
+                    0] != EMPTY else u_lit(".")
             else:
                 c = u_lit("?")
             print(u_lit("%s ") % c, end=u_lit(""), file=output)
@@ -353,6 +371,7 @@ def print_pos(pos, output):
 OPEN = 0
 SOLVED = 1
 IMPOSSIBLE = -1
+
 
 def solved(pos, output, verbose=False):
     hex = pos.hex
@@ -371,7 +390,7 @@ def solved(pos, output, verbose=False):
             vmax = 0
             vmin = 0
             if num != EMPTY:
-                cells_around = hex.get_by_id(i).links;
+                cells_around = hex.get_by_id(i).links
                 for nid in cells_around:
                     if done.already_done(nid):
                         if done[nid][0] != EMPTY:
@@ -393,6 +412,7 @@ def solved(pos, output, verbose=False):
     print_pos(pos, output)
     return SOLVED
 
+
 def solve_step(prev, strategy, order, output, first=False):
     if first:
         pos = prev.clone()
@@ -410,7 +430,7 @@ def solve_step(prev, strategy, order, output, first=False):
             ret = OPEN
             new_pos = pos.clone()
             play_move(new_pos, move)
-            #print_pos(new_pos)
+            # print_pos(new_pos)
             while constraint_pass(new_pos, move[0]):
                 pass
             cur_status = solved(new_pos, output)
@@ -421,6 +441,7 @@ def solve_step(prev, strategy, order, output, first=False):
             if ret == SOLVED:
                 return SOLVED
     return IMPOSSIBLE
+
 
 def check_valid(pos):
     hex = pos.hex
@@ -434,7 +455,9 @@ def check_valid(pos):
             tiles[i] = 0
     # check total
     if tot != hex.count:
-        raise Exception("Invalid input. Expected %d tiles, got %d." % (hex.count, tot))
+        raise Exception(
+            "Invalid input. Expected %d tiles, got %d." % (hex.count, tot))
+
 
 def solve(pos, strategy, order, output):
     check_valid(pos)
@@ -454,7 +477,7 @@ def read_file(file):
         line = lines[linei][size - y - 1:]
         p = 0
         for x in xrange(size + y):
-            tile = line[p:p + 2];
+            tile = line[p:p + 2]
             p += 2
             if tile[1] == ".":
                 inctile = EMPTY
@@ -463,7 +486,7 @@ def read_file(file):
             tiles[inctile] += 1
             # Look for locked tiles
             if tile[0] == "+":
-                #print("Adding locked tile: %d at pos %d, %d, id=%d" %
+                # print("Adding locked tile: %d at pos %d, %d, id=%d" %
                 #      (inctile, x, y, hex.get_by_pos((x, y)).id))
                 done.set_done(hex.get_by_pos((x, y)).id, inctile)
 
@@ -473,7 +496,7 @@ def read_file(file):
         line = lines[linei][y:]
         p = 0
         for x in xrange(y, size * 2 - 1):
-            tile = line[p:p + 2];
+            tile = line[p:p + 2]
             p += 2
             if tile[1] == ".":
                 inctile = EMPTY
@@ -482,13 +505,14 @@ def read_file(file):
             tiles[inctile] += 1
             # Look for locked tiles
             if tile[0] == "+":
-                #print("Adding locked tile: %d at pos %d, %d, id=%d" %
+                # print("Adding locked tile: %d at pos %d, %d, id=%d" %
                 #      (inctile, x, ry, hex.get_by_pos((x, ry)).id))
                 done.set_done(hex.get_by_pos((x, ry)).id, inctile)
         linei += 1
     hex.link_nodes()
     done.filter_tiles(tiles)
     return Pos(hex, tiles, done)
+
 
 def solve_file(file, strategy, order, output):
     pos = read_file(file)
@@ -630,7 +654,8 @@ if __name__ == "__main__":
         # PyPy needs more samples to warmup its JIT
         kw['warmups'] = 15
     runner = perf.text_runner.TextRunner(name='hexiom2', **kw)
-    runner.metadata['description'] = "Test the performance of the hexiom2 benchmark"
+    runner.metadata[
+        'description'] = "Test the performance of the hexiom2 benchmark"
     levels = sorted(LEVELS)
     runner.argparser.add_argument("--level", type=int,
                                   choices=levels,

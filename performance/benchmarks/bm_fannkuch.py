@@ -12,9 +12,9 @@ DEFAULT_ARG = 9
 
 
 def fannkuch(n):
-    count = list(xrange(1, n+1))
+    count = list(xrange(1, n + 1))
     max_flips = 0
-    m = n-1
+    m = n - 1
     r = n
     check = 0
     perm1 = list(xrange(n))
@@ -27,7 +27,7 @@ def fannkuch(n):
             check += 1
 
         while r != 1:
-            count[r-1] = r
+            count[r - 1] = r
             r -= 1
 
         if perm1[0] != 0 and perm1[m] != m:
@@ -35,7 +35,7 @@ def fannkuch(n):
             flips_count = 0
             k = perm[0]
             while k:
-                perm[:k+1] = perm[k::-1]
+                perm[:k + 1] = perm[k::-1]
                 flips_count += 1
                 k = perm[0]
 

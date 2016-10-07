@@ -23,8 +23,8 @@ class ConcatUnicode(Test):
 
     def test(self, loops):
         # Make sure the strings are *not* interned
-        s = unicode(u''.join(map(str,range(100))))
-        t = unicode(u''.join(map(str,range(1,101))))
+        s = unicode(u''.join(map(str, range(100))))
+        t = unicode(u''.join(map(str, range(1, 101))))
         range_it = xrange(loops)
         t0 = perf.perf_counter()
 
@@ -101,8 +101,8 @@ class CompareUnicode(Test):
     def test(self, loops):
 
         # Make sure the strings are *not* interned
-        s = unicode(u''.join(map(str,range(10))))
-        t = unicode(u''.join(map(str,range(10))) + "abc")
+        s = unicode(u''.join(map(str, range(10))))
+        t = unicode(u''.join(map(str, range(10))) + "abc")
         range_it = xrange(loops)
         t0 = perf.perf_counter()
 
@@ -251,7 +251,7 @@ class UnicodeSlicing(Test):
     inner_loops = 5 * 7
 
     def test(self, loops):
-        s = unicode(u''.join(map(str,range(100))))
+        s = unicode(u''.join(map(str, range(100))))
         range_it = xrange(loops)
         t0 = perf.perf_counter()
 
@@ -300,7 +300,7 @@ class UnicodeSlicing(Test):
         return perf.perf_counter() - t0
 
 
-### String methods
+# String methods
 
 class UnicodeMappings(Test):
 
@@ -309,10 +309,10 @@ class UnicodeMappings(Test):
 
     def test(self, loops):
 
-        s = u''.join(map(unichr,range(20)))
-        t = u''.join(map(unichr,range(100)))
-        u = u''.join(map(unichr,range(500)))
-        v = u''.join(map(unichr,range(1000)))
+        s = u''.join(map(unichr, range(20)))
+        t = u''.join(map(unichr, range(100)))
+        u = u''.join(map(unichr, range(500)))
+        v = u''.join(map(unichr, range(1000)))
         range_it = xrange(loops)
         t0 = perf.perf_counter()
 
@@ -377,7 +377,7 @@ class UnicodePredicates(Test):
 
     def test(self, loops):
 
-        data = (u'abc', u'123', u'   ', u'\u1234\u2345\u3456', u'\uFFFF'*10)
+        data = (u'abc', u'123', u'   ', u'\u1234\u2345\u3456', u'\uFFFF' * 10)
         len_data = len(data)
         range_it = xrange(loops)
         t0 = perf.perf_counter()

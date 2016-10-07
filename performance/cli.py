@@ -14,44 +14,44 @@ def comma_separated(values):
 
 def _add_run_options(cmd):
     cmd.add_argument("-r", "--rigorous", action="store_true",
-                      help=("Spend longer running tests to get more" +
-                            " accurate results"))
+                     help=("Spend longer running tests to get more" +
+                           " accurate results"))
     cmd.add_argument("-f", "--fast", action="store_true",
-                      help="Get rough answers quickly")
+                     help="Get rough answers quickly")
     cmd.add_argument("--debug-single-sample", action="store_true",
-                      help="Debug: fastest mode, only collect a single sample")
+                     help="Debug: fastest mode, only collect a single sample")
     cmd.add_argument("-v", "--verbose", action="store_true",
-                      help="Print more output")
+                     help="Print more output")
     cmd.add_argument("-m", "--track-memory", action="store_true",
-                      help="Track memory usage. This only works on Linux.")
+                     help="Track memory usage. This only works on Linux.")
     cmd.add_argument("-a", "--args", default="",
-                      help=("Pass extra arguments (interpreted as a "
-                            "space-separated list) to the python binary."))
+                     help=("Pass extra arguments (interpreted as a "
+                           "space-separated list) to the python binary."))
     cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default="",
-                      help=("Comma-separated list of benchmarks to run.  Can"
-                            " contain both positive and negative arguments:"
-                            "  --benchmarks=run_this,also_this,-not_this.  If"
-                            " there are no positive arguments, we'll run all"
-                            " benchmarks except the negative arguments. "
-                            " Otherwise we run only the positive arguments."))
+                     help=("Comma-separated list of benchmarks to run.  Can"
+                           " contain both positive and negative arguments:"
+                           "  --benchmarks=run_this,also_this,-not_this.  If"
+                           " there are no positive arguments, we'll run all"
+                           " benchmarks except the negative arguments. "
+                           " Otherwise we run only the positive arguments."))
     cmd.add_argument("--inherit-environ", metavar="VAR_LIST",
-                      type=comma_separated,
-                      help=("Comma-separated list of environment variable names"
-                            " that are inherited from the parent environment"
-                            " when running benchmarking subprocesses."))
+                     type=comma_separated,
+                     help=("Comma-separated list of environment variable names"
+                           " that are inherited from the parent environment"
+                           " when running benchmarking subprocesses."))
     cmd.add_argument("--affinity", metavar="CPU_LIST", default=None,
-                      help=("Specify CPU affinity for benchmark runs. This "
-                            "way, benchmarks can be forced to run on a given "
-                            "CPU to minimize run to run variation."))
+                     help=("Specify CPU affinity for benchmark runs. This "
+                           "way, benchmarks can be forced to run on a given "
+                           "CPU to minimize run to run variation."))
 
 
 def _add_compare_options(cmd):
     cmd.add_argument("-O", "--output_style", metavar="STYLE",
                      choices=("normal", "table"),
-                      default="normal",
-                      help=("What style the benchmark output should take."
-                            " Valid options are 'normal' and 'table'."
-                            " Default is normal."))
+                     default="normal",
+                     help=("What style the benchmark output should take."
+                           " Valid options are 'normal' and 'table'."
+                           " Default is normal."))
     cmd.add_argument("--csv", metavar="CSV_FILE",
                      action="store", default=None,
                      help=("Name of a file the results will be written to,"
@@ -69,16 +69,17 @@ def parse_args():
     cmds = []
 
     # run
-    cmd = subparsers.add_parser('run', help='Run benchmarks on the running python')
+    cmd = subparsers.add_parser(
+        'run', help='Run benchmarks on the running python')
     cmds.append(cmd)
     _add_run_options(cmd)
     cmd.add_argument("-o", "--output", metavar="FILENAME",
-                      help="Run the benchmarks on only one interpreter and "
+                     help="Run the benchmarks on only one interpreter and "
                            "write benchmark into FILENAME. "
                            "Provide only baseline_python, not changed_python.")
     cmd.add_argument("--append", metavar="FILENAME",
-                      help="Add runs to an existing file, or create it "
-                           "if it doesn't exist")
+                     help="Add runs to an existing file, or create it "
+                     "if it doesn't exist")
 
     # show
     cmd = subparsers.add_parser('show', help='Display a benchmark file')
@@ -89,17 +90,19 @@ def parse_args():
     cmd = subparsers.add_parser('compare', help='Compare two benchmark files')
     cmds.append(cmd)
     cmd.add_argument("-v", "--verbose", action="store_true",
-                      help="Print more output")
+                     help="Print more output")
     _add_compare_options(cmd)
     cmd.add_argument("baseline_filename", metavar="baseline_file.json")
     cmd.add_argument("changed_filename", metavar="changed_file.json")
 
     # list
-    cmd = subparsers.add_parser('list', help='List benchmarks of the running Python')
+    cmd = subparsers.add_parser(
+        'list', help='List benchmarks of the running Python')
     cmds.append(cmd)
 
     # list_groups
-    cmd = subparsers.add_parser('list_groups', help='List benchmark groups of the running Python')
+    cmd = subparsers.add_parser(
+        'list_groups', help='List benchmark groups of the running Python')
     cmds.append(cmd)
 
     # venv
@@ -112,14 +115,14 @@ def parse_args():
 
     for cmd in cmds:
         cmd.add_argument("--inside-venv", action="store_true",
-                          help=("Option for internal usage only, don't use "
-                                "it directly. Notice that we are already "
-                                "inside the virtual environment."))
+                         help=("Option for internal usage only, don't use "
+                               "it directly. Notice that we are already "
+                               "inside the virtual environment."))
         cmd.add_argument("-p", "--python",
-                          help="Python executable (default: use running Python)",
-                          default=sys.executable)
+                         help="Python executable (default: use running Python)",
+                         default=sys.executable)
         cmd.add_argument("--venv",
-                          help="Path to the virtual environment")
+                         help="Path to the virtual environment")
 
     options = parser.parse_args()
 
@@ -136,7 +139,8 @@ def parse_args():
     # Try to the absolute path to the binary
     abs_python = which(options.python)
     if not abs_python:
-        print("ERROR: Unable to locate the Python executable: %r" % options.python)
+        print("ERROR: Unable to locate the Python executable: %r" %
+              options.python)
         sys.exit(1)
     options.python = os.path.realpath(abs_python)
 

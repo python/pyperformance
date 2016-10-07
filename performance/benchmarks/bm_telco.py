@@ -31,6 +31,7 @@ def rel_path(*path):
 
 filename = rel_path("data", "telco-bench.b")
 
+
 def bench_telco(loops):
     getcontext().rounding = ROUND_DOWN
     rates = list(map(Decimal, ('0.0013', '0.00894')))
@@ -54,7 +55,8 @@ def bench_telco(loops):
 
         for i in xrange(5000):
             datum = infil.read(8)
-            if datum == '': break
+            if datum == '':
+                break
             n, =  unpack('>Q', datum)
 
             calltype = n & 1

@@ -103,31 +103,38 @@ def BM_pathlib(python, options):
 def _PickleBenchmark(python, options, *extra_args):
     bm_path = Relative("bm_pickle.py")
     return run_perf_script(python, options, bm_path,
-                          extra_args=list(extra_args))
+                           extra_args=list(extra_args))
+
 
 @VersionRange()
 def BM_FastPickle(python, options):
     return _PickleBenchmark(python, options, "--use_cpickle", "pickle")
 
+
 @VersionRange()
 def BM_FastUnpickle(python, options):
     return _PickleBenchmark(python, options, "--use_cpickle", "unpickle")
+
 
 @VersionRange()
 def BM_Pickle_List(python, options):
     return _PickleBenchmark(python, options, "--use_cpickle", "pickle_list")
 
+
 @VersionRange()
 def BM_Unpickle_List(python, options):
     return _PickleBenchmark(python, options, "--use_cpickle", "unpickle_list")
+
 
 @VersionRange()
 def BM_Pickle_Dict(python, options):
     return _PickleBenchmark(python, options, "--use_cpickle", "pickle_dict")
 
+
 @VersionRange(None, '2.7')   # 3.x doesn't have slow pickle
 def BM_SlowPickle(python, options):
     return _PickleBenchmark(python, options, "pickle")
+
 
 @VersionRange(None, '2.7')
 def BM_SlowUnpickle(python, options):
@@ -138,17 +145,21 @@ def MeasureEtree(python, options, arg):
     bm_path = Relative("bm_elementtree.py")
     return run_perf_script(python, options, bm_path, extra_args=[arg])
 
+
 @VersionRange()
 def BM_ETree_Parse(python, options):
     return MeasureEtree(python, options, 'parse')
+
 
 @VersionRange()
 def BM_ETree_IterParse(python, options):
     return MeasureEtree(python, options, 'iterparse')
 
+
 @VersionRange()
 def BM_ETree_Generate(python, options):
     return MeasureEtree(python, options, 'generate')
+
 
 @VersionRange()
 def BM_ETree_Process(python, options):
@@ -159,9 +170,11 @@ def _JSONBenchmark(python, options, arg):
     bm_path = Relative("bm_json.py")
     return run_perf_script(python, options, bm_path, extra_args=[arg])
 
+
 @VersionRange()
 def BM_JSON_Dump(python, options):
     return _JSONBenchmark(python, options, "json_dump")
+
 
 @VersionRange()
 def BM_JSON_Load(python, options):
@@ -232,13 +245,16 @@ def _LoggingBenchmark(python, options, arg):
     bm_path = Relative("bm_logging.py")
     return run_perf_script(python, options, bm_path, extra_args=[arg])
 
+
 @VersionRange()
 def BM_Silent_Logging(python, options):
     return _LoggingBenchmark(python, options, "no_output")
 
+
 @VersionRange()
 def BM_Simple_Logging(python, options):
     return _LoggingBenchmark(python, options, "simple_output")
+
 
 @VersionRange()
 def BM_Formatted_Logging(python, options):
@@ -250,6 +266,7 @@ def BM_normal_startup(python, options):
     bm_path = Relative("bm_startup.py")
     return run_perf_script(python, options, bm_path)
 
+
 @VersionRange()
 def BM_startup_nosite(python, options):
     bm_path = Relative("bm_startup.py")
@@ -260,9 +277,11 @@ def BM_startup_nosite(python, options):
 def BM_regex_v8(python, options):
     return run_perf_script(python, options, Relative("bm_regex_v8.py"))
 
+
 @VersionRange()
 def BM_regex_effbot(python, options):
     return run_perf_script(python, options, Relative("bm_regex_effbot.py"))
+
 
 @VersionRange()
 def BM_regex_compile(python, options):
@@ -273,9 +292,11 @@ def ThreadingBenchmark(python, options, bm_name):
     bm_path = Relative("bm_threading.py")
     return run_perf_script(python, options, bm_path, extra_args=[bm_name])
 
+
 @VersionRange()
 def BM_threaded_count(python, options):
     return ThreadingBenchmark(python, options, "threaded_count")
+
 
 @VersionRange()
 def BM_iterative_count(python, options):
@@ -342,7 +363,7 @@ def BM_pidigits(python, options):
     return run_perf_script(python, options, bm_path)
 
 
-### End benchmarks, begin main entry point support.
+# End benchmarks, begin main entry point support.
 
 def _FindAllBenchmarks(namespace):
     return dict((name[3:].lower(), func)
@@ -374,7 +395,7 @@ BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
                 "calls": ["call_simple", "call_method", "call_method_slots",
                           "call_method_unknown"],
                 "math": ["float", "nbody", "pidigits"],
-                "template" : ["django_template", "mako"],
+                "template": ["django_template", "mako"],
                 "logging": ["silent_logging", "simple_logging",
                             "formatted_logging"],
                 # These are removed from the "all" group

@@ -148,7 +148,6 @@ class TryExcept(Test):
             except:
                 pass
 
-
             try:
                 pass
             except:
@@ -189,49 +188,6 @@ class TryExcept(Test):
                 pass
             except:
                 pass
-
-
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-
 
             try:
                 pass
@@ -356,7 +312,6 @@ class TryExcept(Test):
             except:
                 pass
 
-
             try:
                 pass
             except:
@@ -397,49 +352,6 @@ class TryExcept(Test):
                 pass
             except:
                 pass
-
-
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-            try:
-                pass
-            except:
-                pass
-
 
             try:
                 pass
@@ -564,6 +476,87 @@ class TryExcept(Test):
             except:
                 pass
 
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
+            try:
+                pass
+            except:
+                pass
 
             try:
                 pass
@@ -606,7 +599,6 @@ class TryExcept(Test):
             except:
                 pass
 
-
             try:
                 pass
             except:
@@ -647,7 +639,6 @@ class TryExcept(Test):
                 pass
             except:
                 pass
-
 
             try:
                 pass
@@ -693,7 +684,7 @@ class TryExcept(Test):
         return perf.perf_counter() - t0
 
 
-### Test to make Fredrik happy...
+# Test to make Fredrik happy...
 
 if __name__ == '__main__':
     import timeit

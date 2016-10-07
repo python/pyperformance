@@ -78,7 +78,7 @@ except ImportError:
         return None
 
 
-PERFORMANCE_ROOT =  os.path.realpath(os.path.dirname(__file__))
+PERFORMANCE_ROOT = os.path.realpath(os.path.dirname(__file__))
 
 
 def python_implementation():
@@ -265,6 +265,7 @@ def _create_virtualenv(python, venv_path):
 
 
 class Requirements:
+
     def __init__(self, filename, installer, optional):
         # pre-requirements (setuptools, pip)
         self.installer = []
@@ -349,7 +350,7 @@ def create_virtualenv(python, venv_path):
             root_dir = os.path.join(PERFORMANCE_ROOT, '..')
             cmd = [venv_python, '-m', 'pip', 'install', '-e', root_dir]
         else:
-            version =  performance.__version__
+            version = performance.__version__
             cmd = [venv_python, '-m', 'pip',
                    'install', 'performance==%s' % version]
         run_cmd(cmd)
@@ -365,7 +366,8 @@ def exec_in_virtualenv(options):
     venv_path = virtualenv_path(options)
     venv_python = create_virtualenv(options.python, venv_path)
 
-    args = [venv_python, "-m", "performance"] + sys.argv[1:] + ["--inside-venv"]
+    args = [venv_python, "-m", "performance"] + \
+        sys.argv[1:] + ["--inside-venv"]
     # os.execv() is buggy on windows, which is why we use run_cmd/subprocess
     # on windows.
     # * https://bugs.python.org/issue19124

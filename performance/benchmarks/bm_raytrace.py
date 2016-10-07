@@ -16,6 +16,7 @@ EPSILON = 0.00001
 
 
 class Vector(object):
+
     def __init__(self, initx, inity, initz):
         self.x = initx
         self.y = inity
@@ -78,16 +79,17 @@ class Vector(object):
         d = normal.scale(self.dot(normal))
         return self - d.scale(2)
 
-Vector.ZERO = Vector(0,0,0)
-Vector.RIGHT = Vector(1,0,0)
-Vector.UP = Vector(0,1,0)
-Vector.OUT = Vector(0,0,1)
+Vector.ZERO = Vector(0, 0, 0)
+Vector.RIGHT = Vector(1, 0, 0)
+Vector.UP = Vector(0, 1, 0)
+Vector.OUT = Vector(0, 0, 1)
 
 assert Vector.RIGHT.reflectThrough(Vector.UP) == Vector.RIGHT
-assert Vector(-1,-1,0).reflectThrough(Vector.UP) == Vector(-1,1,0)
+assert Vector(-1, -1, 0).reflectThrough(Vector.UP) == Vector(-1, 1, 0)
 
 
 class Point(object):
+
     def __init__(self, initx, inity, initz):
         self.x = initx
         self.y = inity
@@ -123,6 +125,7 @@ class Point(object):
 
 
 class Sphere(object):
+
     def __init__(self, centre, radius):
         centre.mustBePoint()
         self.centre = centre
@@ -134,7 +137,7 @@ class Sphere(object):
     def intersectionTime(self, ray):
         cp = self.centre - ray.point
         v = cp.dot(ray.vector)
-        discriminant = (self.radius * self.radius) - (cp.dot(cp) - v*v)
+        discriminant = (self.radius * self.radius) - (cp.dot(cp) - v * v)
         if discriminant < 0:
             return None
         else:
@@ -143,7 +146,9 @@ class Sphere(object):
     def normalAt(self, p):
         return (p - self.centre).normalized()
 
+
 class Halfspace(object):
+
     def __init__(self, point, normal):
         self.point = point
         self.normal = normal.normalized()
@@ -161,7 +166,9 @@ class Halfspace(object):
     def normalAt(self, p):
         return self.normal
 
+
 class Ray(object):
+
     def __init__(self, point, vector):
         self.point = point
         self.vector = vector.normalized()
@@ -173,12 +180,14 @@ class Ray(object):
         return self.point + self.vector.scale(t)
 
 
-Point.ZERO = Point(0,0,0)
+Point.ZERO = Point(0, 0, 0)
 
-a = Vector(3,4,12)
-b = Vector(1,1,1)
+a = Vector(3, 4, 12)
+b = Vector(1, 1, 1)
+
 
 class PpmCanvas(object):
+
     def __init__(self, width, height, filenameBase):
         import array
         self.bytes = array.array('B', [0] * (width * height * 3))
@@ -190,13 +199,13 @@ class PpmCanvas(object):
 
     def plot(self, x, y, r, g, b):
         i = ((self.height - y - 1) * self.width + x) * 3
-        self.bytes[i  ] = max(0, min(255, int(r * 255)))
-        self.bytes[i+1] = max(0, min(255, int(g * 255)))
-        self.bytes[i+2] = max(0, min(255, int(b * 255)))
+        self.bytes[i] = max(0, min(255, int(r * 255)))
+        self.bytes[i + 1] = max(0, min(255, int(g * 255)))
+        self.bytes[i + 2] = max(0, min(255, int(b * 255)))
 
     def save(self):
         pass
-        #with open(self.filenameBase + '.ppm', 'wb') as f:
+        # with open(self.filenameBase + '.ppm', 'wb') as f:
         #    f.write('P6 %d %d 255\n' % (self.width, self.height))
         #    f.write(self.bytes.tostring())
 
@@ -212,6 +221,7 @@ def firstIntersection(intersections):
 
 
 class Scene(object):
+
     def __init__(self):
         self.objects = []
         self.lightPoints = []
@@ -233,7 +243,7 @@ class Scene(object):
         self.lightPoints.append(p)
 
     def render(self, canvas):
-        #print 'Computing field of view'
+        # print 'Computing field of view'
         fovRadians = math.pi * (self.fieldOfView / 2.0) / 180.0
         halfWidth = math.tan(fovRadians)
         halfHeight = 0.75 * halfWidth
@@ -246,32 +256,33 @@ class Scene(object):
         vpRight = eye.vector.cross(Vector.UP).normalized()
         vpUp = vpRight.cross(eye.vector).normalized()
 
-        #print 'Looping over pixels'
+        # print 'Looping over pixels'
         previousfraction = 0
         for y in xrange(canvas.height):
             currentfraction = float(y) / canvas.height
             if currentfraction - previousfraction > 0.05:
                 canvas.save()
-                #print '%d%% complete' % (currentfraction * 100)
+                # print '%d%% complete' % (currentfraction * 100)
                 previousfraction = currentfraction
             for x in xrange(canvas.width):
                 xcomp = vpRight.scale(x * pixelWidth - halfWidth)
                 ycomp = vpUp.scale(y * pixelHeight - halfHeight)
                 ray = Ray(eye.point, eye.vector + xcomp + ycomp)
                 colour = self.rayColour(ray)
-                canvas.plot(x,y,*colour)
+                canvas.plot(x, y, *colour)
 
-        #print 'Complete.'
+        # print 'Complete.'
 
     def rayColour(self, ray):
         if self.recursionDepth > 3:
-            return (0,0,0)
+            return (0, 0, 0)
         try:
             self.recursionDepth = self.recursionDepth + 1
-            intersections = [(o, o.intersectionTime(ray), s) for (o, s) in self.objects]
+            intersections = [(o, o.intersectionTime(ray), s)
+                             for (o, s) in self.objects]
             i = firstIntersection(intersections)
             if i is None:
-                return (0,0,0) ## the background colour
+                return (0, 0, 0)  # the background colour
             else:
                 (o, t, s) = i
                 p = ray.pointAtTime(t)
@@ -281,7 +292,7 @@ class Scene(object):
 
     def _lightIsVisible(self, l, p):
         for (o, s) in self.objects:
-            t = o.intersectionTime(Ray(p,l - p))
+            t = o.intersectionTime(Ray(p, l - p))
             if t is not None and t > EPSILON:
                 return False
         return True
@@ -301,8 +312,9 @@ def addColours(a, scale, b):
 
 
 class SimpleSurface(object):
+
     def __init__(self, **kwargs):
-        self.baseColour = kwargs.get('baseColour', (1,1,1))
+        self.baseColour = kwargs.get('baseColour', (1, 1, 1))
         self.specularCoefficient = kwargs.get('specularCoefficient', 0.2)
         self.lambertCoefficient = kwargs.get('lambertCoefficient', 0.6)
         self.ambientCoefficient = 1.0 - self.specularCoefficient - self.lambertCoefficient
@@ -313,10 +325,10 @@ class SimpleSurface(object):
     def colourAt(self, scene, ray, p, normal):
         b = self.baseColourAt(p)
 
-        c = (0,0,0)
+        c = (0, 0, 0)
         if self.specularCoefficient > 0:
             reflectedRay = Ray(p, ray.vector.reflectThrough(normal))
-            #print p, normal, ray.vector, reflectedRay.vector
+            # print p, normal, ray.vector, reflectedRay.vector
             reflectedColour = scene.rayColour(reflectedRay)
             c = addColours(c, self.specularCoefficient, reflectedColour)
 
@@ -326,7 +338,7 @@ class SimpleSurface(object):
                 contribution = (lightPoint - p).normalized().dot(normal)
                 if contribution > 0:
                     lambertAmount = lambertAmount + contribution
-            lambertAmount = min(1,lambertAmount)
+            lambertAmount = min(1, lambertAmount)
             c = addColours(c, self.lambertCoefficient * lambertAmount, b)
 
         if self.ambientCoefficient > 0:
@@ -336,16 +348,17 @@ class SimpleSurface(object):
 
 
 class CheckerboardSurface(SimpleSurface):
+
     def __init__(self, **kwargs):
         SimpleSurface.__init__(self, **kwargs)
-        self.otherColour = kwargs.get('otherColour', (0,0,0))
+        self.otherColour = kwargs.get('otherColour', (0, 0, 0))
         self.checkSize = kwargs.get('checkSize', 1)
 
     def baseColourAt(self, p):
         v = p - Point.ZERO
         v.scale(1.0 / self.checkSize)
-        if (int(abs(v.x) + 0.5) + \
-            int(abs(v.y) + 0.5) + \
+        if (int(abs(v.x) + 0.5) +
+            int(abs(v.y) + 0.5) +
             int(abs(v.z) + 0.5)) \
            % 2:
             return self.otherColour
@@ -365,12 +378,13 @@ def main(loops):
         s.addLight(Point(30, 30, 10))
         s.addLight(Point(-10, 100, 30))
         s.lookAt(Point(0, 3, 0))
-        s.addObject(Sphere(Point(1,3,-10), 2),
-                    SimpleSurface(baseColour = (1,1,0)))
+        s.addObject(Sphere(Point(1, 3, -10), 2),
+                    SimpleSurface(baseColour=(1, 1, 0)))
         for y in xrange(6):
             s.addObject(Sphere(Point(-3 - y * 0.4, 2.3, -5), 0.4),
                         SimpleSurface(baseColour=(y / 6.0, 1 - y / 6.0, 0.5)))
-        s.addObject(Halfspace(Point(0,0,0), Vector.UP), CheckerboardSurface())
+        s.addObject(Halfspace(Point(0, 0, 0), Vector.UP),
+                    CheckerboardSurface())
         s.render(c)
 
     return perf.perf_counter() - t0

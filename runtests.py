@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 
+
 def run_cmd(cmd):
     print("Execute: %s" % ' '.join(cmd))
     proc = subprocess.Popen(cmd)

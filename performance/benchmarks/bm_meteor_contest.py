@@ -19,6 +19,7 @@ W, NW, NE = -E, -SE, -SW
 def rotate(ido, rd={E: NE, NE: NW, NW: W, W: SW, SW: SE, SE: E}):
     return [rd[o] for o in ido]
 
+
 def flip(ido, fd={E: E, NE: SE, NW: SW, W: W, SW: NW, SE: NE}):
     return [fd[o] for o in ido]
 
@@ -28,7 +29,7 @@ def permute(ido, r_ido, rotate=rotate, flip=flip):
     for r in xrange(dir_no - 1):
         ps.append(rotate(ps[-1]))
         if ido == r_ido:                 # C2-symmetry
-            ps = ps[0:dir_no//2]
+            ps = ps[0:dir_no // 2]
     for pp in ps[:]:
         ps.append(flip(pp))
     return ps
@@ -63,7 +64,7 @@ def get_senh(board, cti):
 
 
 def get_puzzle(w=w, h=h):
-    board = [E*x + S*y + (y%2) for y in xrange(h) for x in xrange(w)]
+    board = [E * x + S * y + (y % 2) for y in xrange(h) for x in xrange(w)]
     cti = dict((board[i], i) for i in xrange(len(board)))
 
     idos = [[E, E, E, SE],         # incremental direction offsets
@@ -129,6 +130,7 @@ def solve(n, i_min, free, curr_board, pieces_left, solutions,
 
 SOLVE_ARG = 60
 
+
 def main(loops):
     range_it = xrange(loops)
     t0 = perf.perf_counter()
@@ -139,7 +141,7 @@ def main(loops):
         pieces_left = list(range(len(pieces)))
         solutions = []
         solve(SOLVE_ARG, 0, free, curr_board, pieces_left, solutions)
-        #print len(solutions),  'solutions found\n'
+        # print len(solutions),  'solutions found\n'
         #for i in (0, -1): print_board(solutions[i])
 
     return perf.perf_counter() - t0

@@ -126,7 +126,7 @@ class BenchmarkResult(object):
             msg = t_msg(self.base, self.changed)[0]
             delta_avg = quantity_delta(self.base, self.changed)
             return ("Median +- Std dev: %s: %s\n%s"
-                     % (text, delta_avg, msg))
+                    % (text, delta_avg, msg))
         else:
             format_sample = self.base.format_sample
             base = average(self.base)
@@ -207,7 +207,8 @@ def compare_results(options):
     changed_suite = perf.BenchmarkSuite.load(options.changed_filename)
 
     results = []
-    common = set(base_suite.get_benchmark_names()) & set(changed_suite.get_benchmark_names())
+    common = set(base_suite.get_benchmark_names()) & set(
+        changed_suite.get_benchmark_names())
     for name in sorted(common):
         base_bench = base_suite.get_benchmark(name)
         changed_bench = changed_suite.get_benchmark(name)

@@ -7,7 +7,7 @@ from pybench import Test
 class SpecialClassAttribute(Test):
 
     version = 2.0
-    operations = 5*(12 + 12)
+    operations = 5 * (12 + 12)
     inner_loops = 5
 
     def test(self, loops):
@@ -186,7 +186,7 @@ class SpecialClassAttribute(Test):
 class NormalClassAttribute(Test):
 
     version = 2.0
-    operations = 5*(12 + 12)
+    operations = 5 * (12 + 12)
     inner_loops = 5
 
     def test(self, loops):
@@ -215,6 +215,37 @@ class NormalClassAttribute(Test):
             c.b = 3
             c.c = 4
 
+            x = c.a
+            x = c.b
+            x = c.c
+
+            x = c.a
+            x = c.b
+            x = c.c
+
+            x = c.a
+            x = c.b
+            x = c.c
+
+            x = c.a
+            x = c.b
+            x = c.c
+
+            c.a = 2
+            c.b = 3
+            c.c = 4
+
+            c.a = 2
+            c.b = 3
+            c.c = 4
+
+            c.a = 2
+            c.b = 3
+            c.c = 4
+
+            c.a = 2
+            c.b = 3
+            c.c = 4
 
             x = c.a
             x = c.b
@@ -248,7 +279,6 @@ class NormalClassAttribute(Test):
             c.b = 3
             c.c = 4
 
-
             x = c.a
             x = c.b
             x = c.c
@@ -281,7 +311,6 @@ class NormalClassAttribute(Test):
             c.b = 3
             c.c = 4
 
-
             x = c.a
             x = c.b
             x = c.c
@@ -313,40 +342,6 @@ class NormalClassAttribute(Test):
             c.a = 2
             c.b = 3
             c.c = 4
-
-
-            x = c.a
-            x = c.b
-            x = c.c
-
-            x = c.a
-            x = c.b
-            x = c.c
-
-            x = c.a
-            x = c.b
-            x = c.c
-
-            x = c.a
-            x = c.b
-            x = c.c
-
-            c.a = 2
-            c.b = 3
-            c.c = 4
-
-            c.a = 2
-            c.b = 3
-            c.c = 4
-
-            c.a = 2
-            c.b = 3
-            c.c = 4
-
-            c.a = 2
-            c.b = 3
-            c.c = 4
-
 
             x = c.a
             x = c.b
@@ -370,7 +365,7 @@ class NormalClassAttribute(Test):
 class SpecialInstanceAttribute(Test):
 
     version = 2.0
-    operations = 5*(12 + 12)
+    operations = 5 * (12 + 12)
     inner_loops = 5
 
     def test(self, loops):
@@ -400,6 +395,37 @@ class SpecialInstanceAttribute(Test):
             o.__b__ = 3
             o.__c__ = 4
 
+            x = o.__a__
+            x = o.__b__
+            x = o.__c__
+
+            x = o.__a__
+            x = o.__b__
+            x = o.__c__
+
+            x = o.__a__
+            x = o.__b__
+            x = o.__c__
+
+            x = o.__a__
+            x = o.__b__
+            x = o.__c__
+
+            o.__a__ = 2
+            o.__b__ = 3
+            o.__c__ = 4
+
+            o.__a__ = 2
+            o.__b__ = 3
+            o.__c__ = 4
+
+            o.__a__ = 2
+            o.__b__ = 3
+            o.__c__ = 4
+
+            o.__a__ = 2
+            o.__b__ = 3
+            o.__c__ = 4
 
             x = o.__a__
             x = o.__b__
@@ -433,7 +459,6 @@ class SpecialInstanceAttribute(Test):
             o.__b__ = 3
             o.__c__ = 4
 
-
             x = o.__a__
             x = o.__b__
             x = o.__c__
@@ -466,7 +491,6 @@ class SpecialInstanceAttribute(Test):
             o.__b__ = 3
             o.__c__ = 4
 
-
             x = o.__a__
             x = o.__b__
             x = o.__c__
@@ -498,40 +522,6 @@ class SpecialInstanceAttribute(Test):
             o.__a__ = 2
             o.__b__ = 3
             o.__c__ = 4
-
-
-            x = o.__a__
-            x = o.__b__
-            x = o.__c__
-
-            x = o.__a__
-            x = o.__b__
-            x = o.__c__
-
-            x = o.__a__
-            x = o.__b__
-            x = o.__c__
-
-            x = o.__a__
-            x = o.__b__
-            x = o.__c__
-
-            o.__a__ = 2
-            o.__b__ = 3
-            o.__c__ = 4
-
-            o.__a__ = 2
-            o.__b__ = 3
-            o.__c__ = 4
-
-            o.__a__ = 2
-            o.__b__ = 3
-            o.__c__ = 4
-
-            o.__a__ = 2
-            o.__b__ = 3
-            o.__c__ = 4
-
 
             x = o.__a__
             x = o.__b__
@@ -555,7 +545,7 @@ class SpecialInstanceAttribute(Test):
 class NormalInstanceAttribute(Test):
 
     version = 2.0
-    operations = 5*(12 + 12)
+    operations = 5 * (12 + 12)
     inner_loops = 5
 
     def test(self, loops):
@@ -585,6 +575,37 @@ class NormalInstanceAttribute(Test):
             o.b = 3
             o.c = 4
 
+            x = o.a
+            x = o.b
+            x = o.c
+
+            x = o.a
+            x = o.b
+            x = o.c
+
+            x = o.a
+            x = o.b
+            x = o.c
+
+            x = o.a
+            x = o.b
+            x = o.c
+
+            o.a = 2
+            o.b = 3
+            o.c = 4
+
+            o.a = 2
+            o.b = 3
+            o.c = 4
+
+            o.a = 2
+            o.b = 3
+            o.c = 4
+
+            o.a = 2
+            o.b = 3
+            o.c = 4
 
             x = o.a
             x = o.b
@@ -618,7 +639,6 @@ class NormalInstanceAttribute(Test):
             o.b = 3
             o.c = 4
 
-
             x = o.a
             x = o.b
             x = o.c
@@ -651,7 +671,6 @@ class NormalInstanceAttribute(Test):
             o.b = 3
             o.c = 4
 
-
             x = o.a
             x = o.b
             x = o.c
@@ -683,40 +702,6 @@ class NormalInstanceAttribute(Test):
             o.a = 2
             o.b = 3
             o.c = 4
-
-
-            x = o.a
-            x = o.b
-            x = o.c
-
-            x = o.a
-            x = o.b
-            x = o.c
-
-            x = o.a
-            x = o.b
-            x = o.c
-
-            x = o.a
-            x = o.b
-            x = o.c
-
-            o.a = 2
-            o.b = 3
-            o.c = 4
-
-            o.a = 2
-            o.b = 3
-            o.c = 4
-
-            o.a = 2
-            o.b = 3
-            o.c = 4
-
-            o.a = 2
-            o.b = 3
-            o.c = 4
-
 
             x = o.a
             x = o.b
@@ -740,7 +725,7 @@ class NormalInstanceAttribute(Test):
 class BuiltinMethodLookup(Test):
 
     version = 2.0
-    operations = 5*(3*5 + 3*5)
+    operations = 5 * (3 * 5 + 3 * 5)
     inner_loops = 5
 
     def test(self, loops):

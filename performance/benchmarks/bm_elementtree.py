@@ -141,7 +141,8 @@ def bench_iterparse(etree, xml_file, xml_data, xml_root):
         events2 = [(event, elem.tag) for event, elem in it]
     nb_elems = int(xml_root.get('nb-elems'))
     if len(events1) != 2 * nb_elems or events1 != events2:
-        raise RuntimeError("parsing check failed:\n%r\n%r\n" % (len(events1), events2[:10]))
+        raise RuntimeError("parsing check failed:\n%r\n%r\n" %
+                           (len(events1), events2[:10]))
 
 
 def bench_parse(etree, xml_file, xml_data, xml_root):

@@ -11,12 +11,12 @@ KOMI = 7.5
 EMPTY, WHITE, BLACK = 0, 1, 2
 SHOW = {EMPTY: '.', WHITE: 'o', BLACK: 'x'}
 PASS = -1
-MAXMOVES = SIZE*SIZE*3
+MAXMOVES = SIZE * SIZE * 3
 TIMESTAMP = 0
 MOVES = 0
 
 
-def to_pos(x,y):
+def to_pos(x, y):
     return y * SIZE + x
 
 
@@ -26,6 +26,7 @@ def to_xy(pos):
 
 
 class Square:
+
     def __init__(self, board, pos):
         self.board = board
         self.pos = pos
@@ -35,7 +36,7 @@ class Square:
                                 for i in range(3)]
 
     def set_neighbours(self):
-        x, y = self.pos % SIZE, self.pos // SIZE;
+        x, y = self.pos % SIZE, self.pos // SIZE
         self.neighbours = []
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             newx, newy = x + dx, y + dy
@@ -88,27 +89,28 @@ class Square:
                         neighbour_ref.ledges += 1
 
     def find(self, update=False):
-       reference = self.reference
-       if reference.pos != self.pos:
-           reference = reference.find(update)
-           if update:
-               self.reference = reference
-       return reference
+        reference = self.reference
+        if reference.pos != self.pos:
+            reference = reference.find(update)
+            if update:
+                self.reference = reference
+        return reference
 
     def __repr__(self):
         return repr(to_xy(self.pos))
 
 
 class EmptySet:
+
     def __init__(self, board):
         self.board = board
-        self.empties = list(range(SIZE*SIZE))
-        self.empty_pos = list(range(SIZE*SIZE))
+        self.empties = list(range(SIZE * SIZE))
+        self.empty_pos = list(range(SIZE * SIZE))
 
     def random_choice(self):
         choices = len(self.empties)
         while choices:
-            i = int(random.random()*choices)
+            i = int(random.random() * choices)
             pos = self.empties[i]
             if self.board.useful(pos):
                 return pos
@@ -122,7 +124,7 @@ class EmptySet:
         self.empties.append(pos)
 
     def remove(self, pos):
-        self.set(self.empty_pos[pos], self.empties[len(self.empties)-1])
+        self.set(self.empty_pos[pos], self.empties[len(self.empties) - 1])
         self.empties.pop()
 
     def set(self, i, pos):
@@ -131,6 +133,7 @@ class EmptySet:
 
 
 class ZobristHash:
+
     def __init__(self, board):
         self.board = board
         self.hash_set = set()
@@ -150,9 +153,11 @@ class ZobristHash:
     def dupe(self):
         return self.hash in self.hash_set
 
+
 class Board:
+
     def __init__(self):
-        self.squares = [Square(self, pos) for pos in range(SIZE*SIZE)]
+        self.squares = [Square(self, pos) for pos in range(SIZE * SIZE)]
         for square in self.squares:
             square.set_neighbours()
         self.reset()
@@ -177,8 +182,10 @@ class Board:
             self.emptyset.remove(square.pos)
         elif self.lastmove == PASS:
             self.finished = True
-        if self.color == BLACK: self.color = WHITE
-        else: self.color = BLACK
+        if self.color == BLACK:
+            self.color = WHITE
+        else:
+            self.color = BLACK
         self.lastmove = pos
         self.history.append(pos)
 
@@ -223,10 +230,10 @@ class Board:
                     neighbour_ref.remove(neighbour_ref, update=False)
         dupe = self.zobrist.dupe()
         self.zobrist.hash = old_hash
-        strong_neighs = neighs-weak_neighs
-        strong_opps = opps-weak_opps
+        strong_neighs = neighs - weak_neighs
+        strong_opps = opps - weak_opps
         return not dupe and \
-               (empties or weak_opps or (strong_neighs and (strong_opps or weak_neighs)))
+            (empties or weak_opps or (strong_neighs and (strong_opps or weak_neighs)))
 
     def useful_moves(self):
         return [pos for pos in self.emptyset.empties if self.useful(pos)]
@@ -254,64 +261,67 @@ class Board:
         return count
 
     def check(self):
-       for square in self.squares:
-           if square.color == EMPTY:
-               continue
+        for square in self.squares:
+            if square.color == EMPTY:
+                continue
 
-           members1 = set([square])
-           changed = True
-           while changed:
-               changed = False
-               for member in members1.copy():
-                   for neighbour in member.neighbours:
-                       if neighbour.color == square.color and neighbour not in members1:
-                           changed = True
-                           members1.add(neighbour)
-           ledges1 = 0
-           for member in members1:
-               for neighbour in member.neighbours:
-                   if neighbour.color == EMPTY:
-                       ledges1 += 1
+            members1 = set([square])
+            changed = True
+            while changed:
+                changed = False
+                for member in members1.copy():
+                    for neighbour in member.neighbours:
+                        if neighbour.color == square.color and neighbour not in members1:
+                            changed = True
+                            members1.add(neighbour)
+            ledges1 = 0
+            for member in members1:
+                for neighbour in member.neighbours:
+                    if neighbour.color == EMPTY:
+                        ledges1 += 1
 
-           root = square.find()
+            root = square.find()
 
-           #print 'members1', square, root, members1
-           #print 'ledges1', square, ledges1
+            # print 'members1', square, root, members1
+            # print 'ledges1', square, ledges1
 
-           members2 = set()
-           for square2 in self.squares:
-               if square2.color != EMPTY and square2.find() == root:
-                   members2.add(square2)
+            members2 = set()
+            for square2 in self.squares:
+                if square2.color != EMPTY and square2.find() == root:
+                    members2.add(square2)
 
-           ledges2 = root.ledges
-           #print 'members2', square, root, members1
-           #print 'ledges2', square, ledges2
+            ledges2 = root.ledges
+            # print 'members2', square, root, members1
+            # print 'ledges2', square, ledges2
 
-           assert members1 == members2
-           assert ledges1 == ledges2, ('ledges differ at %r: %d %d' % (square, ledges1, ledges2))
+            assert members1 == members2
+            assert ledges1 == ledges2, ('ledges differ at %r: %d %d' % (
+                square, ledges1, ledges2))
 
-           empties1 = set(self.emptyset.empties)
+            empties1 = set(self.emptyset.empties)
 
-           empties2 = set()
-           for square in self.squares:
-               if square.color == EMPTY:
-                   empties2.add(square.pos)
+            empties2 = set()
+            for square in self.squares:
+                if square.color == EMPTY:
+                    empties2.add(square.pos)
 
     def __repr__(self):
         result = []
         for y in range(SIZE):
             start = to_pos(0, y)
-            result.append(''.join([SHOW[square.color]+' ' for square in self.squares[start:start+SIZE]]))
+            result.append(''.join(
+                [SHOW[square.color] + ' ' for square in self.squares[start:start + SIZE]]))
         return '\n'.join(result)
 
 
 class UCTNode:
+
     def __init__(self):
         self.bestchild = None
         self.pos = -1
         self.wins = 0
         self.losses = 0
-        self.pos_child = [None for x in range(SIZE*SIZE)]
+        self.pos_child = [None for x in range(SIZE * SIZE)]
         self.parent = None
 
     def play(self, board):
@@ -342,7 +352,7 @@ class UCTNode:
         if self.unexplored:
             i = random.randrange(len(self.unexplored))
             pos = self.unexplored[i]
-            self.unexplored[i] = self.unexplored[len(self.unexplored)-1]
+            self.unexplored[i] = self.unexplored[len(self.unexplored) - 1]
             self.unexplored.pop()
             return pos
         elif self.bestchild:
@@ -352,7 +362,7 @@ class UCTNode:
 
     def random_playout(self, board):
         """ random play until both players pass """
-        for x in range(MAXMOVES): # XXX while not self.finished?
+        for x in range(MAXMOVES):  # XXX while not self.finished?
             if board.finished:
                 break
             board.move(board.random_move())
@@ -361,8 +371,10 @@ class UCTNode:
         """ update win/loss count along path """
         wins = board.score(BLACK) >= board.score(WHITE)
         for node in path:
-            if color == BLACK: color = WHITE
-            else: color = BLACK
+            if color == BLACK:
+                color = WHITE
+            else:
+                color = BLACK
             if wins == (color == BLACK):
                 node.wins += 1
             else:
@@ -371,12 +383,12 @@ class UCTNode:
                 node.parent.bestchild = node.parent.best_child()
 
     def score(self):
-        winrate = self.wins/float(self.wins+self.losses)
-        parentvisits = self.parent.wins+self.parent.losses
+        winrate = self.wins / float(self.wins + self.losses)
+        parentvisits = self.parent.wins + self.parent.losses
         if not parentvisits:
             return winrate
-        nodevisits = self.wins+self.losses
-        return winrate + math.sqrt((math.log(parentvisits))/(5*nodevisits))
+        nodevisits = self.wins + self.losses
+        return winrate + math.sqrt((math.log(parentvisits)) / (5 * nodevisits))
 
     def best_child(self):
         maxscore = -1
@@ -391,10 +403,10 @@ class UCTNode:
         maxvisits = -1
         maxchild = None
         for child in self.pos_child:
-#            if child:
-#                print to_xy(child.pos), child.wins, child.losses, child.score()
-            if child and (child.wins+child.losses) > maxvisits:
-                maxvisits, maxchild = (child.wins+child.losses), child
+            #            if child:
+            # print to_xy(child.pos), child.wins, child.losses, child.score()
+            if child and (child.wins + child.losses) > maxvisits:
+                maxvisits, maxchild = (child.wins + child.losses), child
         return maxchild
 
 

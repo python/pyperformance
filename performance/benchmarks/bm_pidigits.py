@@ -19,8 +19,10 @@ _count = itertools.count
 _islice = itertools.islice
 
 # Adapted from code on http://shootout.alioth.debian.org/
+
+
 def gen_x():
-    return _map(lambda k: (k, 4*k + 2, 0, 2*k + 1), _count(1))
+    return _map(lambda k: (k, 4 * k + 2, 0, 2 * k + 1), _count(1))
 
 
 def compose(a, b):
@@ -34,7 +36,7 @@ def compose(a, b):
 
 def extract(z, j):
     q, r, s, t = z
-    return (q*j + r) // (s*j + t)
+    return (q * j + r) // (s * j + t)
 
 
 def gen_pi_digits():
@@ -45,7 +47,7 @@ def gen_pi_digits():
         while y != extract(z, 4):
             z = compose(z, next(x))
             y = extract(z, 3)
-        z = compose((10, -10*y, 0, 1), z)
+        z = compose((10, -10 * y, 0, 1), z)
         yield y
 
 

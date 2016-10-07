@@ -18,6 +18,7 @@ HUGE = ([NESTED[0]] * 1000, 1)
 
 cases = ['EMPTY', 'SIMPLE', 'NESTED', 'HUGE']
 
+
 def main(loops):
     data = []
     for case in cases:

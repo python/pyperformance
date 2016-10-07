@@ -15,13 +15,13 @@ def permutations(iterable, r=None):
     if r is None:
         r = n
     indices = list(range(n))
-    cycles = list(range(n-r+1, n+1))[::-1]
+    cycles = list(range(n - r + 1, n + 1))[::-1]
     yield tuple(pool[i] for i in indices[:r])
     while n:
         for i in reversed(range(r)):
             cycles[i] -= 1
             if cycles[i] == 0:
-                indices[i:] = indices[i+1:] + indices[i:i+1]
+                indices[i:] = indices[i + 1:] + indices[i:i + 1]
                 cycles[i] = n - i
             else:
                 j = cycles[i]
@@ -47,8 +47,8 @@ def n_queens(queen_count):
     """
     cols = range(queen_count)
     for vec in permutations(cols):
-        if (queen_count == len(set(vec[i]+i for i in cols))
-                        == len(set(vec[i]-i for i in cols))):
+        if (queen_count == len(set(vec[i] + i for i in cols))
+                        == len(set(vec[i] - i for i in cols))):
             yield vec
 
 
@@ -64,5 +64,6 @@ def bench_n_queens(loops):
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='nqueens')
-    runner.metadata['description'] = ("Test the performance of an N-Queens solvers.")
+    runner.metadata['description'] = (
+        "Test the performance of an N-Queens solvers.")
     runner.bench_sample_func(bench_n_queens)

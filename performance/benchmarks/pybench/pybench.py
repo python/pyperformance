@@ -47,7 +47,7 @@ from CommandLine import Application
 # Version number; version history: see README file !
 __version__ = '2.1'
 
-### Constants
+# Constants
 
 # Second fractions
 MILLI_SECONDS = 1e3
@@ -72,7 +72,8 @@ ALLOW_SKIPPING_CALIBRATION = 1
 # Print debug information ?
 _debug = 0
 
-### Helpers
+# Helpers
+
 
 def get_machine_details():
 
@@ -93,14 +94,14 @@ def get_machine_details():
         'processor': platform.processor(),
         'executable': sys.executable,
         'implementation': getattr(platform, 'python_implementation',
-                                  lambda:'n/a')(),
+                                  lambda: 'n/a')(),
         'python': python,
         'compiler': platform.python_compiler(),
         'buildno': buildno,
         'builddate': builddate,
         'unicode': unitype,
         'bits': bits,
-        }
+    }
 
 
 # FIXME: use perf metadata?
@@ -123,7 +124,8 @@ def print_machine_details(d, indent=''):
     joiner = '\n' + indent
     print(indent + joiner.join(l) + '\n')
 
-### Test baseclass
+# Test baseclass
+
 
 class Test:
 
@@ -145,7 +147,7 @@ class Test:
 
     """
 
-    ### Instance variables that each test should override
+    # Instance variables that each test should override
 
     # Version number of the test as float (x.yy); this is important
     # for comparisons of benchmark runs - tests with unequal version
@@ -164,7 +166,7 @@ class Test:
     # Number of inner loops
     inner_loops = 1
 
-    ### Internal variables
+    # Internal variables
 
     # Mark this class as implementing a test
     is_a_test = 1
@@ -182,10 +184,10 @@ class Test:
         if self.loops:
             return
         # FIXME: don't use private methods of the perf modume!
-        self.loops, self._calibrate_warmups = runner._calibrate(self.bench, self.test)
+        self.loops, self._calibrate_warmups = runner._calibrate(
+            self.bench, self.test)
 
     def run(self, runner, rounds):
-
         """ Run the test in two phases: first calibrate, then
             do the actual test. Be careful to keep the calibration
             timing low w/r to the test timing.
@@ -216,7 +218,6 @@ class Test:
         self.bench.add_run(run)
 
     def test(self):
-
         """ Run the test.
 
             The test needs to run self.rounds executing
@@ -226,14 +227,15 @@ class Test:
         return
 
 
-### Load Setup
+# Load Setup
 
 # This has to be done after the definition of the Test class, since
 # the Setup module will import subclasses using this class.
 
 import Setup
 
-### Benchmark base class
+# Benchmark base class
+
 
 class Benchmark:
 
@@ -272,7 +274,7 @@ class Benchmark:
         limitnames = args.benchmarks
         if limitnames:
             if _debug:
-                print('* limiting test names to one with substring "%s"' % \
+                print('* limiting test names to one with substring "%s"' %
                       limitnames)
             limitnames = re.compile(limitnames, re.I)
         else:
@@ -286,10 +288,10 @@ class Benchmark:
             if not hasattr(testclass, 'is_a_test'):
                 continue
             name = testclass.__name__
-            if  name == 'Test':
+            if name == 'Test':
                 continue
             if (limitnames is not None and
-                limitnames.search(name) is None):
+                    limitnames.search(name) is None):
                 continue
             test = testclass(self.runner)
             self.tests[name] = test
@@ -356,7 +358,7 @@ class Benchmark:
     def print_benchmark(self, limitnames=None):
 
         print('Test                          '
-               '   median')
+              '   median')
         print('-' * LINE)
         tests = sorted(self.tests.items())
         total_avg_time = 0.0
@@ -364,12 +366,12 @@ class Benchmark:
         for bench in self.suite.get_benchmarks():
             median = bench.median()
             total_avg_time += median
-            print('%30s:  %5.0f ns' % \
+            print('%30s:  %5.0f ns' %
                   (bench.get_name(), median * NANO_SECONDS,))
         print('-' * LINE)
         print('Totals:                        '
-               ' %6.1f us' %
-               (total_avg_time * MICRO_SECONDS,))
+              ' %6.1f us' %
+              (total_avg_time * MICRO_SECONDS,))
         print()
 
 
@@ -386,6 +388,7 @@ def prepare_subprocess_args(runner, cmd):
 
 class MyTextRunner(perf.text_runner.TextRunner):
     # FIXME: don't override private methods
+
     def _main(self):
         start_time = perf.monotonic_clock()
 
@@ -425,7 +428,7 @@ class MyTextRunner(perf.text_runner.TextRunner):
 
         duration = perf.monotonic_clock() - start_time
 
-        #self._display_result(bench)
+        # self._display_result(bench)
 
 
 class PyBenchCmdline(Application):
@@ -516,7 +519,7 @@ python pybench.py -s p25.json -c p21.json
         print('PYBENCH %s' % __version__)
         print('-' * LINE)
         print('* using %s %s' % (
-            getattr(platform, 'python_implementation', lambda:'Python')(),
+            getattr(platform, 'python_implementation', lambda: 'Python')(),
             ' '.join(sys.version.split())))
 
         # Switch off garbage collection
@@ -547,7 +550,7 @@ python pybench.py -s p25.json -c p21.json
         print()
 
         if runner.args.output:
-            print('Creating benchmark: %s (rounds=%i)' % \
+            print('Creating benchmark: %s (rounds=%i)' %
                   (runner.args.output, bench.rounds))
             print()
 

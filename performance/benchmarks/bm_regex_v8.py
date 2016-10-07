@@ -132,7 +132,8 @@ compiled_regex_strings = [
     (r'\bucfie\s*=\s*([^;]*)', 'i'),
     (r'\bhfucjrn\s*=\s*([^;]*)', 'i'),
     (r'\bmvc\s*=\s*([^;]*)', 'i'),
-    (r'^((?:[\w' + six.u('\u0128-\uffff') + r'*_-]|\\.)+)(#)((?:[\w' + six.u('\u0128-\uffff') + r'*_-]|\\.)+)', ''),
+    (r'^((?:[\w' + six.u('\u0128-\uffff') + r'*_-]|\\.)+)(#)((?:[\w' +
+     six.u('\u0128-\uffff') + r'*_-]|\\.)+)', ''),
     (r'^([>+~])\s*(\w*)', 'i'),
     (r'^>\s*((?:[\w' + six.u('\u0128-\uffff') + r'*_-]|\\.)+)', ''),
     (r'^[\s[]?shapgvba', ''),
@@ -143,7 +144,8 @@ compiled_regex_strings = [
     (r'(\$\{abj\})|(\$abj\b)', 'g'),
     (r'\s+$', ''),
     (r'^\s+', ''),
-    (r'(\\\"|\x00-|\x1f|\x7f-|\x9f|' + six.u('\u00ad|\u0600-|\u0604|\u070f|\u17b4|\u17b5|\u200c-|\u200f|\u2028-|\u202f|\u2060-|\u206f|\ufeff|\ufff0-|\uffff') + r')', 'g'),
+    (r'(\\\"|\x00-|\x1f|\x7f-|\x9f|' +
+     six.u('\u00ad|\u0600-|\u0604|\u070f|\u17b4|\u17b5|\u200c-|\u200f|\u2028-|\u202f|\u2060-|\u206f|\ufeff|\ufff0-|\uffff') + r')', 'g'),
     (r'^(:)([\w-]+)\("?\'?(.*?(\(.*?\))?[^(]*?)"?\'?\)', ''),
     (r'^([:.#]*)((?:[\w' + six.u('\u0128-\uffff') + r'*_-]|\\.)+)', ''),
     (r'^(\[) *@?([\w-]+) *([!*$^~=]*) *(\'?"?)(.*?)\4 *\]', '')]
@@ -272,6 +274,7 @@ strings = [
 
 # The 12 benchmarking blocks
 
+
 def block0():
     for i in xrange(6511):
         regexs[0].search(r'pyvpx')
@@ -289,7 +292,8 @@ def block0():
         regexs[1].search(r'uggc://jjj.snprobbx.pbz/fepu.cuc')
 
     for i in xrange(352):
-        re.search(r'qqqq|qqq|qq|q|ZZZZ|ZZZ|ZZ|Z|llll|ll|l|uu|u|UU|U|zz|z|ff|f|gg|g|sss|ss|s|mmm|mm|m', 'qqqq, ZZZ q, llll')
+        re.search(
+            r'qqqq|qqq|qq|q|ZZZZ|ZZZ|ZZ|Z|llll|ll|l|uu|u|UU|U|zz|z|ff|f|gg|g|sss|ss|s|mmm|mm|m', 'qqqq, ZZZ q, llll')
 
     for i in xrange(312):
         regexs[3].search(r'vachggrkg QBZPbageby_cynprubyqre')
@@ -329,7 +333,8 @@ def block0():
         regexs[2].sub(r'', 'uvqqra_ryrz', subcount[2])
 
     for i in xrange(95):
-        re.search(r'(?:^|;)\s*sevraqfgre_ynat=([^;]*)', 'sevraqfgre_naba=nvq%3Qn6ss9p85n868ro9s059pn854735956o3%26ers%3Q%26df%3Q%26vpgl%3QHF')
+        re.search(r'(?:^|;)\s*sevraqfgre_ynat=([^;]*)',
+                  'sevraqfgre_naba=nvq%3Qn6ss9p85n868ro9s059pn854735956o3%26ers%3Q%26df%3Q%26vpgl%3QHF')
 
     for i in xrange(93):
         regexs[12].sub(r'', 'uggc://ubzr.zlfcnpr.pbz/vaqrk.psz', subcount[12])
@@ -341,11 +346,13 @@ def block0():
     for i in xrange(85):
         regexs[14].sub(r'', 'svefg', subcount[14])
         regexs[15].sub(r'', 'svefg', subcount[15])
-        regexs[12].sub(r'', 'uggc://cebsvyr.zlfcnpr.pbz/vaqrk.psz', subcount[12])
+        regexs[12].sub(
+            r'', 'uggc://cebsvyr.zlfcnpr.pbz/vaqrk.psz', subcount[12])
         regexs[14].sub(r'', 'ynfg', subcount[14])
         regexs[15].sub(r'', 'ynfg', subcount[15])
         regexs[16].search(r'qvfcynl')
         regexs[13].search(r'uggc://cebsvyr.zlfcnpr.pbz/vaqrk.psz')
+
 
 def block1():
     for i in xrange(81):
@@ -378,11 +385,13 @@ def block1():
         regexs[0].search(r'xrlhc')
 
     for i in xrange(77):
-        regexs[12].sub(r'', 'uggc://zrffntvat.zlfcnpr.pbz/vaqrk.psz', subcount[12])
+        regexs[12].sub(
+            r'', 'uggc://zrffntvat.zlfcnpr.pbz/vaqrk.psz', subcount[12])
         regexs[13].search(r'uggc://zrffntvat.zlfcnpr.pbz/vaqrk.psz')
 
     for i in xrange(73):
-        regexs[18].sub(r'', 'FrffvbaFgbentr=%7O%22GnoThvq%22%3N%7O%22thvq%22%3N1231367125017%7Q%7Q', subcount[18])
+        regexs[18].sub(
+            r'', 'FrffvbaFgbentr=%7O%22GnoThvq%22%3N%7O%22thvq%22%3N1231367125017%7Q%7Q', subcount[18])
 
     for i in xrange(72):
         regexs[1].search(strings[6])
@@ -395,13 +404,16 @@ def block1():
         re.sub(r'd1', '', strings[7], 0)
         re.sub(r'NQ_VQ', '', strings[8], 0)
         re.sub(r'd2', '', strings[9], 0)
-        re.sub(r'_', '', 'NI%3Q1_CI%3Q1_PI%3Q1_EI%3Q1_HI%3Q1_HP%3Q1_IC%3Q0.0.0.0_IH%3Q0', 0)
-        regexs[20].split(r'svz_zlfcnpr_ubzrcntr_abgybttrqva,svz_zlfcnpr_aba_HTP,svz_zlfcnpr_havgrq-fgngrf')
+        re.sub(
+            r'_', '', 'NI%3Q1_CI%3Q1_PI%3Q1_EI%3Q1_HI%3Q1_HP%3Q1_IC%3Q0.0.0.0_IH%3Q0', 0)
+        regexs[20].split(
+            r'svz_zlfcnpr_ubzrcntr_abgybttrqva,svz_zlfcnpr_aba_HTP,svz_zlfcnpr_havgrq-fgngrf')
         regexs[21].search(r'ybnqvat')
 
     for i in xrange(68):
         regexs[1].search(r'#')
-        re.search(r'(?:ZFVR.(\d+\.\d+))|(?:(?:Sversbk|TenaCnenqvfb|Vprjrnfry).(\d+\.\d+))|(?:Bcren.(\d+\.\d+))|(?:NccyrJroXvg.(\d+(?:\.\d+)?))', strings[0])
+        re.search(
+            r'(?:ZFVR.(\d+\.\d+))|(?:(?:Sversbk|TenaCnenqvfb|Vprjrnfry).(\d+\.\d+))|(?:Bcren.(\d+\.\d+))|(?:NccyrJroXvg.(\d+(?:\.\d+)?))', strings[0])
         re.search(r'(Znp BF K)|(Jvaqbjf;)', strings[0])
         re.search(r'Trpxb\/([0-9]+)', strings[0])
         regexs[21].search(r'ybnqrq')
@@ -410,8 +422,10 @@ def block1():
         regexs[16].search(r'pbybe')
 
     for i in xrange(44):
-        regexs[12].sub(r'', 'uggc://sevraqf.zlfcnpr.pbz/vaqrk.psz', subcount[12])
+        regexs[12].sub(
+            r'', 'uggc://sevraqf.zlfcnpr.pbz/vaqrk.psz', subcount[12])
         regexs[13].search(r'uggc://sevraqf.zlfcnpr.pbz/vaqrk.psz')
+
 
 def block2():
     for i in xrange(40):
@@ -431,7 +445,8 @@ def block2():
     for i in xrange(37):
         regexs[8].search(r'111soqs57qo8o8480qo18sor2011r3n591q7s6s37r120904')
         regexs[8].search(r'SbeprqRkcvengvba=633669315660164980')
-        regexs[8].search(r'FrffvbaQQS2=111soqs57qo8o8480qo18sor2011r3n591q7s6s37r120904')
+        regexs[8].search(
+            r'FrffvbaQQS2=111soqs57qo8o8480qo18sor2011r3n591q7s6s37r120904')
 
     for i in xrange(35):
         regexs[14].sub(r'', 'puvyq p1 svefg', subcount[14])
@@ -445,7 +460,8 @@ def block2():
         regexs[8].search(r'44132r503660')
         regexs[8].search(r'SbeprqRkcvengvba=633669316860113296')
         regexs[8].search(r'AFP_zp_dfctwzs-aowb_80=44132r503660')
-        regexs[8].search(r'FrffvbaQQS2=s6r4579npn4rn2135s904r0s75pp1o5334p6s6pospo12696')
+        regexs[8].search(
+            r'FrffvbaQQS2=s6r4579npn4rn2135s904r0s75pp1o5334p6s6pospo12696')
         regexs[8].search(r's6r4579npn4rn2135s904r0s75pp1o5334p6s6pospo12696')
 
     for i in xrange(32):
@@ -455,7 +471,8 @@ def block2():
         regexs[23].sub(r'', 'uggc://jjj.snprobbx.pbz/', subcount[23])
         regexs[8].search(r'SbeprqRkcvengvba=633669358527244818')
         regexs[8].search(r'VC=66.249.85.130')
-        regexs[8].search(r'FrffvbaQQS2=s15q53p9n372sn76npr13o271n4s3p5r29p235746p908p58')
+        regexs[8].search(
+            r'FrffvbaQQS2=s15q53p9n372sn76npr13o271n4s3p5r29p235746p908p58')
         regexs[8].search(r's15q53p9n372sn76npr13o271n4s3p5r29p235746p908p58')
         regexs[24].search(r'uggc://jjj.snprobbx.pbz/')
 
@@ -471,6 +488,7 @@ def block2():
         regexs[25].sub(r'', 'Funer guvf tnqtrg', subcount[25])
         regexs[12].sub(r'', 'Funer guvf tnqtrg', subcount[12])
         regexs[26].search(r'uggc://jjj.tbbtyr.pbz/vt/qverpgbel')
+
 
 def block3():
     for i in xrange(27):
@@ -510,13 +528,17 @@ def block3():
         regexs[32].split(strings[11])
         regexs[33].sub(r'', strings[12], subcount[33])
         regexs[8].search(r'144631658.0.10.1231363570')
-        regexs[8].search(r'144631658.1231363570.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
-        regexs[8].search(r'144631658.3426875219718084000.1231363570.1231363570.1231363570.1')
+        regexs[8].search(
+            r'144631658.1231363570.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'144631658.3426875219718084000.1231363570.1231363570.1231363570.1')
         regexs[8].search(strings[13])
         regexs[8].search(strings[14])
-        regexs[8].search(r'__hgzn=144631658.3426875219718084000.1231363570.1231363570.1231363570.1')
+        regexs[8].search(
+            r'__hgzn=144631658.3426875219718084000.1231363570.1231363570.1231363570.1')
         regexs[8].search(r'__hgzo=144631658.0.10.1231363570')
-        regexs[8].search(r'__hgzm=144631658.1231363570.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'__hgzm=144631658.1231363570.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
         regexs[34].search(strings[10])
         regexs[34].search(strings[11])
 
@@ -559,8 +581,10 @@ def block3():
         regexs[14].sub(r'', 'hyJVzt', subcount[14])
         regexs[15].sub(r'', 'hyJVzt', subcount[15])
         regexs[8].search(r'144631658.0.10.1231363638')
-        regexs[8].search(r'144631658.1231363638.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
-        regexs[8].search(r'144631658.965867047679498800.1231363638.1231363638.1231363638.1')
+        regexs[8].search(
+            r'144631658.1231363638.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'144631658.965867047679498800.1231363638.1231363638.1231363638.1')
         regexs[8].search(r'4413268q3660')
         regexs[8].search(r'4ss747o77904333q374or84qrr1s9r0nprp8r5q81534o94n')
         regexs[8].search(r'SbeprqRkcvengvba=633669321699093060')
@@ -568,10 +592,13 @@ def block3():
         regexs[8].search(strings[19])
         regexs[8].search(strings[20])
         regexs[8].search(r'AFP_zp_tfwsbrg-aowb_80=4413268q3660')
-        regexs[8].search(r'FrffvbaQQS2=4ss747o77904333q374or84qrr1s9r0nprp8r5q81534o94n')
-        regexs[8].search(r'__hgzn=144631658.965867047679498800.1231363638.1231363638.1231363638.1')
+        regexs[8].search(
+            r'FrffvbaQQS2=4ss747o77904333q374or84qrr1s9r0nprp8r5q81534o94n')
+        regexs[8].search(
+            r'__hgzn=144631658.965867047679498800.1231363638.1231363638.1231363638.1')
         regexs[8].search(r'__hgzo=144631658.0.10.1231363638')
-        regexs[8].search(r'__hgzm=144631658.1231363638.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'__hgzm=144631658.1231363638.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
         regexs[34].search(strings[15])
         regexs[34].search(strings[16])
 
@@ -588,26 +615,32 @@ def block4():
     for i in xrange(15):
         regexs[32].split(strings[21])
         regexs[32].split(strings[22])
-        regexs[12].sub(r'', 'uggc://ohyyrgvaf.zlfcnpr.pbz/vaqrk.psz', subcount[12])
+        regexs[12].sub(
+            r'', 'uggc://ohyyrgvaf.zlfcnpr.pbz/vaqrk.psz', subcount[12])
         regexs[33].sub(r'', strings[23], subcount[33])
         regexs[37].sub(r'', 'yv', subcount[37])
         regexs[18].sub(r'', 'yv', subcount[18])
         regexs[8].search(r'144631658.0.10.1231367822')
-        regexs[8].search(r'144631658.1231367822.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
-        regexs[8].search(r'144631658.4127520630321984500.1231367822.1231367822.1231367822.1')
+        regexs[8].search(
+            r'144631658.1231367822.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'144631658.4127520630321984500.1231367822.1231367822.1231367822.1')
         regexs[8].search(strings[24])
         regexs[8].search(strings[25])
-        regexs[8].search(r'__hgzn=144631658.4127520630321984500.1231367822.1231367822.1231367822.1')
+        regexs[8].search(
+            r'__hgzn=144631658.4127520630321984500.1231367822.1231367822.1231367822.1')
         regexs[8].search(r'__hgzo=144631658.0.10.1231367822')
-        regexs[8].search(r'__hgzm=144631658.1231367822.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'__hgzm=144631658.1231367822.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
         regexs[34].search(strings[21])
         regexs[34].search(strings[22])
 
-        #FIXME
+        # FIXME
         # The \{0,65534} should be a *
         # There's a current python bug that will stop the regex compilation
         # when a * appears there http://bugs.python.org/issue6156.
-        re.search(r'\.([\w-]+)|\[(\w+)(?:([!*^$~|]?=)["\']?(.*?)["\']?)?\]|:([\w-]+)(?:\(["\']?(.\{0,65534}?)?["\']?\)|$)', strings[26])
+        re.search(
+            r'\.([\w-]+)|\[(\w+)(?:([!*^$~|]?=)["\']?(.*?)["\']?)?\]|:([\w-]+)(?:\(["\']?(.\{0,65534}?)?["\']?\)|$)', strings[26])
 
         regexs[13].search(r'uggc://ohyyrgvaf.zlfcnpr.pbz/vaqrk.psz')
         regexs[38].search(r'yv')
@@ -618,7 +651,8 @@ def block4():
         re.sub(r'<', '', 'Funer guvf tnqtrg', 0)
         re.sub(r'>', '', 'Funer guvf tnqtrg', 0)
         regexs[39].sub(r'', 'Funer guvf tnqtrg', subcount[39])
-        regexs[12].sub(r'', 'uggc://cebsvyrrqvg.zlfcnpr.pbz/vaqrk.psz', subcount[12])
+        regexs[12].sub(
+            r'', 'uggc://cebsvyrrqvg.zlfcnpr.pbz/vaqrk.psz', subcount[12])
         regexs[40].sub(r'', 'grnfre', subcount[40])
         regexs[41].sub(r'', 'grnfre', subcount[41])
         regexs[42].sub(r'', 'grnfre', subcount[42])
@@ -656,8 +690,10 @@ def block5():
         regexs[14].sub(r'', 'vape fyvqrgrkg', subcount[14])
         regexs[15].sub(r'', 'vape fyvqrgrkg', subcount[15])
         regexs[5].sub(r'', 'vachggrkg QBZPbageby_cynprubyqre', subcount[5])
-        regexs[14].sub(r'', 'cnerag puebzr6 fvatyr1 gno fryrpgrq', subcount[14])
-        regexs[15].sub(r'', 'cnerag puebzr6 fvatyr1 gno fryrpgrq', subcount[15])
+        regexs[14].sub(
+            r'', 'cnerag puebzr6 fvatyr1 gno fryrpgrq', subcount[14])
+        regexs[15].sub(
+            r'', 'cnerag puebzr6 fvatyr1 gno fryrpgrq', subcount[15])
         regexs[14].sub(r'', 'cb_guz', subcount[14])
         regexs[15].sub(r'', 'cb_guz', subcount[15])
         regexs[14].sub(r'', 'fhozvg', subcount[14])
@@ -667,7 +703,8 @@ def block5():
         re.search(r'XUGZY', strings[0])
 
     for i in xrange(12):
-        re.sub(r'(\$\{cebg\})|(\$cebg\b)', '', '${cebg}://${ubfg}${cngu}/${dz}', 0)
+        re.sub(r'(\$\{cebg\})|(\$cebg\b)', '',
+               '${cebg}://${ubfg}${cngu}/${dz}', 0)
         regexs[40].sub(r'', '1', subcount[40])
         regexs[10].sub(r'', '1', subcount[10])
         regexs[51].sub(r'', '1', subcount[51])
@@ -678,13 +715,17 @@ def block5():
         re.sub(r'^(.*)\..*$', '', '9.0  e115', 1)
         re.sub(r'^.*e(.*)$', '', '9.0  e115', 1)
         regexs[55].sub(r'', '<!-- ${nqiHey} -->', subcount[55])
-        regexs[55].sub(r'', '<fpevcg glcr="grkg/wninfpevcg" fep="${nqiHey}"></fpevcg>', subcount[55])
+        regexs[55].sub(
+            r'', '<fpevcg glcr="grkg/wninfpevcg" fep="${nqiHey}"></fpevcg>', subcount[55])
         re.sub(r'^.*\s+(\S+\s+\S+$)', '', strings[1], 1)
         regexs[30].sub(r'', 'tzk%2Subzrcntr%2Sfgneg%2Sqr%2S', subcount[30])
         regexs[30].sub(r'', 'tzk', subcount[30])
-        re.sub(r'(\$\{ubfg\})|(\$ubfg\b)', '', 'uggc://${ubfg}${cngu}/${dz}', 0)
-        regexs[56].sub(r'', 'uggc://nqpyvrag.hvzfrei.arg${cngu}/${dz}', subcount[56])
-        re.sub(r'(\$\{dz\})|(\$dz\b)', '', 'uggc://nqpyvrag.hvzfrei.arg/wf.at/${dz}', 0)
+        re.sub(r'(\$\{ubfg\})|(\$ubfg\b)', '',
+               'uggc://${ubfg}${cngu}/${dz}', 0)
+        regexs[56].sub(
+            r'', 'uggc://nqpyvrag.hvzfrei.arg${cngu}/${dz}', subcount[56])
+        re.sub(r'(\$\{dz\})|(\$dz\b)', '',
+               'uggc://nqpyvrag.hvzfrei.arg/wf.at/${dz}', 0)
         regexs[29].sub(r'', 'frpgvba', subcount[29])
         regexs[30].sub(r'', 'frpgvba', subcount[30])
         regexs[29].sub(r'', 'fvgr', subcount[29])
@@ -710,7 +751,6 @@ def block6():
         re.sub(r'(?i)##h##', '', strings[30], 0)
         re.sub(r'(?i)##n##', '', strings[31], 0)
         re.sub(r'(?i)##\/n##', '', strings[32], 0)
-
 
         # This prints a unicode escape where the V8 version
         # prints the unicode character.
@@ -742,7 +782,8 @@ def block6():
         re.search(r'##yv9##', strings[28], re.IGNORECASE)
         regexs[8].search(r'473qq1rs0n2r70q9qo1pq48n021s9468ron90nps048p4p29')
         regexs[8].search(r'SbeprqRkcvengvba=633669325184628362')
-        regexs[8].search(r'FrffvbaQQS2=473qq1rs0n2r70q9qo1pq48n021s9468ron90nps048p4p29')
+        regexs[8].search(
+            r'FrffvbaQQS2=473qq1rs0n2r70q9qo1pq48n021s9468ron90nps048p4p29')
         re.search(r'AbxvnA[^\/]*', strings[0])
 
     for i in xrange(10):
@@ -758,7 +799,8 @@ def block6():
         regexs[29].sub(r'', 'nqfvmr', subcount[29])
         regexs[30].sub(r'', 'nqfvmr', subcount[30])
         re.sub(r'(\$\{2\})|(\$2\b)', '', 'uggc://${2}${3}${4}${5}', 0)
-        re.sub(r'(\$\{3\})|(\$3\b)', '', 'uggc://wf.hv-cbegny.qr${3}${4}${5}', 0)
+        re.sub(r'(\$\{3\})|(\$3\b)', '',
+               'uggc://wf.hv-cbegny.qr${3}${4}${5}', 0)
         regexs[40].sub(r'', 'arjf', subcount[40])
         regexs[41].sub(r'', 'arjf', subcount[41])
         regexs[42].sub(r'', 'arjf', subcount[42])
@@ -781,8 +823,10 @@ def block6():
         regexs[9].search(r'hsgy')
         regexs[9].search(r'lhv-h')
         re.search(r'Fnsnev|Xbadhrebe|XUGZY', strings[0], re.IGNORECASE)
-        regexs[61].search(r'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/onfr.wf')
+        regexs[61].search(
+            r'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/onfr.wf')
         regexs[62].search(r'#Ybtva_rznvy')
+
 
 def block7():
     for i in xrange(9):
@@ -818,8 +862,10 @@ def block7():
         regexs[30].sub(r'', 'at_bhgre', subcount[30])
         regexs[14].sub(r'', 'cnerag puebzr5 qbhoyr2 NU', subcount[14])
         regexs[15].sub(r'', 'cnerag puebzr5 qbhoyr2 NU', subcount[15])
-        regexs[14].sub(r'', 'cnerag puebzr5 dhnq5 ps NU osyvax zbarl', subcount[14])
-        regexs[15].sub(r'', 'cnerag puebzr5 dhnq5 ps NU osyvax zbarl', subcount[15])
+        regexs[14].sub(
+            r'', 'cnerag puebzr5 dhnq5 ps NU osyvax zbarl', subcount[14])
+        regexs[15].sub(
+            r'', 'cnerag puebzr5 dhnq5 ps NU osyvax zbarl', subcount[15])
         regexs[14].sub(r'', 'cnerag puebzr6 fvatyr1', subcount[14])
         regexs[15].sub(r'', 'cnerag puebzr6 fvatyr1', subcount[15])
         regexs[14].sub(r'', 'cb_qrs', subcount[14])
@@ -829,20 +875,26 @@ def block7():
         regexs[30].sub(r'', 'iv_svefg_gvzr', subcount[30])
         re.search(r'(^|.)(ronl|qri-ehf3.wbg)(|fgberf|zbgbef|yvirnhpgvbaf|jvxv|rkcerff|punggre).(pbz(|.nh|.pa|.ux|.zl|.ft|.oe|.zk)|pb(.hx|.xe|.am)|pn|qr|se|vg|ay|or|ng|pu|vr|va|rf|cy|cu|fr)$', 'cntrf.ronl.pbz', re.IGNORECASE)
         regexs[8].search(r'144631658.0.10.1231364074')
-        regexs[8].search(r'144631658.1231364074.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
-        regexs[8].search(r'144631658.2294274870215848400.1231364074.1231364074.1231364074.1')
+        regexs[8].search(
+            r'144631658.1231364074.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'144631658.2294274870215848400.1231364074.1231364074.1231364074.1')
         regexs[8].search(r'4413241q3660')
         regexs[8].search(r'SbeprqRkcvengvba=633669357391353591')
         regexs[8].search(strings[39])
         regexs[8].search(strings[40])
         regexs[8].search(r'AFP_zp_kkk-gdzogv_80=4413241q3660')
-        regexs[8].search(r'FrffvbaQQS2=p98s8o9q42nr21or1r61pqorn1n002nsss569635984s6qp7')
-        regexs[8].search(r'__hgzn=144631658.2294274870215848400.1231364074.1231364074.1231364074.1')
+        regexs[8].search(
+            r'FrffvbaQQS2=p98s8o9q42nr21or1r61pqorn1n002nsss569635984s6qp7')
+        regexs[8].search(
+            r'__hgzn=144631658.2294274870215848400.1231364074.1231364074.1231364074.1')
         regexs[8].search(r'__hgzo=144631658.0.10.1231364074')
-        regexs[8].search(r'__hgzm=144631658.1231364074.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'__hgzm=144631658.1231364074.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
         regexs[8].search(r'p98s8o9q42nr21or1r61pqorn1n002nsss569635984s6qp7')
         regexs[34].search(strings[36])
         regexs[34].search(strings[37])
+
 
 def block8():
     for i in xrange(7):
@@ -854,7 +906,8 @@ def block8():
         regexs[37].sub(r'', 'ohggba', subcount[37])
         regexs[18].sub(r'', 'ohggba', subcount[18])
         regexs[65].sub(r'', 'qngrgvzr.kzy', subcount[65])
-        regexs[65].sub(r'', 'uggc://eff.paa.pbz/eff/paa_gbcfgbevrf.eff', subcount[65])
+        regexs[65].sub(
+            r'', 'uggc://eff.paa.pbz/eff/paa_gbcfgbevrf.eff', subcount[65])
         regexs[37].sub(r'', 'vachg', subcount[37])
         regexs[18].sub(r'', 'vachg', subcount[18])
         regexs[64].sub(r'', 'vafvqr', subcount[64])
@@ -901,7 +954,8 @@ def block8():
         regexs[53].sub(r'', '/', subcount[53])
         regexs[39].sub(r'', '/', subcount[39])
         regexs[54].sub(r'', '/', subcount[54])
-        regexs[63].sub(r'', 'uggc://zfacbegny.112.2b7.arg/o/ff/zfacbegnyubzr/1/U.7-cqi-2/{0}?[NDO]&{1}&{2}&[NDR]', subcount[63])
+        regexs[63].sub(
+            r'', 'uggc://zfacbegny.112.2b7.arg/o/ff/zfacbegnyubzr/1/U.7-cqi-2/{0}?[NDO]&{1}&{2}&[NDR]', subcount[63])
         regexs[12].sub(r'', strings[41], subcount[12])
         regexs[23].sub(r'', 'uggc://jjj.snprobbx.pbz/fepu.cuc', subcount[23])
         regexs[40].sub(r'', 'freivpr', subcount[40])
@@ -919,32 +973,42 @@ def block8():
         regexs[8].search(r'8sqq78r9n442851q565599o401385sp3s04r92rnn7o19ssn')
         regexs[8].search(r'SbeprqRkcvengvba=633669340386893867')
         regexs[8].search(r'VC=74.125.75.17')
-        regexs[8].search(r'FrffvbaQQS2=8sqq78r9n442851q565599o401385sp3s04r92rnn7o19ssn')
+        regexs[8].search(
+            r'FrffvbaQQS2=8sqq78r9n442851q565599o401385sp3s04r92rnn7o19ssn')
         re.search(r'Xbadhrebe|Fnsnev|XUGZY', strings[0])
         regexs[13].search(strings[41])
         regexs[49].search(r'unfsbphf')
+
 
 def block9():
     for i in xrange(5):
         regexs[32].split(strings[42])
         regexs[32].split(strings[43])
-        regexs[20].split(r'svz_zlfcnpr_hfre-ivrj-pbzzragf,svz_zlfcnpr_havgrq-fgngrf')
+        regexs[20].split(
+            r'svz_zlfcnpr_hfre-ivrj-pbzzragf,svz_zlfcnpr_havgrq-fgngrf')
         regexs[33].sub(r'', strings[44], subcount[33])
-        regexs[67].sub(r'', 'zrah_arj zrah_arj_gbttyr zrah_gbttyr', subcount[67])
-        regexs[67].sub(r'', 'zrah_byq zrah_byq_gbttyr zrah_gbttyr', subcount[67])
+        regexs[67].sub(
+            r'', 'zrah_arj zrah_arj_gbttyr zrah_gbttyr', subcount[67])
+        regexs[67].sub(
+            r'', 'zrah_byq zrah_byq_gbttyr zrah_gbttyr', subcount[67])
         regexs[8].search(r'102n9o0o9pq60132qn0337rr867p75953502q2s27s2s5r98')
         regexs[8].search(r'144631658.0.10.1231364380')
-        regexs[8].search(r'144631658.1231364380.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
-        regexs[8].search(r'144631658.3931862196947939300.1231364380.1231364380.1231364380.1')
+        regexs[8].search(
+            r'144631658.1231364380.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'144631658.3931862196947939300.1231364380.1231364380.1231364380.1')
         regexs[8].search(r'441326q33660')
         regexs[8].search(r'SbeprqRkcvengvba=633669341278771470')
         regexs[8].search(strings[45])
         regexs[8].search(strings[46])
         regexs[8].search(r'AFP_zp_dfctwzssrwh-aowb_80=441326q33660')
-        regexs[8].search(r'FrffvbaQQS2=102n9o0o9pq60132qn0337rr867p75953502q2s27s2s5r98')
-        regexs[8].search(r'__hgzn=144631658.3931862196947939300.1231364380.1231364380.1231364380.1')
+        regexs[8].search(
+            r'FrffvbaQQS2=102n9o0o9pq60132qn0337rr867p75953502q2s27s2s5r98')
+        regexs[8].search(
+            r'__hgzn=144631658.3931862196947939300.1231364380.1231364380.1231364380.1')
         regexs[8].search(r'__hgzo=144631658.0.10.1231364380')
-        regexs[8].search(r'__hgzm=144631658.1231364380.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'__hgzm=144631658.1231364380.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
 
     for i in xrange(4):
         regexs[14].sub(r'', ' yvfg1', subcount[14])
@@ -959,12 +1023,18 @@ def block9():
         regexs[35].sub(r'', '', subcount[35])
         regexs[63].sub(r'', '(..-{0})(|(d+)|)', subcount[63])
         regexs[18].sub(r'', strings[48], subcount[18])
-        regexs[56].sub(r'', '//vzt.jro.qr/vij/FC/${cngu}/${anzr}/${inyhr}?gf=${abj}', subcount[56])
-        re.sub(r'(\$\{anzr\})|(\$anzr\b)', '', '//vzt.jro.qr/vij/FC/tzk_uc/${anzr}/${inyhr}?gf=${abj}', 0)
-        regexs[69].sub(r'', '<fcna pynff="urnq"><o>Jvaqbjf Yvir Ubgznvy</o></fcna><fcna pynff="zft">{1}</fcna>', subcount[69])
-        regexs[63].sub(r'', '<fcna pynff="urnq"><o>{0}</o></fcna><fcna pynff="zft">{1}</fcna>', subcount[63])
-        regexs[69].sub(r'', '<fcna pynff="fvtahc"><n uers=uggc://jjj.ubgznvy.pbz><o>{1}</o></n></fcna>', subcount[69])
-        regexs[63].sub(r'', '<fcna pynff="fvtahc"><n uers={0}><o>{1}</o></n></fcna>', subcount[63])
+        regexs[56].sub(
+            r'', '//vzt.jro.qr/vij/FC/${cngu}/${anzr}/${inyhr}?gf=${abj}', subcount[56])
+        re.sub(r'(\$\{anzr\})|(\$anzr\b)', '',
+               '//vzt.jro.qr/vij/FC/tzk_uc/${anzr}/${inyhr}?gf=${abj}', 0)
+        regexs[69].sub(
+            r'', '<fcna pynff="urnq"><o>Jvaqbjf Yvir Ubgznvy</o></fcna><fcna pynff="zft">{1}</fcna>', subcount[69])
+        regexs[63].sub(
+            r'', '<fcna pynff="urnq"><o>{0}</o></fcna><fcna pynff="zft">{1}</fcna>', subcount[63])
+        regexs[69].sub(
+            r'', '<fcna pynff="fvtahc"><n uers=uggc://jjj.ubgznvy.pbz><o>{1}</o></n></fcna>', subcount[69])
+        regexs[63].sub(
+            r'', '<fcna pynff="fvtahc"><n uers={0}><o>{1}</o></n></fcna>', subcount[63])
         regexs[15].sub(r'', 'Vzntrf', subcount[15])
         regexs[15].sub(r'', 'ZFA', subcount[15])
         regexs[15].sub(r'', 'Zncf', subcount[15])
@@ -979,7 +1049,8 @@ def block9():
         regexs[70].split(r'nwnkFgbc')
         regexs[14].sub(r'', 'ovaq', subcount[14])
         regexs[15].sub(r'', 'ovaq', subcount[15])
-        regexs[63].sub(r'', 'oevatf lbh zber. Zber fcnpr (5TO), zber frphevgl, fgvyy serr.', subcount[63])
+        regexs[63].sub(
+            r'', 'oevatf lbh zber. Zber fcnpr (5TO), zber frphevgl, fgvyy serr.', subcount[63])
         regexs[14].sub(r'', 'puvyq p1 svefg qrpx', subcount[14])
         regexs[15].sub(r'', 'puvyq p1 svefg qrpx', subcount[15])
         regexs[14].sub(r'', 'puvyq p1 svefg qbhoyr2', subcount[14])
@@ -1006,18 +1077,23 @@ def block9():
         regexs[29].sub(r'', 'ugzy%2Rvq', subcount[29])
         regexs[30].sub(r'', 'ugzy%2Rvq', subcount[30])
         regexs[33].sub(r'', strings[51], subcount[33])
-        regexs[71].sub(r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/cebgbglcr.wf${4}${5}', subcount[71])
-        regexs[72].sub(r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/cebgbglcr.wf${5}', subcount[72])
+        regexs[71].sub(
+            r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/cebgbglcr.wf${4}${5}', subcount[71])
+        regexs[72].sub(
+            r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/cebgbglcr.wf${5}', subcount[72])
         regexs[73].sub(r'', strings[52], subcount[73])
-        regexs[69].sub(r'', 'uggc://zfacbegny.112.2b7.arg/o/ff/zfacbegnyubzr/1/U.7-cqi-2/f55332979829981?[NDO]&{1}&{2}&[NDR]', subcount[69])
+        regexs[69].sub(
+            r'', 'uggc://zfacbegny.112.2b7.arg/o/ff/zfacbegnyubzr/1/U.7-cqi-2/f55332979829981?[NDO]&{1}&{2}&[NDR]', subcount[69])
         regexs[14].sub(r'', 'vztZFSG', subcount[14])
         regexs[15].sub(r'', 'vztZFSG', subcount[15])
         regexs[14].sub(r'', 'zfasbbg1 ps', subcount[14])
         regexs[15].sub(r'', 'zfasbbg1 ps', subcount[15])
         regexs[14].sub(r'', strings[53], subcount[14])
         regexs[15].sub(r'', strings[53], subcount[15])
-        regexs[14].sub(r'', 'cnerag puebzr6 fvatyr1 gno fryrpgrq ovaq', subcount[14])
-        regexs[15].sub(r'', 'cnerag puebzr6 fvatyr1 gno fryrpgrq ovaq', subcount[15])
+        regexs[14].sub(
+            r'', 'cnerag puebzr6 fvatyr1 gno fryrpgrq ovaq', subcount[14])
+        regexs[15].sub(
+            r'', 'cnerag puebzr6 fvatyr1 gno fryrpgrq ovaq', subcount[15])
         regexs[14].sub(r'', 'cevznel', subcount[14])
         regexs[15].sub(r'', 'cevznel', subcount[15])
         regexs[30].sub(r'', 'erpgnatyr', subcount[30])
@@ -1029,8 +1105,10 @@ def block9():
         re.search(r'(..-HF)(\|(\d+)|)', 'xb-xe,ra-va,gu-gu', re.IGNORECASE)
         regexs[4].search(r'/ZlFcnprNccf/NccPnainf,45000012')
         regexs[8].search(r'144631658.0.10.1231367708')
-        regexs[8].search(r'144631658.1231367708.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
-        regexs[8].search(r'144631658.2770915348920628700.1231367708.1231367708.1231367708.1')
+        regexs[8].search(
+            r'144631658.1231367708.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'144631658.2770915348920628700.1231367708.1231367708.1231367708.1')
         regexs[8].search(r'4413235p3660')
         regexs[8].search(r'441327q73660')
         regexs[8].search(r'9995p6rp12rrnr893334ro7nq70o7p64p69rqn844prs1473')
@@ -1039,10 +1117,13 @@ def block9():
         regexs[8].search(strings[55])
         regexs[8].search(r'AFP_zp_dfctwzs-aowb_80=441327q73660')
         regexs[8].search(r'AFP_zp_kkk-aowb_80=4413235p3660')
-        regexs[8].search(r'FrffvbaQQS2=9995p6rp12rrnr893334ro7nq70o7p64p69rqn844prs1473')
-        regexs[8].search(r'__hgzn=144631658.2770915348920628700.1231367708.1231367708.1231367708.1')
+        regexs[8].search(
+            r'FrffvbaQQS2=9995p6rp12rrnr893334ro7nq70o7p64p69rqn844prs1473')
+        regexs[8].search(
+            r'__hgzn=144631658.2770915348920628700.1231367708.1231367708.1231367708.1')
         regexs[8].search(r'__hgzo=144631658.0.10.1231367708')
-        regexs[8].search(r'__hgzm=144631658.1231367708.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'__hgzm=144631658.1231367708.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
         regexs[34].search(strings[49])
         regexs[34].search(strings[50])
         re.search(r'ZFVR\s+5[.]01', strings[0])
@@ -1050,7 +1131,8 @@ def block9():
         regexs[74].search(strings[47])
         regexs[28].search(r'svefg npgvir svefgNpgvir')
         regexs[28].search(r'ynfg')
-        re.search(r'\bp:(..)', 'm:94043|yn:37.4154|yb:-122.0585|p:HF', re.IGNORECASE)
+        re.search(
+            r'\bp:(..)', 'm:94043|yn:37.4154|yb:-122.0585|p:HF', re.IGNORECASE)
         regexs[75].search(strings[57])
         regexs[75].search(strings[58])
         regexs[76].search(strings[57])
@@ -1064,7 +1146,8 @@ def block9():
         regexs[79].search(strings[58])
         regexs[79].search(strings[60])
         regexs[79].search(strings[59])
-        re.search(r'\|p:([a-z]{2})', 'm:94043|yn:37.4154|yb:-122.0585|p:HF|ue:1', re.IGNORECASE)
+        re.search(
+            r'\|p:([a-z]{2})', 'm:94043|yn:37.4154|yb:-122.0585|p:HF|ue:1', re.IGNORECASE)
         regexs[80].search(strings[47])
         regexs[61].search(r'cebgbglcr.wf')
         regexs[68].search(strings[47])
@@ -1077,6 +1160,7 @@ def block9():
         regexs[84].search(strings[61])
         regexs[84].search(strings[62])
         re.search(r'jroxvg', strings[63])
+
 
 def block10():
     for i in xrange(3):
@@ -1207,13 +1291,17 @@ def block10():
         regexs[9].search(r'zbqynory')
         regexs[9].search(r'lhv-h svefg')
         regexs[8].search(r'144631658.0.10.1231365779')
-        regexs[8].search(r'144631658.1231365779.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
-        regexs[8].search(r'144631658.1877536177953918500.1231365779.1231365779.1231365779.1')
+        regexs[8].search(
+            r'144631658.1231365779.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'144631658.1877536177953918500.1231365779.1231365779.1231365779.1')
         regexs[8].search(strings[75])
         regexs[8].search(strings[76])
-        regexs[8].search(r'__hgzn=144631658.1877536177953918500.1231365779.1231365779.1231365779.1')
+        regexs[8].search(
+            r'__hgzn=144631658.1877536177953918500.1231365779.1231365779.1231365779.1')
         regexs[8].search(r'__hgzo=144631658.0.10.1231365779')
-        regexs[8].search(r'__hgzm=144631658.1231365779.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'__hgzm=144631658.1231365779.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
         regexs[34].search(strings[68])
         regexs[34].search(strings[69])
         re.search(r'^$', '')
@@ -1226,6 +1314,7 @@ def block10():
         regexs[85].search(r'eaq_zbqobkva ')
         regexs[85].search(r'eaq_zbqgvgyr ')
         re.search(r'frpgvba\d+_pbagragf', 'obggbz_ani')
+
 
 def block11():
     for i in xrange(2):
@@ -1242,10 +1331,14 @@ def block11():
         regexs[18].sub(r'', '*', subcount[18])
         regexs[68].sub(r'', '.pybfr', subcount[68])
         regexs[18].sub(r'', '.pybfr', subcount[18])
-        regexs[87].sub(r'', '//vzt.jro.qr/vij/FC/tzk_uc/fperra/${inyhr}?gf=${abj}', subcount[87])
-        regexs[88].sub(r'', '//vzt.jro.qr/vij/FC/tzk_uc/fperra/1024?gf=${abj}', subcount[88])
-        regexs[87].sub(r'', '//vzt.jro.qr/vij/FC/tzk_uc/jvafvmr/${inyhr}?gf=${abj}', subcount[87])
-        regexs[88].sub(r'', '//vzt.jro.qr/vij/FC/tzk_uc/jvafvmr/992/608?gf=${abj}', subcount[88])
+        regexs[87].sub(
+            r'', '//vzt.jro.qr/vij/FC/tzk_uc/fperra/${inyhr}?gf=${abj}', subcount[87])
+        regexs[88].sub(
+            r'', '//vzt.jro.qr/vij/FC/tzk_uc/fperra/1024?gf=${abj}', subcount[88])
+        regexs[87].sub(
+            r'', '//vzt.jro.qr/vij/FC/tzk_uc/jvafvmr/${inyhr}?gf=${abj}', subcount[87])
+        regexs[88].sub(
+            r'', '//vzt.jro.qr/vij/FC/tzk_uc/jvafvmr/992/608?gf=${abj}', subcount[88])
         regexs[30].sub(r'', '300k120', subcount[30])
         regexs[30].sub(r'', '300k250', subcount[30])
         regexs[30].sub(r'', '310k120', subcount[30])
@@ -1372,14 +1465,21 @@ def block11():
         regexs[30].sub(r'', 'uc_erpgnatyr', subcount[30])
         regexs[33].sub(r'', strings[87], subcount[33])
         regexs[33].sub(r'', strings[88], subcount[33])
-        regexs[71].sub(r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/onfr.wf${4}${5}', subcount[71])
-        regexs[72].sub(r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/onfr.wf${5}', subcount[72])
-        regexs[71].sub(r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/qlaYvo.wf${4}${5}', subcount[71])
-        regexs[72].sub(r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/qlaYvo.wf${5}', subcount[72])
-        regexs[71].sub(r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/rssrpgYvo.wf${4}${5}', subcount[71])
-        regexs[72].sub(r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/rssrpgYvo.wf${5}', subcount[72])
+        regexs[71].sub(
+            r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/onfr.wf${4}${5}', subcount[71])
+        regexs[72].sub(
+            r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/onfr.wf${5}', subcount[72])
+        regexs[71].sub(
+            r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/qlaYvo.wf${4}${5}', subcount[71])
+        regexs[72].sub(
+            r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/qlaYvo.wf${5}', subcount[72])
+        regexs[71].sub(
+            r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/rssrpgYvo.wf${4}${5}', subcount[71])
+        regexs[72].sub(
+            r'', 'uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/rssrpgYvo.wf${5}', subcount[72])
         regexs[73].sub(r'', strings[89], subcount[73])
-        regexs[69].sub(r'', 'uggc://zfacbegny.112.2b7.arg/o/ff/zfacbegnyubzr/1/U.7-cqi-2/f55023338617756?[NDO]&{1}&{2}&[NDR]', subcount[69])
+        regexs[69].sub(
+            r'', 'uggc://zfacbegny.112.2b7.arg/o/ff/zfacbegnyubzr/1/U.7-cqi-2/f55023338617756?[NDO]&{1}&{2}&[NDR]', subcount[69])
         regexs[23].sub(r'', strings[6], subcount[23])
         regexs[40].sub(r'', 'xvab', subcount[40])
         regexs[41].sub(r'', 'xvab', subcount[41])
@@ -1391,7 +1491,8 @@ def block11():
         regexs[47].sub(r'', 'xvab', subcount[47])
         regexs[48].sub(r'', 'xvab', subcount[48])
         regexs[70].split(r'ybnq')
-        regexs[18].sub(r'', 'zrqvnzbqgno lhv-anifrg lhv-anifrg-gbc', subcount[18])
+        regexs[18].sub(
+            r'', 'zrqvnzbqgno lhv-anifrg lhv-anifrg-gbc', subcount[18])
         regexs[39].sub(r'', 'zrgn', subcount[39])
         regexs[68].sub(r'', strings[90], subcount[68])
         regexs[18].sub(r'', strings[90], subcount[18])
@@ -1503,31 +1604,41 @@ def block11():
         regexs[46].sub(r'', 'jrggre', subcount[46])
         regexs[47].sub(r'', 'jrggre', subcount[47])
         regexs[48].sub(r'', 'jrggre', subcount[48])
-        re.search(r'#[a-z0-9]+$', 'uggc://jjj.fpuhryreim.arg/Qrsnhyg', re.IGNORECASE)
+        re.search(r'#[a-z0-9]+$',
+                  'uggc://jjj.fpuhryreim.arg/Qrsnhyg', re.IGNORECASE)
         regexs[66].search(r'fryrpgrq')
         re.search(r'(?:^|\s+)lhv-ani(?:\s+|$)', 'sff lhv-ani')
         re.search(r'(?:^|\s+)lhv-anifrg(?:\s+|$)', 'zrqvnzbqgno lhv-anifrg')
-        re.search(r'(?:^|\s+)lhv-anifrg-gbc(?:\s+|$)', 'zrqvnzbqgno lhv-anifrg')
+        re.search(r'(?:^|\s+)lhv-anifrg-gbc(?:\s+|$)',
+                  'zrqvnzbqgno lhv-anifrg')
         regexs[91].search(r'GnoThvq')
         regexs[91].search(r'thvq')
         re.search(r'(pbzcngvoyr|jroxvg)', strings[63])
         re.search(r'.+(?:ei|vg|en|vr)[\/: ]([\d.]+)', strings[63])
         regexs[8].search(r'144631658.0.10.1231365869')
         regexs[8].search(r'144631658.0.10.1231367054')
-        regexs[8].search(r'144631658.1231365869.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
-        regexs[8].search(r'144631658.1231367054.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
-        regexs[8].search(r'144631658.1670816052019209000.1231365869.1231365869.1231365869.1')
-        regexs[8].search(r'144631658.1796080716621419500.1231367054.1231367054.1231367054.1')
+        regexs[8].search(
+            r'144631658.1231365869.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'144631658.1231367054.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'144631658.1670816052019209000.1231365869.1231365869.1231365869.1')
+        regexs[8].search(
+            r'144631658.1796080716621419500.1231367054.1231367054.1231367054.1')
         regexs[8].search(strings[94])
         regexs[8].search(strings[95])
         regexs[8].search(strings[96])
         regexs[8].search(strings[97])
-        regexs[8].search(r'__hgzn=144631658.1670816052019209000.1231365869.1231365869.1231365869.1')
-        regexs[8].search(r'__hgzn=144631658.1796080716621419500.1231367054.1231367054.1231367054.1')
+        regexs[8].search(
+            r'__hgzn=144631658.1670816052019209000.1231365869.1231365869.1231365869.1')
+        regexs[8].search(
+            r'__hgzn=144631658.1796080716621419500.1231367054.1231367054.1231367054.1')
         regexs[8].search(r'__hgzo=144631658.0.10.1231365869')
         regexs[8].search(r'__hgzo=144631658.0.10.1231367054')
-        regexs[8].search(r'__hgzm=144631658.1231365869.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
-        regexs[8].search(r'__hgzm=144631658.1231367054.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'__hgzm=144631658.1231365869.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
+        regexs[8].search(
+            r'__hgzm=144631658.1231367054.1.1.hgzpfe=(qverpg)|hgzppa=(qverpg)|hgzpzq=(abar)')
         regexs[34].search(strings[78])
         regexs[34].search(strings[79])
         regexs[34].search(strings[81])
@@ -1540,7 +1651,8 @@ def block11():
         regexs[74].search(r'sbez.nwnk')
         regexs[74].search(strings[90])
         regexs[74].search(r'bowrpg')
-        re.search(r'\/onfr.wf(\?.+)?$', '/uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/onfr.wf')
+        re.search(r'\/onfr.wf(\?.+)?$',
+                  '/uggc://wf.hv-cbegny.qr/tzk/ubzr/wf/20080602/onfr.wf')
         regexs[28].search(r'uvag ynfgUvag ynfg')
         regexs[75].search(r'')
         regexs[76].search(r'')

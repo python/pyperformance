@@ -11,6 +11,7 @@ import time
 
 TEST_TIME = 1.0
 
+
 def clockres(timer):
     d = {}
     wallclock = time.time
@@ -26,7 +27,7 @@ def clockres(timer):
     values = sorted(d.keys())
     min_diff = TEST_TIME
     for i in range(len(values) - 1):
-        diff = values[i+1] - values[i]
+        diff = values[i + 1] - values[i]
         if diff < min_diff:
             min_diff = diff
     return min_diff
@@ -37,6 +38,7 @@ if __name__ == '__main__':
     print('time.time:            %10.3fus' % (clockres(time.time) * 1e6))
     try:
         import systimes
-        print('systimes.processtime: %10.3fus' % (clockres(systimes.processtime) * 1e6))
+        print('systimes.processtime: %10.3fus' %
+              (clockres(systimes.processtime) * 1e6))
     except ImportError:
         pass

@@ -21,7 +21,8 @@ or contact the author. All Rights Reserved.
 """
 __version__ = '1.2'
 
-### Application baseclass
+# Application baseclass
+
 
 class Application:
 
@@ -79,7 +80,6 @@ class Application:
         raise SystemExit(rc)
 
     def exit(self, rc=0):
-
         """ Exit the program.
 
             rc is used as exit code and passed back to the calling
@@ -90,14 +90,14 @@ class Application:
 
     def print_header(self):
 
-        print('-'*72)
+        print('-' * 72)
         print(self.header % self.__dict__)
-        print('-'*72)
+        print('-' * 72)
         print()
 
     # Handlers for long options have two underscores in their name
 
-    def handle__copyright(self,arg):
+    def handle__copyright(self, arg):
 
         self.print_header()
         copyright = self.copyright % self.__dict__
@@ -106,7 +106,6 @@ class Application:
         return 0
 
     def main(self):
-
         """ Override this method as program entry point.
 
             The return value is passed to sys.exit() as argument.  If

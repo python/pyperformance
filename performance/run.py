@@ -20,8 +20,7 @@ class BenchmarkException(Exception):
     pass
 
 
-
-### Utility functions
+# Utility functions
 
 
 def LogCall(command):
@@ -36,9 +35,9 @@ def CallAndCaptureOutput(command, hide_stderr=True):
     else:
         kw = {}
     proc = subprocess.Popen(LogCall(command),
-                               stdout=subprocess.PIPE,
-                               universal_newlines=True,
-                               **kw)
+                            stdout=subprocess.PIPE,
+                            universal_newlines=True,
+                            **kw)
     try:
         stdout, stderr = proc.communicate()
     except:
@@ -79,6 +78,7 @@ def copy_perf_options(cmd, options):
         cmd.append('--track-memory')
     if options.inherit_environ:
         cmd.append('--inherit-environ=%s' % ','.join(options.inherit_environ))
+
 
 def run_perf_script(python, options, bm_path, extra_args=[]):
     bench_args = [bm_path]
@@ -177,7 +177,7 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
     for index, name in enumerate(to_run):
         func = bench_funcs[name]
         print("[%s/%s] %s..." %
-              (str(index+1).rjust(len(run_count)), run_count, name))
+              (str(index + 1).rjust(len(run_count)), run_count, name))
         sys.stdout.flush()
 
         def add_bench(dest_suite, bench):

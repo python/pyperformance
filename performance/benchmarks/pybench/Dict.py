@@ -3,10 +3,11 @@ from six.moves import xrange
 
 from pybench import Test
 
+
 class DictCreation(Test):
 
     version = 2.0
-    operations = 5*(5 + 5)
+    operations = 5 * (5 + 5)
     inner_loops = 5
 
     def test(self, loops):
@@ -21,11 +22,11 @@ class DictCreation(Test):
             d4 = {}
             d5 = {}
 
-            d1 = {1:2,3:4,5:6}
-            d2 = {2:3,4:5,6:7}
-            d3 = {3:4,5:6,7:8}
-            d4 = {4:5,6:7,8:9}
-            d5 = {6:7,8:9,10:11}
+            d1 = {1: 2, 3: 4, 5: 6}
+            d2 = {2: 3, 4: 5, 6: 7}
+            d3 = {3: 4, 5: 6, 7: 8}
+            d4 = {4: 5, 6: 7, 8: 9}
+            d5 = {6: 7, 8: 9, 10: 11}
 
             d1 = {}
             d2 = {}
@@ -33,11 +34,11 @@ class DictCreation(Test):
             d4 = {}
             d5 = {}
 
-            d1 = {1:2,3:4,5:6}
-            d2 = {2:3,4:5,6:7}
-            d3 = {3:4,5:6,7:8}
-            d4 = {4:5,6:7,8:9}
-            d5 = {6:7,8:9,10:11}
+            d1 = {1: 2, 3: 4, 5: 6}
+            d2 = {2: 3, 4: 5, 6: 7}
+            d3 = {3: 4, 5: 6, 7: 8}
+            d4 = {4: 5, 6: 7, 8: 9}
+            d5 = {6: 7, 8: 9, 10: 11}
 
             d1 = {}
             d2 = {}
@@ -45,11 +46,11 @@ class DictCreation(Test):
             d4 = {}
             d5 = {}
 
-            d1 = {1:2,3:4,5:6}
-            d2 = {2:3,4:5,6:7}
-            d3 = {3:4,5:6,7:8}
-            d4 = {4:5,6:7,8:9}
-            d5 = {6:7,8:9,10:11}
+            d1 = {1: 2, 3: 4, 5: 6}
+            d2 = {2: 3, 4: 5, 6: 7}
+            d3 = {3: 4, 5: 6, 7: 8}
+            d4 = {4: 5, 6: 7, 8: 9}
+            d5 = {6: 7, 8: 9, 10: 11}
 
             d1 = {}
             d2 = {}
@@ -57,11 +58,11 @@ class DictCreation(Test):
             d4 = {}
             d5 = {}
 
-            d1 = {1:2,3:4,5:6}
-            d2 = {2:3,4:5,6:7}
-            d3 = {3:4,5:6,7:8}
-            d4 = {4:5,6:7,8:9}
-            d5 = {6:7,8:9,10:11}
+            d1 = {1: 2, 3: 4, 5: 6}
+            d2 = {2: 3, 4: 5, 6: 7}
+            d3 = {3: 4, 5: 6, 7: 8}
+            d4 = {4: 5, 6: 7, 8: 9}
+            d5 = {6: 7, 8: 9, 10: 11}
 
             d1 = {}
             d2 = {}
@@ -69,11 +70,11 @@ class DictCreation(Test):
             d4 = {}
             d5 = {}
 
-            d1 = {1:2,3:4,5:6}
-            d2 = {2:3,4:5,6:7}
-            d3 = {3:4,5:6,7:8}
-            d4 = {4:5,6:7,8:9}
-            d5 = {6:7,8:9,10:11}
+            d1 = {1: 2, 3: 4, 5: 6}
+            d2 = {2: 3, 4: 5, 6: 7}
+            d3 = {3: 4, 5: 6, 7: 8}
+            d4 = {4: 5, 6: 7, 8: 9}
+            d5 = {6: 7, 8: 9, 10: 11}
 
         return perf.perf_counter() - t0
 
@@ -81,7 +82,7 @@ class DictCreation(Test):
 class DictWithStringKeys(Test):
 
     version = 2.0
-    operations = 5*(6 + 6)
+    operations = 5 * (6 + 6)
     inner_loops = 5
 
     def test(self, loops):
@@ -167,7 +168,7 @@ class DictWithStringKeys(Test):
 class DictWithFloatKeys(Test):
 
     version = 2.0
-    operations = 5*(6 + 6)
+    operations = 5 * (6 + 6)
     inner_loops = 5
 
     def test(self, loops):
@@ -254,7 +255,7 @@ class DictWithFloatKeys(Test):
 class DictWithIntegerKeys(Test):
 
     version = 2.0
-    operations = 5*(6 + 6)
+    operations = 5 * (6 + 6)
     inner_loops = 5
 
     def test(self, loops):
@@ -341,7 +342,7 @@ class DictWithIntegerKeys(Test):
 class SimpleDictManipulation(Test):
 
     version = 2.0
-    operations = 5*(6 + 6 + 6 + 6)
+    operations = 5 * (6 + 6 + 6 + 6)
     inner_loops = 5
 
     def test(self, loops):

@@ -7,11 +7,11 @@ from pybench import Test
 class IfThenElse(Test):
 
     version = 2.0
-    operations = 30*3 # hard to say...
+    operations = 30 * 3  # hard to say...
     inner_loops = 30
 
     def test(self, loops):
-        a, b, c = 1,2,3
+        a, b, c = 1, 2, 3
         range_it = xrange(loops)
         t0 = perf.perf_counter()
 
@@ -473,7 +473,7 @@ class IfThenElse(Test):
 class NestedForLoops(Test):
 
     version = 2.0
-    operations = 1000*10*5
+    operations = 1000 * 10 * 5
     inner_loops = 1000 * 10 * 5
 
     def test(self, loops):

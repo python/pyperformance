@@ -13,8 +13,8 @@ class ConcatStrings(Test):
     def test(self, loops):
 
         # Make sure the strings are *not* interned
-        s = ''.join(map(str,range(100)))
-        t = ''.join(map(str,range(1,101)))
+        s = ''.join(map(str, range(100)))
+        t = ''.join(map(str, range(1, 101)))
 
         range_it = xrange(loops)
         t0 = perf.perf_counter()
@@ -92,8 +92,8 @@ class CompareStrings(Test):
     def test(self, loops):
 
         # Make sure the strings are *not* interned
-        s = ''.join(map(str,range(10)))
-        t = ''.join(map(str,range(10))) + "abc"
+        s = ''.join(map(str, range(10)))
+        t = ''.join(map(str, range(10))) + "abc"
 
         range_it = xrange(loops)
         t0 = perf.perf_counter()
@@ -171,7 +171,7 @@ class CompareInternedStrings(Test):
     def test(self, loops):
 
         # Make sure the strings *are* interned
-        s = intern(''.join(map(str,range(10))))
+        s = intern(''.join(map(str, range(10))))
         t = s
 
         range_it = xrange(loops)
@@ -323,7 +323,7 @@ class StringSlicing(Test):
 
     def test(self, loops):
 
-        s = ''.join(map(str,range(100)))
+        s = ''.join(map(str, range(100)))
 
         range_it = xrange(loops)
         t0 = perf.perf_counter()
@@ -373,7 +373,7 @@ class StringSlicing(Test):
         return perf.perf_counter() - t0
 
 
-### String methods
+# String methods
 
 if hasattr('', 'lower'):
 
@@ -384,10 +384,10 @@ if hasattr('', 'lower'):
 
         def test(self, loops):
 
-            s = ''.join(map(chr,range(20)))
-            t = ''.join(map(chr,range(50)))
-            u = ''.join(map(chr,range(100)))
-            v = ''.join(map(chr,range(256)))
+            s = ''.join(map(chr, range(20)))
+            t = ''.join(map(chr, range(50)))
+            u = ''.join(map(chr, range(100)))
+            v = ''.join(map(chr, range(256)))
 
             range_it = xrange(loops)
             t0 = perf.perf_counter()
@@ -452,7 +452,7 @@ if hasattr('', 'lower'):
 
         def test(self, loops):
 
-            data = ('abc', '123', '   ', '\xe4\xf6\xfc', '\xdf'*10)
+            data = ('abc', '123', '   ', '\xe4\xf6\xfc', '\xdf' * 10)
             len_data = len(data)
 
             range_it = xrange(loops)

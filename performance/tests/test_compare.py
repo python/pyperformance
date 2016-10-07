@@ -27,6 +27,7 @@ def run_cmd(cmd):
 
 
 class CompareTests(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cmd = [sys.executable, '-m', 'performance', 'venv', 'create']

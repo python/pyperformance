@@ -13,8 +13,10 @@ class WithFinally(Test):
     inner_loops = 20
 
     class ContextManager(object):
+
         def __enter__(self):
             pass
+
         def __exit__(self, exc, val, tb):
             pass
 
@@ -24,26 +26,46 @@ class WithFinally(Test):
         t0 = perf.perf_counter()
 
         for _ in range_it:
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
-            with cm: pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
+            with cm:
+                pass
 
         return perf.perf_counter() - t0
 
@@ -55,8 +77,10 @@ class TryFinally(Test):
     inner_loops = 20
 
     class ContextManager(object):
+
         def __enter__(self):
             pass
+
         def __exit__(self):
             # "Context manager" objects used just for their cleanup
             # actions in finally blocks usually don't have parameters.
@@ -69,84 +93,124 @@ class TryFinally(Test):
 
         for _ in range_it:
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
             cm.__enter__()
-            try: pass
-            finally: cm.__exit__()
+            try:
+                pass
+            finally:
+                cm.__exit__()
 
         return perf.perf_counter() - t0
 
@@ -158,8 +222,10 @@ class WithRaiseExcept(Test):
     inner_loops = 8
 
     class BlockExceptions(object):
+
         def __enter__(self):
             pass
+
         def __exit__(self, exc, val, tb):
             return True
 
@@ -171,13 +237,21 @@ class WithRaiseExcept(Test):
         t0 = perf.perf_counter()
 
         for _ in range_it:
-            with be: raise error("something")
-            with be: raise error("something")
-            with be: raise error("something")
-            with be: raise error("something")
-            with be: raise error("something")
-            with be: raise error("something")
-            with be: raise error("something")
-            with be: raise error("something")
+            with be:
+                raise error("something")
+            with be:
+                raise error("something")
+            with be:
+                raise error("something")
+            with be:
+                raise error("something")
+            with be:
+                raise error("something")
+            with be:
+                raise error("something")
+            with be:
+                raise error("something")
+            with be:
+                raise error("something")
 
         return perf.perf_counter() - t0

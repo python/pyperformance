@@ -7,7 +7,7 @@ from pybench import Test
 class SimpleListManipulation(Test):
 
     version = 2.0
-    operations = 5* (6 + 6 + 6)
+    operations = 5 * (6 + 6 + 6)
     inner_loops = 5
 
     def test(self, loops):
@@ -134,7 +134,7 @@ class SimpleListManipulation(Test):
 class ListSlicing(Test):
 
     version = 2.0
-    operations = 25*(3+1+2+1)
+    operations = 25 * (3 + 1 + 2 + 1)
 
     def test(self, loops):
 
@@ -163,7 +163,7 @@ class ListSlicing(Test):
 class SmallLists(Test):
 
     version = 2.0
-    operations = 5*(1+ 6 + 6 + 3 + 1)
+    operations = 5 * (1 + 6 + 6 + 3 + 1)
     inner_loops = 5
 
     def test(self, loops):
@@ -190,11 +190,11 @@ class SmallLists(Test):
             l[4] = 4
             l[5] = 5
 
-            l[:3] = [1,2,3]
+            l[:3] = [1, 2, 3]
             m = l[:-1]
             m = l[1:]
 
-            l[-1:] = [4,5,6]
+            l[-1:] = [4, 5, 6]
 
             l = []
 
@@ -213,11 +213,11 @@ class SmallLists(Test):
             l[4] = 4
             l[5] = 5
 
-            l[:3] = [1,2,3]
+            l[:3] = [1, 2, 3]
             m = l[:-1]
             m = l[1:]
 
-            l[-1:] = [4,5,6]
+            l[-1:] = [4, 5, 6]
 
             l = []
 
@@ -236,11 +236,11 @@ class SmallLists(Test):
             l[4] = 4
             l[5] = 5
 
-            l[:3] = [1,2,3]
+            l[:3] = [1, 2, 3]
             m = l[:-1]
             m = l[1:]
 
-            l[-1:] = [4,5,6]
+            l[-1:] = [4, 5, 6]
 
             l = []
 
@@ -259,11 +259,11 @@ class SmallLists(Test):
             l[4] = 4
             l[5] = 5
 
-            l[:3] = [1,2,3]
+            l[:3] = [1, 2, 3]
             m = l[:-1]
             m = l[1:]
 
-            l[-1:] = [4,5,6]
+            l[-1:] = [4, 5, 6]
 
             l = []
 
@@ -282,11 +282,11 @@ class SmallLists(Test):
             l[4] = 4
             l[5] = 5
 
-            l[:3] = [1,2,3]
+            l[:3] = [1, 2, 3]
             m = l[:-1]
             m = l[1:]
 
-            l[-1:] = [4,5,6]
+            l[-1:] = [4, 5, 6]
 
         return perf.perf_counter() - t0
 

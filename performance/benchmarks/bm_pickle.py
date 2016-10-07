@@ -212,6 +212,7 @@ def bench_unpickle_list(loops, pickle, options):
 
 MICRO_DICT = dict((key, dict.fromkeys(range(10))) for key in xrange(100))
 
+
 def bench_pickle_dict(loops, pickle, options):
     range_it = xrange(loops)
     # micro-optimization: use fast local variables
@@ -261,9 +262,9 @@ if __name__ == "__main__":
 
     parser = runner.argparser
     parser.add_argument("--use_cpickle", action="store_true",
-                       help="Use the C version of pickle.")
+                        help="Use the C version of pickle.")
     parser.add_argument("--protocol", action="store", default=None, type=int,
-                       help="Which protocol to use (default: highest protocol).")
+                        help="Which protocol to use (default: highest protocol).")
     benchmarks = sorted(BENCHMARKS)
     parser.add_argument("benchmark", choices=benchmarks)
 

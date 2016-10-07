@@ -62,7 +62,8 @@ def prepare_subprocess_args(runner, args):
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='threading')
-    runner.metadata['description'] = "Test the performance of Python's threads."
+    runner.metadata[
+        'description'] = "Test the performance of Python's threads."
     runner.prepare_subprocess_args = prepare_subprocess_args
 
     benchmarks = {"iterative_count": test_iterative_count,
@@ -70,11 +71,11 @@ if __name__ == "__main__":
 
     parser = runner.argparser
     parser.add_argument("--num_threads", action="store", type=int, default=2,
-                      dest="num_threads", help="Number of threads to test.")
+                        dest="num_threads", help="Number of threads to test.")
     parser.add_argument("--check_interval", action="store", type=int,
-                      default=sys.getcheckinterval(),
-                      dest="check_interval",
-                      help="Value to pass to sys.setcheckinterval().")
+                        default=sys.getcheckinterval(),
+                        dest="check_interval",
+                        help="Value to pass to sys.setcheckinterval().")
     runner.argparser.add_argument("benchmark", choices=sorted(benchmarks))
     options = runner.parse_args()
 

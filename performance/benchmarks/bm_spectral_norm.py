@@ -17,7 +17,7 @@ def eval_A(i, j):
 
 
 def eval_times_u(func, u):
-    return [func((i,u)) for i in xrange(len(list(u)))]
+    return [func((i, u)) for i in xrange(len(list(u)))]
 
 
 def eval_AtA_times_u(u):
@@ -55,12 +55,13 @@ def main(loops):
 
         for ue, ve in izip(u, v):
             vBv += ue * ve
-            vv  += ve * ve
+            vv += ve * ve
 
     return perf.perf_counter() - t0
 
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='spectral_norm')
-    runner.metadata['description'] = "Test the performance of the Float benchmark"
+    runner.metadata[
+        'description'] = "Test the performance of the Float benchmark"
     runner.bench_sample_func(main)

@@ -26,11 +26,13 @@ def bench_html5lib(loops, html_file):
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='html5lib')
-    runner.metadata['description'] = ("Test the performance of the html5lib parser.")
+    runner.metadata['description'] = (
+        "Test the performance of the html5lib parser.")
     runner.metadata['html5lib_version'] = html5lib.__version__
 
     # Get all our IO over with early.
-    filename = os.path.join(os.path.dirname(__file__), "data", "w3_tr_html5.html")
+    filename = os.path.join(os.path.dirname(__file__),
+                            "data", "w3_tr_html5.html")
     with io.open(filename, "rb") as fp:
         html_file = StringIO.StringIO(fp.read())
 
