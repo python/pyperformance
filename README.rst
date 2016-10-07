@@ -294,6 +294,13 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
+Version 0.2.3
+-------------
+
+* ``chaos`` benchmark now also reset the ``random`` module at each sample
+  to get more reproductible benchmark results
+
+
 Version 0.2.2 (2016-09-19)
 --------------------------
 

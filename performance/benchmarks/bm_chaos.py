@@ -1,6 +1,6 @@
-#   Copyright (C) 2005 Carl Friedrich Bolz
-
 """create chaosgame-like fractals
+
+Copyright (C) 2005 Carl Friedrich Bolz
 """
 
 from __future__ import division
@@ -8,8 +8,6 @@ from __future__ import print_function
 
 import operator
 import random
-# FIXME: document this, maybe move it below
-random.seed(1234)
 import math
 
 import perf.text_runner
@@ -220,6 +218,10 @@ class Chaosgame(object):
 
 
 def main(loops):
+    # Always use the same sequence of random numbers
+    # to get reproductible benchmark
+    random.seed(1234)
+
     splines = [
         Spline([
             GVector(1.597350, 3.304460, 0.000000),
