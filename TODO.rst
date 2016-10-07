@@ -37,7 +37,6 @@ Todo:
 * dulwich_log: https://github.com/python/performance/pull/13
 * mdp
 * deltablue
-* eparse
 * genshi_text
 * genshi_xml
 * krakatau: https://github.com/Storyyeller/Krakatau is not on PyPI, but it seems actively developed
@@ -49,7 +48,6 @@ Todo:
 * scimark_montecarlo
 * scimark_sor
 * scimark_sparsematmult
-* spambayes
 * sphinx
 * sqlalchemy_declarative
 * sqlalchemy_imperative
@@ -70,6 +68,8 @@ Todo:
 
 Deliberate choice to not add it:
 
+* eparse: https://pypi.python.org/pypi/Monte 0.0.11 was released in 2013,
+  no tarball on PyPI, only on SourceForge
 * slowspitfire, spitfire, spitfire_cstringio: not on PyPI
 * rietveld: not on PyPy
 
@@ -90,6 +90,7 @@ Done:
 * nqueens
 * pidigits
 * richards
+* spambayes
 * spectral-norm
 * telco
 
