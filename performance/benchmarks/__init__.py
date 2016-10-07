@@ -399,6 +399,36 @@ def BM_deltablue(python, options):
     return run_perf_script(python, options, bm_path)
 
 
+@VersionRange()
+def BM_scimark_SOR(python, options):
+    bm_path = Relative("bm_scimark.py")
+    return run_perf_script(python, options, bm_path, extra_args=['SOR'])
+
+
+@VersionRange()
+def BM_scimark_SparseMatMult(python, options):
+    bm_path = Relative("bm_scimark.py")
+    return run_perf_script(python, options, bm_path, extra_args=['SparseMatMult'])
+
+
+@VersionRange()
+def BM_scimark_MonteCarlo(python, options):
+    bm_path = Relative("bm_scimark.py")
+    return run_perf_script(python, options, bm_path, extra_args=['MonteCarlo'])
+
+
+@VersionRange()
+def BM_scimark_LU(python, options):
+    bm_path = Relative("bm_scimark.py")
+    return run_perf_script(python, options, bm_path, extra_args=['LU'])
+
+
+@VersionRange()
+def BM_scimark_FFT(python, options):
+    bm_path = Relative("bm_scimark.py")
+    return run_perf_script(python, options, bm_path, extra_args=['FFT'])
+
+
 # End benchmarks, begin main entry point support.
 
 def _FindAllBenchmarks(namespace):

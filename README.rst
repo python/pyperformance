@@ -277,6 +277,18 @@ Available Benchmarks
   Python's current regex engine.
 - ``regex_v8`` - Python port of V8's regex benchmark.
 - ``richards`` - the classic Richards benchmark.
+- ``scimark_SOR`` - scimark: `Successive over-relaxation (SOR)
+  <https://en.wikipedia.org/wiki/Successive_over-relaxation>`_ benchmark
+- ``scimark_SparseMatMult`` - scimark: `sparse matrix
+  <https://en.wikipedia.org/wiki/Sparse_matrix>`_ `multiplication
+  <https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm>`_ benchmark
+- ``scimark_MonteCarlo`` - scimark: benchmark on the `Monte Carlo algorithm
+  <https://en.wikipedia.org/wiki/Monte_Carlo_algorithm>`_ to compute the area
+  of a disc
+- ``scimark_LU`` - scimark: `LU decomposition
+  <https://en.wikipedia.org/wiki/LU_decomposition>`_ benchmark
+- ``scimark_FFT`` - scimark: `Fast Fourier transform (FFT)
+   <https://en.wikipedia.org/wiki/Fast_Fourier_transform>`_ benchmark
 - ``silent_logging``
 - ``simple_logging``
 - ``slowpickle`` - use the pure-Python pickle module to pickle a variety of
@@ -313,6 +325,7 @@ Version 0.2.3
 * Add ``crypto_pyaes``: Benchmark a pure-Python implementation of the AES
   block-cipher in CTR mode using the pyaes module (version 1.6.0).
 * Add ``sympy``: Benchmark on SymPy
+* Add ``scimark`` benchmark
 * Add ``detablue``: DeltaBlue benchmark
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results

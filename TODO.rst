@@ -43,11 +43,6 @@ Todo:
 * pyflate-fast
 * pypy_interp
 * pyxl_bench
-* scimark_fft
-* scimark_lu
-* scimark_montecarlo
-* scimark_sor
-* scimark_sparsematmult
 * sphinx
 * sqlalchemy_declarative
 * sqlalchemy_imperative
@@ -89,6 +84,11 @@ Done:
 * nqueens
 * pidigits
 * richards
+* scimark_fft
+* scimark_lu
+* scimark_montecarlo
+* scimark_sor
+* scimark_sparsematmult
 * spambayes
 * spectral-norm
 * sympy_expand
