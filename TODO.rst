@@ -37,11 +37,9 @@ Different from performance?
 
 Todo:
 
-* dulwich_log: https://github.com/python/performance/pull/13
 * mdp: https://github.com/python/performance/pull/14
 * genshi_text
 * genshi_xml
-* pyflate-fast
 * pypy_interp
 * pyxl_bench
 * sphinx
@@ -76,6 +74,7 @@ Done:
 * crypto_pyaes
 * deltablue
 * django (called django_template in performance)
+* dulwich_log
 * fannkuch
 * float
 * go
@@ -84,6 +83,7 @@ Done:
 * meteor-contest
 * nqueens
 * pidigits
+* pyflate-fast (called pyflate in performance)
 * richards
 * scimark_fft
 * scimark_lu

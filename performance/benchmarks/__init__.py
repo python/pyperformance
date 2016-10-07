@@ -435,7 +435,13 @@ def BM_dulwich_log(python, options):
     return run_perf_script(python, options, bm_path)
 
 
-### End benchmarks, begin main entry point support.
+@VersionRange(None, '2.7')
+def BM_pyflate(python, options):
+    bm_path = Relative("bm_pyflate.py")
+    return run_perf_script(python, options, bm_path)
+
+
+# End benchmarks, begin main entry point support.
 
 def _FindAllBenchmarks(namespace):
     return dict((name[3:].lower(), func)

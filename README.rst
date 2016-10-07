@@ -272,6 +272,7 @@ Available Benchmarks
 - ``pybench`` - run the standard Python PyBench benchmark suite. This is
   considered an unreliable, unrepresentative benchmark; do not base decisions
   off it. It is included only for completeness.
+- ``pyflate`` - Pyflate benchmark: tar/bzip2 decompressor in pure Python
 - ``raytrace`` - Simple raytracer.
 - ``regex_compile`` - stress the performance of Python's regex compiler,
   rather than the regex execution speed.
@@ -331,6 +332,8 @@ Version 0.2.3
 * Add ``detablue``: DeltaBlue benchmark
 * Add ``dulwich_log``: Iterate on commits of the asyncio Git repository using
   the Dulwich module
+* Add ``pyflate``: Pyflate benchmark, tar/bzip2 decompressor in pure
+  Python
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results
 * Rename ``hexiom2`` benchmark to  ``hexiom``
