@@ -347,7 +347,7 @@ def create_virtualenv(python, venv_path):
 
         # install performance inside the virtual environment
         if is_build_dir():
-            root_dir = os.path.join(PERFORMANCE_ROOT, '..')
+            root_dir = os.path.dirname(PERFORMANCE_ROOT)
             cmd = [venv_python, '-m', 'pip', 'install', '-e', root_dir]
         else:
             version = performance.__version__
