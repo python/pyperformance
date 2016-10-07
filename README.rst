@@ -303,6 +303,7 @@ Version 0.2.3
   block-cipher in CTR mode using the pyaes module (version 1.6.0).
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results
+* Update dependencies
 
 
 Version 0.2.2 (2016-09-19)

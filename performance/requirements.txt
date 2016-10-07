@@ -22,7 +22,7 @@ wheel
 # tornado 4.4.1 dependencies
 backports-abc==0.4
 singledispatch==3.4.0.3
-certifi==2016.8.31
+certifi==2016.9.26
 
 # spambayes 1.1b2 dependencies
 lockfile==0.12.2; python_version < '3.0'
@@ -43,7 +43,7 @@ docutils==0.12
 # ------------------------
 
 six==1.10.0
-perf==0.7.11
+perf==0.7.12
 
 
 # Benchmarks dependencies
@@ -53,15 +53,15 @@ perf==0.7.11
 # should be increased to respect semantic versionning. Comparison between
 # two performance results of two different major versions is not reliable.
 
-Chameleon==2.24                           # chameleon
-Django==1.10.1                            # django_template
-Mako==1.0.4                               # mako
-mercurial==3.9.1; python_version < '3.0'  # hg_startup
-html5lib==0.999999999                     # html5lib
-pathlib2==2.1.0; python_version < '3.4'   # pathlib
-pyaes==1.6.0                              # crypto_pyaes
-spambayes==1.1b2; python_version < '3.0'  # spambayes
-tornado==4.4.1                            # tornado_http
+Chameleon==2.25                           # bm_chameleon
+Django==1.10.2                            # bm_django_template
+Mako==1.0.4                               # bm_mako
+mercurial==3.9.1; python_version < '3.0'  # bm_hg_startup
+html5lib==0.999999999                     # bm_html5lib
+pathlib2==2.1.0; python_version < '3.4'   # bm_pathlib
+pyaes==1.6.0                              # bm_crypto_pyaes
+spambayes==1.1b2; python_version < '3.0'  # bm_spambayes
+tornado==4.4.2                            # bm_tornado_http
 
 
 # Optional dependencies
