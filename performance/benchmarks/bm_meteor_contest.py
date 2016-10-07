@@ -1,7 +1,12 @@
-# The Computer Language Benchmarks Game
-# http://shootout.alioth.debian.org/
-#
-# contributed by Daniel Nanz, 2008-08-21
+"""
+Meteor Puzzle board:
+http://benchmarksgame.alioth.debian.org/u32/meteor-description.html#meteor
+
+The Computer Language Benchmarks Game
+http://shootout.alioth.debian.org/
+
+contributed by Daniel Nanz, 2008-08-21
+"""
 
 from bisect import bisect
 
@@ -149,6 +154,5 @@ def main(loops):
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='meteor_contest')
-    runner.metadata['description'] = ("Test the performance of "
-                                      "the Float benchmark")
+    runner.metadata['description'] = "Solver for Meteor Puzzle board"
     runner.bench_sample_func(main)

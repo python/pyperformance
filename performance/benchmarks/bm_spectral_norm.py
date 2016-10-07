@@ -1,10 +1,16 @@
-# The Computer Language Benchmarks Game
-# http://shootout.alioth.debian.org/
-# Contributed by Sebastien Loisel
-# Fixed by Isaac Gouy
-# Sped up by Josh Goldfoot
-# Dirtily sped up by Simon Descarpentries
-# Concurrency by Jason Stitt
+"""
+MathWorld: "Hundred-Dollar, Hundred-Digit Challenge Problems", Challenge #3.
+http://mathworld.wolfram.com/Hundred-DollarHundred-DigitChallengeProblems.html
+
+The Computer Language Benchmarks Game
+http://benchmarksgame.alioth.debian.org/u64q/spectralnorm-description.html#spectralnorm
+
+Contributed by Sebastien Loisel
+Fixed by Isaac Gouy
+Sped up by Josh Goldfoot
+Dirtily sped up by Simon Descarpentries
+Concurrency by Jason Stitt
+"""
 
 import perf.text_runner
 from six.moves import xrange, zip as izip
@@ -62,6 +68,7 @@ def main(loops):
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='spectral_norm')
-    runner.metadata[
-        'description'] = "Test the performance of the Float benchmark"
+    runner.metadata['description'] = (
+        'MathWorld: "Hundred-Dollar, Hundred-Digit Challenge Problems", '
+        'Challenge #3.')
     runner.bench_sample_func(main)

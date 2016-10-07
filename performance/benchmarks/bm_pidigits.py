@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
-
-"""Calculating (some of) the digits of π.  This stresses big integer
-arithmetic."""
+# coding: utf-8
+"""
+Calculating some of the digits of π.  This benchmark stresses big integer
+arithmetic.
+"""
 
 # Python imports
 import itertools

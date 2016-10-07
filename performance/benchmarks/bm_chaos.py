@@ -255,6 +255,5 @@ def main(loops):
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='chaos')
-    runner.metadata['description'] = ("Test the performance "
-                                      "of the Chaos benchmark")
+    runner.metadata['description'] = "Create chaosgame-like fractals"
     runner.bench_sample_func(main)

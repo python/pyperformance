@@ -1,9 +1,13 @@
-# This file contains definitions for a simple raytracer.
-# Copyright Callum and Tony Garnock-Jones, 2008.
-# This file may be freely redistributed under the MIT license,
-# http://www.opensource.org/licenses/mit-license.php
+"""
+This file contains definitions for a simple raytracer.
+Copyright Callum and Tony Garnock-Jones, 2008.
 
-# from http://www.lshift.net/blog/2008/10/29/toy-raytracer-in-python
+This file may be freely redistributed under the MIT license,
+http://www.opensource.org/licenses/mit-license.php
+
+From http://www.lshift.net/blog/2008/10/29/toy-raytracer-in-python
+"""
+
 from __future__ import with_statement
 
 import math
@@ -391,6 +395,5 @@ def main(loops):
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='raytrace')
-    runner.metadata['description'] = ("Test the performance of "
-                                      "the raytrace benchmark")
+    runner.metadata['description'] = "Simple raytracer"
     runner.bench_sample_func(main)

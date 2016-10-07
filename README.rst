@@ -230,8 +230,8 @@ Available Benchmarks
 - ``call_method_slots`` - method calls on classes that use __slots__.
 - ``call_method_unknown`` - method calls where the receiver cannot be predicted.
 - ``call_simple`` - positional arguments-only function calls.
-- ``chameleon``
-- ``chaos``
+- ``chameleon`` - render a template using the ``chameleon`` module
+- ``chaos`` - create chaosgame-like fractals
 - ``crypto_pyaes`` - benchmark a pure-Python implementation of the AES
   block-cipher in CTR mode using the pyaes module.
 - ``django_template`` - use the Django template system to build a 150x150-cell
@@ -245,27 +245,31 @@ Available Benchmarks
 - ``fastunpickle`` - use the cPickle module to unnpickle a variety of datasets.
 - ``float`` - artificial, floating point-heavy benchmark originally used
   by Factor.
-- ``formatted_logging``
-- ``go``
-- ``hexiom2``
-- ``hg_startup`` - get Mercurial's help screen.
+- ``formatted_logging`` - Benchmark the formatting function
+  of the ``logging`` module
+- ``go``: Go board game
+- ``hexiom`` - Solver of Hexiom board game (level 25 by default)
+- ``hg_startup`` - Get Mercurial's help screen.
 - ``html5lib`` - parse the HTML 5 spec using html5lib.
-- ``json_dump_v2``
-- ``json_load``
+- ``json_dump_v2`` - performance of the JSON serializer
+- ``json_load`` - performance of the JSON deserializer
 - ``mako`` - use the Mako template system to build a 150x150-cell HTML table.
-- ``meteor_contest``
+- ``meteor_contest`` - solver for Meteor Puzzle board
 - ``nbody`` - the N-body Shootout benchmark. Microbenchmark for floating point
   operations.
-- ``normal_startup``
+- ``normal_startup`` - Measure the Python startup time
 - ``nqueens`` - small solver for the N-Queens problem.
-- ``pathlib``
+- ``pathlib`` - Test the performance of operations of the ``pathlib`` module.
+  This benchmark stresses the creation of small objects, globbing, and system
+  calls.
 - ``pickle_dict`` - microbenchmark; use the cPickle module to pickle a lot of dicts.
 - ``pickle_list`` - microbenchmark; use the cPickle module to pickle a lot of lists.
-- ``pidigits``
+- ``pidigits`` - Calculating some of the digits of π.  This benchmark stresses
+  big integer arithmetic.
 - ``pybench`` - run the standard Python PyBench benchmark suite. This is
   considered an unreliable, unrepresentative benchmark; do not base decisions
   off it. It is included only for completeness.
-- ``raytrace``
+- ``raytrace`` - Simple raytracer.
 - ``regex_compile`` - stress the performance of Python's regex compiler,
   rather than the regex execution speed.
 - ``regex_effbot`` - some of the original benchmarks used to tune mainline
@@ -279,14 +283,16 @@ Available Benchmarks
 - ``slowunpickle`` - use the pure-Python pickle module to unpickle a variety
   of datasets.
 - ``spambayes`` - run a canned mailbox through a SpamBayes ham/spam classifier.
-- ``spectral_norm``
-- ``startup_nosite``
+- ``spectral_norm`` - MathWorld: "Hundred-Dollar, Hundred-Digit Challenge
+  Problems", Challenge #3.
+- ``startup_nosite`` - Measure the Python startup time without importing
+  the ``site`` module (``python -S``)
 - ``sympy_expand`` - Benchmark ``sympy.expand()``
 - ``sympy_integrate`` - Benchmark ``sympy.integrate()``
 - ``sympy_str`` - Benchmark ``str(sympy.expand())``
 - ``sympy_sum`` - Benchmark ``sympy.summation()``
-- ``telco``
-- ``tornado_http``
+- ``telco`` - Benchmark the ``decimal`` module
+- ``tornado_http`` - Benchmark HTTP server of the ``tornado`` module
 - ``unpack_sequence`` - microbenchmark for unpacking lists and tuples.
 - ``unpickle_list``
 
