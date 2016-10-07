@@ -45,7 +45,6 @@ Todo:
 * sphinx
 * sqlalchemy_declarative
 * sqlalchemy_imperative
-* sqlitesynth
 * trans2_annotate
 * trans2_backendopt
 * trans2_database
@@ -92,6 +91,7 @@ Done:
 * scimark_sparsematmult
 * spambayes
 * spectral-norm
+* sqlitesynth
 * sympy_expand
 * sympy_integrate
 * sympy_str

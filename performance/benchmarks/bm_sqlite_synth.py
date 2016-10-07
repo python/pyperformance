@@ -1,0 +1,53 @@
+import sqlite3
+import math
+
+import perf.text_runner
+from six.moves import xrange
+
+
+# the goal of the benchmark is to test CFFI performance and going back and
+# forth between SQLite and Python a lot. Therefore the queries themselves are
+# really simple
+
+class AvgLength(object):
+    def __init__(self):
+        self.sum = 0
+        self.count = 0
+
+    def step(self, x):
+        if x is not None:
+            self.count += 1
+            self.sum += len(x)
+
+    def finalize(self):
+        return self.sum / float(self.count)
+
+
+def main(loops):
+    t0 = perf.perf_counter()
+
+    conn = sqlite3.connect(":memory:")
+    conn.execute('create table cos (x, y, z);')
+    for i in xrange(loops):
+        cos_i = math.cos(i)
+        conn.execute('insert into cos values (?, ?, ?)',
+                     [i, cos_i, str(i)])
+
+    conn.create_function("cos", 1, math.cos)
+    for x, cosx1, cosx2 in conn.execute("select x, cos(x), y from cos"):
+        assert math.cos(x) == cosx1 == cosx2
+
+    conn.create_aggregate("avglength", 1, AvgLength)
+    cursor = conn.execute("select avglength(z) from cos;")
+    cursor.fetchone()[0]
+
+    conn.execute("delete from cos;")
+    conn.close()
+
+    return perf.perf_counter() - t0
+
+
+if __name__ == "__main__":
+    runner = perf.text_runner.TextRunner(name='sqlite_synth')
+    runner.metadata['description'] = "Benchmark Python aggregate for SQLite"
+    runner.bench_sample_func(main)

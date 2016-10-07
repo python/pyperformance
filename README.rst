@@ -301,6 +301,7 @@ Available Benchmarks
 - ``spambayes`` - run a canned mailbox through a SpamBayes ham/spam classifier.
 - ``spectral_norm`` - MathWorld: "Hundred-Dollar, Hundred-Digit Challenge
   Problems", Challenge #3.
+- ``sqlite_synth`` - Benchmark Python aggregate for SQLite
 - ``startup_nosite`` - Measure the Python startup time without importing
   the ``site`` module (``python -S``)
 - ``sympy_expand`` - Benchmark ``sympy.expand()``
@@ -334,6 +335,7 @@ Version 0.2.3
   the Dulwich module
 * Add ``pyflate``: Pyflate benchmark, tar/bzip2 decompressor in pure
   Python
+* Add ``sqlite_synth`` benchmark: Benchmark Python aggregate for SQLite
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results
 * Rename ``hexiom2`` benchmark to  ``hexiom``

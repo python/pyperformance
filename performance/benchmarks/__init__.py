@@ -440,6 +440,11 @@ def BM_pyflate(python, options):
     return run_perf_script(python, options, bm_path)
 
 
+def BM_sqlite_synth(python, options):
+    bm_path = Relative("bm_sqlite_synth.py")
+    return run_perf_script(python, options, bm_path)
+
+
 # End benchmarks, begin main entry point support.
 
 def _FindAllBenchmarks(namespace):
