@@ -250,6 +250,8 @@ Available Benchmarks
   by Factor.
 - ``formatted_logging`` - Benchmark the formatting function
   of the ``logging`` module
+- ``genshi_text``: Render template to plain text using the Genshi module
+- ``genshi_xml``: Render template to XML using the Genshi module
 - ``go``: Go board game
 - ``hexiom`` - Solver of Hexiom board game (level 25 by default)
 - ``hg_startup`` - Get Mercurial's help screen.
@@ -336,6 +338,8 @@ Version 0.2.3
 * Add ``pyflate``: Pyflate benchmark, tar/bzip2 decompressor in pure
   Python
 * Add ``sqlite_synth`` benchmark: Benchmark Python aggregate for SQLite
+* Add ``genshi`` benchmark: Render template to XML or plain text using the
+  Genshi module
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results
 * Port ``html5lib`` benchmark to Python 3

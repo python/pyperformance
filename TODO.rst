@@ -47,8 +47,6 @@ Different from performance?
 Todo:
 
 * mdp: https://github.com/python/performance/pull/14
-* genshi_text
-* genshi_xml
 * pypy_interp
 * pyxl_bench
 
@@ -95,6 +93,8 @@ Done:
 * dulwich_log
 * fannkuch
 * float
+* genshi_text
+* genshi_xml
 * go
 * hexiom2
 * html5lib

@@ -332,6 +332,14 @@ def BM_sqlite_synth(python, options):
     return run_perf_script(python, options, "sqlite_synth")
 
 
+def BM_genshi_text(python, options):
+    return run_perf_script(python, options, "genshi", extra_args=["text"])
+
+
+def BM_genshi_xml(python, options):
+    return run_perf_script(python, options, "genshi", extra_args=["xml"])
+
+
 # End benchmarks, begin main entry point support.
 
 def _FindAllBenchmarks(namespace):

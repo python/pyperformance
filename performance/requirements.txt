@@ -58,6 +58,7 @@ perf==0.7.12
 
 Chameleon==2.25                           # bm_chameleon
 Django==1.10.2                            # bm_django_template
+Genshi==0.7                               # bm_genshi
 Mako==1.0.4                               # bm_mako
 dulwich==0.14.1                           # dulwich_log
 mercurial==3.9.1; python_version < '3.0'  # bm_hg_startup
