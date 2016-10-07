@@ -298,7 +298,7 @@ class Board:
             assert ledges1 == ledges2, ('ledges differ at %r: %d %d' % (
                 square, ledges1, ledges2))
 
-            empties1 = set(self.emptyset.empties)
+            set(self.emptyset.empties)
 
             empties2 = set()
             for square in self.squares:

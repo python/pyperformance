@@ -15,9 +15,10 @@ from six.moves import xrange
 
 # Mako imports (w/o markupsafe)
 sys.modules['markupsafe'] = None
-import mako
-from mako.template import Template
-from mako.lookup import TemplateLookup
+
+import mako   # noqa
+from mako.template import Template   # noqa
+from mako.lookup import TemplateLookup   # noqa
 
 
 __author__ = "virhilo@gmail.com (Lukasz Fidosz)"

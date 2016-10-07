@@ -10,6 +10,17 @@
 
 from __future__ import print_function
 
+import re
+import sys
+import time
+import platform
+
+import perf
+import perf.text_runner
+
+from CommandLine import Application
+
+
 # pybench Copyright
 __copyright__ = """\
 Copyright (c), 1997-2006, Marc-Andre Lemburg (mal@lemburg.com)
@@ -32,17 +43,6 @@ FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
 NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
 WITH THE USE OR PERFORMANCE OF THIS SOFTWARE !
 """
-
-import re
-import sys
-import time
-import platform
-
-import perf
-import perf.text_runner
-
-from CommandLine import Application
-
 
 # Version number; version history: see README file !
 __version__ = '2.1'
@@ -360,7 +360,6 @@ class Benchmark:
         print('Test                          '
               '   median')
         print('-' * LINE)
-        tests = sorted(self.tests.items())
         total_avg_time = 0.0
 
         for bench in self.suite.get_benchmarks():
@@ -417,7 +416,7 @@ class MyTextRunner(perf.text_runner.TextRunner):
 
             for run_bench in run_suite.get_benchmarks():
                 suite._add_benchmark_runs(run_bench)
-                #print("Process %s: %s: %s" % (process, run_bench.get_name(), run_bench))
+                # print("Process %s: %s: %s" % (process, run_bench.get_name(), run_bench))
 
             if not quiet:
                 print('* Round %s/%s done in %.1f seconds.'
@@ -425,10 +424,6 @@ class MyTextRunner(perf.text_runner.TextRunner):
 
         if not quiet:
             print(file=stream)
-
-        duration = perf.monotonic_clock() - start_time
-
-        # self._display_result(bench)
 
 
 class PyBenchCmdline(Application):
@@ -444,16 +439,16 @@ class PyBenchCmdline(Application):
         runner = MyTextRunner(name='pybench')
 
         # FIXME: add about to argparser help
-        about = """\
-The normal operation is to run the suite and display the
-results. Use -f to save them for later reuse or comparisons.
-
-Examples:
-
-python2.1 pybench.py -f p21.json
-python2.5 pybench.py -f p25.json
-python pybench.py -s p25.json -c p21.json
-"""
+#         about = """\
+# The normal operation is to run the suite and display the
+# results. Use -f to save them for later reuse or comparisons.
+#
+# Examples:
+#
+# python2.1 pybench.py -f p21.json
+# python2.5 pybench.py -f p25.json
+# python pybench.py -s p25.json -c p21.json
+# """
 
         parser = runner.argparser
         parser.add_argument(
