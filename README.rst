@@ -234,7 +234,7 @@ Available Benchmarks
 - ``chaos`` - create chaosgame-like fractals
 - ``crypto_pyaes`` - benchmark a pure-Python implementation of the AES
   block-cipher in CTR mode using the pyaes module.
-- ``detablue`` - DeltaBlue benchmark
+- ``deltablue`` - DeltaBlue benchmark
 - ``django_template`` - use the Django template system to build a 150x150-cell
   HTML table.
 - ``dulwich_log``: Iterate on commits of the asyncio Git repository using
@@ -329,7 +329,7 @@ Version 0.2.3
   block-cipher in CTR mode using the pyaes module (version 1.6.0).
 * Add ``sympy``: Benchmark on SymPy
 * Add ``scimark`` benchmark
-* Add ``detablue``: DeltaBlue benchmark
+* Add ``deltablue``: DeltaBlue benchmark
 * Add ``dulwich_log``: Iterate on commits of the asyncio Git repository using
   the Dulwich module
 * Add ``pyflate``: Pyflate benchmark, tar/bzip2 decompressor in pure
