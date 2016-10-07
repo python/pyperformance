@@ -6,6 +6,7 @@ kwargs, and do not use tuple unpacking.
 """
 
 import perf.text_runner
+from six.moves import xrange
 
 
 def foo(a, b, c, d):
@@ -109,7 +110,7 @@ def qux():
 
 
 def test_calls(loops):
-    range_it = range(loops)
+    range_it = xrange(loops)
     t0 = perf.perf_counter()
 
     for loops in range_it:
