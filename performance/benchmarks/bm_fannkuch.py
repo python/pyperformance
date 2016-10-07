@@ -53,7 +53,7 @@ def fannkuch(n):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='fannkuch', warmups=0)
+    runner = perf.text_runner.TextRunner(name='fannkuch')
     runner.metadata['description'] = ("Test the performance of "
                                       "the Float benchmark")
     runner.bench_func(fannkuch, DEFAULT_ARG)
