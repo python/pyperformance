@@ -232,7 +232,7 @@ class Test:
 # This has to be done after the definition of the Test class, since
 # the Setup module will import subclasses using this class.
 
-import Setup
+import Setup   # noqa
 
 # Benchmark base class
 

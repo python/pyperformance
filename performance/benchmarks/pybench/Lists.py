@@ -117,12 +117,12 @@ class SimpleListManipulation(Test):
             l[4] = 4
             l[5] = 5
 
-            x = l[0]
-            x = l[1]
-            x = l[2]
-            x = l[3]
-            x = l[4]
-            x = l[5]
+            x = l[0]    # noqa
+            x = l[1]    # noqa
+            x = l[2]    # noqa
+            x = l[3]    # noqa
+            x = l[4]    # noqa
+            x = l[5]    # noqa
 
             if len(l) > 10000:
                 # cut down the size
@@ -149,13 +149,13 @@ class ListSlicing(Test):
 
             for j in r:
 
-                m = l[50:]
-                m = l[:25]
-                m = l[50:55]
-                l[:3] = n
-                m = l[:-1]
-                m = l[1:]
-                l[-1:] = n
+                m = l[50:]     # noqa
+                m = l[:25]     # noqa
+                m = l[50:55]   # noqa
+                l[:3] = n      # noqa
+                m = l[:-1]     # noqa
+                m = l[1:]      # noqa
+                l[-1:] = n     # noqa
 
         return perf.perf_counter() - t0
 
@@ -284,7 +284,7 @@ class SmallLists(Test):
 
             l[:3] = [1, 2, 3]
             m = l[:-1]
-            m = l[1:]
+            m = l[1:]    # noqa
 
             l[-1:] = [4, 5, 6]
 
@@ -311,7 +311,7 @@ class SimpleListComprehensions(Test):
 
             l = [x for x in n]
             l = [x for x in n if x]
-            l = [x for x in n if not x]
+            l = [x for x in n if not x]    # noqa
 
         return perf.perf_counter() - t0
 
@@ -337,6 +337,6 @@ class NestedListComprehensions(Test):
             l = [y for x in n for y in m if x]
 
             l = [x for x in n for y in m if not y]
-            l = [y for x in n for y in m if not x]
+            l = [y for x in n for y in m if not x]   # noqa
 
         return perf.perf_counter() - t0

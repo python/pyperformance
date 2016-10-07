@@ -35,19 +35,19 @@ class CreateInstances(Test):
         t0 = perf.perf_counter()
 
         for i in range_it:
-            o = c()
-            o1 = c()
-            o2 = c()
-            p = d(i, i, 3)
-            p1 = d(i, i, 3)
-            p2 = d(i, 3, 3)
-            p3 = d(3, i, 3)
-            p4 = d(i, i, i)
-            p5 = d(3, i, 3)
-            p6 = d(i, i, i)
-            q = e(i, i, 3)
-            q1 = e(i, i, 3)
-            q2 = e(i, i, 3)
-            q3 = e(i, i)
+            o = c()           # noqa
+            o1 = c()          # noqa
+            o2 = c()          # noqa
+            p = d(i, i, 3)    # noqa
+            p1 = d(i, i, 3)   # noqa
+            p2 = d(i, 3, 3)   # noqa
+            p3 = d(3, i, 3)   # noqa
+            p4 = d(i, i, i)   # noqa
+            p5 = d(3, i, 3)   # noqa
+            p6 = d(i, i, i)   # noqa
+            q = e(i, i, 3)    # noqa
+            q1 = e(i, i, 3)   # noqa
+            q2 = e(i, i, 3)   # noqa
+            q3 = e(i, i)      # noqa
 
         return perf.perf_counter() - t0

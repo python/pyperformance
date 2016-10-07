@@ -70,11 +70,11 @@ class DictCreation(Test):
             d4 = {}
             d5 = {}
 
-            d1 = {1: 2, 3: 4, 5: 6}
-            d2 = {2: 3, 4: 5, 6: 7}
-            d3 = {3: 4, 5: 6, 7: 8}
-            d4 = {4: 5, 6: 7, 8: 9}
-            d5 = {6: 7, 8: 9, 10: 11}
+            d1 = {1: 2, 3: 4, 5: 6}     # noqa
+            d2 = {2: 3, 4: 5, 6: 7}     # noqa
+            d3 = {3: 4, 5: 6, 7: 8}     # noqa
+            d4 = {4: 5, 6: 7, 8: 9}     # noqa
+            d5 = {6: 7, 8: 9, 10: 11}   # noqa
 
         return perf.perf_counter() - t0
 
@@ -348,7 +348,10 @@ class SimpleDictManipulation(Test):
     def test(self, loops):
 
         d = {}
-        has_key = lambda key: key in d
+
+        def has_key(key):
+            return key in d
+
         range_it = xrange(loops)
         t0 = perf.perf_counter()
 
@@ -473,12 +476,12 @@ class SimpleDictManipulation(Test):
             d[4] = 4
             d[5] = 5
 
-            x = d[0]
-            x = d[1]
-            x = d[2]
-            x = d[3]
-            x = d[4]
-            x = d[5]
+            x = d[0]   # noqa
+            x = d[1]   # noqa
+            x = d[2]   # noqa
+            x = d[3]   # noqa
+            x = d[4]   # noqa
+            x = d[5]   # noqa
 
             has_key(0)
             has_key(2)

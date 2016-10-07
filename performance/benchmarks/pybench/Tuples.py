@@ -253,13 +253,13 @@ class TupleSlicing(Test):
                 m = t[-10:]
                 m = t[:10]
 
-                m = t[50:]
-                m = t[:25]
-                m = t[50:55]
-                m = t[:-1]
-                m = t[1:]
-                m = t[-10:]
-                m = t[:10]
+                m = t[50:]     # noqa
+                m = t[:25]     # noqa
+                m = t[50:55]   # noqa
+                m = t[:-1]     # noqa
+                m = t[1:]      # noqa
+                m = t[-10:]    # noqa
+                m = t[:10]     # noqa
 
         return perf.perf_counter() - t0
 

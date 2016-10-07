@@ -164,21 +164,21 @@ class SpecialClassAttribute(Test):
             c.__b = 3
             c.__c = 4
 
-            x = c.__a
-            x = c.__b
-            x = c.__c
+            x = c.__a    # noqa
+            x = c.__b    # noqa
+            x = c.__c    # noqa
 
-            x = c.__a
-            x = c.__b
-            x = c.__c
+            x = c.__a    # noqa
+            x = c.__b    # noqa
+            x = c.__c    # noqa
 
-            x = c.__a
-            x = c.__b
-            x = c.__c
+            x = c.__a    # noqa
+            x = c.__b    # noqa
+            x = c.__c    # noqa
 
-            x = c.__a
-            x = c.__b
-            x = c.__c
+            x = c.__a    # noqa
+            x = c.__b    # noqa
+            x = c.__c    # noqa
 
         return perf.perf_counter() - t0
 
@@ -355,9 +355,9 @@ class NormalClassAttribute(Test):
             x = c.b
             x = c.c
 
-            x = c.a
-            x = c.b
-            x = c.c
+            x = c.a   # noqa
+            x = c.b   # noqa
+            x = c.c   # noqa
 
         return perf.perf_counter() - t0
 
@@ -535,9 +535,9 @@ class SpecialInstanceAttribute(Test):
             x = o.__b__
             x = o.__c__
 
-            x = o.__a__
-            x = o.__b__
-            x = o.__c__
+            x = o.__a__   # noqa
+            x = o.__b__   # noqa
+            x = o.__c__   # noqa
 
         return perf.perf_counter() - t0
 
@@ -715,9 +715,9 @@ class NormalInstanceAttribute(Test):
             x = o.b
             x = o.c
 
-            x = o.a
-            x = o.b
-            x = o.c
+            x = o.a   # noqa
+            x = o.b   # noqa
+            x = o.c   # noqa
 
         return perf.perf_counter() - t0
 
