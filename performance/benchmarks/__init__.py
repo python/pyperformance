@@ -369,6 +369,30 @@ def BM_crypto_pyaes(python, options):
     return run_perf_script(python, options, bm_path)
 
 
+@VersionRange()
+def BM_sympy_expand(python, options):
+    bm_path = Relative("bm_sympy.py")
+    return run_perf_script(python, options, bm_path, extra_args=['expand'])
+
+
+@VersionRange()
+def BM_sympy_integrate(python, options):
+    bm_path = Relative("bm_sympy.py")
+    return run_perf_script(python, options, bm_path, extra_args=['integrate'])
+
+
+@VersionRange()
+def BM_sympy_str(python, options):
+    bm_path = Relative("bm_sympy.py")
+    return run_perf_script(python, options, bm_path, extra_args=['str'])
+
+
+@VersionRange()
+def BM_sympy_sum(python, options):
+    bm_path = Relative("bm_sympy.py")
+    return run_perf_script(python, options, bm_path, extra_args=['sum'])
+
+
 # End benchmarks, begin main entry point support.
 
 def _FindAllBenchmarks(namespace):

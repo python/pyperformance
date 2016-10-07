@@ -1,4 +1,6 @@
 * Run pep8 on Travis
+* venv.py: open text files in script creating the hash, read also setup.py
+  content?
 * Fix confusion on benchmark names between the list command,
   benchmarks/__init__.py names and benchmark resulting names
 * Add benchmarks from the PyPy benchmark suite:
@@ -52,10 +54,6 @@ Todo:
 * sqlalchemy_declarative
 * sqlalchemy_imperative
 * sqlitesynth
-* sympy_expand
-* sympy_integrate
-* sympy_str
-* sympy_sum
 * trans2_annotate
 * trans2_backendopt
 * trans2_database
@@ -92,6 +90,10 @@ Done:
 * richards
 * spambayes
 * spectral-norm
+* sympy_expand
+* sympy_integrate
+* sympy_str
+* sympy_sum
 * telco
 
 

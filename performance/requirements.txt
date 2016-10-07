@@ -34,6 +34,9 @@ MarkupSafe==0.23
 # html5lib 0.999999999 dependencies
 webencodings==0.5
 
+# sympy 1.0 dependency
+mpmath==0.19
+
 # perf dependencies (docutils is needed by statistics)
 statistics==1.0.3.5; python_version < '3.4'
 docutils==0.12
@@ -61,6 +64,7 @@ html5lib==0.999999999                     # bm_html5lib
 pathlib2==2.1.0; python_version < '3.4'   # bm_pathlib
 pyaes==1.6.0                              # bm_crypto_pyaes
 spambayes==1.1b2; python_version < '3.0'  # bm_spambayes
+sympy==1.0                                # bm_sympy
 tornado==4.4.2                            # bm_tornado_http
 
 

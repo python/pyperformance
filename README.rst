@@ -281,6 +281,10 @@ Available Benchmarks
 - ``spambayes`` - run a canned mailbox through a SpamBayes ham/spam classifier.
 - ``spectral_norm``
 - ``startup_nosite``
+- ``sympy_expand`` - Benchmark ``sympy.expand()``
+- ``sympy_integrate`` - Benchmark ``sympy.integrate()``
+- ``sympy_str`` - Benchmark ``str(sympy.expand())``
+- ``sympy_sum`` - Benchmark ``sympy.summation()``
 - ``telco``
 - ``tornado_http``
 - ``unpack_sequence`` - microbenchmark for unpacking lists and tuples.
@@ -301,6 +305,7 @@ Version 0.2.3
 
 * Add ``crypto_pyaes``: Benchmark a pure-Python implementation of the AES
   block-cipher in CTR mode using the pyaes module (version 1.6.0).
+* Add ``sympy``: Benchmark on SymPy
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results
 * Update dependencies
