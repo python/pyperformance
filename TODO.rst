@@ -37,10 +37,9 @@ Different from performance?
 Todo:
 
 * dulwich_log: https://github.com/python/performance/pull/13
-* mdp
+* mdp: https://github.com/python/performance/pull/14
 * genshi_text
 * genshi_xml
-* krakatau: https://github.com/Storyyeller/Krakatau is not on PyPI, but it seems actively developed
 * pyflate-fast
 * pypy_interp
 * pyxl_bench
@@ -67,6 +66,8 @@ Deliberate choice to not add it:
 
 * eparse: https://pypi.python.org/pypi/Monte 0.0.11 was released in 2013,
   no tarball on PyPI, only on SourceForge
+* krakatau: https://github.com/Storyyeller/Krakatau is not on PyPI, but it
+  seems actively developed
 * slowspitfire, spitfire, spitfire_cstringio: not on PyPI
 * rietveld: not on PyPy
 
