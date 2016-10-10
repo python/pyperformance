@@ -8,8 +8,6 @@ TODO
 * Run pep8 on Travis
 * python3 -m performance list: list Python 2 benchmarks, but mention that
   they are incompatible with Python 3?
-* performance/benchmarks/__init__.py: don't hardcode benchmarks for search for
-  glob.glob("performance/benchmarks/bm_*.py")
 * Port bm_pyflate to Python 3?
 * Add benchmarks from the Pyston benchmark suite:
   https://github.com/dropbox/pyston-perf

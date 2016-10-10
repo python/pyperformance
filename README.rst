@@ -334,9 +334,10 @@ Available Benchmarks
 
 There are also two disabled benchmarks:
 
-- ``threaded_count`` - spin in a while loop, counting down from a large number
-  in a thread.
-- ``iterative_count`` - spin in a while loop, counting down from a large number.
+- ``threading_threaded_count`` - spin in a while loop, counting down
+  from a large number in a thread.
+- ``threading_iterative_count`` - spin in a while loop, counting down
+  from a large number.
 
 
 Changelog
