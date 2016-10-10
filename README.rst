@@ -364,6 +364,13 @@ Version 0.2.3
   (especially ``PYTHONPATH``) by default anymore: ``--inherit-environ``
   command line option must now be used explicitly.
 * ``compare`` command now fails if the performance versions are different
+* Rename pickle benchmarks:
+
+  - ``slowpickle`` becomes ``pickle_pure_python``
+  - ``slowunpickle`` becomes ``unpickle_pure_python``
+  - ``fastpickle`` becomes ``pickle``
+  - ``fastunpickle`` becomes ``unpickle``
+
 * Update dependencies
 
 

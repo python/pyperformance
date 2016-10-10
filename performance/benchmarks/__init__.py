@@ -17,14 +17,14 @@ from performance.run import (run_perf_script, copy_perf_options,
 # An "all" group which includes every benchmark perf.py knows about is generated
 # automatically.
 BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
-                            "tornado_http", "fastpickle", "fastunpickle",
+                            "tornado_http", "pickle", "unpickle",
                             "regex_v8", "json_dump_v2", "json_load"],
                 "startup": ["normal_startup", "startup_nosite",
                             "hg_startup"],
                 "regex": ["regex_v8", "regex_effbot", "regex_compile"],
                 "threading": ["threaded_count", "iterative_count"],
-                "serialize": ["slowpickle", "slowunpickle",  # Not for Python 3
-                              "fastpickle", "fastunpickle",
+                "serialize": ["pickle_pure_python", "unpickle_pure_python",  # Not for Python 3
+                              "pickle", "unpickle",
                               "etree",
                               "json_dump_v2", "json_load"],
                 "etree": ["etree_generate", "etree_parse",
@@ -106,40 +106,40 @@ def BM_pathlib(python, options):
     return run_perf_script(python, options, "pathlib")
 
 
-def _PickleBenchmark(python, options, *extra_args):
+def pickle_benchmark(python, options, *extra_args):
     return run_perf_script(python, options, "pickle",
                            extra_args=list(extra_args))
 
 
-def BM_FastPickle(python, options):
-    return _PickleBenchmark(python, options, "--use_cpickle", "pickle")
+def BM_pickle(python, options):
+    return pickle_benchmark(python, options, "--use_cpickle", "pickle")
 
 
-def BM_FastUnpickle(python, options):
-    return _PickleBenchmark(python, options, "--use_cpickle", "unpickle")
+def BM_unpickle(python, options):
+    return pickle_benchmark(python, options, "--use_cpickle", "unpickle")
 
 
-def BM_Pickle_List(python, options):
-    return _PickleBenchmark(python, options, "--use_cpickle", "pickle_list")
+def BM_pickle_list(python, options):
+    return pickle_benchmark(python, options, "--use_cpickle", "pickle_list")
 
 
-def BM_Unpickle_List(python, options):
-    return _PickleBenchmark(python, options, "--use_cpickle", "unpickle_list")
+def BM_pickle_dict(python, options):
+    return pickle_benchmark(python, options, "--use_cpickle", "pickle_dict")
 
 
-def BM_Pickle_Dict(python, options):
-    return _PickleBenchmark(python, options, "--use_cpickle", "pickle_dict")
+def BM_unpickle_list(python, options):
+    return pickle_benchmark(python, options, "--use_cpickle", "unpickle_list")
 
 
-# 3.x doesn't have slow pickle
+# 3.x doesn't have pure Python implementation anymore
 @python2_only
-def BM_SlowPickle(python, options):
-    return _PickleBenchmark(python, options, "pickle")
+def BM_pickle_pure_python(python, options):
+    return pickle_benchmark(python, options, "pickle")
 
 
 @python2_only
-def BM_SlowUnpickle(python, options):
-    return _PickleBenchmark(python, options, "unpickle")
+def BM_unpickle_pure_python(python, options):
+    return pickle_benchmark(python, options, "unpickle")
 
 
 def MeasureEtree(python, options, arg):

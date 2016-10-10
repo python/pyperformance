@@ -268,11 +268,9 @@ if __name__ == "__main__":
 
     options = runner.parse_args()
     benchmark, inner_loops = BENCHMARKS[options.benchmark]
-    if options.use_cpickle:
-        runner.name = "fast%s" % runner.name
-    else:
-        runner.name = "slow%s" % runner.name
-    runner.name += "/%s" % options.benchmark
+    runner.name = options.benchmark
+    if not options.use_cpickle:
+        runner.name += "_pure_python"
     runner.inner_loops = inner_loops
 
     if options.use_cpickle:
