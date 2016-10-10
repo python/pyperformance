@@ -1,4 +1,5 @@
 import json
+import sys
 
 import perf.text_runner
 import six
@@ -14,27 +15,49 @@ NESTED_DATA = {'key1': 0, 'key2': SIMPLE[0], 'key3': 'value', 'key4': SIMPLE[0],
 NESTED = (NESTED_DATA, 1000)
 HUGE = ([NESTED[0]] * 1000, 1)
 
-cases = ['EMPTY', 'SIMPLE', 'NESTED', 'HUGE']
+CASES = ['EMPTY', 'SIMPLE', 'NESTED', 'HUGE']
 
 
-def bench_json_dumps(loops):
+def bench_json_dumps(data):
+    for obj, count_it in data:
+        for _ in count_it:
+            json.dumps(obj)
+
+
+def prepare_cmd(runner, cmd):
+    args = runner.args
+    if args.cases:
+        cmd.extend(("--cases", args.cases))
+
+
+def main():
+    runner = perf.text_runner.TextRunner(name='json_dumps')
+    runner.prepare_subprocess_args = prepare_cmd
+    runner.argparser.add_argument("--cases",
+                                  help="Comma separated list of cases. Available cases: %s. By default, run all cases."
+                                       % ', '.join(CASES))
+    runner.metadata['description'] = "Benchmark json.dumps()"
+
+    args = runner.parse_args()
+    if args.cases:
+        cases = []
+        for case in args.cases.split(','):
+            case = case.strip()
+            if case:
+                cases.append(case)
+        if not cases:
+            print("ERROR: empty list of cases")
+            sys.exit(1)
+    else:
+        cases = CASES
+
     data = []
     for case in cases:
         obj, count = globals()[case]
         data.append((obj, xrange(count)))
 
-    range_it = xrange(loops)
-    t0 = perf.perf_counter()
-
-    for _ in range_it:
-        for obj, count_it in data:
-            for _ in count_it:
-                json.dumps(obj)
-
-    return perf.perf_counter() - t0
+    runner.bench_func(bench_json_dumps, data)
 
 
 if __name__ == '__main__':
-    runner = perf.text_runner.TextRunner(name='json_dumps')
-    runner.metadata['description'] = "Benchmark json.dumps()"
-    runner.bench_sample_func(bench_json_dumps)
+    main()

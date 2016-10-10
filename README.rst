@@ -355,6 +355,7 @@ Enhancements:
 * ``chaos``: add ``--width``, ``--height``, ``--thickness``, ``--filename``
   and ``--rng-seed`` command line options
 * ``django_template``: add ``--size`` command line option
+* ``json_dumps``: add ``--cases`` command line option
 * Port ``html5lib`` benchmark to Python 3
 * Enable ``pickle_pure_python`` and ``unpickle_pure_python`` on Python 3
   (code was already compatible with Python 3)
