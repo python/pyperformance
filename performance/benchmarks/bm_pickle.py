@@ -246,7 +246,7 @@ def is_module_accelerated(module):
     return getattr(pickle.Pickler, '__module__', '<jython>') == 'pickle'
 
 
-def prepare_subprocess_args(runner, args):
+def prepare_cmd(runner, args):
     if runner.args.pure_python:
         args.append("--pure-python")
     args.extend(("--protocol", str(runner.args.protocol)))
@@ -256,7 +256,7 @@ def prepare_subprocess_args(runner, args):
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='pickle')
     runner.metadata['description'] = "Test the performance of pickling."
-    runner.prepare_subprocess_args = prepare_subprocess_args
+    runner.prepare_subprocess_args = prepare_cmd
 
     parser = runner.argparser
     parser.add_argument("--pure-python", action="store_true",

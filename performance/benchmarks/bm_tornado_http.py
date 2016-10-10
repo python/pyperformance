@@ -59,7 +59,7 @@ def bench_tornado(loops):
     loop = IOLoop.instance()
     host, port = make_http_server(loop, make_application())
     url = "http://%s:%s/" % (host, port)
-    times = []
+    namespace = {}
 
     @coroutine
     def run_client():
@@ -75,11 +75,10 @@ def bench_tornado(loops):
                 buf.seek(0, 2)
                 assert buf.tell() == len(CHUNK) * NCHUNKS
 
-        dt = perf.perf_counter() - t0
-        times.append(dt)
+        namespace['dt'] = perf.perf_counter() - t0
 
     loop.run_sync(run_client)
-    return times[0]
+    return namespace['dt']
 
 
 if __name__ == "__main__":

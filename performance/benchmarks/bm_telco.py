@@ -49,6 +49,7 @@ def bench_telco(loops):
     start = perf.perf_counter()
     for _ in range(loops):
         infil.seek(0)
+
         sumT = Decimal("0")   # sum of total prices
         sumB = Decimal("0")   # sum of basic tax
         sumD = Decimal("0")   # sum of 'distance' tax
