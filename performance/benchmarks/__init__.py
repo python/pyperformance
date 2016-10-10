@@ -15,11 +15,9 @@ from performance.run import (run_perf_script, copy_perf_options,
 # Benchmarks without a range applied are assumed to be compatible with all
 # (reasonably new) Python versions.
 
-def VersionRange(minver=None, maxver=None):
-    def deco(func):
-        func._range = minver or (1, 0), maxver or (9, 999)
-        return func
-    return deco
+def python2_only(func):
+    func._python2_only = True
+    return func
 
 
 def BM_PyBench(python, options):
@@ -51,7 +49,7 @@ def BM_2to3(python, options):
     return run_perf_script(python, options, "2to3")
 
 
-@VersionRange(None, (2, 7))
+@python2_only
 def BM_hg_startup(python, options):
     return run_perf_script(python, options, "hg_startup")
 
@@ -105,12 +103,13 @@ def BM_Pickle_Dict(python, options):
     return _PickleBenchmark(python, options, "--use_cpickle", "pickle_dict")
 
 
-@VersionRange(None, (2, 7))   # 3.x doesn't have slow pickle
+# 3.x doesn't have slow pickle
+@python2_only
 def BM_SlowPickle(python, options):
     return _PickleBenchmark(python, options, "pickle")
 
 
-@VersionRange(None, (2, 7))
+@python2_only
 def BM_SlowUnpickle(python, options):
     return _PickleBenchmark(python, options, "unpickle")
 
@@ -259,7 +258,7 @@ def BM_nbody(python, options):
     return run_perf_script(python, options, "nbody")
 
 
-@VersionRange(None, (2, 7))
+@python2_only
 def BM_spambayes(python, options):
     return run_perf_script(python, options, "spambayes")
 
@@ -324,7 +323,7 @@ def BM_dulwich_log(python, options):
     return run_perf_script(python, options, "dulwich_log")
 
 
-@VersionRange(None, (2, 7))
+@python2_only
 def BM_pyflate(python, options):
     return run_perf_script(python, options, "pyflate")
 
@@ -391,8 +390,8 @@ group_deprecated = set(BENCH_GROUPS["deprecated"])
 for bm, func in BENCH_FUNCS.items():
     if bm in group_deprecated:
         continue
-    minver, maxver = getattr(func, '_range', ((1, 0), (9, 999)))
-    if minver <= (2, 7) and (3, 2) <= maxver:
+
+    if not getattr(func, '_python2_only', False):
         group2n3.append(bm)
 
 
@@ -422,10 +421,11 @@ def filter_benchmarks(benchmarks, bench_funcs, base_ver):
         The filtered set of benchmark names
     """
     for bm in list(benchmarks):
-        minver, maxver = getattr(bench_funcs[bm], '_range', ((1, 0), (9, 999)))
-        if not minver <= base_ver <= maxver:
-            benchmarks.discard(bm)
-            logging.info("Skipping benchmark %s; not compatible with "
-                         "Python %s" % (bm, base_ver))
-            continue
+        func = bench_funcs[bm]
+        if getattr(func, '_python2_only', False):
+            if (3, 0) <= base_ver:
+                benchmarks.discard(bm)
+                logging.info("Skipping Python2-only benchmark %s; "
+                             "not compatible with Python %s" % (bm, base_ver))
+                continue
     return benchmarks
