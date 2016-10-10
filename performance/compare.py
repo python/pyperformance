@@ -179,6 +179,12 @@ def display_suite_metadata(suite, title=None):
         text = fmt % metadata[key]
         print(text)
 
+    dates = suite.get_dates()
+    if dates:
+        print("Start date: %s" % dates[0].isoformat(' '))
+        print("End date: %s" % dates[1].isoformat(' '))
+        empty = False
+
     if not empty:
         print()
 
@@ -239,10 +245,12 @@ def compare_results(options):
     display_suite_metadata(changed_suite, title=changed_label)
 
     if options.output_style == "normal":
-        for name, result in shown:
+        for index, item in enumerate(shown):
+            if index:
+                print()
+            name, result = item
             print("###", name, "###")
             print(result)
-            print()
 
     elif options.output_style == "table":
         if shown:
@@ -259,18 +267,21 @@ def compare_results(options):
     only_base = set(base_suite.get_benchmark_names()) - common
     if only_base:
         print()
-        print("Skipped benchmarks only in %s (%s): %s"
-              % (len(only_base), base_suite.filename, ', '.join(sorted(only_base))))
+        print("Skipped %s benchmarks only in %s: %s"
+              % (len(only_base), base_label,
+                 ', '.join(sorted(only_base))))
 
     only_changed = set(changed_suite.get_benchmark_names()) - common
     if only_changed:
         print()
-        print("Skipped benchmarks only in %s (%s): %s"
-              % (len(only_changed), changed_suite.filename, ', '.join(sorted(only_changed))))
+        print("Skipped %s benchmarks only in %s: %s"
+              % (len(only_changed), changed_label,
+                 ', '.join(sorted(only_changed))))
 
     version1 = base_suite.get_metadata().get('performance_version', NO_VERSION)
     version2 = changed_suite.get_metadata().get('performance_version', NO_VERSION)
     if version1 != version2 or (version1 == version2 == NO_VERSION):
+        print()
         print("ERROR: Performance versions are different: %s != %s"
               % (version1, version2))
         sys.exit(1)

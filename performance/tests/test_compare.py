@@ -71,7 +71,6 @@ class CompareTests(unittest.TestCase):
             ### call_simple ###
             Median +- Std dev: 11.4 ms +- 2.1 ms -> 13.6 ms +- 1.3 ms: 1.19x slower
             Significant (t=-3.38)
-
         ''').lstrip())
 
     def test_compare_wrong_version(self):
@@ -109,7 +108,6 @@ class CompareTests(unittest.TestCase):
 
             ### call_simple ###
             7896.0 kB -> 7900.0 kB: 1.00x larger
-
         ''').lstrip())
 
     def test_csv(self):
