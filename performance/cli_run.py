@@ -31,7 +31,7 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
     if not os.path.isabs(sys.executable):
         print("ERROR: sys.executable is not an absolute path")
         sys.exit(1)
-    cmd_prefix = [sys.executable] + options.args.split()
+    cmd_prefix = [sys.executable]
 
     should_run = select_benchmarks(options.benchmarks, bench_groups)
     should_run = filter_benchmarks_python(should_run, bench_funcs, cmd_prefix)

@@ -189,15 +189,6 @@ or Windows with PyWin32. Because ``--track_memory`` introduces performance
 jitter while collecting memory measurements, only memory usage is reported in
 the final report.
 
-If ``--args`` is passed, it specifies extra arguments to pass to the test
-python binary. For example::
-
-  pyperformance run --args="-OO -S" --python=python3 -b telco
-
-will run benchmarks like::
-
-  python3 -OO -S bm_telco.py
-
 
 Benchmarks
 ==========
@@ -380,6 +371,7 @@ Version 0.2.3
 
 * Update dependencies
 * ``pickle_pure_python`` and ``unpickle_pure_python`` now work on Python 3
+* Remove broken ``--args`` command line option.
 
 
 Version 0.2.2 (2016-09-19)

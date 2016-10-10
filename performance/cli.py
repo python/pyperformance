@@ -24,9 +24,6 @@ def _add_run_options(cmd):
                      help="Print more output")
     cmd.add_argument("-m", "--track-memory", action="store_true",
                      help="Track memory usage. This only works on Linux.")
-    cmd.add_argument("-a", "--args", default="",
-                     help=("Pass extra arguments (interpreted as a "
-                           "space-separated list) to the python binary."))
     cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default="",
                      help=("Comma-separated list of benchmarks to run.  Can"
                            " contain both positive and negative arguments:"
