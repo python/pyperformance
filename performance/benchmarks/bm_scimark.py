@@ -390,11 +390,11 @@ def prepare_cmd(runner, cmd):
 
 BENCHMARKS = {
     # function name => arguments
-    'SOR': (100, 10, Array2D),
-    'SparseMatMult': (1000, 50 * 1000),
-    'MonteCarlo': (100 * 1000,),
-    'LU': (100,),
-    'FFT': (1024, 50),
+    'sor': (bench_SOR, 100, 10, Array2D),
+    'sparse_mat_mult': (bench_SparseMatMult, 1000, 50 * 1000),
+    'monte_carlo': (bench_MonteCarlo, 100 * 1000,),
+    'lu': (bench_LU, 100,),
+    'fft': (bench_FFT, 1024, 50),
 }
 
 
@@ -407,6 +407,5 @@ if __name__ == "__main__":
     bench = args.benchmark
 
     runner.name += "_%s" % bench
-    func = globals()["bench_%s" % bench]
     args = BENCHMARKS[bench]
-    runner.bench_sample_func(func, *args)
+    runner.bench_sample_func(*args)

@@ -297,17 +297,17 @@ Available Benchmarks
   Python's current regex engine.
 - ``regex_v8`` - Python port of V8's regex benchmark.
 - ``richards`` - the classic Richards benchmark.
-- ``scimark_SOR`` - scimark: `Successive over-relaxation (SOR)
+- ``scimark_sor`` - scimark: `Successive over-relaxation (SOR)
   <https://en.wikipedia.org/wiki/Successive_over-relaxation>`_ benchmark
-- ``scimark_SparseMatMult`` - scimark: `sparse matrix
+- ``scimark_sparse_mat_mult`` - scimark: `sparse matrix
   <https://en.wikipedia.org/wiki/Sparse_matrix>`_ `multiplication
   <https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm>`_ benchmark
-- ``scimark_MonteCarlo`` - scimark: benchmark on the `Monte Carlo algorithm
+- ``scimark_monte_carlo`` - scimark: benchmark on the `Monte Carlo algorithm
   <https://en.wikipedia.org/wiki/Monte_Carlo_algorithm>`_ to compute the area
   of a disc
-- ``scimark_LU`` - scimark: `LU decomposition
+- ``scimark_lu`` - scimark: `LU decomposition
   <https://en.wikipedia.org/wiki/LU_decomposition>`_ benchmark
-- ``scimark_FFT`` - scimark: `Fast Fourier transform (FFT)
+- ``scimark_fft`` - scimark: `Fast Fourier transform (FFT)
   <https://en.wikipedia.org/wiki/Fast_Fourier_transform>`_ benchmark
 - ``spambayes`` - run a canned mailbox through a SpamBayes ham/spam classifier.
 - ``spectral_norm`` - MathWorld: "Hundred-Dollar, Hundred-Digit Challenge
