@@ -657,7 +657,6 @@ if __name__ == "__main__":
         # PyPy needs more samples to warmup its JIT
         kw['warmups'] = 15
     runner = perf.text_runner.TextRunner(name='hexiom', **kw)
-    runner.metadata['description'] = "Solver of Hexiom board game"
     levels = sorted(LEVELS)
     runner.argparser.add_argument("--level", type=int,
                                   choices=levels,
@@ -667,7 +666,7 @@ if __name__ == "__main__":
     runner.prepare_subprocess_args = prepare_subprocess_args
 
     args = runner.parse_args()
-    level = args.level
-    runner.name += "_level%s" % level
+    runner.metadata['description'] = "Solver of Hexiom board game"
+    runner.metadata['hexiom_level'] = args.level
 
-    runner.bench_sample_func(main, level)
+    runner.bench_sample_func(main, args.level)
