@@ -452,7 +452,7 @@ if __name__ == "__main__":
     options = runner.parse_args()
     if options.benchmark:
         func = benchmarks[options.benchmark]
-        runner.name += "/%s" % options.benchmark
+        runner.name += "_%s" % options.benchmark
     else:
         func = bench_all
 
