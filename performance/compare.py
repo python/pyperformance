@@ -193,9 +193,20 @@ def cmd_show(options):
     display_benchmark_suite(suite)
 
 
+def get_labels(filename1, filename2):
+    # Find a short label to identify two filenames:
+    # the two labels must be different
+    name1 = os.path.basename(filename1)
+    name2 = os.path.basename(filename2)
+    if name1 != name2:
+        return (name1, name2)
+
+    return (filename1, filename2)
+
+
 def compare_results(options):
-    base_label = os.path.basename(options.baseline_filename)
-    changed_label = os.path.basename(options.changed_filename)
+    base_label, changed_label = get_labels(options.baseline_filename,
+                                           options.changed_filename)
 
     base_suite = perf.BenchmarkSuite.load(options.baseline_filename)
     changed_suite = perf.BenchmarkSuite.load(options.changed_filename)
