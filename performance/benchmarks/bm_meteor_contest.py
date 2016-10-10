@@ -8,17 +8,84 @@ http://shootout.alioth.debian.org/
 contributed by Daniel Nanz, 2008-08-21
 """
 
+from __future__ import division, print_function, absolute_import
+
 from bisect import bisect
 
 from six.moves import xrange
 import perf.text_runner
 
-w, h = 5, 10
-dir_no = 6
-S, E = w * h, 2
+
+SOLVE_ARG = 60
+
+WIDTH, HEIGHT = 5, 10
+DIR_NO = 6
+S, E = WIDTH * HEIGHT, 2
 SE = S + (E / 2)
 SW = SE - E
 W, NW, NE = -E, -SE, -SW
+
+SOLUTIONS = [
+    '00001222012661126155865558633348893448934747977799',
+    '00001222012771127148774485464855968596835966399333',
+    '00001222012771127148774485494855998596835966366333',
+    '00001222012771127148774485994855948596835966366333',
+    '00001222012771127166773863384653846538445584959999',
+    '00001222012771127183778834833348555446554666969999',
+    '00001222012771127183778834833348555446554966699996',
+    '00001223012331123166423564455647456775887888979999',
+    '00001555015541144177484726877268222683336689399993',
+    '00001555015541144177484728677286222863338669399993',
+    '00001599015591159148594482224827748276837766366333',
+    '00001777017871184155845558449984669662932629322333',
+    '00004222042664426774996879687759811598315583153331',
+    '00004222042774427384773183331866118615586555969999',
+    '00004223042334423784523785771855718566186611969999',
+    '00004227042874428774528735833155831566316691169999',
+    '00004333045534455384175781777812228116286662969999',
+    '00004333045934459384559185991866118612286727267772',
+    '00004333047734427384277182221866118615586555969999',
+    '00004555045514411224172621768277368736683339899998',
+    '00004555045514411224172721777299998966836688368333',
+    '00004555045534413334132221177266172677886888969999',
+    '00004555045534473334739967792617926192661882211888',
+    '00004555045564466694699992288828811233317273177731',
+    '00004555045564466694699997773172731233312881122888',
+    '00004555045564496664999962288828811233317273177731',
+    '00004555045564496664999967773172731233312881122888',
+    '00004555045584411884171187722866792679236992369333',
+    '00004555045584411884191189999832226333267372677766',
+    '00004555045584411884191189999866222623336727367773',
+    '13335138551389511895778697869947762446624022240000',
+    '13777137271333211882888226999946669446554055540000',
+    '13777137271333211882888229999649666446554055540000',
+    '27776272768221681166819958195548395443954033340000',
+    '33322392623926696648994485554855148117871077710000',
+    '33366366773867284772842228449584195119551099510000',
+    '33366366953869584955849958447784172117721022210000',
+    '33366366953869589955849458447784172117721022210000',
+    '33386388663866989999277712727142211441554055540000',
+    '33396329963297629766822778117148811448554055540000',
+    '33399366953869586955846458447784172117721022210000',
+    '37776372763332622266899998119148811448554055540000',
+    '39999396683336822268277682748477144114551055510000',
+    '39999398663338622286277862748477144114551055510000',
+    '66777627376233362223899998119148811448554055540000',
+    '69999666945564455584333843887738172117721022210000',
+    '88811228816629162971629776993743337443554055540000',
+    '88822118821333213727137776999946669446554055540000',
+    '88822118821333213727137779999649666446554055540000',
+    '89999893338663786377286712627142211441554055540000',
+    '99777974743984439884333685556855162116621022210000',
+    '99995948554483564835648336837766172117721022210000',
+    '99996119661366513855133853782547782447824072240000',
+    '99996911668166581755817758732548732443324032240000',
+    '99996926668261182221877718757148355443554033340000',
+    '99996955568551681166812228177248372443774033340000',
+    '99996955568551681166813338137748372447724022240000',
+    '99996966645564455584333843887738172117721022210000',
+    '99996988868877627166277112223143331443554055540000',
+    '99997988878857765474655446532466132113321032210000']
 
 
 def rotate(ido, rd={E: NE, NE: NW, NW: W, W: SW, SW: SE, SE: E}):
@@ -31,10 +98,10 @@ def flip(ido, fd={E: E, NE: SE, NW: SW, W: W, SW: NW, SE: NE}):
 
 def permute(ido, r_ido, rotate=rotate, flip=flip):
     ps = [ido]
-    for r in xrange(dir_no - 1):
+    for r in xrange(DIR_NO - 1):
         ps.append(rotate(ps[-1]))
         if ido == r_ido:                 # C2-symmetry
-            ps = ps[0:dir_no // 2]
+            ps = ps[0:DIR_NO // 2]
     for pp in ps[:]:
         ps.append(flip(pp))
     return ps
@@ -68,11 +135,14 @@ def get_senh(board, cti):
     return se_nh
 
 
-def get_puzzle(w=w, h=h):
-    board = [E * x + S * y + (y % 2) for y in xrange(h) for x in xrange(w)]
+def get_puzzle(width, height):
+    board = [E * x + S * y + (y % 2)
+             for y in xrange(height)
+             for x in xrange(width)]
     cti = dict((board[i], i) for i in xrange(len(board)))
 
-    idos = [[E, E, E, SE],         # incremental direction offsets
+    # Incremental direction offsets
+    idos = [[E, E, E, SE],
             [SE, SW, W, SW],
             [W, W, SW, SE],
             [E, E, SW, SE],
@@ -83,28 +153,16 @@ def get_puzzle(w=w, h=h):
             [SE, SE, E, SE],
             [E, NW, NW, NW]]
 
-    perms = (permute(p, idos[3]) for p in idos)    # restrict piece 4
+    # Restrict piece 4
+    perms = (permute(p, idos[3]) for p in idos)
     pieces = [[convert(pp) for pp in p] for p in perms]
     return (board, cti, pieces)
 
 
-def print_board(board, w=w, h=h):
-    for y in xrange(h):
-        for x in xrange(w):
-            print(board[x + y * w])
-        print('')
-        if y % 2 == 0:
-            print('')
-    print()
+def solve(n, i_min, free, curr_board, pieces_left, solutions, fps, se_nh,
+          # Hack to use a fast local variable to avoid a global lookup
+          bisect=bisect):
 
-
-board, cti, pieces = get_puzzle()
-fps = get_footprints(board, cti, pieces)
-se_nh = get_senh(board, cti)
-
-
-def solve(n, i_min, free, curr_board, pieces_left, solutions,
-          fps=fps, se_nh=se_nh, bisect=bisect):
     fp_i_cands = fps[i_min]
     for p in pieces_left:
         fp_cands = fp_i_cands[p]
@@ -113,6 +171,7 @@ def solve(n, i_min, free, curr_board, pieces_left, solutions,
                 n_curr_board = curr_board[:]
                 for ci in fp:
                     n_curr_board[ci] = p
+
                 if len(pieces_left) > 1:
                     n_free = free - fp
                     n_i_min = min(n_free)
@@ -120,7 +179,7 @@ def solve(n, i_min, free, curr_board, pieces_left, solutions,
                         n_pieces_left = pieces_left[:]
                         n_pieces_left.remove(p)
                         solve(n, n_i_min, n_free, n_curr_board,
-                              n_pieces_left, solutions)
+                              n_pieces_left, solutions, fps, se_nh)
                 else:
                     s = ''.join(map(str, n_curr_board))
                     solutions.insert(bisect(solutions, s), s)
@@ -128,15 +187,12 @@ def solve(n, i_min, free, curr_board, pieces_left, solutions,
                     solutions.insert(bisect(solutions, rs), rs)
                     if len(solutions) >= n:
                         return
+
         if len(solutions) >= n:
             return
-    return
 
 
-SOLVE_ARG = 60
-
-
-def main(loops):
+def bench_meteor_contest(loops, board, pieces, solve_arg, fps, se_nh):
     range_it = xrange(loops)
     t0 = perf.perf_counter()
 
@@ -145,14 +201,28 @@ def main(loops):
         curr_board = [-1] * len(board)
         pieces_left = list(range(len(pieces)))
         solutions = []
-        solve(SOLVE_ARG, 0, free, curr_board, pieces_left, solutions)
-        # print len(solutions),  'solutions found\n'
-        # for i in (0, -1): print_board(solutions[i])
+        solve(solve_arg, 0, free, curr_board, pieces_left,
+              solutions, fps, se_nh)
 
-    return perf.perf_counter() - t0
+    dt = perf.perf_counter() - t0
+
+    if solutions != SOLUTIONS:
+        raise ValueError("unexpected solutions")
+
+    return dt
+
+
+def main():
+    runner = perf.text_runner.TextRunner(name='meteor_contest')
+    runner.metadata['description'] = "Solver for Meteor Puzzle board"
+
+    board, cti, pieces = get_puzzle(WIDTH, HEIGHT)
+    fps = get_footprints(board, cti, pieces)
+    se_nh = get_senh(board, cti)
+
+    solve_arg = SOLVE_ARG
+    runner.bench_sample_func(bench_meteor_contest, board, pieces, solve_arg, fps, se_nh)
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='meteor_contest')
-    runner.metadata['description'] = "Solver for Meteor Puzzle board"
-    runner.bench_sample_func(main)
+    main()
