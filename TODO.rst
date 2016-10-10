@@ -9,14 +9,8 @@ TODO
 * performance/benchmarks/__init__.py: don't hardcode benchmarks for search for
   glob.glob("performance/benchmarks/bm_*.py")
 * Port bm_pyflate to Python 3?
-* Fix installation dulwich on PyPy to be able to upgrade it
-* venv.py: open text files in script creating the hash, read also setup.py
-  content?
 * Fix confusion on benchmark names between the list command,
   benchmarks/__init__.py names and benchmark resulting names
-* Add benchmarks from the PyPy benchmark suite:
-  https://bitbucket.org/pypy/benchmarks
-  and convince PyPy to use performance :-)
 * Add benchmarks from the Pyston benchmark suite:
   https://github.com/dropbox/pyston-perf
   and convince Pyston to use performance :-)
