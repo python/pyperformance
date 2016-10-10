@@ -38,6 +38,22 @@ See also the `Python speed mailing list
 <http://perf.readthedocs.io/>`_ (used by performance).
 
 
+Installation
+============
+
+Command to install performance::
+
+    python3 -m pip install performance
+
+At runtime, Python development files (header files) may be needed to install
+some dependencies like ``dulwich_log`` or ``psutil``, to build their C
+extension. Commands on Fedora to install dependencies:
+
+* Python 2: ``sudo dnf install python-devel``
+* Python 3: ``sudo dnf install python3-devel``
+* PyPy: ``sudo dnf install pypy-devel``
+
+
 Run benchmarks
 ==============
 
@@ -326,8 +342,8 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
-Version 0.2.3
--------------
+Version 0.3.0 (2016-10-11)
+--------------------------
 
 New benchmarks:
 
