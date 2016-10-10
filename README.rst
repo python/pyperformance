@@ -329,6 +329,8 @@ Changelog
 Version 0.2.3
 -------------
 
+New benchmarks:
+
 * Add ``crypto_pyaes``: Benchmark a pure-Python implementation of the AES
   block-cipher in CTR mode using the pyaes module (version 1.6.0). Add
   ``pyaes`` dependency.
@@ -345,45 +347,58 @@ Version 0.2.3
 * Add ``sqlalchemy_declarative`` and ``sqlalchemy_imperative`` benchmarks:
   SQLAlchemy Declarative and Imperative benchmarks using SQLite. Add
   ``SQLAlchemy`` dependency.
-* ``chaos`` benchmark now also reset the ``random`` module at each sample
-  to get more reproductible benchmark results
+
+Enhancements:
+
+* ``compare`` command now fails if the performance versions are different
+* nbody: add ``--reference`` and ``--iterations`` command line options.
 * Port ``html5lib`` benchmark to Python 3
+* Enable ``pickle_pure_python`` and ``unpickle_pure_python`` on Python 3
+  (code was already compatible with Python 3)
 * Creating the virtual environment doesn't inherit environment variables
   (especially ``PYTHONPATH``) by default anymore: ``--inherit-environ``
   command line option must now be used explicitly.
-* ``compare`` command now fails if the performance versions are different
+
+Bugfixes:
+
+* ``chaos`` benchmark now also reset the ``random`` module at each sample
+  to get more reproductible benchmark results
 * Logging benchmarks now truncate the in-memory stream before each benchmark
   run
+
+Rename benchmarks:
+
 * Rename benchmarks to get a consistent name between the command line and
-  benchmark name in the JSON file:
+  benchmark name in the JSON file.
+* Rename pickle benchmarks:
 
-  * Rename pickle benchmarks:
+   - ``slowpickle`` becomes ``pickle_pure_python``
+   - ``slowunpickle`` becomes ``unpickle_pure_python``
+   - ``fastpickle`` becomes ``pickle``
+   - ``fastunpickle`` becomes ``unpickle``
 
-     - ``slowpickle`` becomes ``pickle_pure_python``
-     - ``slowunpickle`` becomes ``unpickle_pure_python``
-     - ``fastpickle`` becomes ``pickle``
-     - ``fastunpickle`` becomes ``unpickle``
+ * Rename ElementTree benchmarks: replace ``etree_`` prefix with
+   ``xml_etree_``.
+ * Rename ``hexiom2`` to ``hexiom_level25`` and explicitly pass ``--level=25``
+   parameter
+ * Rename ``json_load`` to ``json_loads``
+ * Rename ``json_dump_v2`` to ``json_dumps`` (and remove the deprecated
+   ``json_dump`` benchmark)
+ * Rename ``normal_startup`` to ``python_startup``, and ``startup_nosite``
+   to ``python_startup_no_site``
+ * Rename ``threaded_count`` to ``threading_threaded_count``,
+   rename ``iterative_count`` to ``threading_iterative_count``
+ * Rename logging benchmarks:
 
-   * Rename ElementTree benchmarks: replace ``etree_`` prefix with
-     ``xml_etree_``.
-   * Rename ``hexiom2`` to ``hexiom_level25`` and explicitly pass ``--level=25``
-     parameter
-   * Rename ``json_load`` to ``json_loads``
-   * Rename ``json_dump_v2`` to ``json_dumps`` (and remove the deprecated
-     ``json_dump`` benchmark)
-   * Rename ``normal_startup`` to ``python_startup``, and ``startup_nosite``
-     to ``python_startup_no_site``
-   * Rename ``threaded_count`` to ``threading_threaded_count``,
-     rename ``iterative_count`` to ``threading_iterative_count``
-   * Rename logging benchmarks:
+   - ``silent_logging`` to ``logging_silent``
+   - ``simple_logging`` to ``logging_simple``
+   - ``formatted_logging`` to ``logging_format``
 
-     - ``silent_logging`` to ``logging_silent``
-     - ``simple_logging`` to ``logging_simple``
-     - ``formatted_logging`` to ``logging_format``
+Minor changes:
 
 * Update dependencies
-* ``pickle_pure_python`` and ``unpickle_pure_python`` now work on Python 3
 * Remove broken ``--args`` command line option.
+
 
 
 Version 0.2.2 (2016-09-19)
