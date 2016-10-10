@@ -205,6 +205,9 @@ def run_etree_benchmark(iterations, etree, bench_func):
     return dt
 
 
+BENCHMARKS = 'parse iterparse generate process'.split()
+
+
 def prepare_subprocess_args(runner, args):
     args.extend(("--etree-module", runner.args.etree_module))
     if runner.args.no_accelerator:
@@ -220,12 +223,11 @@ if __name__ == "__main__":
     else:
         default_etmodule = "xml.etree.cElementTree"
 
-    runner = perf.text_runner.TextRunner(name='elementtree')
+    runner = perf.text_runner.TextRunner(name='xml_etree')
     runner.metadata['description'] = ("Test the performance of "
                                       "ElementTree XML processing.")
     runner.prepare_subprocess_args = prepare_subprocess_args
 
-    benchmarks = 'parse iterparse generate process'.split()
     parser = runner.argparser
     parser.add_argument(
         "--etree-module", default=None, metavar="FQMN",
@@ -236,11 +238,11 @@ if __name__ == "__main__":
         help="Disable the '_elementree' accelerator module for ElementTree "
              "in Python 3.3+.")
     parser.add_argument(
-        "benchmark", nargs='?', choices=benchmarks, default="parse")
+        "benchmark", nargs='?', choices=BENCHMARKS, default="parse")
 
     options = runner.parse_args()
     bench_func = globals()['bench_%s' % options.benchmark]
-    runner.name += "/%s" % options.benchmark
+    runner.name += "_%s" % options.benchmark
 
     if not options.etree_module:
         if options.no_accelerator:

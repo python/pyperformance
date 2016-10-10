@@ -371,6 +371,8 @@ Version 0.2.3
   - ``fastpickle`` becomes ``pickle``
   - ``fastunpickle`` becomes ``unpickle``
 
+* Rename ElementTree benchmarks: replace ``etree_`` prefix with ``xml_etree_``.
+
 * Update dependencies
 
 

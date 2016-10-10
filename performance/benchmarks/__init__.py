@@ -142,24 +142,24 @@ def BM_unpickle_pure_python(python, options):
     return pickle_benchmark(python, options, "unpickle")
 
 
-def MeasureEtree(python, options, arg):
-    return run_perf_script(python, options, "elementtree", extra_args=[arg])
+def bench_xml_etree(python, options, arg):
+    return run_perf_script(python, options, "xml_etree", extra_args=[arg])
 
 
-def BM_ETree_Parse(python, options):
-    return MeasureEtree(python, options, 'parse')
+def BM_xml_etree_parse(python, options):
+    return bench_xml_etree(python, options, 'parse')
 
 
-def BM_ETree_IterParse(python, options):
-    return MeasureEtree(python, options, 'iterparse')
+def BM_xml_etree_iterparse(python, options):
+    return bench_xml_etree(python, options, 'iterparse')
 
 
-def BM_ETree_Generate(python, options):
-    return MeasureEtree(python, options, 'generate')
+def BM_xml_etree_generate(python, options):
+    return bench_xml_etree(python, options, 'generate')
 
 
-def BM_ETree_Process(python, options):
-    return MeasureEtree(python, options, 'process')
+def BM_xml_etree_process(python, options):
+    return bench_xml_etree(python, options, 'process')
 
 
 def _JSONBenchmark(python, options, arg):
