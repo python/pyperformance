@@ -365,14 +365,10 @@ def BM_SQLAlchemy_Declarative(python, options):
 
 # End benchmarks, begin main entry point support.
 
-def _FindAllBenchmarks(namespace):
-    return dict((name[3:].lower(), func)
-                for name, func in namespace.items()
-                if name.startswith("BM_"))
-
-
 def get_benchmark_groups():
-    bench_funcs = _FindAllBenchmarks(globals())
+    bench_funcs = dict((name[3:].lower(), func)
+                       for name, func in globals().items()
+                       if name.startswith("BM_"))
 
     bench_groups = BENCH_GROUPS.copy()
     deprecated = set(bench_groups["deprecated"])
