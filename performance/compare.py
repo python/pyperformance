@@ -2,10 +2,14 @@ from __future__ import division, with_statement, print_function, absolute_import
 
 import csv
 import os.path
+import sys
 
 import statistics
 
 import perf
+
+
+NO_VERSION = "<not set>"
 
 
 def average(bench):
@@ -263,6 +267,13 @@ def compare_results(options):
         print()
         print("Skipped benchmarks only in %s (%s): %s"
               % (len(only_changed), changed_suite.filename, ', '.join(sorted(only_changed))))
+
+    version1 = base_suite.get_metadata().get('performance_version', NO_VERSION)
+    version2 = changed_suite.get_metadata().get('performance_version', NO_VERSION)
+    if version1 != version2 or (version1 == version2 == NO_VERSION):
+        print("ERROR: Performance versions are different: %s != %s"
+              % (version1, version2))
+        sys.exit(1)
 
     return results
 

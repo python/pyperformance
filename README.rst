@@ -353,6 +353,7 @@ Version 0.2.3
 * Creating the virtual environment doesn't inherit environment variables
   (especially ``PYTHONPATH``) by default anymore: ``--inherit-environ``
   command line option must now be used explicitly.
+* ``compare`` command now fails if the performance versions are different
 * Update dependencies
 
 
