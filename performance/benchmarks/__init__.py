@@ -131,13 +131,10 @@ def BM_unpickle_list(python, options):
     return pickle_benchmark(python, options, "unpickle_list")
 
 
-# 3.x doesn't have pure Python implementation anymore
-@python2_only
 def BM_pickle_pure_python(python, options):
     return pickle_benchmark(python, options, "--pure-python", "pickle")
 
 
-@python2_only
 def BM_unpickle_pure_python(python, options):
     return pickle_benchmark(python, options, "--pure-python", "unpickle")
 

@@ -171,12 +171,11 @@ pyperformance will run Student's two-tailed T test on the benchmark results at t
 confidence level to indicate whether the observed difference is statistically
 significant.
 
-Omitting the -b option will result in the default group of benchmarks being run
-This currently consists of: 2to3, django, nbody, slowpickle,
-slowunpickle, spambayes. Omitting -b is the same as specifying `-b default`.
+Omitting the ``-b`` option will result in the default group of benchmarks being
+run Omitting ``-b`` is the same as specifying `-b default`.
 
-To run every benchmark pyperformance knows about, use `-b all`. To see a full list of
-all available benchmarks, use `--help`.
+To run every benchmark pyperformance knows about, use ``-b all``. To see a full
+list of all available benchmarks, use `--help`.
 
 Negative benchmarks specifications are also supported: `-b -2to3` will run every
 benchmark in the default group except for 2to3 (this is the same as
@@ -184,21 +183,20 @@ benchmark in the default group except for 2to3 (this is the same as
 templates benchmark. Negative groups (e.g., `-b -default`) are not supported.
 Positive benchmarks are parsed before the negative benchmarks are subtracted.
 
-If --track_memory is passed, pyperformance will continuously sample the benchmark's
-memory usage, then give you the maximum usage and a link to a Google Chart of
-the benchmark's memory usage over time. This currently only works on Linux
-2.6.16 and higher or Windows with PyWin32. Because --track_memory introduces
-performance jitter while collecting memory measurements, only memory usage is
-reported in the final report.
+If ``--track_memory`` is passed, pyperformance will continuously sample the
+benchmark's memory usage. This currently only works on Linux 2.6.16 and higher
+or Windows with PyWin32. Because ``--track_memory`` introduces performance
+jitter while collecting memory measurements, only memory usage is reported in
+the final report.
 
-If --args is passed, it specifies extra arguments to pass to the test
+If ``--args`` is passed, it specifies extra arguments to pass to the test
 python binary. For example::
 
-  pyperformance run --args="-arg1 -arg2" --python=python3
+  pyperformance run --args="-OO -S" --python=python3 -b telco
 
 will run benchmarks like::
 
-  python3 -arg1 -arg2 the_benchmark.py
+  python3 -OO -S bm_telco.py
 
 
 Benchmarks
@@ -275,6 +273,8 @@ Available Benchmarks
   calls.
 - ``pickle_dict`` - microbenchmark; use the cPickle module to pickle a lot of dicts.
 - ``pickle_list`` - microbenchmark; use the cPickle module to pickle a lot of lists.
+- ``pickle_pure_python`` - use the pure-Python pickle module to pickle a
+  variety of datasets.
 - ``pidigits`` - Calculating some of the digits of π.  This benchmark stresses
   big integer arithmetic.
 - ``pybench`` - run the standard Python PyBench benchmark suite. This is
@@ -302,10 +302,6 @@ Available Benchmarks
   <https://en.wikipedia.org/wiki/Fast_Fourier_transform>`_ benchmark
 - ``silent_logging``
 - ``simple_logging``
-- ``slowpickle`` - use the pure-Python pickle module to pickle a variety of
-  datasets.
-- ``slowunpickle`` - use the pure-Python pickle module to unpickle a variety
-  of datasets.
 - ``spambayes`` - run a canned mailbox through a SpamBayes ham/spam classifier.
 - ``spectral_norm`` - MathWorld: "Hundred-Dollar, Hundred-Digit Challenge
   Problems", Challenge #3.
@@ -322,6 +318,8 @@ Available Benchmarks
 - ``tornado_http`` - Benchmark HTTP server of the ``tornado`` module
 - ``unpack_sequence`` - microbenchmark for unpacking lists and tuples.
 - ``unpickle_list``
+- ``unpickle_pure_python`` - use the pure-Python pickle module to unpickle a
+  variety of datasets.
 - ``xml_etree_generate``
 - ``xml_etree_iterparse``
 - ``xml_etree_parse``
@@ -381,6 +379,7 @@ Version 0.2.3
      ``json_dump`` benchmark)
 
 * Update dependencies
+* ``pickle_pure_python`` and ``unpickle_pure_python`` now work on Python 3
 
 
 Version 0.2.2 (2016-09-19)
