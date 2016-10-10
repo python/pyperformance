@@ -351,7 +351,9 @@ New benchmarks:
 Enhancements:
 
 * ``compare`` command now fails if the performance versions are different
-* nbody: add ``--reference`` and ``--iterations`` command line options.
+* ``nbody``: add ``--reference`` and ``--iterations`` command line options.
+* ``chaos``: add ``--width``, ``--height``, ``--thickness``, ``--filename``
+  and ``--rng-seed`` command line options
 * Port ``html5lib`` benchmark to Python 3
 * Enable ``pickle_pure_python`` and ``unpickle_pure_python`` on Python 3
   (code was already compatible with Python 3)

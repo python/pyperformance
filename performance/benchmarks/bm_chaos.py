@@ -3,15 +3,21 @@
 Copyright (C) 2005 Carl Friedrich Bolz
 """
 
-from __future__ import division
-from __future__ import print_function
+from __future__ import division, print_function
 
-import operator
-import random
 import math
+import random
 
 import perf.text_runner
-from six.moves import reduce
+import six
+from six.moves import xrange
+
+
+DEFAULT_THICKNESS = 0.25
+DEFAULT_WIDTH = 256
+DEFAULT_HEIGHT = 256
+DEFAULT_ITERATIONS = 5000
+DEFAULT_RNG_SEED = 1234
 
 
 class GVector(object):
@@ -131,6 +137,26 @@ degree of the Spline."""
         return "Spline(%r, %r, %r)" % (self.points, self.degree, self.knots)
 
 
+def save_im(im, filename):
+    magic = 'P6\n'
+    maxval = 255
+    w = len(im)
+    h = len(im[0])
+
+    if six.PY3:
+        fp = open(filename, "w", encoding="latin1", newline='')
+    else:
+        fp = open(filename, "wb")
+    with fp:
+        fp.write(magic)
+        fp.write('%i %i\n%i\n' % (w, h, maxval))
+        for j in range(h):
+            for i in range(w):
+                val = im[i][j]
+                c = val * 255
+                fp.write('%c%c%c' % (c, c, c))
+
+
 class Chaosgame(object):
 
     def __init__(self, splines, thickness=0.1):
@@ -153,7 +179,7 @@ class Chaosgame(object):
                 curr = spl(t)
                 length += curr.dist(last)
             self.num_trafos.append(max(1, int(length / maxlength * 1.5)))
-        self.num_total = reduce(operator.add, self.num_trafos, 0)
+        self.num_total = sum(self.num_trafos)
 
     def get_random_trafo(self):
         r = random.randrange(int(self.num_total) + 1)
@@ -200,13 +226,15 @@ class Chaosgame(object):
         if point.y < self.miny:
             point.y = self.miny
 
-    def create_image_chaos(self, w, h, loops):
+    def create_image_chaos(self, w, h, iterations, filename, rng_seed):
+        # Always use the same sequence of random numbers
+        # to get reproductible benchmark
+        random.seed(rng_seed)
+
         im = [[1] * h for i in range(w)]
         point = GVector((self.maxx + self.minx) / 2,
                         (self.maxy + self.miny) / 2, 0)
-        start = perf.perf_counter()
-
-        for _ in range(loops):
+        for _ in xrange(iterations):
             point = self.transform_point(point)
             x = (point.x - self.minx) / self.width * w
             y = (point.y - self.miny) / self.height * h
@@ -218,14 +246,11 @@ class Chaosgame(object):
                 y -= 1
             im[x][h - y - 1] = 0
 
-        return perf.perf_counter() - start
+        if filename:
+            save_im(im, filename)
 
 
-def main(loops):
-    # Always use the same sequence of random numbers
-    # to get reproductible benchmark
-    random.seed(1234)
-
+def main(runner, args):
     splines = [
         Spline([
             GVector(1.597350, 3.304460, 0.000000),
@@ -249,11 +274,52 @@ def main(loops):
             GVector(2.366800, 3.233460, 0.000000)],
             3, [0, 0, 0, 1, 1, 1])
     ]
-    c = Chaosgame(splines, 0.25)
-    return c.create_image_chaos(1000, 1200, loops)
+
+    runner.metadata['chaos_thickness'] = args.thickness
+    runner.metadata['chaos_width'] = args.width
+    runner.metadata['chaos_height'] = args.height
+    runner.metadata['chaos_iterations'] = args.iterations
+    runner.metadata['chaos_rng_seed'] = args.rng_seed
+
+    chaos = Chaosgame(splines, args.thickness)
+    runner.bench_func(chaos.create_image_chaos,
+                      args.width, args.height, args.iterations,
+                      args.filename, args.rng_seed)
+
+
+def prepare_cmd(runner, cmd):
+    cmd.append("--width=%s" % runner.args.width)
+    cmd.append("--height=%s" % runner.args.height)
+    cmd.append("--thickness=%s" % runner.args.thickness)
+    cmd.append("--rng-seed=%s" % runner.args.rng_seed)
+    if runner.args.filename:
+        cmd.extend(("--filename", runner.args.filename))
 
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='chaos')
     runner.metadata['description'] = "Create chaosgame-like fractals"
-    runner.bench_sample_func(main)
+    runner.prepare_subprocess_args = prepare_cmd
+    cmd = runner.argparser
+    cmd.add_argument("--thickness",
+                     type=float, default=DEFAULT_THICKNESS,
+                     help="Thickness (default: %s)" % DEFAULT_THICKNESS)
+    cmd.add_argument("--width",
+                     type=int, default=DEFAULT_WIDTH,
+                     help="Image width (default: %s)" % DEFAULT_WIDTH)
+    cmd.add_argument("--height",
+                     type=int, default=DEFAULT_HEIGHT,
+                     help="Image height (default: %s)" % DEFAULT_HEIGHT)
+    cmd.add_argument("--iterations",
+                     type=int, default=DEFAULT_ITERATIONS,
+                     help="Number of iterations (default: %s)"
+                          % DEFAULT_ITERATIONS)
+    cmd.add_argument("--filename", metavar="FILENAME.PPM",
+                     help="Output filename of the PPM picture")
+    cmd.add_argument("--rng-seed",
+                     type=int, default=DEFAULT_RNG_SEED,
+                     help="Random number generator seed (default: %s)"
+                          % DEFAULT_RNG_SEED)
+
+    args = runner.parse_args()
+    main(runner, args)
