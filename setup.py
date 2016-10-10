@@ -47,9 +47,10 @@ CLASSIFIERS = [
 # put most of the code inside main() to be able to import setup.py in
 # unit tests
 def main():
+    import io
     from setuptools import setup
 
-    with open('README.rst') as fp:
+    with io.open('README.rst', encoding="utf8") as fp:
         long_description = fp.read().strip()
 
     packages = [
