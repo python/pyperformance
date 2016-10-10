@@ -11,9 +11,37 @@ from performance.run import (run_perf_script, copy_perf_options,
                              Relative)
 
 
-# Decorators for giving ranges of supported Python versions.
-# Benchmarks without a range applied are assumed to be compatible with all
-# (reasonably new) Python versions.
+# Benchmark groups. The "default" group is what's run if no -b option is
+# specified.
+# If you update the default group, be sure to update the module docstring, too.
+# An "all" group which includes every benchmark perf.py knows about is generated
+# automatically.
+BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
+                            "tornado_http", "fastpickle", "fastunpickle",
+                            "regex_v8", "json_dump_v2", "json_load"],
+                "startup": ["normal_startup", "startup_nosite",
+                            "hg_startup"],
+                "regex": ["regex_v8", "regex_effbot", "regex_compile"],
+                "threading": ["threaded_count", "iterative_count"],
+                "serialize": ["slowpickle", "slowunpickle",  # Not for Python 3
+                              "fastpickle", "fastunpickle",
+                              "etree",
+                              "json_dump_v2", "json_load"],
+                "etree": ["etree_generate", "etree_parse",
+                          "etree_iterparse", "etree_process"],
+                "apps": ["2to3", "chameleon", "html5lib",
+                         "spambayes", "tornado_http"],
+                "calls": ["call_simple", "call_method", "call_method_slots",
+                          "call_method_unknown"],
+                "math": ["float", "nbody", "pidigits"],
+                "template": ["django_template", "mako"],
+                "logging": ["silent_logging", "simple_logging",
+                            "formatted_logging"],
+                # These are removed from the "all" group
+                "deprecated": ["iterative_count", "json_dump",
+                               "threaded_count"],
+                }
+
 
 def python2_only(func):
     func._python2_only = True
@@ -351,61 +379,25 @@ def _FindAllBenchmarks(namespace):
                 for name, func in namespace.items()
                 if name.startswith("BM_"))
 
-BENCH_FUNCS = _FindAllBenchmarks(globals())
-
-# Benchmark groups. The "default" group is what's run if no -b option is
-# specified.
-# If you update the default group, be sure to update the module docstring, too.
-# An "all" group which includes every benchmark perf.py knows about is generated
-# automatically.
-BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
-                            "tornado_http", "fastpickle", "fastunpickle",
-                            "regex_v8", "json_dump_v2", "json_load"],
-                "startup": ["normal_startup", "startup_nosite",
-                            "hg_startup"],
-                "regex": ["regex_v8", "regex_effbot", "regex_compile"],
-                "threading": ["threaded_count", "iterative_count"],
-                "serialize": ["slowpickle", "slowunpickle",  # Not for Python 3
-                              "fastpickle", "fastunpickle",
-                              "etree",
-                              "json_dump_v2", "json_load"],
-                "etree": ["etree_generate", "etree_parse",
-                          "etree_iterparse", "etree_process"],
-                "apps": ["2to3", "chameleon", "html5lib",
-                         "spambayes", "tornado_http"],
-                "calls": ["call_simple", "call_method", "call_method_slots",
-                          "call_method_unknown"],
-                "math": ["float", "nbody", "pidigits"],
-                "template": ["django_template", "mako"],
-                "logging": ["silent_logging", "simple_logging",
-                            "formatted_logging"],
-                # These are removed from the "all" group
-                "deprecated": ["iterative_count", "json_dump",
-                               "threaded_count"],
-                }
-
-# Calculate set of 2-and-3 compatible benchmarks.
-group2n3 = BENCH_GROUPS["2n3"] = []
-group_deprecated = set(BENCH_GROUPS["deprecated"])
-for bm, func in BENCH_FUNCS.items():
-    if bm in group_deprecated:
-        continue
-
-    if not getattr(func, '_python2_only', False):
-        group2n3.append(bm)
-
-
-def CreateBenchGroups(bench_funcs=BENCH_FUNCS, bench_groups=BENCH_GROUPS):
-    bench_groups = bench_groups.copy()
-    deprecated = bench_groups['deprecated']
-    bench_groups["all"] = sorted(b for b in bench_funcs if b not in deprecated)
-    return bench_groups
-
 
 def get_benchmark_groups():
-    bench_funcs = BENCH_FUNCS
+    bench_funcs = _FindAllBenchmarks(globals())
+
+    bench_groups = BENCH_GROUPS.copy()
+    deprecated = set(bench_groups["deprecated"])
+
+    # Calculate set of 2-and-3 compatible benchmarks.
+    group2n3 = bench_groups["2n3"] = []
+    for bm, func in bench_funcs.items():
+        if bm in deprecated:
+            continue
+
+        if not getattr(func, '_python2_only', False):
+            group2n3.append(bm)
+
     # create the 'all' group
-    bench_groups = CreateBenchGroups(bench_funcs, BENCH_GROUPS)
+    bench_groups["all"] = sorted(b for b in bench_funcs if b not in deprecated)
+
     return (bench_funcs, bench_groups)
 
 
