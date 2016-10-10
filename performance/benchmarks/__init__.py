@@ -112,34 +112,34 @@ def pickle_benchmark(python, options, *extra_args):
 
 
 def BM_pickle(python, options):
-    return pickle_benchmark(python, options, "--use_cpickle", "pickle")
+    return pickle_benchmark(python, options, "pickle")
 
 
 def BM_unpickle(python, options):
-    return pickle_benchmark(python, options, "--use_cpickle", "unpickle")
+    return pickle_benchmark(python, options, "unpickle")
 
 
 def BM_pickle_list(python, options):
-    return pickle_benchmark(python, options, "--use_cpickle", "pickle_list")
+    return pickle_benchmark(python, options, "pickle_list")
 
 
 def BM_pickle_dict(python, options):
-    return pickle_benchmark(python, options, "--use_cpickle", "pickle_dict")
+    return pickle_benchmark(python, options, "pickle_dict")
 
 
 def BM_unpickle_list(python, options):
-    return pickle_benchmark(python, options, "--use_cpickle", "unpickle_list")
+    return pickle_benchmark(python, options, "unpickle_list")
 
 
 # 3.x doesn't have pure Python implementation anymore
 @python2_only
 def BM_pickle_pure_python(python, options):
-    return pickle_benchmark(python, options, "pickle")
+    return pickle_benchmark(python, options, "--pure-python", "pickle")
 
 
 @python2_only
 def BM_unpickle_pure_python(python, options):
-    return pickle_benchmark(python, options, "unpickle")
+    return pickle_benchmark(python, options, "--pure-python", "unpickle")
 
 
 def bench_xml_etree(python, options, arg):

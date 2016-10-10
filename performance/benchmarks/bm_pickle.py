@@ -247,8 +247,8 @@ def is_module_accelerated(module):
 
 
 def prepare_subprocess_args(runner, args):
-    if runner.args.use_cpickle:
-        args.append("--use_cpickle")
+    if runner.args.pure_python:
+        args.append("--pure-python")
     args.extend(("--protocol", str(runner.args.protocol)))
     args.append(runner.args.benchmark)
 
@@ -259,7 +259,7 @@ if __name__ == "__main__":
     runner.prepare_subprocess_args = prepare_subprocess_args
 
     parser = runner.argparser
-    parser.add_argument("--use_cpickle", action="store_true",
+    parser.add_argument("--pure-python", action="store_true",
                         help="Use the C version of pickle.")
     parser.add_argument("--protocol", action="store", default=None, type=int,
                         help="Which protocol to use (default: highest protocol).")
@@ -269,11 +269,11 @@ if __name__ == "__main__":
     options = runner.parse_args()
     benchmark, inner_loops = BENCHMARKS[options.benchmark]
     runner.name = options.benchmark
-    if not options.use_cpickle:
+    if options.pure_python:
         runner.name += "_pure_python"
     runner.inner_loops = inner_loops
 
-    if options.use_cpickle:
+    if not options.pure_python:
         # C accelerators are enabled by default on 3.x
         if six.PY2:
             import cPickle as pickle
@@ -287,15 +287,10 @@ if __name__ == "__main__":
         import pickle
         if not is_module_accelerated(pickle):
             raise RuntimeError("Unexpected C accelerators for pickle")
+
     if options.protocol is None:
         options.protocol = pickle.HIGHEST_PROTOCOL
     runner.metadata['pickle_protocol'] = str(options.protocol)
-
-    module = pickle.__name__
-    if options.use_cpickle:
-        module += ' (with C accelerator)'
-    else:
-        module += ' (pure Python)'
-    runner.metadata['pickle_module'] = module
+    runner.metadata['pickle_module'] = pickle.__name__
 
     runner.bench_sample_func(benchmark, pickle, options)

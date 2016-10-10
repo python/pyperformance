@@ -18,7 +18,6 @@ TODO
 * Remove deprecated threading tests? bench.py -b threading doesn't run anything
 * pybench: calibrate once in the main process, then pass the number of loops
   to workers? Or rewrite pybench as N subenchmarks?
-* fastpickle: use accelerator by default, as bm_elementtree
 * html5lib: 1 warmup, 3 runs: run 2 is always 10% slower!?
 
 
