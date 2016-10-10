@@ -221,12 +221,13 @@ def BM_Formatted_Logging(python, options):
     return _LoggingBenchmark(python, options, "formatted_output")
 
 
-def BM_normal_startup(python, options):
-    return run_perf_script(python, options, "startup")
+def BM_python_startup(python, options):
+    return run_perf_script(python, options, "python_startup")
 
 
-def BM_startup_nosite(python, options):
-    return run_perf_script(python, options, "startup", extra_args=["--no-site"])
+def BM_python_startup_no_site(python, options):
+    return run_perf_script(python, options, "python_startup",
+                           extra_args=["--no-site"])
 
 
 def BM_regex_v8(python, options):

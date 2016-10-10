@@ -368,6 +368,8 @@ Version 0.2.3
      parameter
    * Rename ``json_dump_v2`` to ``json_dump`` (and remove the deprecated
      ``json_dump`` benchmark)
+   * Rename ``normal_startup`` to ``python_startup``, and ``startup_nosite``
+     to ``python_startup_no_site``
 
 * Update dependencies
 * ``pickle_pure_python`` and ``unpickle_pure_python`` now work on Python 3
