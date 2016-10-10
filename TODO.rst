@@ -14,8 +14,6 @@ TODO
 * Add benchmarks from the Pyston benchmark suite:
   https://github.com/dropbox/pyston-perf
   and convince Pyston to use performance :-)
-* Don't use PYTHONPATH by default when creating the venv: add --inherit-environ
-  to be more explicit and avoid surprises
 * pybench: don't use private perf submodules/functions
 * Remove deprecated threading tests? bench.py -b threading doesn't run anything
 * Remove json_dump and rename json_dump to json_dump_v2?

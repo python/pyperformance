@@ -350,6 +350,9 @@ Version 0.2.3
   to get more reproductible benchmark results
 * Port ``html5lib`` benchmark to Python 3
 * Rename ``hexiom2`` benchmark to  ``hexiom``
+* Creating the virtual environment doesn't inherit environment variables
+  (especially ``PYTHONPATH``) by default anymore: ``--inherit-environ``
+  command line option must now be used explicitly.
 * Update dependencies
 
 

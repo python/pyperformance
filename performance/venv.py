@@ -144,9 +144,23 @@ def get_venv_program(program):
     return path
 
 
-def run_cmd_nocheck(cmd):
+def create_environ(inherit_environ):
+    env = {}
+
+    copy_env = ["PATH", "HOME", "TEMP", "COMSPEC", "SystemRoot"]
+    if inherit_environ:
+        copy_env.extend(inherit_environ)
+
+    for name in copy_env:
+        if name in os.environ:
+            env[name] = os.environ[name]
+    return env
+
+
+def run_cmd_nocheck(cmd, inherit_environ):
     print("Execute: %s" % ' '.join(cmd))
-    proc = subprocess.Popen(cmd)
+    env = create_environ(inherit_environ)
+    proc = subprocess.Popen(cmd, env=env)
     try:
         proc.wait()
     except:
@@ -157,8 +171,8 @@ def run_cmd_nocheck(cmd):
     return proc.returncode
 
 
-def run_cmd(cmd):
-    exitcode = run_cmd_nocheck(cmd)
+def run_cmd(cmd, inherit_environ):
+    exitcode = run_cmd_nocheck(cmd, inherit_environ)
     if exitcode:
         sys.exit(exitcode)
     print()
@@ -221,7 +235,7 @@ def safe_rmtree(path):
     shutil.rmtree(path)
 
 
-def _create_virtualenv(python, venv_path):
+def _create_virtualenv(python, venv_path, inherit_environ):
     # On Python 3.3 and newer, the venv module could be used, but it looks
     # like it doesn't work when run from a virtual environment on Fedora:
     # ensurepip fails with an error. First, try to use the virtualenv command.
@@ -229,7 +243,7 @@ def _create_virtualenv(python, venv_path):
     # Case 1: try virtualenv command
     cmd = ['virtualenv', '-p', python, venv_path]
     try:
-        exitcode = run_cmd_nocheck(cmd)
+        exitcode = run_cmd_nocheck(cmd, inherit_environ)
         if not exitcode:
             return
         print("virtualenv failed!")
@@ -243,7 +257,7 @@ def _create_virtualenv(python, venv_path):
 
     # Case 2: try python -m virtualenv
     cmd = [python, '-m', 'virtualenv', venv_path]
-    exitcode = run_cmd_nocheck(cmd)
+    exitcode = run_cmd_nocheck(cmd, inherit_environ)
     if not exitcode:
         return
     safe_rmtree(venv_path)
@@ -252,7 +266,7 @@ def _create_virtualenv(python, venv_path):
 
     # Case 3: try python -m venv
     cmd = [python, '-m', 'venv', venv_path]
-    exitcode = run_cmd_nocheck(cmd)
+    exitcode = run_cmd_nocheck(cmd, inherit_environ)
     if not exitcode:
         return
     safe_rmtree(venv_path)
@@ -308,7 +322,7 @@ def is_build_dir():
     return os.path.exists(os.path.join(root_dir, 'setup.py'))
 
 
-def create_virtualenv(python, venv_path):
+def create_virtualenv(python, venv_path, inherit_environ):
     if os.name == "nt":
         python_executable = os.path.basename(python)
         venv_python = os.path.join(venv_path, 'Scripts', python_executable)
@@ -326,23 +340,23 @@ def create_virtualenv(python, venv_path):
 
     print("Creating the virtual environment %s" % venv_path)
     try:
-        _create_virtualenv(python, venv_path)
+        _create_virtualenv(python, venv_path, inherit_environ)
 
         # upgrade installer dependencies (ex: pip. Use venv/bin/pip rather than
         # venv/bin/python -m pip, because pip 1.0 doesn't support "-m pip" CLI.
         cmd = [venv_pip, 'install', '-U']
         cmd.extend(requirements.installer)
-        run_cmd(cmd)
+        run_cmd(cmd, inherit_environ)
 
         # install requirements
         cmd = [venv_python, '-m', 'pip', 'install']
         cmd.extend(requirements.req)
-        run_cmd(cmd)
+        run_cmd(cmd, inherit_environ)
 
         # install optional requirements
         for req in requirements.optional:
             cmd = [venv_python, '-m', 'pip', 'install', '-U', req]
-            exitcode = run_cmd_nocheck(cmd)
+            exitcode = run_cmd_nocheck(cmd, inherit_environ)
             if exitcode:
                 print("WARNING: failed to install %s" % req)
                 print()
@@ -355,7 +369,7 @@ def create_virtualenv(python, venv_path):
             version = performance.__version__
             cmd = [venv_python, '-m', 'pip',
                    'install', 'performance==%s' % version]
-        run_cmd(cmd)
+        run_cmd(cmd, inherit_environ)
     except:
         print()
         safe_rmtree(venv_path)
@@ -366,7 +380,8 @@ def create_virtualenv(python, venv_path):
 
 def exec_in_virtualenv(options):
     venv_path = virtualenv_path(options)
-    venv_python = create_virtualenv(options.python, venv_path)
+    venv_python = create_virtualenv(options.python, venv_path,
+                                    options.inherit_environ)
 
     args = [venv_python, "-m", "performance"] + \
         sys.argv[1:] + ["--inside-venv"]
@@ -375,7 +390,7 @@ def exec_in_virtualenv(options):
     # * https://bugs.python.org/issue19124
     # * https://github.com/python/benchmarks/issues/5
     if os.name == "nt":
-        run_cmd(args)
+        run_cmd(args, options.inherit_environ)
         sys.exit(0)
     else:
         os.execv(args[0], args)
@@ -395,7 +410,8 @@ def cmd_venv(options):
             print()
 
         if not os.path.exists(venv_path):
-            create_virtualenv(options.python, venv_path)
+            create_virtualenv(options.python, venv_path,
+                              options.inherit_environ)
 
             what = 'recreated' if recreated else 'created'
             print("The virtual environment %s has been %s" % (venv_path, what))

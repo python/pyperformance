@@ -34,11 +34,6 @@ def _add_run_options(cmd):
                            " there are no positive arguments, we'll run all"
                            " benchmarks except the negative arguments. "
                            " Otherwise we run only the positive arguments."))
-    cmd.add_argument("--inherit-environ", metavar="VAR_LIST",
-                     type=comma_separated,
-                     help=("Comma-separated list of environment variable names"
-                           " that are inherited from the parent environment"
-                           " when running benchmarking subprocesses."))
     cmd.add_argument("--affinity", metavar="CPU_LIST", default=None,
                      help=("Specify CPU affinity for benchmark runs. This "
                            "way, benchmarks can be forced to run on a given "
@@ -60,7 +55,6 @@ def _add_compare_options(cmd):
 
 
 def parse_args():
-
     parser = argparse.ArgumentParser(
         description=("Compares the performance of baseline_python with" +
                      " changed_python and prints a report."))
@@ -114,6 +108,12 @@ def parse_args():
     cmds.append(cmd)
 
     for cmd in cmds:
+        cmd.add_argument("--inherit-environ", metavar="VAR_LIST",
+                         type=comma_separated,
+                         help=("Comma-separated list of environment variable "
+                               "names that are inherited from the parent "
+                               "environment when running benchmarking "
+                               "subprocesses."))
         cmd.add_argument("--inside-venv", action="store_true",
                          help=("Option for internal usage only, don't use "
                                "it directly. Notice that we are already "
