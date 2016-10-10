@@ -260,7 +260,7 @@ Available Benchmarks
 - ``nbody`` - the N-body Shootout benchmark. Microbenchmark for floating point
   operations.
 - ``normal_startup`` - Measure the Python startup time
-- ``nqueens`` - small solver for the N-Queens problem.
+- ``nqueens`` - Simple, brute-force N-Queens solver
 - ``pathlib`` - Test the performance of operations of the ``pathlib`` module.
   This benchmark stresses the creation of small objects, globbing, and system
   calls.
@@ -268,7 +268,7 @@ Available Benchmarks
 - ``pickle_list`` - microbenchmark; use the cPickle module to pickle a lot of lists.
 - ``pickle_pure_python`` - use the pure-Python pickle module to pickle a
   variety of datasets.
-- ``pidigits`` - Calculating some of the digits of π.  This benchmark stresses
+- ``pidigits`` - Calculating 2,000 digits of π.  This benchmark stresses
   big integer arithmetic.
 - ``pybench`` - run the standard Python PyBench benchmark suite. This is
   considered an unreliable, unrepresentative benchmark; do not base decisions
@@ -356,6 +356,7 @@ Enhancements:
   and ``--rng-seed`` command line options
 * ``django_template``: add ``--size`` command line option
 * ``json_dumps``: add ``--cases`` command line option
+* ``pidigits``: add ``--digits`` command line option
 * Port ``html5lib`` benchmark to Python 3
 * Enable ``pickle_pure_python`` and ``unpickle_pure_python`` on Python 3
   (code was already compatible with Python 3)

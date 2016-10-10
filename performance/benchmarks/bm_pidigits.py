@@ -1,29 +1,25 @@
 # coding: utf-8
 """
-Calculating some of the digits of π.  This benchmark stresses big integer
-arithmetic.
+Calculating some of the digits of π.
+
+This benchmark stresses big integer arithmetic.
+
+Adapted from code on http://shootout.alioth.debian.org/
 """
 
-# Python imports
 import itertools
 
-# Local imports
 from six.moves import xrange, map as imap
 import perf.text_runner
 
 
-NDIGITS = 2000
-
-
-_map = imap
-_count = itertools.count
-_islice = itertools.islice
-
-# Adapted from code on http://shootout.alioth.debian.org/
+DEFAULT_DIGITS = 2000
+icount = itertools.count
+islice = itertools.islice
 
 
 def gen_x():
-    return _map(lambda k: (k, 4 * k + 2, 0, 2 * k + 1), _count(1))
+    return imap(lambda k: (k, 4 * k + 2, 0, 2 * k + 1), icount(1))
 
 
 def compose(a, b):
@@ -53,20 +49,23 @@ def gen_pi_digits():
 
 
 def calc_ndigits(n):
-    return list(_islice(gen_pi_digits(), n))
+    return list(islice(gen_pi_digits(), n))
 
 
-def bench_pidigits(loops):
-    range_it = xrange(loops)
-    t0 = perf.perf_counter()
-
-    for _ in range_it:
-        calc_ndigits(NDIGITS)
-
-    return perf.perf_counter() - t0
+def prepare_cmd(runner, args):
+    args.extend(("--digits", str(runner.args.digits)))
 
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='pidigits')
-    runner.metadata['description'] = "Test the performance of pi calculation."
-    runner.bench_sample_func(bench_pidigits)
+    runner.prepare_subprocess_args = prepare_cmd
+
+    cmd = runner.argparser
+    cmd.add_argument("--digits", type=int, default=DEFAULT_DIGITS,
+                     help="Number of computed pi digits (default: %s)"
+                          % DEFAULT_DIGITS)
+
+    args = runner.parse_args()
+    runner.metadata['description'] = "Compute digits of pi."
+    runner.metadata['pidigits_ndigit'] = args.digits
+    runner.bench_func(calc_ndigits, args.digits)
