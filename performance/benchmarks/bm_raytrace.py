@@ -8,14 +8,15 @@ http://www.opensource.org/licenses/mit-license.php
 From http://www.lshift.net/blog/2008/10/29/toy-raytracer-in-python
 """
 
-from __future__ import with_statement
-
+import array
 import math
 
 import perf.text_runner
 from six.moves import xrange
 
 
+DEFAULT_WIDTH = 100
+DEFAULT_HEIGHT = 100
 EPSILON = 0.00001
 
 
@@ -186,20 +187,14 @@ class Ray(object):
 
 Point.ZERO = Point(0, 0, 0)
 
-a = Vector(3, 4, 12)
-b = Vector(1, 1, 1)
 
-
-class PpmCanvas(object):
-
-    def __init__(self, width, height, filenameBase):
-        import array
+class Canvas(object):
+    def __init__(self, width, height):
         self.bytes = array.array('B', [0] * (width * height * 3))
         for i in xrange(width * height):
             self.bytes[i * 3 + 2] = 255
         self.width = width
         self.height = height
-        self.filenameBase = filenameBase
 
     def plot(self, x, y, r, g, b):
         i = ((self.height - y - 1) * self.width + x) * 3
@@ -207,11 +202,11 @@ class PpmCanvas(object):
         self.bytes[i + 1] = max(0, min(255, int(g * 255)))
         self.bytes[i + 2] = max(0, min(255, int(b * 255)))
 
-    def save(self):
-        pass
-        # with open(self.filenameBase + '.ppm', 'wb') as f:
-        #    f.write('P6 %d %d 255\n' % (self.width, self.height))
-        #    f.write(self.bytes.tostring())
+    def write_ppm(self, filename):
+        header = 'P6 %d %d 255\n' % (self.width, self.height)
+        with open(filename, "wb") as fp:
+            fp.write(header.encode('ascii'))
+            fp.write(self.bytes.tostring())
 
 
 def firstIntersection(intersections):
@@ -247,7 +242,6 @@ class Scene(object):
         self.lightPoints.append(p)
 
     def render(self, canvas):
-        # print 'Computing field of view'
         fovRadians = math.pi * (self.fieldOfView / 2.0) / 180.0
         halfWidth = math.tan(fovRadians)
         halfHeight = 0.75 * halfWidth
@@ -260,22 +254,13 @@ class Scene(object):
         vpRight = eye.vector.cross(Vector.UP).normalized()
         vpUp = vpRight.cross(eye.vector).normalized()
 
-        # print 'Looping over pixels'
-        previousfraction = 0
         for y in xrange(canvas.height):
-            currentfraction = float(y) / canvas.height
-            if currentfraction - previousfraction > 0.05:
-                canvas.save()
-                # print '%d%% complete' % (currentfraction * 100)
-                previousfraction = currentfraction
             for x in xrange(canvas.width):
                 xcomp = vpRight.scale(x * pixelWidth - halfWidth)
                 ycomp = vpUp.scale(y * pixelHeight - halfHeight)
                 ray = Ray(eye.point, eye.vector + xcomp + ycomp)
                 colour = self.rayColour(ray)
                 canvas.plot(x, y, *colour)
-
-        # print 'Complete.'
 
     def rayColour(self, ray):
         if self.recursionDepth > 3:
@@ -332,7 +317,6 @@ class SimpleSurface(object):
         c = (0, 0, 0)
         if self.specularCoefficient > 0:
             reflectedRay = Ray(p, ray.vector.reflectThrough(normal))
-            # print p, normal, ray.vector, reflectedRay.vector
             reflectedColour = scene.rayColour(reflectedRay)
             c = addColours(c, self.specularCoefficient, reflectedColour)
 
@@ -370,14 +354,12 @@ class CheckerboardSurface(SimpleSurface):
             return self.baseColour
 
 
-def main(loops):
+def bench_raytrace(loops, width, height, filename):
     range_it = xrange(loops)
     t0 = perf.perf_counter()
 
     for i in range_it:
-
-        c = PpmCanvas(100, 100, 'test_raytrace')
-        # c = PpmCanvas(640, 480, 'test_raytrace_big')
+        canvas = Canvas(width, height)
         s = Scene()
         s.addLight(Point(30, 30, 10))
         s.addLight(Point(-10, 100, 30))
@@ -389,11 +371,40 @@ def main(loops):
                         SimpleSurface(baseColour=(y / 6.0, 1 - y / 6.0, 0.5)))
         s.addObject(Halfspace(Point(0, 0, 0), Vector.UP),
                     CheckerboardSurface())
-        s.render(c)
+        s.render(canvas)
 
-    return perf.perf_counter() - t0
+    dt = perf.perf_counter() - t0
+
+    if filename:
+        canvas.write_ppm(filename)
+    return dt
+
+
+def prepare_cmd(runner, cmd):
+    cmd.append("--width=%s" % runner.args.width)
+    cmd.append("--height=%s" % runner.args.height)
+    if runner.args.filename:
+        cmd.extend(("--filename", runner.args.filename))
+
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='raytrace')
+    runner.prepare_subprocess_args = prepare_cmd
+    cmd = runner.argparser
+    cmd.add_argument("--width",
+                     type=int, default=DEFAULT_WIDTH,
+                     help="Image width (default: %s)" % DEFAULT_WIDTH)
+    cmd.add_argument("--height",
+                     type=int, default=DEFAULT_HEIGHT,
+                     help="Image height (default: %s)" % DEFAULT_HEIGHT)
+    cmd.add_argument("--filename", metavar="FILENAME.PPM",
+                     help="Output filename of the PPM picture")
+
+    args = runner.parse_args()
     runner.metadata['description'] = "Simple raytracer"
-    runner.bench_sample_func(main)
+    runner.metadata['raytrace_width'] = args.width
+    runner.metadata['raytrace_height'] = args.height
+
+    runner.bench_sample_func(bench_raytrace,
+                             args.width, args.height,
+                             args.filename)

@@ -357,6 +357,8 @@ Enhancements:
 * ``django_template``: add ``--size`` command line option
 * ``json_dumps``: add ``--cases`` command line option
 * ``pidigits``: add ``--digits`` command line option
+* ``raytrace``: add ``--width``, ``--height`` and ``--filename`` command line
+  options
 * Port ``html5lib`` benchmark to Python 3
 * Enable ``pickle_pure_python`` and ``unpickle_pure_python`` on Python 3
   (code was already compatible with Python 3)
