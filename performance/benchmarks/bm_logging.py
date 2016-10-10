@@ -16,7 +16,14 @@ FORMAT = 'important: %s'
 MESSAGE = 'some important information to be logged'
 
 
-def bench_no_output(loops, logger):
+def truncate_stream(stream):
+    stream.seek(0)
+    stream.truncate()
+
+
+def bench_silent(loops, logger, stream, check):
+    truncate_stream(stream)
+
     # micro-optimization: use fast local variables
     m = MESSAGE
     range_it = xrange(loops)
@@ -35,10 +42,17 @@ def bench_no_output(loops, logger):
         logger.debug(m)
         logger.debug(m)
 
-    return perf.perf_counter() - t0
+    dt = perf.perf_counter() - t0
+
+    if check and len(stream.getvalue()) != 0:
+        raise ValueError("stream is expected to be empty")
+
+    return dt
 
 
-def bench_simple_output(loops, logger):
+def bench_simple_output(loops, logger, stream, check):
+    truncate_stream(stream)
+
     # micro-optimization: use fast local variables
     m = MESSAGE
     range_it = xrange(loops)
@@ -57,34 +71,57 @@ def bench_simple_output(loops, logger):
         logger.warn(m)
         logger.warn(m)
 
-    return perf.perf_counter() - t0
+    dt = perf.perf_counter() - t0
+
+    if check:
+        lines = stream.getvalue().splitlines()
+        if len(lines) != loops * 10:
+            raise ValueError("wrong number of lines")
+
+    return dt
 
 
-def bench_formatted_output(loops, logger):
+def bench_formatted_output(loops, logger, stream, check):
+    truncate_stream(stream)
+
     # micro-optimization: use fast local variables
-    f = FORMAT
-    m = MESSAGE
+    fmt = FORMAT
+    msg = MESSAGE
     range_it = xrange(loops)
     t0 = perf.perf_counter()
 
     for _ in range_it:
         # repeat 10 times
-        logger.warn(f, m)
-        logger.warn(f, m)
-        logger.warn(f, m)
-        logger.warn(f, m)
-        logger.warn(f, m)
-        logger.warn(f, m)
-        logger.warn(f, m)
-        logger.warn(f, m)
-        logger.warn(f, m)
-        logger.warn(f, m)
+        logger.warn(fmt, msg)
+        logger.warn(fmt, msg)
+        logger.warn(fmt, msg)
+        logger.warn(fmt, msg)
+        logger.warn(fmt, msg)
+        logger.warn(fmt, msg)
+        logger.warn(fmt, msg)
+        logger.warn(fmt, msg)
+        logger.warn(fmt, msg)
+        logger.warn(fmt, msg)
 
-    return perf.perf_counter() - t0
+    dt = perf.perf_counter() - t0
+
+    if check:
+        lines = stream.getvalue().splitlines()
+        if len(lines) != loops * 10:
+            raise ValueError("wrong number of lines")
+
+    return dt
 
 
 def prepare_subprocess_args(runner, args):
     args.append(runner.args.benchmark)
+
+
+BENCHMARKS = {
+    "silent": bench_silent,
+    "simple": bench_simple_output,
+    "format": bench_formatted_output,
+}
 
 
 if __name__ == "__main__":
@@ -93,30 +130,24 @@ if __name__ == "__main__":
     runner.prepare_subprocess_args = prepare_subprocess_args
 
     parser = runner.argparser
-    benchmarks = ["no_output", "simple_output", "formatted_output"]
-    parser.add_argument("benchmark", choices=benchmarks)
+    parser.add_argument("benchmark", choices=sorted(BENCHMARKS))
 
     options = runner.parse_args()
-    benchmark = globals()["bench_" + options.benchmark]
-    runner.name += "/%s" % options.benchmark
+    bench = options.benchmark
+    runner.name += "_%s" % bench
+    bench_func = BENCHMARKS[bench]
 
     # NOTE: StringIO performance will impact the results...
     if six.PY3:
-        sio = io.StringIO()
+        stream = io.StringIO()
     else:
-        sio = io.BytesIO()
+        stream = io.BytesIO()
 
-    handler = logging.StreamHandler(stream=sio)
+    handler = logging.StreamHandler(stream=stream)
     logger = logging.getLogger("benchlogger")
     logger.propagate = False
     logger.addHandler(handler)
     logger.setLevel(logging.WARNING)
 
-    runner.bench_sample_func(benchmark, logger)
-
-    # benchmark are only run in worker processes
-    if runner.args.worker:
-        if benchmark is not bench_no_output:
-            assert len(sio.getvalue()) > 0
-        else:
-            assert len(sio.getvalue()) == 0
+    # Only check loggers in worker processes
+    runner.bench_sample_func(bench_func, logger, stream, runner.args.worker)

@@ -36,8 +36,8 @@ BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
                           "call_method_unknown"],
                 "math": ["float", "nbody", "pidigits"],
                 "template": ["django_template", "mako"],
-                "logging": ["silent_logging", "simple_logging",
-                            "formatted_logging"],
+                "logging": ["logging_silent", "logging_simple",
+                            "logging_format"],
                 # These are removed from the "all" group
                 "deprecated": ["threading_iterative_count",
                                "threading_threaded_count"],
@@ -206,20 +206,20 @@ def BM_Raytrace(python, options):
     return run_perf_script(python, options, "raytrace")
 
 
-def _LoggingBenchmark(python, options, arg):
+def bench_logging(python, options, arg):
     return run_perf_script(python, options, "logging", extra_args=[arg])
 
 
-def BM_Silent_Logging(python, options):
-    return _LoggingBenchmark(python, options, "no_output")
+def BM_logging_silent(python, options):
+    return bench_logging(python, options, "silent")
 
 
-def BM_Simple_Logging(python, options):
-    return _LoggingBenchmark(python, options, "simple_output")
+def BM_logging_simple(python, options):
+    return bench_logging(python, options, "simple")
 
 
-def BM_Formatted_Logging(python, options):
-    return _LoggingBenchmark(python, options, "formatted_output")
+def BM_logging_format(python, options):
+    return bench_logging(python, options, "format")
 
 
 def BM_python_startup(python, options):

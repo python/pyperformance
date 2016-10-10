@@ -243,8 +243,6 @@ Available Benchmarks
 - ``fastunpickle`` - use the cPickle module to unnpickle a variety of datasets.
 - ``float`` - artificial, floating point-heavy benchmark originally used
   by Factor.
-- ``formatted_logging`` - Benchmark the formatting function
-  of the ``logging`` module
 - ``genshi_text``: Render template to plain text using the Genshi module
 - ``genshi_xml``: Render template to XML using the Genshi module
 - ``go``: Go board game
@@ -253,6 +251,10 @@ Available Benchmarks
 - ``html5lib`` - parse the HTML 5 spec using html5lib.
 - ``json_dump`` - performance of the JSON serializer
 - ``json_load`` - performance of the JSON deserializer
+- ``logging_format`` - Benchmark ``logger.warn(fmt, str)`` of ``logging``
+- ``logging_simple`` - Benchmark ``logger.warn(msg)`` of ``logging``
+- ``logging_silent`` - Benchmark ``logger.warn(msg)`` of ``logging`` when
+  the message is ignored
 - ``mako`` - use the Mako template system to build a 150x150-cell HTML table.
 - ``meteor_contest`` - solver for Meteor Puzzle board
 - ``nbody`` - the N-body Shootout benchmark. Microbenchmark for floating point
@@ -291,8 +293,6 @@ Available Benchmarks
   <https://en.wikipedia.org/wiki/LU_decomposition>`_ benchmark
 - ``scimark_FFT`` - scimark: `Fast Fourier transform (FFT)
   <https://en.wikipedia.org/wiki/Fast_Fourier_transform>`_ benchmark
-- ``silent_logging``
-- ``simple_logging``
 - ``spambayes`` - run a canned mailbox through a SpamBayes ham/spam classifier.
 - ``spectral_norm`` - MathWorld: "Hundred-Dollar, Hundred-Digit Challenge
   Problems", Challenge #3.
@@ -352,6 +352,8 @@ Version 0.2.3
   (especially ``PYTHONPATH``) by default anymore: ``--inherit-environ``
   command line option must now be used explicitly.
 * ``compare`` command now fails if the performance versions are different
+* Logging benchmarks now truncate the in-memory stream before each benchmark
+  run
 * Rename benchmarks to get a consistent name between the command line and
   benchmark name in the JSON file:
 
@@ -372,6 +374,11 @@ Version 0.2.3
      to ``python_startup_no_site``
    * Rename ``threaded_count`` to ``threading_threaded_count``,
      rename ``iterative_count`` to ``threading_iterative_count``
+   * Rename logging benchmarks:
+
+     - ``silent_logging`` to ``logging_silent``
+     - ``simple_logging`` to ``logging_simple``
+     - ``formatted_logging`` to ``logging_format``
 
 * Update dependencies
 * ``pickle_pure_python`` and ``unpickle_pure_python`` now work on Python 3
