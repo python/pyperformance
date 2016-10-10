@@ -206,8 +206,10 @@ def BM_Telco(python, options):
     return run_perf_script(python, options, "telco")
 
 
-def BM_Hexiom(python, options):
-    return run_perf_script(python, options, "hexiom")
+def BM_hexiom_level25(python, options):
+    # 2016-07-07: CPython 3.6 takes ~25 ms to solve the board level 25
+    return run_perf_script(python, options, "hexiom",
+                           extra_args=['--level=25'])
 
 
 def BM_Raytrace(python, options):

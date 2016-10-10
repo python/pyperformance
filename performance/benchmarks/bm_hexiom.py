@@ -668,6 +668,6 @@ if __name__ == "__main__":
 
     args = runner.parse_args()
     level = args.level
-    runner.name += "/level_%s" % level
+    runner.name += "_level%s" % level
 
     runner.bench_sample_func(main, level)

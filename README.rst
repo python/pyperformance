@@ -359,19 +359,23 @@ Version 0.2.3
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results
 * Port ``html5lib`` benchmark to Python 3
-* Rename ``hexiom2`` benchmark to  ``hexiom``
 * Creating the virtual environment doesn't inherit environment variables
   (especially ``PYTHONPATH``) by default anymore: ``--inherit-environ``
   command line option must now be used explicitly.
 * ``compare`` command now fails if the performance versions are different
-* Rename pickle benchmarks:
+* Rename benchmarks to get a consistent name between the command line and
+  benchmark name in the JSON file:
 
-  - ``slowpickle`` becomes ``pickle_pure_python``
-  - ``slowunpickle`` becomes ``unpickle_pure_python``
-  - ``fastpickle`` becomes ``pickle``
-  - ``fastunpickle`` becomes ``unpickle``
+  * Rename pickle benchmarks:
 
-* Rename ElementTree benchmarks: replace ``etree_`` prefix with ``xml_etree_``.
+     - ``slowpickle`` becomes ``pickle_pure_python``
+     - ``slowunpickle`` becomes ``unpickle_pure_python``
+     - ``fastpickle`` becomes ``pickle``
+     - ``fastunpickle`` becomes ``unpickle``
+
+   * Rename ElementTree benchmarks: replace ``etree_`` prefix with ``xml_etree_``.
+   * Rename ``hexiom2`` to ``hexiom_level25`` and explicitly pass ``--level=25``
+     parameter
 
 * Update dependencies
 
