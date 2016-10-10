@@ -1,4 +1,3 @@
-
 """
 Benchmark for test the performance of Mako templates engine.
 Includes:
@@ -8,6 +7,7 @@ Includes:
     -forloops
 """
 
+import functools
 import sys
 
 import perf.text_runner
@@ -114,29 +114,30 @@ ${fun6()}
 """
 
 
-def bench_mako(loops):
+def bench_mako(runner, table_size, nparagraph, img_count):
     lookup = TemplateLookup()
     lookup.put_string('base.mako', BASE_TEMPLATE)
     lookup.put_string('page.mako', PAGE_TEMPLATE)
 
     template = Template(CONTENT_TEMPLATE, lookup=lookup)
 
-    table = [xrange(150) for i in xrange(150)]
-    paragraphs = xrange(50)
+    table = [xrange(table_size) for i in xrange(table_size)]
+    paragraphs = xrange(nparagraph)
     title = 'Hello world!'
-    range_it = xrange(loops)
-    t0 = perf.perf_counter()
 
-    for _ in range_it:
-        # ignore result
-        template.render(table=table, paragraphs=paragraphs,
-                        lorem=LOREM_IPSUM, title=title,
-                        img_count=50, xrange=xrange)
+    func = functools.partial(template.render,
+                             table=table, paragraphs=paragraphs,
+                             lorem=LOREM_IPSUM, title=title,
+                             img_count=img_count, xrange=xrange)
+    runner.bench_func(func)
 
-    return perf.perf_counter() - t0
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='mako')
     runner.metadata['description'] = "Mako templates"
     runner.metadata['mako_version'] = mako.__version__
-    runner.bench_sample_func(bench_mako)
+
+    table_size = 150
+    nparagraph = 50
+    img_count = 50
+    bench_mako(runner, table_size, nparagraph, img_count)
