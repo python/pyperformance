@@ -44,7 +44,7 @@ session = DBSession()
 
 
 # add 'npeople' people to the database
-def main(loops, npeople):
+def bench_sqlalchemy(loops, npeople):
     total_dt = 0.0
 
     for loops in xrange(loops):
@@ -90,4 +90,4 @@ if __name__ == "__main__":
                                   help="Number of rows (default: 100)")
 
     args = runner.parse_args()
-    runner.bench_sample_func(main, args.rows)
+    runner.bench_sample_func(bench_sqlalchemy, args.rows)

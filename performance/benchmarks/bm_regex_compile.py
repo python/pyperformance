@@ -41,7 +41,7 @@ def capture_regexes():
         bm_regex_effbot.bench_regex_effbot(1)
 
         import bm_regex_v8
-        bm_regex_v8.test_regex_v8(1)
+        bm_regex_v8.bench_regex_v8(1)
     finally:
         re.compile = real_compile
         re.search = real_search

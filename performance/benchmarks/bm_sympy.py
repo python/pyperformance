@@ -26,7 +26,7 @@ def bench_str():
     str(expand((x + 2 * y + 3 * z) ** 30))
 
 
-def main(loops, func):
+def bench_sympy(loops, func):
     timer = perf.perf_counter
     dt = 0
 
@@ -58,4 +58,4 @@ if __name__ == "__main__":
 
     runner.name += "_%s" % bench
     func = globals()['bench_' + bench]
-    runner.bench_sample_func(main, func)
+    runner.bench_sample_func(bench_sympy, func)

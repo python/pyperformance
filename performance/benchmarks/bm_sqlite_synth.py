@@ -23,7 +23,7 @@ class AvgLength(object):
         return self.sum / float(self.count)
 
 
-def main(loops):
+def bench_sqlite(loops):
     t0 = perf.perf_counter()
 
     conn = sqlite3.connect(":memory:")
@@ -50,4 +50,4 @@ def main(loops):
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='sqlite_synth')
     runner.metadata['description'] = "Benchmark Python aggregate for SQLite"
-    runner.bench_sample_func(main)
+    runner.bench_sample_func(bench_sqlite)

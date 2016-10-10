@@ -46,7 +46,7 @@ def part_At_times_u(i_u):
     return partial_sum
 
 
-def main(loops):
+def bench_spectral_norm(loops):
     range_it = xrange(loops)
     t0 = perf.perf_counter()
 
@@ -71,4 +71,4 @@ if __name__ == "__main__":
     runner.metadata['description'] = (
         'MathWorld: "Hundred-Dollar, Hundred-Digit Challenge Problems", '
         'Challenge #3.')
-    runner.bench_sample_func(main)
+    runner.bench_sample_func(bench_spectral_norm)

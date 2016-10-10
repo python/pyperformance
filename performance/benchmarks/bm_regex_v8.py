@@ -1768,7 +1768,7 @@ def block11():
         re.search(r'jvaqbjf', strings[63])
 
 
-def test_regex_v8(loops):
+def bench_regex_v8(loops):
     t0 = perf.perf_counter()
     for loops in range(loops):
         block0()
@@ -1790,4 +1790,4 @@ if __name__ == '__main__':
     runner = perf.text_runner.TextRunner(name='regex_v8')
     runner.metadata['description'] = ("Test the performance of regexps "
                                       "using V8's benchmarks")
-    runner.bench_sample_func(test_regex_v8)
+    runner.bench_sample_func(bench_regex_v8)

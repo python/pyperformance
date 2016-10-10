@@ -25,7 +25,7 @@ BIGTABLE_TEXT = """\
 """
 
 
-def main(loops, tmpl_cls, tmpl_str):
+def bench_genshi(loops, tmpl_cls, tmpl_str):
     tmpl = tmpl_cls(tmpl_str)
     table = [dict(a=1, b=2, c=3, d=4, e=5, f=6, g=7, h=8, i=9, j=10)
              for _ in range(1000)]
@@ -60,4 +60,4 @@ if __name__ == "__main__":
 
     runner.name += "_%s" % bench
     tmpl_cls, tmpl_str = BENCHMARKS[bench]
-    runner.bench_sample_func(main, tmpl_cls, tmpl_str)
+    runner.bench_sample_func(bench_genshi, tmpl_cls, tmpl_str)
