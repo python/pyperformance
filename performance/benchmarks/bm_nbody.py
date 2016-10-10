@@ -1,4 +1,3 @@
-
 """N-body benchmark from the Computer Language Benchmarks Game.
 
 This is intended to support Unladen Swallow's perf.py. Accordingly, it has been
@@ -16,6 +15,8 @@ import perf.text_runner
 from six.moves import xrange
 
 __contact__ = "collinwinter@google.com (Collin Winter)"
+DEFAULT_ITERATIONS = 20000
+DEFAULT_REFERENCE = 'sun'
 
 
 def combinations(l):
@@ -117,21 +118,37 @@ def offset_momentum(ref, bodies=SYSTEM, px=0.0, py=0.0, pz=0.0):
     v[2] = pz / m
 
 
-def bench_nbody(loops):
+def bench_nbody(loops, reference, iterations):
+    # Set up global state
+    offset_momentum(BODIES[reference])
+
     range_it = xrange(loops)
     t0 = perf.perf_counter()
 
     for _ in range_it:
         report_energy()
-        advance(0.01, 20000)
+        advance(0.01, iterations)
         report_energy()
 
     return perf.perf_counter() - t0
 
 
+def prepare_cmd(runner, cmd):
+    cmd.extend(("--iterations", str(runner.args.iterations)))
+
+
 if __name__ == '__main__':
     runner = perf.text_runner.TextRunner(name='nbody')
     runner.metadata['description'] = "n-body benchmark"
+    runner.prepare_subprocess_args = prepare_cmd
+    runner.argparser.add_argument("--iterations",
+                                  type=int, default=DEFAULT_ITERATIONS,
+                                  help="Number of nbody advance() iterations "
+                                       "(default: %s)" % DEFAULT_ITERATIONS)
+    runner.argparser.add_argument("--reference",
+                                  type=str, default=DEFAULT_REFERENCE,
+                                  help="nbody reference (default: %s)"
+                                       % DEFAULT_REFERENCE)
 
-    offset_momentum(BODIES['sun'])  # Set up global state
-    runner.bench_sample_func(bench_nbody)
+    args = runner.parse_args()
+    runner.bench_sample_func(bench_nbody, args.reference, args.iterations)
