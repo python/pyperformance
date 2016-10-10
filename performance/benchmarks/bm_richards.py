@@ -417,20 +417,9 @@ class Richards(object):
         return True
 
 
-def bench_richards(loops):
-    richard = Richards()
-
-    range_it = xrange(loops)
-    t0 = perf.perf_counter()
-
-    for _ in range_it:
-        richard.run(iterations=1)
-
-    return perf.perf_counter() - t0
-
-
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='richards')
-    runner.metadata['description'] = ("Test the performance of "
-                                      "the Richards benchmark")
-    runner.bench_sample_func(bench_richards)
+    runner.metadata['description'] = "The Richards benchmark"
+
+    richard = Richards()
+    runner.bench_func(richard.run, 1)

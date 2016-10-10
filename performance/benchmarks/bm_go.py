@@ -2,7 +2,6 @@ import math
 import random
 
 import perf.text_runner
-from six.moves import xrange
 
 
 SIZE = 9
@@ -429,7 +428,6 @@ class UCTNode:
 
 
 def computer_move(board):
-    global MOVES
     pos = board.random_move()
     if pos == PASS:
         return PASS
@@ -441,7 +439,6 @@ def computer_move(board):
         nboard.reset()
         nboard.replay(board.history)
         node.play(nboard)
-#    print 'moves', MOVES
     return tree.best_visited().pos
 
 
@@ -451,17 +448,6 @@ def versus_cpu():
     return computer_move(board)
 
 
-def main(loops):
-    range_it = xrange(loops)
-    t0 = perf.perf_counter()
-
-    for _ in range_it:
-        # ignore result
-        versus_cpu()
-
-    return perf.perf_counter() - t0
-
-
 if __name__ == "__main__":
     kw = {}
     if perf.python_has_jit():
@@ -469,4 +455,4 @@ if __name__ == "__main__":
         kw['warmups'] = 50
     runner = perf.text_runner.TextRunner(name='go', **kw)
     runner.metadata['description'] = "Test the performance of the Go benchmark"
-    runner.bench_sample_func(main)
+    runner.bench_func(versus_cpu)

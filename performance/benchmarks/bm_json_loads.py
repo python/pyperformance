@@ -16,7 +16,6 @@ import sys
 # Local imports
 import perf.text_runner
 import six
-from six.moves import xrange
 if six.PY3:
     long = int
 
@@ -75,44 +74,38 @@ random_source = random.Random(5)  # Fixed seed.
 DICT_GROUP = [mutate_dict(DICT, random_source) for _ in range(3)]
 
 
-def bench_json_loads(loops):
-    json_dict = json.dumps(DICT)
-    json_tuple = json.dumps(TUPLE)
-    json_dict_group = json.dumps(DICT_GROUP)
-
-    loads = json.loads
-    objs = (json_dict, json_tuple, json_dict_group)
-    range_it = xrange(loops)
-    t0 = perf.perf_counter()
-
-    for _ in range_it:
-        for obj in objs:
-            # 20 loads
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-            loads(obj)
-
-    return perf.perf_counter() - t0
+def bench_json_loads(objs):
+    for obj in objs:
+        # 20 loads
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
+        json.loads(obj)
 
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='json_loads', inner_loops=20)
     runner.metadata['description'] = "Benchmark json.loads()"
-    runner.bench_sample_func(bench_json_loads)
+
+    json_dict = json.dumps(DICT)
+    json_tuple = json.dumps(TUPLE)
+    json_dict_group = json.dumps(DICT_GROUP)
+    objs = (json_dict, json_tuple, json_dict_group)
+
+    runner.bench_func(bench_json_loads, objs)

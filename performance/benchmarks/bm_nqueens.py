@@ -1,7 +1,6 @@
 """Simple, brute-force N-Queens solver."""
 
 import perf.text_runner
-from six.moves import xrange
 
 __author__ = "collinwinter@google.com (Collin Winter)"
 

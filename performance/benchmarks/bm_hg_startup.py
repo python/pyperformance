@@ -4,7 +4,6 @@ import subprocess
 
 import perf.text_runner
 from performance.venv import get_venv_program
-from six.moves import xrange
 
 
 def get_hg_version(hg_bin):
@@ -26,23 +25,15 @@ def get_hg_version(hg_bin):
     return stdout.splitlines()[0]
 
 
-def bench_startup(loops, command):
-    with open(os.devnull, "rb") as devnull_in:
-        with open(os.devnull, "wb") as devnull_out:
-            range_it = xrange(loops)
-            t0 = perf.perf_counter()
-
-            for _ in range_it:
-                proc = subprocess.Popen(command,
-                                        stdin=devnull_in,
-                                        stdout=devnull_out,
-                                        stderr=devnull_out)
-                returncode = proc.wait()
-                if returncode != 0:
-                    print("ERROR: Mercurial command failed!")
-                    sys.exit(1)
-
-            return perf.perf_counter() - t0
+def bench_startup(command, devnull_in, devnull_out):
+    proc = subprocess.Popen(command,
+                            stdin=devnull_in,
+                            stdout=devnull_out,
+                            stderr=devnull_out)
+    returncode = proc.wait()
+    if returncode != 0:
+        print("ERROR: Mercurial command failed!")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
@@ -55,4 +46,7 @@ if __name__ == "__main__":
     runner.metadata['hg_version'] = get_hg_version(hg_bin)
 
     command = [sys.executable, hg_bin, "help"]
-    runner.bench_sample_func(bench_startup, command)
+
+    with open(os.devnull, "rb") as devnull_in:
+        with open(os.devnull, "wb") as devnull_out:
+            runner.bench_func(bench_startup, command, devnull_in, devnull_out)

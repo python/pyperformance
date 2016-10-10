@@ -9,7 +9,7 @@ Adapted from code on http://shootout.alioth.debian.org/
 
 import itertools
 
-from six.moves import xrange, map as imap
+from six.moves import map as imap
 import perf.text_runner
 
 

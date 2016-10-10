@@ -11,18 +11,14 @@ import os.path
 import html5lib
 import perf.text_runner
 import six
-from six.moves import xrange
 
 
 __author__ = "collinwinter@google.com (Collin Winter)"
 
 
-def bench_html5lib(loops, html_file):
-    t0 = perf.perf_counter()
-    for _ in xrange(loops):
-        html_file.seek(0)
-        html5lib.parse(html_file)
-    return perf.perf_counter() - t0
+def bench_html5lib(html_file):
+    html_file.seek(0)
+    html5lib.parse(html_file)
 
 
 if __name__ == "__main__":
@@ -37,4 +33,4 @@ if __name__ == "__main__":
     with io.open(filename, "rb") as fp:
         html_file = six.BytesIO(fp.read())
 
-    runner.bench_sample_func(bench_html5lib, html_file)
+    runner.bench_func(bench_html5lib, html_file)
