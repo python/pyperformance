@@ -137,7 +137,7 @@ degree of the Spline."""
         return "Spline(%r, %r, %r)" % (self.points, self.degree, self.knots)
 
 
-def save_im(im, filename):
+def write_ppm(im, filename):
     magic = 'P6\n'
     maxval = 255
     w = len(im)
@@ -247,7 +247,7 @@ class Chaosgame(object):
             im[x][h - y - 1] = 0
 
         if filename:
-            save_im(im, filename)
+            write_ppm(im, filename)
 
 
 def main(runner, args):
