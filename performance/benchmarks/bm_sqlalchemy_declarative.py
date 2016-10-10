@@ -56,26 +56,48 @@ session = DBSession()
 
 # add 'npeople' people to the database
 
-def main(npeople):
-    # Insert a Person in the person table
-    new_person = Person(name="name")
-    session.add(new_person)
-    session.commit()
+def main(loops, npeople):
+    total_dt = 0.0
 
-    # Insert an Address in the address table
-    new_address = Address(post_code='00000', person=new_person)
-    session.add(new_address)
-    session.commit()
+    for loops in xrange(loops):
+        # drop rows created by the previous benchmark
+        session.query(Person).delete(synchronize_session=False)
+        session.query(Address).delete(synchronize_session=False)
 
-    # do 100 queries per insert
-    for i in xrange(npeople):
-        session.query(Person).all()
+        # Run the benchmark once
+        t0 = perf.perf_counter()
+
+        for i in xrange(npeople):
+            # Insert a Person in the person table
+            new_person = Person(name="name %i" % i)
+            session.add(new_person)
+            session.commit()
+
+            # Insert an Address in the address table
+            new_address = Address(post_code='%05i' % i, person=new_person)
+            session.add(new_address)
+            session.commit()
+
+        # do 100 queries per insert
+        for i in xrange(npeople):
+            session.query(Person).all()
+
+        total_dt += (perf.perf_counter() - t0)
+
+    return total_dt
+
+
+def prepare_cmd(runner, cmd):
+    cmd.extend(("--rows", str(runner.args.rows)))
 
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='sqlalchemy_declarative')
     runner.metadata['description'] = ("SQLAlchemy Declarative benchmark "
                                       "using SQLite")
+    runner.prepare_subprocess_args = prepare_cmd
+    runner.argparser.add_argument("--rows", type=int, default=100,
+                                  help="Number of rows (default: 100)")
 
-    npeople = 100
-    runner.bench_func(main, npeople)
+    args = runner.parse_args()
+    runner.bench_sample_func(main, args.rows)

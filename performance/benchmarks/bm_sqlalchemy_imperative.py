@@ -44,25 +44,50 @@ session = DBSession()
 
 
 # add 'npeople' people to the database
-def main(npeople):
-    # Insert a Person in the person table
-    new_person = Person.insert()
-    new_person.execute(name="name")
+def main(loops, npeople):
+    total_dt = 0.0
 
-    # Insert an Address in the address table
-    new_address = Address.insert()
-    new_address.execute(post_code='00000')
+    for loops in xrange(loops):
+        # drop rows created by the previous benchmark
+        cur = Person.delete()
+        cur.execute()
 
-    # do 'npeople' queries per insert
-    for i in xrange(npeople):
-        s = Person.select()
-        s.execute()
+        cur = Address.delete()
+        cur.execute()
+
+        # Run the benchmark once
+        t0 = perf.perf_counter()
+
+        for i in xrange(npeople):
+            # Insert a Person in the person table
+            new_person = Person.insert()
+            new_person.execute(name="name %i" % i)
+
+            # Insert an Address in the address table
+            new_address = Address.insert()
+            new_address.execute(post_code='%05i' % i)
+
+        # do 'npeople' queries per insert
+        for i in xrange(npeople):
+            cur = Person.select()
+            cur.execute()
+
+        total_dt += (perf.perf_counter() - t0)
+
+    return total_dt
+
+
+def prepare_cmd(runner, cmd):
+    cmd.extend(("--rows", str(runner.args.rows)))
 
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='sqlalchemy_imperative')
     runner.metadata['description'] = ("SQLAlchemy Imperative benchmark "
                                       "using SQLite")
+    runner.prepare_subprocess_args = prepare_cmd
+    runner.argparser.add_argument("--rows", type=int, default=100,
+                                  help="Number of rows (default: 100)")
 
-    npeople = 100
-    runner.bench_func(main, npeople)
+    args = runner.parse_args()
+    runner.bench_sample_func(main, args.rows)
