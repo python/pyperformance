@@ -249,10 +249,6 @@ Available Benchmarks
   HTML table.
 - ``dulwich_log``: Iterate on commits of the asyncio Git repository using
   the Dulwich module
-- ``etree_generate``
-- ``etree_iterparse``
-- ``etree_parse``
-- ``etree_process``
 - ``fannkuch``
 - ``fastpickle`` - use the cPickle module to pickle a variety of datasets.
 - ``fastunpickle`` - use the cPickle module to unnpickle a variety of datasets.
@@ -326,6 +322,10 @@ Available Benchmarks
 - ``tornado_http`` - Benchmark HTTP server of the ``tornado`` module
 - ``unpack_sequence`` - microbenchmark for unpacking lists and tuples.
 - ``unpickle_list``
+- ``xml_etree_generate``
+- ``xml_etree_iterparse``
+- ``xml_etree_parse``
+- ``xml_etree_process``
 
 There are also two disabled benchmarks:
 
@@ -373,7 +373,8 @@ Version 0.2.3
      - ``fastpickle`` becomes ``pickle``
      - ``fastunpickle`` becomes ``unpickle``
 
-   * Rename ElementTree benchmarks: replace ``etree_`` prefix with ``xml_etree_``.
+   * Rename ElementTree benchmarks: replace ``etree_`` prefix with
+     ``xml_etree_``.
    * Rename ``hexiom2`` to ``hexiom_level25`` and explicitly pass ``--level=25``
      parameter
    * Rename ``json_dump_v2`` to ``json_dump`` (and remove the deprecated
