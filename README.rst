@@ -303,6 +303,7 @@ Available Benchmarks
 - ``spambayes`` - run a canned mailbox through a SpamBayes ham/spam classifier.
 - ``spectral_norm`` - MathWorld: "Hundred-Dollar, Hundred-Digit Challenge
   Problems", Challenge #3.
+- ``sqlalchemy_declarative`` - SQLAlchemy Declarative benchmark using SQLite
 - ``sqlite_synth`` - Benchmark Python aggregate for SQLite
 - ``startup_nosite`` - Measure the Python startup time without importing
   the ``site`` module (``python -S``)
@@ -329,17 +330,20 @@ Version 0.2.3
 -------------
 
 * Add ``crypto_pyaes``: Benchmark a pure-Python implementation of the AES
-  block-cipher in CTR mode using the pyaes module (version 1.6.0).
-* Add ``sympy``: Benchmark on SymPy
+  block-cipher in CTR mode using the pyaes module (version 1.6.0). Add
+  ``pyaes`` dependency.
+* Add ``sympy``: Benchmark on SymPy. Add ``scipy`` dependency.
 * Add ``scimark`` benchmark
 * Add ``deltablue``: DeltaBlue benchmark
 * Add ``dulwich_log``: Iterate on commits of the asyncio Git repository using
-  the Dulwich module
+  the Dulwich module. Add ``dulwich`` (and ``mpmath``) dependencies.
 * Add ``pyflate``: Pyflate benchmark, tar/bzip2 decompressor in pure
   Python
 * Add ``sqlite_synth`` benchmark: Benchmark Python aggregate for SQLite
 * Add ``genshi`` benchmark: Render template to XML or plain text using the
-  Genshi module
+  Genshi module. Add ``Genshi`` dependency.
+* Add ``sqlalchemy_declarative`` benchmark: SQLAlchemy Declarative benchmark
+  using SQLite. Add ``SQLAlchemy`` dependency.
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results
 * Port ``html5lib`` benchmark to Python 3

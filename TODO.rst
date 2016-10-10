@@ -2,7 +2,6 @@ TODO
 ====
 
 * Run pep8 on Travis
-* Run PyPy on Travis
 * python3 -m performance list: list Python 2 benchmarks, but mention that
   they are incompatible with Python 3?
 * performance/benchmarks/__init__.py: don't hardcode benchmarks for search for
@@ -60,7 +59,6 @@ Todo:
   benchmarks.py: invoke sphinx-build.py on lib/cpython-doc/
   cpython-doc/: 24 MB
 
-* sqlalchemy_declarative
 * sqlalchemy_imperative
 * trans2_annotate
 * trans2_backendopt
@@ -110,7 +108,8 @@ Done:
 * scimark_sparsematmult
 * spambayes
 * spectral-norm
-* sqlitesynth
+* sqlalchemy_declarative
+* sqlitesynth (called pyflate in sqlite_synth)
 * sympy_expand
 * sympy_integrate
 * sympy_str

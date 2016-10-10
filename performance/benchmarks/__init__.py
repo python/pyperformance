@@ -340,6 +340,10 @@ def BM_genshi_xml(python, options):
     return run_perf_script(python, options, "genshi", extra_args=["xml"])
 
 
+def BM_SQLAlchemy_Declarative(python, options):
+    return run_perf_script(python, options, "sqlalchemy_declarative")
+
+
 # End benchmarks, begin main entry point support.
 
 def _FindAllBenchmarks(namespace):
