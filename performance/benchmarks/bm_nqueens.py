@@ -1,4 +1,3 @@
-
 """Simple, brute-force N-Queens solver."""
 
 import perf.text_runner
@@ -52,18 +51,13 @@ def n_queens(queen_count):
             yield vec
 
 
-def bench_n_queens(loops):
-    range_it = xrange(loops)
-    t0 = perf.perf_counter()
-
-    for _ in range_it:
-        list(n_queens(8))
-
-    return perf.perf_counter() - t0
+def bench_n_queens(queen_count):
+    list(n_queens(queen_count))
 
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='nqueens')
-    runner.metadata['description'] = (
-        "Test the performance of an N-Queens solvers.")
-    runner.bench_sample_func(bench_n_queens)
+    runner.metadata['description'] = "Simple, brute-force N-Queens solver"
+
+    queen_count = 8
+    runner.bench_func(bench_n_queens, queen_count)

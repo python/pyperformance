@@ -1,6 +1,8 @@
 TODO
 ====
 
+* bm_nqueens: Remove the "Pure-Python implementation of
+  itertools.permutations()"?
 * Decide of sqlalchemy benchmarks should only benchmark SELECT ALL
   or INSERT+SELECT?
 * Run pep8 on Travis

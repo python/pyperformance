@@ -49,21 +49,9 @@ def benchmark(n):
     return maximize(points)
 
 
-def main(loops):
-    # micro-optimization: use fast local variables
-    points = POINTS
-    range_it = xrange(loops)
-    start = perf.perf_counter()
-
-    for _ in range_it:
-        # ignore result
-        benchmark(points)
-
-    return perf.perf_counter() - start
-
-
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='float')
-    runner.metadata['description'] = ("Test the performance of "
-                                      "the Float benchmark")
-    runner.bench_sample_func(main)
+    runner.metadata['description'] = "Float benchmark"
+
+    points = POINTS
+    runner.bench_func(benchmark, points)

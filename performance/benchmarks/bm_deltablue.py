@@ -612,12 +612,14 @@ def change(v, new_value):
 planner = None
 
 
-def delta_blue():
-    chain_test(100)
-    projection_test(100)
+def delta_blue(n):
+    chain_test(n)
+    projection_test(n)
 
 
 if __name__ == "__main__":
     runner = perf.text_runner.TextRunner(name='deltablue')
     runner.metadata['description'] = "DeltaBlue benchmark"
-    runner.bench_func(delta_blue)
+
+    n = 100
+    runner.bench_func(delta_blue, n)
