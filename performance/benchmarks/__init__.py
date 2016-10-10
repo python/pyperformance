@@ -18,7 +18,7 @@ from performance.run import (run_perf_script, copy_perf_options,
 # automatically.
 BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
                             "tornado_http", "pickle", "unpickle",
-                            "regex_v8", "json_dump", "json_load"],
+                            "regex_v8", "json_dumps", "json_loads"],
                 "startup": ["normal_startup", "startup_nosite",
                             "hg_startup"],
                 "regex": ["regex_v8", "regex_effbot", "regex_compile"],
@@ -27,7 +27,7 @@ BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
                 "serialize": ["pickle_pure_python", "unpickle_pure_python",  # Not for Python 3
                               "pickle", "unpickle",
                               "etree",
-                              "json_dump", "json_load"],
+                              "json_dumps", "json_loads"],
                 "etree": ["etree_generate", "etree_parse",
                           "etree_iterparse", "etree_process"],
                 "apps": ["2to3", "chameleon", "html5lib",
@@ -160,12 +160,12 @@ def BM_xml_etree_process(python, options):
     return bench_xml_etree(python, options, 'process')
 
 
-def BM_JSON_Load(python, options):
-    return run_perf_script(python, options, "json_load")
+def BM_json_loads(python, options):
+    return run_perf_script(python, options, "json_loads")
 
 
-def BM_JSON_Dump_V2(python, options):
-    return run_perf_script(python, options, "json_dump")
+def BM_json_dumps(python, options):
+    return run_perf_script(python, options, "json_dumps")
 
 
 def BM_NQueens(python, options):

@@ -249,8 +249,8 @@ Available Benchmarks
 - ``hexiom`` - Solver of Hexiom board game (level 25 by default)
 - ``hg_startup`` - Get Mercurial's help screen.
 - ``html5lib`` - parse the HTML 5 spec using html5lib.
-- ``json_dump`` - performance of the JSON serializer
-- ``json_load`` - performance of the JSON deserializer
+- ``json_dumps`` - Benchmark ``json.dumps()``
+- ``json_loads`` - Benchmark ``json.loads()``
 - ``logging_format`` - Benchmark ``logger.warn(fmt, str)`` of ``logging``
 - ``logging_simple`` - Benchmark ``logger.warn(msg)`` of ``logging``
 - ``logging_silent`` - Benchmark ``logger.warn(msg)`` of ``logging`` when
@@ -368,7 +368,8 @@ Version 0.2.3
      ``xml_etree_``.
    * Rename ``hexiom2`` to ``hexiom_level25`` and explicitly pass ``--level=25``
      parameter
-   * Rename ``json_dump_v2`` to ``json_dump`` (and remove the deprecated
+   * Rename ``json_load`` to ``json_loads``
+   * Rename ``json_dump_v2`` to ``json_dumps`` (and remove the deprecated
      ``json_dump`` benchmark)
    * Rename ``normal_startup`` to ``python_startup``, and ``startup_nosite``
      to ``python_startup_no_site``

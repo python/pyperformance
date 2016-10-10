@@ -75,7 +75,7 @@ random_source = random.Random(5)  # Fixed seed.
 DICT_GROUP = [mutate_dict(DICT, random_source) for _ in range(3)]
 
 
-def bench_json_load(loops):
+def bench_json_loads(loops):
     json_dict = json.dumps(DICT)
     json_tuple = json.dumps(TUPLE)
     json_dict_group = json.dumps(DICT_GROUP)
@@ -113,6 +113,6 @@ def bench_json_load(loops):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='json_load', inner_loops=20)
+    runner = perf.text_runner.TextRunner(name='json_loads', inner_loops=20)
     runner.metadata['description'] = "Benchmark json.loads()"
-    runner.bench_sample_func(bench_json_load)
+    runner.bench_sample_func(bench_json_loads)

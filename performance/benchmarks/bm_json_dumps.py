@@ -17,7 +17,7 @@ HUGE = ([NESTED[0]] * 1000, 1)
 cases = ['EMPTY', 'SIMPLE', 'NESTED', 'HUGE']
 
 
-def main(loops):
+def bench_json_dumps(loops):
     data = []
     for case in cases:
         obj, count = globals()[case]
@@ -35,6 +35,6 @@ def main(loops):
 
 
 if __name__ == '__main__':
-    runner = perf.text_runner.TextRunner(name='json_dump')
+    runner = perf.text_runner.TextRunner(name='json_dumps')
     runner.metadata['description'] = "Benchmark json.dumps()"
-    runner.bench_sample_func(main)
+    runner.bench_sample_func(bench_json_dumps)
