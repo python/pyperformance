@@ -59,7 +59,6 @@ Todo:
   benchmarks.py: invoke sphinx-build.py on lib/cpython-doc/
   cpython-doc/: 24 MB
 
-* sqlalchemy_imperative
 * trans2_annotate
 * trans2_backendopt
 * trans2_database
@@ -109,6 +108,7 @@ Done:
 * spambayes
 * spectral-norm
 * sqlalchemy_declarative
+* sqlalchemy_imperative
 * sqlitesynth (called pyflate in sqlite_synth)
 * sympy_expand
 * sympy_integrate

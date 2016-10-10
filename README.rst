@@ -304,6 +304,7 @@ Available Benchmarks
 - ``spectral_norm`` - MathWorld: "Hundred-Dollar, Hundred-Digit Challenge
   Problems", Challenge #3.
 - ``sqlalchemy_declarative`` - SQLAlchemy Declarative benchmark using SQLite
+- ``sqlalchemy_imperative`` - SQLAlchemy Imperative benchmark using SQLite
 - ``sqlite_synth`` - Benchmark Python aggregate for SQLite
 - ``startup_nosite`` - Measure the Python startup time without importing
   the ``site`` module (``python -S``)
@@ -342,8 +343,9 @@ Version 0.2.3
 * Add ``sqlite_synth`` benchmark: Benchmark Python aggregate for SQLite
 * Add ``genshi`` benchmark: Render template to XML or plain text using the
   Genshi module. Add ``Genshi`` dependency.
-* Add ``sqlalchemy_declarative`` benchmark: SQLAlchemy Declarative benchmark
-  using SQLite. Add ``SQLAlchemy`` dependency.
+* Add ``sqlalchemy_declarative`` and ``sqlalchemy_imperative`` benchmarks:
+  SQLAlchemy Declarative and Imperative benchmarks using SQLite. Add
+  ``SQLAlchemy`` dependency.
 * ``chaos`` benchmark now also reset the ``random`` module at each sample
   to get more reproductible benchmark results
 * Port ``html5lib`` benchmark to Python 3
