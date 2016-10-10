@@ -29,8 +29,6 @@ Repository: https://bitbucket.org/pypy/benchmarks/
 Different from performance?
 
 * json_bench
-* nbody_modified
-* raytrace-simple
 
 Todo:
 
@@ -85,9 +83,11 @@ Done:
 * hexiom2
 * html5lib
 * meteor-contest
+* nbody_modified (called nbody in performance)
 * nqueens
 * pidigits
 * pyflate-fast (called pyflate in performance)
+* raytrace-simple (called raytrace in performance)
 * richards
 * scimark_fft
 * scimark_lu
