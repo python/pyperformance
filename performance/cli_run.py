@@ -9,7 +9,7 @@ import perf
 import performance
 from performance.benchmarks import filter_benchmarks
 from performance.compare import display_benchmark_suite
-from performance.run import ParseBenchmarksOption, run_benchmarks
+from performance.run import select_benchmarks, run_benchmarks
 from performance.venv import interpreter_version
 
 
@@ -33,19 +33,14 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
         sys.exit(1)
     cmd_prefix = [sys.executable] + options.args.split()
 
-    should_run = ParseBenchmarksOption(options.benchmarks, bench_groups,
-                                       options.fast or options.debug_single_sample)
-
+    should_run = select_benchmarks(options.benchmarks, bench_groups)
     should_run = filter_benchmarks_python(should_run, bench_funcs, cmd_prefix)
-
     suite = run_benchmarks(bench_funcs, should_run, cmd_prefix, options)
 
     if options.output:
         suite.dump(options.output)
-
     if options.append:
         perf.add_runs(options.append, suite)
-
     display_benchmark_suite(suite)
 
 

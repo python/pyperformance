@@ -26,18 +26,16 @@ def Relative(*path):
     return os.path.join(PERFORMANCE_ROOT, 'benchmarks', *path)
 
 
-def LogCall(command):
-    command = list(map(str, command))
-    logging.info("Running `%s`", " ".join(command))
-    return command
-
-
-def CallAndCaptureOutput(command, hide_stderr=True):
+def run_command(command, hide_stderr=True):
     if hide_stderr:
         kw = {'stderr': subprocess.PIPE}
     else:
         kw = {}
-    proc = subprocess.Popen(LogCall(command),
+
+    logging.info("Running `%s`",
+                 " ".join(list(map(str, command))))
+
+    proc = subprocess.Popen(command,
                             stdout=subprocess.PIPE,
                             universal_newlines=True,
                             **kw)
@@ -90,14 +88,14 @@ def run_perf_script(python, options, name, extra_args=[]):
     bench_args.append("--stdout")
 
     command = python + bench_args + extra_args
-    stdout = CallAndCaptureOutput(command, hide_stderr=not options.verbose)
+    stdout = run_command(command, hide_stderr=not options.verbose)
 
     bench = perf.Benchmark.loads(stdout)
     bench.update_metadata({'performance_version': performance.__version__})
     return bench
 
 
-def _ExpandBenchmarkName(bm_name, bench_groups):
+def expand_benchmark_name(bm_name, bench_groups):
     """Recursively expand name benchmark names.
 
     Args:
@@ -109,39 +107,33 @@ def _ExpandBenchmarkName(bm_name, bench_groups):
     expansion = bench_groups.get(bm_name)
     if expansion:
         for name in expansion:
-            for name in _ExpandBenchmarkName(name, bench_groups):
+            for name in expand_benchmark_name(name, bench_groups):
                 yield name
     else:
         yield bm_name
 
 
-def ParseBenchmarksOption(benchmarks_opt, bench_groups, fast=False):
-    """Parses and verifies the --benchmarks option.
-
-    Args:
-        benchmarks_opt: the string passed to the -b option on the command line.
-        bench_groups: the collection of benchmark groups to pull from
-
-    Returns:
-        A set() of the names of the benchmarks to run.
-    """
+def select_benchmarks(benchmarks, bench_groups):
     legal_benchmarks = bench_groups["all"]
-    benchmarks = benchmarks_opt.split(",")
-    positive_benchmarks = set(
-        bm.lower() for bm in benchmarks if bm and bm[0] != "-")
-    negative_benchmarks = set(
-        bm[1:].lower() for bm in benchmarks if bm and bm[0] == "-")
+    benchmarks = benchmarks.split(",")
+    positive_benchmarks = set(bm.lower()
+                              for bm in benchmarks
+                              if bm and not bm.startswith("-"))
+    negative_benchmarks = set(bm[1:].lower()
+                              for bm in benchmarks
+                              if bm and bm.startswith("-"))
 
     should_run = set()
     if not positive_benchmarks:
-        should_run = set(_ExpandBenchmarkName("default", bench_groups))
+        should_run = set(expand_benchmark_name("default", bench_groups))
 
     for name in positive_benchmarks:
-        for bm in _ExpandBenchmarkName(name, bench_groups):
+        for bm in expand_benchmark_name(name, bench_groups):
             if bm not in legal_benchmarks:
                 logging.warning("No benchmark named %s", bm)
             else:
                 should_run.add(bm)
+
     for bm in negative_benchmarks:
         if bm in bench_groups:
             raise ValueError("Negative groups not supported: -%s" % bm)

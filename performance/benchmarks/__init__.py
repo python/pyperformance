@@ -7,7 +7,7 @@ import perf
 
 import performance
 from performance.run import (run_perf_script, copy_perf_options,
-                             BenchmarkException, CallAndCaptureOutput,
+                             BenchmarkException, run_command,
                              Relative)
 
 
@@ -37,7 +37,7 @@ def BM_PyBench(python, options):
 
     try:
         cmd = python + args
-        stdout = CallAndCaptureOutput(cmd, hide_stderr=False)
+        stdout = run_command(cmd, hide_stderr=False)
 
         suite = perf.BenchmarkSuite.loads(stdout)
         for benchmark in suite:

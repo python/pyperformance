@@ -18,7 +18,31 @@ def stdev(bench):
     return statistics.stdev(samples, center)
 
 
-def _FormatPerfDataForTable(base_label, changed_label, results):
+def significant_msg(base, changed):
+    if base.get_nsample() < 2 or changed.get_nsample() < 2:
+        return "(benchmark only contains a single sample)"
+
+    avg_base = average(base)
+    avg_changed = average(changed)
+
+    msg = "Not significant"
+    significant = False
+
+    # Due to inherent measurement imprecisions, variations of less than 1%
+    # are automatically considered insignificant. This helps present
+    # a clear picture to the user.
+    if abs(avg_base - avg_changed) > (avg_base + avg_changed) * 0.01:
+        base_times = base.get_samples()
+        changed_times = changed.get_samples()
+
+        significant, t_score = perf.is_significant(base_times, changed_times)
+        if significant:
+            msg = "Significant (t=%.2f)" % t_score
+
+    return msg
+
+
+def format_table(base_label, changed_label, results):
     table = [("Benchmark", base_label, changed_label, "Change", "Significance")]
 
     for (bench_name, result) in results:
@@ -26,19 +50,13 @@ def _FormatPerfDataForTable(base_label, changed_label, results):
         avg_base = average(result.base)
         avg_changed = average(result.changed)
         delta_avg = quantity_delta(result.base, result.changed)
-        msg = t_msg(result.base, result.changed)[0]
+        msg = significant_msg(result.base, result.changed)
         table.append((bench_name,
                       # Limit the precision for conciseness in the table.
                       format_sample(avg_base),
                       format_sample(avg_changed),
                       delta_avg,
                       msg))
-
-    return table
-
-
-def FormatOutputAsTable(base_label, changed_label, results):
-    table = _FormatPerfDataForTable(base_label, changed_label, results)
 
     # Columns with None values are skipped
     skipped_cols = set()
@@ -74,30 +92,6 @@ def FormatOutputAsTable(base_label, changed_label, results):
     return "\n".join(output)
 
 
-def t_msg(base, changed):
-    if base.get_nsample() < 2 or changed.get_nsample() < 2:
-        return ("(benchmark only contains a single sample)", True)
-
-    avg_base = average(base)
-    avg_changed = average(changed)
-
-    msg = "Not significant"
-    significant = False
-
-    # Due to inherent measurement imprecisions, variations of less than 1%
-    # are automatically considered insignificant. This helps present
-    # a clear picture to the user.
-    if abs(avg_base - avg_changed) > (avg_base + avg_changed) * 0.01:
-        base_times = base.get_samples()
-        changed_times = changed.get_samples()
-
-        significant, t_score = perf.is_significant(base_times, changed_times)
-        if significant:
-            msg = "Significant (t=%.2f)" % t_score
-
-    return (msg, significant)
-
-
 class BenchmarkResult(object):
     """An object representing data from a succesful benchmark run."""
 
@@ -123,7 +117,7 @@ class BenchmarkResult(object):
                       average(self.changed), changed_stdev)
             text = "%s +- %s -> %s +- %s" % self.base.format_samples(values)
 
-            msg = t_msg(self.base, self.changed)[0]
+            msg = significant_msg(self.base, self.changed)
             delta_avg = quantity_delta(self.base, self.changed)
             return ("Median +- Std dev: %s: %s\n%s"
                     % (text, delta_avg, msg))
@@ -220,7 +214,7 @@ def compare_results(options):
     for result in results:
         name = result.base.get_name()
 
-        significant = t_msg(result.base, result.changed)[0]
+        significant = significant_msg(result.base, result.changed)
         if significant or options.verbose:
             shown.append((name, result))
         else:
@@ -237,9 +231,7 @@ def compare_results(options):
 
     elif options.output_style == "table":
         if shown:
-            print(FormatOutputAsTable(base_label,
-                                      changed_label,
-                                      shown))
+            print(format_table(base_label, changed_label, shown))
     else:
         raise ValueError("Invalid output_style: %r" % options.output_style)
 
