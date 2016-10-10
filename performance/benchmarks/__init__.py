@@ -22,7 +22,8 @@ BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
                 "startup": ["normal_startup", "startup_nosite",
                             "hg_startup"],
                 "regex": ["regex_v8", "regex_effbot", "regex_compile"],
-                "threading": ["threaded_count", "iterative_count"],
+                "threading": ["threading_threaded_count",
+                              "threading_iterative_count"],
                 "serialize": ["pickle_pure_python", "unpickle_pure_python",  # Not for Python 3
                               "pickle", "unpickle",
                               "etree",
@@ -38,8 +39,8 @@ BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
                 "logging": ["silent_logging", "simple_logging",
                             "formatted_logging"],
                 # These are removed from the "all" group
-                "deprecated": ["iterative_count",
-                               "threaded_count"],
+                "deprecated": ["threading_iterative_count",
+                               "threading_threaded_count"],
                 }
 
 
@@ -242,16 +243,16 @@ def BM_regex_compile(python, options):
     return run_perf_script(python, options, "regex_compile")
 
 
-def ThreadingBenchmark(python, options, bm_name):
+def bench_threading(python, options, bm_name):
     return run_perf_script(python, options, "threading", extra_args=[bm_name])
 
 
-def BM_threaded_count(python, options):
-    return ThreadingBenchmark(python, options, "threaded_count")
+def BM_threading_threaded_count(python, options):
+    return bench_threading(python, options, "threaded_count")
 
 
-def BM_iterative_count(python, options):
-    return ThreadingBenchmark(python, options, "iterative_count")
+def BM_threading_iterative_count(python, options):
+    return bench_threading(python, options, "iterative_count")
 
 
 def BM_unpack_sequence(python, options):

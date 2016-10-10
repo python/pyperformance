@@ -370,6 +370,8 @@ Version 0.2.3
      ``json_dump`` benchmark)
    * Rename ``normal_startup`` to ``python_startup``, and ``startup_nosite``
      to ``python_startup_no_site``
+   * Rename ``threaded_count`` to ``threading_threaded_count``,
+     rename ``iterative_count`` to ``threading_iterative_count``
 
 * Update dependencies
 * ``pickle_pure_python`` and ``unpickle_pure_python`` now work on Python 3
