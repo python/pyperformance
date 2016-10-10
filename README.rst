@@ -354,7 +354,7 @@ Enhancements:
 * ``nbody``: add ``--reference`` and ``--iterations`` command line options.
 * ``chaos``: add ``--width``, ``--height``, ``--thickness``, ``--filename``
   and ``--rng-seed`` command line options
-* ``django_template``: add ``--size`` command line option
+* ``django_template``: add ``--table-size`` command line option
 * ``json_dumps``: add ``--cases`` command line option
 * ``pidigits``: add ``--digits`` command line option
 * ``raytrace``: add ``--width``, ``--height`` and ``--filename`` command line

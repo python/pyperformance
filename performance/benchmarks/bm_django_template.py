@@ -15,7 +15,7 @@ from django.template import Context, Template
 DEFAULT_SIZE = 100
 
 
-def bench_django_template(loops, size):
+def bench_django_template(runner, size):
     template = Template("""<table>
 {% for row in table %}
 <tr>{% for col in row %}<td>{{ col|escape }}</td>{% endfor %}</tr>
@@ -25,18 +25,11 @@ def bench_django_template(loops, size):
     table = [xrange(size) for _ in xrange(size)]
     context = Context({"table": table})
 
-    range_it = xrange(loops)
-    t0 = perf.perf_counter()
-
-    for _ in range_it:
-        # ignore result
-        template.render(context)
-
-    return perf.perf_counter() - t0
+    runner.bench_func(template.render, context)
 
 
 def prepare_cmd(runner, cmd):
-    cmd.append("--size=%s" % runner.args.size)
+    cmd.append("--table-size=%s" % runner.args.table_size)
 
 
 if __name__ == "__main__":
@@ -47,14 +40,14 @@ if __name__ == "__main__":
 
     runner = perf.text_runner.TextRunner(name='django_template')
     cmd = runner.argparser
-    cmd.add_argument("--size",
+    cmd.add_argument("--table-size",
                      type=int, default=DEFAULT_SIZE,
-                     help="Table size, height and width (default: %s)"
-                          % DEFAULT_SIZE)
+                     help="Size of the HTML table, height and width "
+                          "(default: %s)" % DEFAULT_SIZE)
 
     args = runner.parse_args()
     runner.metadata['description'] = "Django template"
     runner.metadata['django_version'] = django.__version__
-    runner.metadata['django_table_size'] = args.size
+    runner.metadata['django_table_size'] = args.table_size
 
-    runner.bench_sample_func(bench_django_template, args.size)
+    bench_django_template(runner, args.table_size)
