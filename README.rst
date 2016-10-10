@@ -60,14 +60,24 @@ Actions::
     list_groups         List benchmark groups of the running Python
     venv                Actions on the virtual environment
 
+Common options
+--------------
+
+Options available to all commands::
+
+  -p PYTHON, --python PYTHON
+                        Python executable (default: use running Python)
+  --venv VENV           Path to the virtual environment
+  --inherit-environ VAR_LIST
+                        Comma-separated list of environment variable names
+                        that are inherited from the parent environment when
+                        running benchmarking subprocesses.
+
 run
 ---
 
 Options of the ``run`` command::
 
-  -p PYTHON, --python PYTHON
-                        Python executable (default: use running Python)
-  --venv VENV           Path to the virtual environment
   -r, --rigorous        Spend longer running tests to get more accurate
                         results
   -f, --fast            Get rough answers quickly
