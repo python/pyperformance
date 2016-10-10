@@ -90,7 +90,6 @@ def python_implementation():
     return name.lower()
 
 
-# FIXME: use version_info format: (int, int)
 def interpreter_version(python, _cache={}):
     """Return the interpreter version for the given Python interpreter.
     *python* is the base command (as a list) to execute the interpreter.
@@ -100,16 +99,19 @@ def interpreter_version(python, _cache={}):
         return _cache[key]
     except KeyError:
         pass
-    code = """import sys; print('.'.join(map(str, sys.version_info[:2])))"""
+    code = "import sys; print('.'.join(map(str, sys.version_info[:2])))"
     subproc = subprocess.Popen(python + ['-c', code],
                                stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
+                               stderr=subprocess.PIPE,
+                               universal_newlines=True)
     out, err = subproc.communicate()
     if subproc.returncode != 0:
         raise RuntimeError("Child interpreter died: " + err.decode())
-    version = out.decode().strip()
-    if len(version) != 3:
-        raise RuntimeError("Strange version printed: %s" % version)
+    version = out.rstrip()
+    major, _, minor = version.partition('.')
+    major = int(major)
+    minor = int(minor)
+    version = (major, minor)
     _cache[key] = version
     return version
 
