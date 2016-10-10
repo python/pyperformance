@@ -12,8 +12,7 @@ except ImportError:
 import perf
 
 import performance
-from performance.compare import display_benchmark_suite
-from performance.venv import interpreter_version, PERFORMANCE_ROOT
+from performance.venv import PERFORMANCE_ROOT
 
 
 class BenchmarkException(Exception):
@@ -153,28 +152,6 @@ def ParseBenchmarksOption(benchmarks_opt, bench_groups, fast=False):
     return should_run
 
 
-def FilterBenchmarks(benchmarks, bench_funcs, python):
-    """Filters out benchmarks not supported by both Pythons.
-
-    Args:
-        benchmarks: a set() of benchmark names
-        bench_funcs: dict mapping benchmark names to functions
-        python: the interpereter commands (as lists)
-
-    Returns:
-        The filtered set of benchmark names
-    """
-    basever = interpreter_version(python)
-    for bm in list(benchmarks):
-        minver, maxver = getattr(bench_funcs[bm], '_range', ('2.0', '4.0'))
-        if not minver <= basever <= maxver:
-            benchmarks.discard(bm)
-            logging.info("Skipping benchmark %s; not compatible with "
-                         "Python %s" % (bm, basever))
-            continue
-    return benchmarks
-
-
 def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
     suite = perf.BenchmarkSuite()
     to_run = list(sorted(should_run))
@@ -204,57 +181,3 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
     print()
 
     return suite
-
-
-def cmd_run(parser, options, bench_funcs, bench_groups):
-    logging.basicConfig(level=logging.INFO)
-
-    print("Python benchmark suite %s" % performance.__version__)
-    print()
-
-    if options.output and os.path.exists(options.output):
-        print("ERROR: the output file %s already exists!" % options.output)
-        sys.exit(1)
-
-    if not os.path.isabs(sys.executable):
-        print("ERROR: sys.executable is not an absolute path")
-        sys.exit(1)
-    cmd_prefix = [sys.executable] + options.args.split()
-
-    should_run = ParseBenchmarksOption(options.benchmarks, bench_groups,
-                                       options.fast or options.debug_single_sample)
-
-    should_run = FilterBenchmarks(should_run, bench_funcs, cmd_prefix)
-
-    suite = run_benchmarks(bench_funcs, should_run, cmd_prefix, options)
-
-    if options.output:
-        suite.dump(options.output)
-
-    if options.append:
-        perf.add_runs(options.append, suite)
-
-    display_benchmark_suite(suite)
-
-
-def cmd_list(options, bench_funcs, bench_groups):
-    funcs = bench_groups['all']
-    python = [sys.executable]
-    all_funcs = FilterBenchmarks(set(funcs), bench_funcs, python)
-
-    if options.action == 'list':
-        print("%s benchmarks:" % len(all_funcs))
-        for func in sorted(all_funcs):
-            print("- %s" % func)
-    else:
-        # list_groups
-        for group, funcs in sorted(bench_groups.items()):
-            funcs = set(funcs) & all_funcs
-            if not funcs:
-                # skip empty groups
-                continue
-
-            print("%s (%s):" % (group, len(funcs)))
-            for func in sorted(funcs):
-                print("- %s" % func)
-            print()

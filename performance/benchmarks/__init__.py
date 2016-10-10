@@ -1,5 +1,6 @@
 from __future__ import division, with_statement, print_function, absolute_import
 
+import logging
 import subprocess
 
 import perf
@@ -16,7 +17,7 @@ from performance.run import (run_perf_script, copy_perf_options,
 
 def VersionRange(minver=None, maxver=None):
     def deco(func):
-        func._range = minver or '2.0', maxver or '9.0'
+        func._range = minver or '1.0', maxver or '9.9'
         return func
     return deco
 
@@ -348,7 +349,7 @@ def BM_SQLAlchemy_Declarative(python, options):
 
 def _FindAllBenchmarks(namespace):
     return dict((name[3:].lower(), func)
-                for (name, func) in sorted(namespace.items())
+                for name, func in namespace.items()
                 if name.startswith("BM_"))
 
 BENCH_FUNCS = _FindAllBenchmarks(globals())
@@ -390,7 +391,7 @@ group_deprecated = set(BENCH_GROUPS["deprecated"])
 for bm, func in BENCH_FUNCS.items():
     if bm in group_deprecated:
         continue
-    minver, maxver = getattr(func, '_range', ('2.0', '4.0'))
+    minver, maxver = getattr(func, '_range', ('1.0', '9.9'))
     if minver <= '2.7' and '3.2' <= maxver:
         group2n3.append(bm)
 
@@ -407,3 +408,24 @@ def get_benchmark_groups():
     # create the 'all' group
     bench_groups = CreateBenchGroups(bench_funcs, BENCH_GROUPS)
     return (bench_funcs, bench_groups)
+
+
+def filter_benchmarks(benchmarks, bench_funcs, base_ver):
+    """Filters out benchmarks not supported by both Pythons.
+
+    Args:
+        benchmarks: a set() of benchmark names
+        bench_funcs: dict mapping benchmark names to functions
+        python: the interpereter commands (as lists)
+
+    Returns:
+        The filtered set of benchmark names
+    """
+    for bm in list(benchmarks):
+        minver, maxver = getattr(bench_funcs[bm], '_range', ('2.0', '4.0'))
+        if not minver <= base_ver <= maxver:
+            benchmarks.discard(bm)
+            logging.info("Skipping benchmark %s; not compatible with "
+                         "Python %s" % (bm, base_ver))
+            continue
+    return benchmarks
