@@ -4,8 +4,6 @@ import perf.text_runner
 import six
 from six.moves import xrange
 
-# execution runtime per test case
-TARGET_RUNTIME = 10
 
 EMPTY = ({}, 2000)
 SIMPLE_DATA = {'key1': 0, 'key2': True, 'key3': 'value', 'key4': 'foo',
@@ -35,8 +33,8 @@ def main(loops):
 
     return perf.perf_counter() - t0
 
+
 if __name__ == '__main__':
-    runner = perf.text_runner.TextRunner(name='json_dump_v2')
-    runner.metadata['description'] = ("Test the performance of "
-                                      "the JSON serializing")
+    runner = perf.text_runner.TextRunner(name='json_dump')
+    runner.metadata['description'] = "Benchmark json.dumps()"
     runner.bench_sample_func(main)

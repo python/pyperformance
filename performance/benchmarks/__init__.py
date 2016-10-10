@@ -18,7 +18,7 @@ from performance.run import (run_perf_script, copy_perf_options,
 # automatically.
 BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
                             "tornado_http", "pickle", "unpickle",
-                            "regex_v8", "json_dump_v2", "json_load"],
+                            "regex_v8", "json_dump", "json_load"],
                 "startup": ["normal_startup", "startup_nosite",
                             "hg_startup"],
                 "regex": ["regex_v8", "regex_effbot", "regex_compile"],
@@ -26,7 +26,7 @@ BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
                 "serialize": ["pickle_pure_python", "unpickle_pure_python",  # Not for Python 3
                               "pickle", "unpickle",
                               "etree",
-                              "json_dump_v2", "json_load"],
+                              "json_dump", "json_load"],
                 "etree": ["etree_generate", "etree_parse",
                           "etree_iterparse", "etree_process"],
                 "apps": ["2to3", "chameleon", "html5lib",
@@ -38,7 +38,7 @@ BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
                 "logging": ["silent_logging", "simple_logging",
                             "formatted_logging"],
                 # These are removed from the "all" group
-                "deprecated": ["iterative_count", "json_dump",
+                "deprecated": ["iterative_count",
                                "threaded_count"],
                 }
 
@@ -162,20 +162,12 @@ def BM_xml_etree_process(python, options):
     return bench_xml_etree(python, options, 'process')
 
 
-def _JSONBenchmark(python, options, arg):
-    return run_perf_script(python, options, "json", extra_args=[arg])
-
-
-def BM_JSON_Dump(python, options):
-    return _JSONBenchmark(python, options, "json_dump")
-
-
 def BM_JSON_Load(python, options):
-    return _JSONBenchmark(python, options, "json_load")
+    return run_perf_script(python, options, "json_load")
 
 
 def BM_JSON_Dump_V2(python, options):
-    return run_perf_script(python, options, "json_dump_v2")
+    return run_perf_script(python, options, "json_dump")
 
 
 def BM_NQueens(python, options):

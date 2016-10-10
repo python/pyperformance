@@ -75,39 +75,6 @@ random_source = random.Random(5)  # Fixed seed.
 DICT_GROUP = [mutate_dict(DICT, random_source) for _ in range(3)]
 
 
-def bench_json_dump(loops):
-    dumps = json.dumps
-    objs = (DICT, TUPLE, DICT_GROUP)
-    range_it = xrange(loops)
-    t0 = perf.perf_counter()
-
-    for _ in range_it:
-        for obj in objs:
-            # 20 dumps
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-            dumps(obj)
-
-    return perf.perf_counter() - t0
-
-
 def bench_json_load(loops):
     json_dict = json.dumps(DICT)
     json_tuple = json.dumps(TUPLE)
@@ -145,20 +112,7 @@ def bench_json_load(loops):
     return perf.perf_counter() - t0
 
 
-def prepare_cmd(runner, cmd):
-    cmd.append(runner.args.benchmark)
-
-
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='json', inner_loops=20)
-    runner.metadata['description'] = ("Test the performance of "
-                                      "JSON (de)serializing.")
-    runner.prepare_subprocess_args = prepare_cmd
-    runner.argparser.add_argument("benchmark",
-                                  choices=("json_dump", "json_load"))
-
-    options = runner.parse_args()
-    benchmark = globals()["bench_" + options.benchmark]
-    runner.name += "/%s" % options.benchmark
-
-    runner.bench_sample_func(benchmark)
+    runner = perf.text_runner.TextRunner(name='json_load', inner_loops=20)
+    runner.metadata['description'] = "Benchmark json.loads()"
+    runner.bench_sample_func(bench_json_load)

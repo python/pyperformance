@@ -16,7 +16,6 @@ TODO
   and convince Pyston to use performance :-)
 * pybench: don't use private perf submodules/functions
 * Remove deprecated threading tests? bench.py -b threading doesn't run anything
-* Remove json_dump and rename json_dump to json_dump_v2?
 * pybench: calibrate once in the main process, then pass the number of loops
   to workers? Or rewrite pybench as N subenchmarks?
 * fastpickle: use accelerator by default, as bm_elementtree

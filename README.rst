@@ -266,7 +266,7 @@ Available Benchmarks
 - ``hexiom`` - Solver of Hexiom board game (level 25 by default)
 - ``hg_startup`` - Get Mercurial's help screen.
 - ``html5lib`` - parse the HTML 5 spec using html5lib.
-- ``json_dump_v2`` - performance of the JSON serializer
+- ``json_dump`` - performance of the JSON serializer
 - ``json_load`` - performance of the JSON deserializer
 - ``mako`` - use the Mako template system to build a 150x150-cell HTML table.
 - ``meteor_contest`` - solver for Meteor Puzzle board
@@ -376,6 +376,8 @@ Version 0.2.3
    * Rename ElementTree benchmarks: replace ``etree_`` prefix with ``xml_etree_``.
    * Rename ``hexiom2`` to ``hexiom_level25`` and explicitly pass ``--level=25``
      parameter
+   * Rename ``json_dump_v2`` to ``json_dump`` (and remove the deprecated
+     ``json_dump`` benchmark)
 
 * Update dependencies
 
