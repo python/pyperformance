@@ -104,6 +104,40 @@ Done:
 * telco
 
 
+pyston benchmarks
+=================
+
+TODO:
+
+- django_lexing
+- django_migrate
+- django_template2
+- django_template3_10x
+- django_template3
+- django_template
+- fasta
+- interp2
+- pyxl_bench_10x
+- pyxl_bench2_10x
+- pyxl_bench2
+- pyxl_bench
+- sre_parse_parse
+- virtualenv_bench2
+- virtualenv_bench
+
+Done:
+
+- chaos
+- deltablue
+- fannkuch, fannkuch_med
+- nbody
+- pidigits: pyston has a flat implementation, single function
+- raytrace, raytrace_small
+- richards
+- sqlalchemy_imperative, sqlalchemy_imperative2, sqlalchemy_imperative2_10x
+- sre_compile_ubench: performance has a much more complete benchmark
+
+
 pybench
 =======
 
