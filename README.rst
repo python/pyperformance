@@ -27,6 +27,7 @@ Other Python Benchmarks:
 * PyPy: `speed.pypy.org <http://speed.pypy.org/>`_
   uses `PyPy benchmarks <https://bitbucket.org/pypy/benchmarks>`_
 * Pyston: `pyston-perf <https://github.com/dropbox/pyston-perf>`_
+  and `speed.pyston.org <http://speed.pyston.org/>`_
 * `Numba benchmarks <http://numba.pydata.org/numba-benchmark/>`_
 * Cython: `Cython Demos/benchmarks
   <https://github.com/cython/cython/tree/master/Demos/benchmarks>`_
@@ -422,7 +423,6 @@ Minor changes:
 
 * Update dependencies
 * Remove broken ``--args`` command line option.
-
 
 
 Version 0.2.2 (2016-09-19)
