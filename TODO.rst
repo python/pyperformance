@@ -1,6 +1,8 @@
 TODO
 ====
 
+* Installing dulwich on Windows fails with a compiler error,
+  there is no prebuilt Windows wheel package.
 * bm_nqueens: Remove the "Pure-Python implementation of
   itertools.permutations()"?
 * Decide of sqlalchemy benchmarks should only benchmark SELECT ALL
