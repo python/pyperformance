@@ -55,8 +55,8 @@ def bench_n_queens(queen_count):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='nqueens')
+    runner = perf.Runner()
     runner.metadata['description'] = "Simple, brute-force N-Queens solver"
 
     queen_count = 8
-    runner.bench_func(bench_n_queens, queen_count)
+    runner.bench_func('nqueens', bench_n_queens, queen_count)

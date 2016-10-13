@@ -624,7 +624,7 @@ def gzip_main(field):
     return "".join(out)
 
 
-def main(loops, filename):
+def bench_pyflake(loops, filename):
     input_fp = open(filename, 'rb')
     range_it = xrange(loops)
     t0 = perf.perf_counter()
@@ -652,9 +652,9 @@ def main(loops, filename):
 
 
 if __name__ == '__main__':
-    runner = perf.Runner(name='pyflate')
+    runner = perf.Runner()
     runner.metadata['description'] = "Pyflate benchmark"
 
     filename = os.path.join(os.path.dirname(__file__),
                             "data", "interpreter.tar.bz2")
-    runner.bench_sample_func(main, filename)
+    runner.bench_sample_func('pyflate', bench_pyflake, filename)

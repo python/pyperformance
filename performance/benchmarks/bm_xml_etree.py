@@ -177,7 +177,7 @@ def bench_generate(etree, xml_file, xml_data, xml_root):
             raise RuntimeError("unexpected output detected")
 
 
-def run_etree_benchmark(iterations, etree, bench_func):
+def bench_etree(iterations, etree, bench_func):
     xml_root = build_xml_tree(etree)
     xml_data = etree.tostring(xml_root)
 
@@ -223,7 +223,7 @@ if __name__ == "__main__":
     else:
         default_etmodule = "xml.etree.cElementTree"
 
-    runner = perf.Runner(name='xml_etree')
+    runner = perf.Runner()
     runner.metadata['description'] = ("Test the performance of "
                                       "ElementTree XML processing.")
     runner.prepare_subprocess_args = prepare_subprocess_args
@@ -242,7 +242,6 @@ if __name__ == "__main__":
 
     options = runner.parse_args()
     bench_func = globals()['bench_%s' % options.benchmark]
-    runner.name += "_%s" % options.benchmark
 
     if not options.etree_module:
         if options.no_accelerator:
@@ -290,4 +289,5 @@ if __name__ == "__main__":
     runner.metadata['elementtree_module'] = module
 
     # Run the benchmark
-    runner.bench_sample_func(run_etree_benchmark, etree_module, bench_func)
+    name = 'xml_etree_%s' % options.benchmark
+    runner.bench_sample_func(name, bench_etree, etree_module, bench_func)

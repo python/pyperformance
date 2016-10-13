@@ -453,6 +453,6 @@ if __name__ == "__main__":
     if perf.python_has_jit():
         # PyPy needs more samples to warmup its JIT
         kw['warmups'] = 50
-    runner = perf.Runner(name='go', **kw)
+    runner = perf.Runner(**kw)
     runner.metadata['description'] = "Test the performance of the Go benchmark"
-    runner.bench_func(versus_cpu)
+    runner.bench_func('go', versus_cpu)

@@ -31,7 +31,7 @@ def prepare_cmd(runner, cmd):
 
 
 def main():
-    runner = perf.Runner(name='json_dumps')
+    runner = perf.Runner()
     runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("--cases",
                                   help="Comma separated list of cases. Available cases: %s. By default, run all cases."
@@ -56,7 +56,7 @@ def main():
         obj, count = globals()[case]
         data.append((obj, xrange(count)))
 
-    runner.bench_func(bench_json_dumps, data)
+    runner.bench_func('json_dumps', bench_json_dumps, data)
 
 
 if __name__ == '__main__':

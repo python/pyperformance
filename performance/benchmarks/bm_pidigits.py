@@ -57,7 +57,7 @@ def prepare_cmd(runner, args):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='pidigits')
+    runner = perf.Runner()
     runner.prepare_subprocess_args = prepare_cmd
 
     cmd = runner.argparser
@@ -68,4 +68,4 @@ if __name__ == "__main__":
     args = runner.parse_args()
     runner.metadata['description'] = "Compute digits of pi."
     runner.metadata['pidigits_ndigit'] = args.digits
-    runner.bench_func(calc_ndigits, args.digits)
+    runner.bench_func('pidigits', calc_ndigits, args.digits)

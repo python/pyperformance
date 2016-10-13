@@ -16,7 +16,7 @@ def iter_all_commits(repo):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='dulwich_log')
+    runner = perf.Runner()
     runner.metadata['description'] = ("Dulwich benchmark: "
                                       "iterate on all Git commits")
 
@@ -24,4 +24,4 @@ if __name__ == "__main__":
 
     repo = dulwich.repo.Repo(repo_path)
     head = repo.head()
-    runner.bench_func(iter_all_commits, repo)
+    runner.bench_func('dulwich_log', iter_all_commits, repo)

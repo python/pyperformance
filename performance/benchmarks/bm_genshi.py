@@ -50,7 +50,7 @@ BENCHMARKS = {
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='genshi')
+    runner = perf.Runner()
     runner.metadata['description'] = "Render a template using Genshi module"
     runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("benchmark", choices=sorted(BENCHMARKS))
@@ -58,6 +58,6 @@ if __name__ == "__main__":
     args = runner.parse_args()
     bench = args.benchmark
 
-    runner.name += "_%s" % bench
+    name = 'genshi_%s' % bench
     tmpl_cls, tmpl_str = BENCHMARKS[bench]
-    runner.bench_sample_func(bench_genshi, tmpl_cls, tmpl_str)
+    runner.bench_sample_func(name, bench_genshi, tmpl_cls, tmpl_str)

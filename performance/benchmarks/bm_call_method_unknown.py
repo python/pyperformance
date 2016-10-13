@@ -339,7 +339,7 @@ def test_calls(loops):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='call_method_unknown')
+    runner = perf.Runner()
     runner.metadata['description'] = ("Test the performance of unpredictable "
                                       "Python-to-Python method calls")
-    runner.bench_sample_func(test_calls, inner_loops=18)
+    runner.bench_sample_func('call_method_unknown', test_calls, inner_loops=18)

@@ -87,6 +87,6 @@ def bench_telco(loops):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='telco')
+    runner = perf.Runner()
     runner.metadata['description'] = "Telco decimal benchmark"
-    runner.bench_sample_func(bench_telco)
+    runner.bench_sample_func('telco', bench_telco)

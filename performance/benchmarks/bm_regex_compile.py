@@ -63,8 +63,8 @@ def bench_regex_compile(loops, regexes):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='regex_compile')
+    runner = perf.Runner()
     runner.metadata['description'] = "Test regex compilation performance"
 
     regexes = capture_regexes()
-    runner.bench_sample_func(bench_regex_compile, regexes)
+    runner.bench_sample_func('regex_compile', bench_regex_compile, regexes)

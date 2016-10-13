@@ -20,7 +20,7 @@ tal:content="python: d" />
 
 
 def main():
-    runner = perf.Runner(name='chameleon')
+    runner = perf.Runner()
     runner.metadata['description'] = "Chameleon template"
 
     tmpl = PageTemplate(BIGTABLE_ZPT)
@@ -29,7 +29,7 @@ def main():
     options = {'table': table}
 
     func = functools.partial(tmpl, options=options)
-    runner.bench_func(func)
+    runner.bench_func('chameleon', func)
 
 
 if __name__ == '__main__':

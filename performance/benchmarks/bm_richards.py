@@ -418,8 +418,8 @@ class Richards(object):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='richards')
+    runner = perf.Runner()
     runner.metadata['description'] = "The Richards benchmark"
 
     richard = Richards()
-    runner.bench_func(richard.run, 1)
+    runner.bench_func('richards', richard.run, 1)

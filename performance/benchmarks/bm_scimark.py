@@ -399,13 +399,13 @@ BENCHMARKS = {
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='scimark')
+    runner = perf.Runner()
     runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("benchmark", choices=sorted(BENCHMARKS))
 
     args = runner.parse_args()
     bench = args.benchmark
 
-    runner.name += "_%s" % bench
+    name = 'scimark_%s' % bench
     args = BENCHMARKS[bench]
-    runner.bench_sample_func(*args)
+    runner.bench_sample_func(name, *args)

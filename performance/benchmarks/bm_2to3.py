@@ -17,7 +17,7 @@ def bench_2to3(command, devnull_out):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='2to3')
+    runner = perf.Runner()
 
     runner.metadata['description'] = "Performance of the Python 2to3 program"
     args = runner.parse_args()
@@ -27,4 +27,4 @@ if __name__ == "__main__":
 
     command = [sys.executable, "-m", "lib2to3", "-f", "all"] + pyfiles
     with open(os.devnull, "wb") as devnull_out:
-        runner.bench_func(bench_2to3, command, devnull_out)
+        runner.bench_func('2to3', bench_2to3, command, devnull_out)

@@ -25,18 +25,19 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='python_startup', samples=10)
+    runner = perf.Runner(samples=10)
     runner.argparser.add_argument("--no-site", action="store_true")
     runner.prepare_subprocess_args = prepare_cmd
 
     runner.metadata['description'] = "Performance of the Python startup"
     args = runner.parse_args()
+    name = 'python_startup'
     if args.no_site:
-        runner.name += "_no_site"
+        name += "_no_site"
 
     command = [sys.executable]
     if args.no_site:
         command.append("-S")
     command.extend(("-c", "pass"))
 
-    runner.bench_sample_func(bench_startup, command)
+    runner.bench_sample_func(name, bench_startup, command)

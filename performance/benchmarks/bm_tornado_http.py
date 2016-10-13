@@ -86,7 +86,7 @@ if __name__ == "__main__":
     if perf.python_has_jit():
         # PyPy needs more samples to warmup its JIT
         kw['warmups'] = 30
-    runner = perf.Runner(name='tornado_http', **kw)
+    runner = perf.Runner(**kw)
     runner.metadata['description'] = ("Test the performance of HTTP requests "
                                       "with Tornado.")
-    runner.bench_sample_func(bench_tornado)
+    runner.bench_sample_func('tornado_http', bench_tornado)

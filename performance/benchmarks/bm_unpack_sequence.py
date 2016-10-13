@@ -440,7 +440,7 @@ if __name__ == "__main__":
     benchmarks = {"tuple": bench_tuple_unpacking,
                   "list": bench_list_unpacking}
 
-    runner = perf.Runner(name='unpack_sequence')
+    runner = perf.Runner()
     runner.metadata['description'] = ("Microbenchmark for "
                                       "Python's sequence unpacking.")
     runner.prepare_subprocess_args = prepare_subprocess_args
@@ -449,10 +449,11 @@ if __name__ == "__main__":
                                   choices=sorted(benchmarks))
 
     options = runner.parse_args()
+    name = 'unpack_sequence'
     if options.benchmark:
         func = benchmarks[options.benchmark]
-        runner.name += "_%s" % options.benchmark
+        name += "_%s" % options.benchmark
     else:
         func = bench_all
 
-    runner.bench_sample_func(func, inner_loops=400)
+    runner.bench_sample_func(name, func, inner_loops=400)

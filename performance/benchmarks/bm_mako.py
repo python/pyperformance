@@ -129,11 +129,11 @@ def bench_mako(runner, table_size, nparagraph, img_count):
                              table=table, paragraphs=paragraphs,
                              lorem=LOREM_IPSUM, title=title,
                              img_count=img_count, xrange=xrange)
-    runner.bench_func(func)
+    runner.bench_func('mako', func)
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='mako')
+    runner = perf.Runner()
     runner.metadata['description'] = "Mako templates"
     runner.metadata['mako_version'] = mako.__version__
 

@@ -656,7 +656,7 @@ if __name__ == "__main__":
     if perf.python_has_jit():
         # PyPy needs more samples to warmup its JIT
         kw['warmups'] = 15
-    runner = perf.Runner(name='hexiom', **kw)
+    runner = perf.Runner(**kw)
     levels = sorted(LEVELS)
     runner.argparser.add_argument("--level", type=int,
                                   choices=levels,
@@ -669,4 +669,4 @@ if __name__ == "__main__":
     runner.metadata['description'] = "Solver of Hexiom board game"
     runner.metadata['hexiom_level'] = args.level
 
-    runner.bench_sample_func(main, args.level)
+    runner.bench_sample_func('hexiom', main, args.level)

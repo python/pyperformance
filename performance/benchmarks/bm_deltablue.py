@@ -618,8 +618,8 @@ def delta_blue(n):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='deltablue')
+    runner = perf.Runner()
     runner.metadata['description'] = "DeltaBlue benchmark"
 
     n = 100
-    runner.bench_func(delta_blue, n)
+    runner.bench_func('deltablue', delta_blue, n)

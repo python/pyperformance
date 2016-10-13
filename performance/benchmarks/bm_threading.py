@@ -61,7 +61,7 @@ def prepare_subprocess_args(runner, args):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='threading')
+    runner = perf.Runner()
     runner.metadata[
         'description'] = "Test the performance of Python's threads."
     runner.prepare_subprocess_args = prepare_subprocess_args
@@ -79,9 +79,8 @@ if __name__ == "__main__":
     runner.argparser.add_argument("benchmark", choices=sorted(benchmarks))
     options = runner.parse_args()
 
-    runner.name += "_%s" % options.benchmark
-
+    name = 'threading_%s' % options.benchmark
     bench_func = benchmarks[options.benchmark]
 
     sys.setcheckinterval(options.check_interval)
-    runner.bench_sample_func(bench_func, options.num_threads)
+    runner.bench_sample_func(name, bench_func, options.num_threads)

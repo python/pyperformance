@@ -46,7 +46,7 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='sympy')
+    runner = perf.Runner()
     runner.metadata['description'] = "SymPy benchmark"
     runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("benchmark",
@@ -56,6 +56,6 @@ if __name__ == "__main__":
     args = runner.parse_args()
     bench = args.benchmark
 
-    runner.name += "_%s" % bench
+    name = 'sympy_%s' % bench
     func = globals()['bench_' + bench]
-    runner.bench_sample_func(bench_sympy, func)
+    runner.bench_sample_func(name, bench_sympy, func)

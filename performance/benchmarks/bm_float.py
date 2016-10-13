@@ -50,8 +50,8 @@ def benchmark(n):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='float')
+    runner = perf.Runner()
     runner.metadata['description'] = "Float benchmark"
 
     points = POINTS
-    runner.bench_func(benchmark, points)
+    runner.bench_func('float', benchmark, points)

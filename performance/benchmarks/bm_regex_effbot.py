@@ -162,7 +162,7 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == '__main__':
-    runner = perf.Runner(name='regex_effbot')
+    runner = perf.Runner()
     runner.metadata['description'] = ("Test the performance of regexps "
                                       "using Fredik Lundh's benchmarks.")
     runner.prepare_subprocess_args = prepare_cmd
@@ -173,4 +173,5 @@ if __name__ == '__main__':
     if options.force_bytes:
         USE_BYTES_IN_PY3K = True
 
-    runner.bench_sample_func(bench_regex_effbot, inner_loops=10)
+    runner.bench_sample_func('regex_effbot', bench_regex_effbot,
+                             inner_loops=10)

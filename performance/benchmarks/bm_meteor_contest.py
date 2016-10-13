@@ -213,7 +213,7 @@ def bench_meteor_contest(loops, board, pieces, solve_arg, fps, se_nh):
 
 
 def main():
-    runner = perf.Runner(name='meteor_contest')
+    runner = perf.Runner()
     runner.metadata['description'] = "Solver for Meteor Puzzle board"
 
     board, cti, pieces = get_puzzle(WIDTH, HEIGHT)
@@ -221,7 +221,8 @@ def main():
     se_nh = get_senh(board, cti)
 
     solve_arg = SOLVE_ARG
-    runner.bench_sample_func(bench_meteor_contest, board, pieces, solve_arg, fps, se_nh)
+    runner.bench_sample_func('meteor_contest', bench_meteor_contest,
+                             board, pieces, solve_arg, fps, se_nh)
 
 
 if __name__ == "__main__":

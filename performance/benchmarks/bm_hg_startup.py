@@ -37,7 +37,7 @@ def bench_startup(command, devnull_in, devnull_out):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='hg_startup', samples=25)
+    runner = perf.Runner(samples=25)
 
     runner.metadata['description'] = "Performance of the Python startup"
     args = runner.parse_args()
@@ -49,4 +49,5 @@ if __name__ == "__main__":
 
     with open(os.devnull, "rb") as devnull_in:
         with open(os.devnull, "wb") as devnull_out:
-            runner.bench_func(bench_startup, command, devnull_in, devnull_out)
+            runner.bench_func('hg_startup', bench_startup,
+                              command, devnull_in, devnull_out)

@@ -21,7 +21,7 @@ def bench_spambayes(ham_classifier, messages):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='spambayes')
+    runner = perf.Runner()
     runner.metadata['description'] = "Run the SpamBayes benchmark."
 
     data_dir = os.path.join(os.path.dirname(__file__), "data")
@@ -30,4 +30,4 @@ if __name__ == "__main__":
     messages = list(mboxutils.getmbox(mailbox))
     ham_classifier = hammie.open(ham_data, "pickle", "r")
 
-    runner.bench_func(bench_spambayes, ham_classifier, messages)
+    runner.bench_func('spambayes', bench_spambayes, ham_classifier, messages)

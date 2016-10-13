@@ -22,7 +22,7 @@ def bench_html5lib(html_file):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='html5lib')
+    runner = perf.Runner()
     runner.metadata['description'] = (
         "Test the performance of the html5lib parser.")
     runner.metadata['html5lib_version'] = html5lib.__version__
@@ -33,4 +33,4 @@ if __name__ == "__main__":
     with io.open(filename, "rb") as fp:
         html_file = six.BytesIO(fp.read())
 
-    runner.bench_func(bench_html5lib, html_file)
+    runner.bench_func('html5lib', bench_html5lib, html_file)

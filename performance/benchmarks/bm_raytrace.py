@@ -388,7 +388,7 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='raytrace')
+    runner = perf.Runner()
     runner.prepare_subprocess_args = prepare_cmd
     cmd = runner.argparser
     cmd.add_argument("--width",
@@ -405,6 +405,6 @@ if __name__ == "__main__":
     runner.metadata['raytrace_width'] = args.width
     runner.metadata['raytrace_height'] = args.height
 
-    runner.bench_sample_func(bench_raytrace,
+    runner.bench_sample_func('raytrace', bench_raytrace,
                              args.width, args.height,
                              args.filename)

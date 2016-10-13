@@ -82,7 +82,7 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='sqlalchemy_imperative')
+    runner = perf.Runner()
     runner.metadata['description'] = ("SQLAlchemy Imperative benchmark "
                                       "using SQLite")
     runner.prepare_subprocess_args = prepare_cmd
@@ -90,4 +90,4 @@ if __name__ == "__main__":
                                   help="Number of rows (default: 100)")
 
     args = runner.parse_args()
-    runner.bench_sample_func(bench_sqlalchemy, args.rows)
+    runner.bench_sample_func('sqlalchemy_imperative', bench_sqlalchemy, args.rows)

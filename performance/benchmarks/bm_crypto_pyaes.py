@@ -17,7 +17,7 @@ CLEARTEXT = b"This is a test. What could possibly go wrong? " * 500
 KEY = b'\xa1\xf6%\x8c\x87}_\xcd\x89dHE8\xbf\xc9,'
 
 
-def main(loops):
+def bench_pyaes(loops):
     range_it = xrange(loops)
     t0 = perf.perf_counter()
 
@@ -40,7 +40,7 @@ def main(loops):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='crypto_pyaes')
+    runner = perf.Runner()
     runner.metadata['description'] = ("Pure-Python Implementation "
                                       "of the AES block-cipher")
-    runner.bench_sample_func(main)
+    runner.bench_sample_func('crypto_pyaes', bench_pyaes)

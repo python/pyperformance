@@ -254,7 +254,7 @@ def prepare_cmd(runner, args):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='pickle')
+    runner = perf.Runner()
     runner.metadata['description'] = "Test the performance of pickling."
     runner.prepare_subprocess_args = prepare_cmd
 
@@ -268,9 +268,10 @@ if __name__ == "__main__":
 
     options = runner.parse_args()
     benchmark, inner_loops = BENCHMARKS[options.benchmark]
-    runner.name = options.benchmark
+
+    name = options.benchmark
     if options.pure_python:
-        runner.name += "_pure_python"
+        name += "_pure_python"
 
     if not options.pure_python:
         # C accelerators are enabled by default on 3.x
@@ -292,4 +293,5 @@ if __name__ == "__main__":
     runner.metadata['pickle_protocol'] = str(options.protocol)
     runner.metadata['pickle_module'] = pickle.__name__
 
-    runner.bench_sample_func(benchmark, pickle, options, inner_loops=inner_loops)
+    runner.bench_sample_func(name, benchmark,
+                             pickle, options, inner_loops=inner_loops)

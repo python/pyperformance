@@ -282,7 +282,7 @@ def main(runner, args):
     runner.metadata['chaos_rng_seed'] = args.rng_seed
 
     chaos = Chaosgame(splines, args.thickness)
-    runner.bench_func(chaos.create_image_chaos,
+    runner.bench_func('chaos', chaos.create_image_chaos,
                       args.width, args.height, args.iterations,
                       args.filename, args.rng_seed)
 
@@ -297,7 +297,7 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(name='chaos')
+    runner = perf.Runner()
     runner.metadata['description'] = "Create chaosgame-like fractals"
     runner.prepare_subprocess_args = prepare_cmd
     cmd = runner.argparser

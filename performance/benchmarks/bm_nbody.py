@@ -138,7 +138,7 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == '__main__':
-    runner = perf.Runner(name='nbody')
+    runner = perf.Runner()
     runner.metadata['description'] = "n-body benchmark"
     runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("--iterations",
@@ -151,4 +151,5 @@ if __name__ == '__main__':
                                        % DEFAULT_REFERENCE)
 
     args = runner.parse_args()
-    runner.bench_sample_func(bench_nbody, args.reference, args.iterations)
+    runner.bench_sample_func('nbody', bench_nbody,
+                             args.reference, args.iterations)

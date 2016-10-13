@@ -25,7 +25,7 @@ def bench_django_template(runner, size):
     table = [xrange(size) for _ in xrange(size)]
     context = Context({"table": table})
 
-    runner.bench_func(template.render, context)
+    runner.bench_func('django_template', template.render, context)
 
 
 def prepare_cmd(runner, cmd):
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     }])
     django.setup()
 
-    runner = perf.Runner(name='django_template')
+    runner = perf.Runner()
     cmd = runner.argparser
     cmd.add_argument("--table-size",
                      type=int, default=DEFAULT_SIZE,
