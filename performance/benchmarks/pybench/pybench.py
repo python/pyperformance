@@ -201,10 +201,10 @@ class Test:
         samples = []
         for i in range(rounds):
             dt = self.test(loops)
-            dt /= total_loops
             if i < runner.args.warmups:
                 warmups.append((loops, dt))
             else:
+                dt /= total_loops
                 samples.append(dt)
 
         metadata = {'name': name,
@@ -217,7 +217,6 @@ class Test:
             self.bench.add_run(run)
         else:
             self.bench = perf.Benchmark([run])
-
 
     def test(self):
         """ Run the test.
