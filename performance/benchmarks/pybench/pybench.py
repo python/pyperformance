@@ -174,6 +174,7 @@ class Test:
     times = []
 
     def __init__(self, runner):
+        self.name = self.__class__.__name__
         self.runner = runner
         self.bench = None
         self.loops = self.runner.args.loops
@@ -191,7 +192,7 @@ class Test:
             timing low w/r to the test timing.
 
         """
-        name = 'pybench.%s' % self.__class__.__name__
+        name = 'pybench.%s' % self.name
         loops = self.loops
         total_loops = loops * self.inner_loops
 
@@ -263,7 +264,7 @@ class Benchmark:
             self.verbose = verbose
 
         # Init vars
-        self.tests = {}
+        self.tests = []
         if _debug:
             print('Getting machine details...')
         self.machine_details = get_machine_details()
@@ -295,22 +296,24 @@ class Benchmark:
                     limitnames.search(name) is None):
                 continue
             test = testclass(self.runner)
-            self.tests[name] = test
-        l = sorted(self.tests)
+            self.tests.append(test)
+
+        # Sort tests by their name
+        self.tests.sort(key=lambda test: test.name)
+
         if self.verbose:
-            for name in l:
-                print('  %s' % name)
+            for test in self.tests:
+                print('  %s' % test.name)
             print('--------------------------------------')
-            print('  %i tests found' % len(l))
+            print('  %i tests found' % len(self.tests))
             print()
 
     def list_benchmarks(self, args):
         self.load_tests(args, Setup)
-        tests = sorted(self.tests.items())
-        for name, test in tests:
-            print(name)
+        for test in self.tests:
+            print(test.name)
         print()
-        print("Total: %s benchmarks" % len(tests))
+        print("Total: %s benchmarks" % len(self.tests))
 
     def calibrate(self):
         print('Calibrating tests. Please wait...', end=' ')
@@ -320,12 +323,10 @@ class Benchmark:
             print()
             print('Test                             loops')
             print('-' * LINE)
-        tests = sorted(self.tests.items())
-        for name, test in tests:
+        for test in self.tests:
             test.calibrate_test(self.runner)
             if self.verbose:
-                # FIXME: remove overhead
-                print('%30s:  %s' % (name, test.loops))
+                print('%30s:  %s' % (test.name, test.loops))
         if self.verbose:
             print()
             print('Done with the calibration.')
@@ -334,14 +335,12 @@ class Benchmark:
         print()
 
     def run(self):
-        tests = sorted(self.tests.items())
         print('Running %i round(s) of the suite:' % self.rounds)
         print()
-        for j in range(len(tests)):
-            name, test = tests[j]
+        for test in self.tests:
             test.run(self.runner, self.rounds)
             self.suite.add_benchmark(test.bench)
-            print('%30s: %s' % (name, test.bench))
+            print('%30s: %s' % (test.name, test.bench))
         print()
 
     def print_header(self, title='Benchmark'):
