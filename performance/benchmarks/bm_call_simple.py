@@ -5,7 +5,7 @@ This measures simple function calls that are not methods, do not use varargs or
 kwargs, and do not use tuple unpacking.
 """
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 
@@ -140,8 +140,7 @@ def test_calls(loops):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='call_simple',
-                                         inner_loops=20)
+    runner = perf.Runner(name='call_simple')
     runner.metadata['description'] = ("Test the performance of simple "
                                       "Python-to-Python function calls")
-    runner.bench_sample_func(test_calls)
+    runner.bench_sample_func(test_calls, inner_loops=20)

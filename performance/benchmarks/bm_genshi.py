@@ -2,7 +2,7 @@
 Render a template using Genshi module.
 """
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 from genshi.template import MarkupTemplate, NewTextTemplate
@@ -50,7 +50,7 @@ BENCHMARKS = {
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='genshi')
+    runner = perf.Runner(name='genshi')
     runner.metadata['description'] = "Render a template using Genshi module"
     runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("benchmark", choices=sorted(BENCHMARKS))

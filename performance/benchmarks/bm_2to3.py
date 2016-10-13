@@ -3,7 +3,7 @@ import os.path
 import subprocess
 import sys
 
-import perf.text_runner
+import perf
 
 
 def bench_2to3(command, devnull_out):
@@ -17,7 +17,7 @@ def bench_2to3(command, devnull_out):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='2to3')
+    runner = perf.Runner(name='2to3')
 
     runner.metadata['description'] = "Performance of the Python 2to3 program"
     args = runner.parse_args()

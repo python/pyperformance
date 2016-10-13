@@ -12,7 +12,7 @@ Dirtily sped up by Simon Descarpentries
 Concurrency by Jason Stitt
 """
 
-import perf.text_runner
+import perf
 from six.moves import xrange, zip as izip
 
 DEFAULT_N = 130
@@ -67,7 +67,7 @@ def bench_spectral_norm(loops):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='spectral_norm')
+    runner = perf.Runner(name='spectral_norm')
     runner.metadata['description'] = (
         'MathWorld: "Hundred-Dollar, Hundred-Digit Challenge Problems", '
         'Challenge #3.')

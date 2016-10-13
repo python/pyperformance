@@ -10,7 +10,7 @@ Source: https://github.com/slowfrog/hexiom : hexiom2.py, level36.txt
 
 from __future__ import division, print_function
 
-import perf.text_runner
+import perf
 from six.moves import xrange, StringIO
 from six import u as u_lit, text_type
 
@@ -656,7 +656,7 @@ if __name__ == "__main__":
     if perf.python_has_jit():
         # PyPy needs more samples to warmup its JIT
         kw['warmups'] = 15
-    runner = perf.text_runner.TextRunner(name='hexiom', **kw)
+    runner = perf.Runner(name='hexiom', **kw)
     levels = sorted(LEVELS)
     runner.argparser.add_argument("--level", type=int,
                                   choices=levels,

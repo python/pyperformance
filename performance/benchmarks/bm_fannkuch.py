@@ -4,7 +4,7 @@
 # contributed by Sokolov Yura
 # modified by Tupteq
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 
@@ -53,7 +53,7 @@ def fannkuch(n):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='fannkuch')
+    runner = perf.Runner(name='fannkuch')
     runner.metadata['description'] = ("Test the performance of "
                                       "the Float benchmark")
 

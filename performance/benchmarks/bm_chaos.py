@@ -8,7 +8,7 @@ from __future__ import division, print_function
 import math
 import random
 
-import perf.text_runner
+import perf
 import six
 from six.moves import xrange
 
@@ -297,7 +297,7 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='chaos')
+    runner = perf.Runner(name='chaos')
     runner.metadata['description'] = "Create chaosgame-like fractals"
     runner.prepare_subprocess_args = prepare_cmd
     cmd = runner.argparser

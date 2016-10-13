@@ -17,7 +17,7 @@
 import hashlib
 import os
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 
@@ -652,7 +652,7 @@ def main(loops, filename):
 
 
 if __name__ == '__main__':
-    runner = perf.text_runner.TextRunner(name='pyflate')
+    runner = perf.Runner(name='pyflate')
     runner.metadata['description'] = "Pyflate benchmark"
 
     filename = os.path.join(os.path.dirname(__file__),

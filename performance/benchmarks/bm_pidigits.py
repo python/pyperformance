@@ -10,7 +10,7 @@ Adapted from code on http://shootout.alioth.debian.org/
 import itertools
 
 from six.moves import map as imap
-import perf.text_runner
+import perf
 
 
 DEFAULT_DIGITS = 2000
@@ -57,7 +57,7 @@ def prepare_cmd(runner, args):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='pidigits')
+    runner = perf.Runner(name='pidigits')
     runner.prepare_subprocess_args = prepare_cmd
 
     cmd = runner.argparser

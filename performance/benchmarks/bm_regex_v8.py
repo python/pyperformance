@@ -44,7 +44,7 @@
 import re
 
 # Third party imports
-import perf.text_runner
+import perf
 import six
 from six.moves import xrange
 
@@ -1787,7 +1787,7 @@ def bench_regex_v8(loops):
 
 
 if __name__ == '__main__':
-    runner = perf.text_runner.TextRunner(name='regex_v8')
+    runner = perf.Runner(name='regex_v8')
     runner.metadata['description'] = ("Test the performance of regexps "
                                       "using V8's benchmarks")
     runner.bench_sample_func(bench_regex_v8)

@@ -1,7 +1,7 @@
 from array import array
 import math
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 
@@ -399,7 +399,7 @@ BENCHMARKS = {
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='scimark')
+    runner = perf.Runner(name='scimark')
     runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("benchmark", choices=sorted(BENCHMARKS))
 

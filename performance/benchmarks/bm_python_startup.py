@@ -4,7 +4,7 @@ Benchmark Python startup.
 import sys
 import subprocess
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 
@@ -25,7 +25,7 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='python_startup', samples=10)
+    runner = perf.Runner(name='python_startup', samples=10)
     runner.argparser.add_argument("--no-site", action="store_true")
     runner.prepare_subprocess_args = prepare_cmd
 

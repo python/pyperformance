@@ -1,4 +1,4 @@
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 from sympy import expand, symbols, integrate, tan, summation
@@ -46,7 +46,7 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='sympy')
+    runner = perf.Runner(name='sympy')
     runner.metadata['description'] = "SymPy benchmark"
     runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("benchmark",

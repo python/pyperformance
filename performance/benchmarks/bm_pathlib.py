@@ -11,7 +11,7 @@ import shutil
 import sys
 import tempfile
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 if sys.version_info >= (3, 4):
@@ -71,7 +71,7 @@ def bench_pathlib(loops, tmp_path):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='pathlib')
+    runner = perf.Runner(name='pathlib')
     runner.metadata['description'] = ("Test the performance of "
                                       "pathlib operations.")
 

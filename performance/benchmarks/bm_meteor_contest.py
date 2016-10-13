@@ -13,7 +13,7 @@ from __future__ import division, print_function, absolute_import
 from bisect import bisect
 
 from six.moves import xrange
-import perf.text_runner
+import perf
 
 
 SOLVE_ARG = 60
@@ -213,7 +213,7 @@ def bench_meteor_contest(loops, board, pieces, solve_arg, fps, se_nh):
 
 
 def main():
-    runner = perf.text_runner.TextRunner(name='meteor_contest')
+    runner = perf.Runner(name='meteor_contest')
     runner.metadata['description'] = "Solver for Meteor Puzzle board"
 
     board, cti, pieces = get_puzzle(WIDTH, HEIGHT)

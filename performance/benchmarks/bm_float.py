@@ -1,5 +1,5 @@
 from six.moves import xrange
-import perf.text_runner
+import perf
 
 from math import sin, cos, sqrt
 
@@ -50,7 +50,7 @@ def benchmark(n):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='float')
+    runner = perf.Runner(name='float')
     runner.metadata['description'] = "Float benchmark"
 
     points = POINTS

@@ -9,7 +9,7 @@ data as a HTTP response's body.
 import socket
 
 from six.moves import xrange
-import perf.text_runner
+import perf
 
 from tornado.httpclient import AsyncHTTPClient
 from tornado.httpserver import HTTPServer
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     if perf.python_has_jit():
         # PyPy needs more samples to warmup its JIT
         kw['warmups'] = 30
-    runner = perf.text_runner.TextRunner(name='tornado_http', **kw)
+    runner = perf.Runner(name='tornado_http', **kw)
     runner.metadata['description'] = ("Test the performance of HTTP requests "
                                       "with Tornado.")
     runner.bench_sample_func(bench_tornado)

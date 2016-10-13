@@ -11,7 +11,7 @@ From http://www.lshift.net/blog/2008/10/29/toy-raytracer-in-python
 import array
 import math
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 
@@ -388,7 +388,7 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='raytrace')
+    runner = perf.Runner(name='raytrace')
     runner.prepare_subprocess_args = prepare_cmd
     cmd = runner.argparser
     cmd.add_argument("--width",

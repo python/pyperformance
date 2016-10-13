@@ -10,7 +10,7 @@ the re module's caching to force it to recompile every regex we give it.
 import re
 
 # Local imports
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 
@@ -63,7 +63,7 @@ def bench_regex_compile(loops, regexes):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='regex_compile')
+    runner = perf.Runner(name='regex_compile')
     runner.metadata['description'] = "Test regex compilation performance"
 
     regexes = capture_regexes()

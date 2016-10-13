@@ -1,7 +1,7 @@
 import sqlite3
 import math
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 
@@ -48,6 +48,6 @@ def bench_sqlite(loops):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='sqlite_synth')
+    runner = perf.Runner(name='sqlite_synth')
     runner.metadata['description'] = "Benchmark Python aggregate for SQLite"
     runner.bench_sample_func(bench_sqlite)

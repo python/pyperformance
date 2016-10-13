@@ -16,7 +16,6 @@ import time
 import platform
 
 import perf
-import perf.text_runner
 
 from CommandLine import Application
 
@@ -385,7 +384,7 @@ def prepare_subprocess_args(runner, cmd):
         cmd.append("--with-syscheck")
 
 
-class MyTextRunner(perf.text_runner.TextRunner):
+class MyTextRunner(perf.Runner):
     # FIXME: don't override private methods
 
     def _main(self):

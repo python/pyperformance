@@ -1,6 +1,6 @@
 """Microbenchmark for Python's sequence unpacking."""
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 
@@ -440,8 +440,7 @@ if __name__ == "__main__":
     benchmarks = {"tuple": bench_tuple_unpacking,
                   "list": bench_list_unpacking}
 
-    runner = perf.text_runner.TextRunner(name='unpack_sequence',
-                                         inner_loops=400)
+    runner = perf.Runner(name='unpack_sequence')
     runner.metadata['description'] = ("Microbenchmark for "
                                       "Python's sequence unpacking.")
     runner.prepare_subprocess_args = prepare_subprocess_args
@@ -456,4 +455,4 @@ if __name__ == "__main__":
     else:
         func = bench_all
 
-    runner.bench_sample_func(func)
+    runner.bench_sample_func(func, inner_loops=400)

@@ -9,7 +9,7 @@ import logging
 # Third party imports
 import six
 from six.moves import xrange
-import perf.text_runner
+import perf
 
 # A simple format for parametered logging
 FORMAT = 'important: %s'
@@ -125,7 +125,7 @@ BENCHMARKS = {
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='logging', inner_loops=10)
+    runner = perf.Runner(name='logging')
     runner.metadata['description'] = "Test the performance of logging."
     runner.prepare_subprocess_args = prepare_subprocess_args
 
@@ -150,4 +150,5 @@ if __name__ == "__main__":
     logger.setLevel(logging.WARNING)
 
     # Only check loggers in worker processes
-    runner.bench_sample_func(bench_func, logger, stream, runner.args.worker)
+    runner.bench_sample_func(bench_func, logger, stream, runner.args.worker,
+                             inner_loops=10)

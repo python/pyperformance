@@ -16,7 +16,7 @@ import sys
 import threading
 
 # Local imports
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 
@@ -61,7 +61,7 @@ def prepare_subprocess_args(runner, args):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='threading')
+    runner = perf.Runner(name='threading')
     runner.metadata[
         'description'] = "Test the performance of Python's threads."
     runner.prepare_subprocess_args = prepare_subprocess_args

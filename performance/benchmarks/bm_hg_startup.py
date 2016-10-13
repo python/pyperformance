@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 
-import perf.text_runner
+import perf
 from performance.venv import get_venv_program
 
 
@@ -37,7 +37,7 @@ def bench_startup(command, devnull_in, devnull_out):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='hg_startup', samples=25)
+    runner = perf.Runner(name='hg_startup', samples=25)
 
     runner.metadata['description'] = "Performance of the Python startup"
     args = runner.parse_args()

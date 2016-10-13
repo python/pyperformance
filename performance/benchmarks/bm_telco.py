@@ -21,7 +21,7 @@ import io
 import os
 from struct import unpack
 
-import perf.text_runner
+import perf
 import six
 from six.moves import xrange
 
@@ -87,6 +87,6 @@ def bench_telco(loops):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='telco')
+    runner = perf.Runner(name='telco')
     runner.metadata['description'] = "Telco decimal benchmark"
     runner.bench_sample_func(bench_telco)

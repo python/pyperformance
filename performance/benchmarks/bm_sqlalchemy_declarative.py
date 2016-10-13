@@ -1,4 +1,4 @@
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 from sqlalchemy import Column, ForeignKey, Integer, String
@@ -92,7 +92,7 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='sqlalchemy_declarative')
+    runner = perf.Runner(name='sqlalchemy_declarative')
     runner.metadata['description'] = ("SQLAlchemy Declarative benchmark "
                                       "using SQLite")
     runner.prepare_subprocess_args = prepare_cmd

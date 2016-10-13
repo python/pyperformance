@@ -18,7 +18,7 @@ import datetime
 import random
 import sys
 
-import perf.text_runner
+import perf
 import six
 from six.moves import xrange
 if six.PY3:
@@ -254,7 +254,7 @@ def prepare_cmd(runner, args):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='pickle')
+    runner = perf.Runner(name='pickle')
     runner.metadata['description'] = "Test the performance of pickling."
     runner.prepare_subprocess_args = prepare_cmd
 
@@ -271,7 +271,6 @@ if __name__ == "__main__":
     runner.name = options.benchmark
     if options.pure_python:
         runner.name += "_pure_python"
-    runner.inner_loops = inner_loops
 
     if not options.pure_python:
         # C accelerators are enabled by default on 3.x
@@ -293,4 +292,4 @@ if __name__ == "__main__":
     runner.metadata['pickle_protocol'] = str(options.protocol)
     runner.metadata['pickle_module'] = pickle.__name__
 
-    runner.bench_sample_func(benchmark, pickle, options)
+    runner.bench_sample_func(benchmark, pickle, options, inner_loops=inner_loops)

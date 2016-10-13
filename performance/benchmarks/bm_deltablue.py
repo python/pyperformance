@@ -20,7 +20,7 @@ the layout & logic from the original. (Ugh.)
 """
 from __future__ import print_function
 
-import perf.text_runner
+import perf
 
 
 # The JS variant implements "OrderedCollection", which basically completely
@@ -618,7 +618,7 @@ def delta_blue(n):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='deltablue')
+    runner = perf.Runner(name='deltablue')
     runner.metadata['description'] = "DeltaBlue benchmark"
 
     n = 100

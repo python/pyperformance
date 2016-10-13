@@ -11,7 +11,7 @@ based on a Java version:
 
 from __future__ import print_function
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 
@@ -418,7 +418,7 @@ class Richards(object):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='richards')
+    runner = perf.Runner(name='richards')
     runner.metadata['description'] = "The Richards benchmark"
 
     richard = Richards()

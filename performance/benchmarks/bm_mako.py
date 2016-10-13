@@ -10,7 +10,7 @@ Includes:
 import functools
 import sys
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 # Mako imports (w/o markupsafe)
@@ -133,7 +133,7 @@ def bench_mako(runner, table_size, nparagraph, img_count):
 
 
 if __name__ == "__main__":
-    runner = perf.text_runner.TextRunner(name='mako')
+    runner = perf.Runner(name='mako')
     runner.metadata['description'] = "Mako templates"
     runner.metadata['mako_version'] = mako.__version__
 

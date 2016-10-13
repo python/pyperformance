@@ -1,7 +1,7 @@
 import functools
 
 import six
-import perf.text_runner
+import perf
 
 from chameleon import PageTemplate
 
@@ -20,7 +20,7 @@ tal:content="python: d" />
 
 
 def main():
-    runner = perf.text_runner.TextRunner(name='chameleon')
+    runner = perf.Runner(name='chameleon')
     runner.metadata['description'] = "Chameleon template"
 
     tmpl = PageTemplate(BIGTABLE_ZPT)

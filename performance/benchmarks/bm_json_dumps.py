@@ -1,7 +1,7 @@
 import json
 import sys
 
-import perf.text_runner
+import perf
 import six
 from six.moves import xrange
 
@@ -31,7 +31,7 @@ def prepare_cmd(runner, cmd):
 
 
 def main():
-    runner = perf.text_runner.TextRunner(name='json_dumps')
+    runner = perf.Runner(name='json_dumps')
     runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("--cases",
                                   help="Comma separated list of cases. Available cases: %s. By default, run all cases."

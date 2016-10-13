@@ -14,7 +14,7 @@ import sys
 import tempfile
 from collections import defaultdict
 
-import perf.text_runner
+import perf
 import six
 from six.moves import xrange
 
@@ -223,7 +223,7 @@ if __name__ == "__main__":
     else:
         default_etmodule = "xml.etree.cElementTree"
 
-    runner = perf.text_runner.TextRunner(name='xml_etree')
+    runner = perf.Runner(name='xml_etree')
     runner.metadata['description'] = ("Test the performance of "
                                       "ElementTree XML processing.")
     runner.prepare_subprocess_args = prepare_subprocess_args

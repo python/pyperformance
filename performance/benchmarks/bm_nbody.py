@@ -11,7 +11,7 @@ modified from the Shootout version:
 # Contributed by Kevin Carson.
 # Modified by Tupteq, Fredrik Johansson, and Daniel Nanz.
 
-import perf.text_runner
+import perf
 from six.moves import xrange
 
 __contact__ = "collinwinter@google.com (Collin Winter)"
@@ -138,7 +138,7 @@ def prepare_cmd(runner, cmd):
 
 
 if __name__ == '__main__':
-    runner = perf.text_runner.TextRunner(name='nbody')
+    runner = perf.Runner(name='nbody')
     runner.metadata['description'] = "n-body benchmark"
     runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("--iterations",
