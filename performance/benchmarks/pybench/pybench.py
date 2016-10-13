@@ -1,23 +1,17 @@
 #!/usr/bin/env python3
-
 """ A Python Benchmark Suite
 
 """
 # Tests may include features in later Python versions, but these
 # should then be embedded in try-except clauses in the configuration
 # module Setup.py.
-#
 
 from __future__ import print_function
 
 import re
 import sys
-import time
-import platform
 
 import perf
-
-from CommandLine import Application
 
 
 # pybench Copyright
@@ -48,83 +42,11 @@ __version__ = '2.1'
 
 # Constants
 
-# Second fractions
-MILLI_SECONDS = 1e3
-MICRO_SECONDS = 1e6
-NANO_SECONDS = 1e9
-
-# Percent unit
-PERCENT = 100
-
-# Horizontal line length
-LINE = 79
-
-# Minimum test run-time
-MIN_TEST_RUNTIME = 1e-3
-
-# Number of calibration loops to run for each calibration run
-CALIBRATION_LOOPS = 20
-
-# Allow skipping calibration ?
-ALLOW_SKIPPING_CALIBRATION = 1
-
 # Print debug information ?
 _debug = 0
 
-# Helpers
-
-
-def get_machine_details():
-
-    if _debug:
-        print('Getting machine details...')
-    buildno, builddate = platform.python_build()
-    python = platform.python_version()
-    # XXX this is now always UCS4, maybe replace it with 'PEP393' in 3.3+?
-    if sys.maxunicode == 65535:
-        # UCS2 build (standard)
-        unitype = 'UCS2'
-    else:
-        # UCS4 build (most recent Linux distros)
-        unitype = 'UCS4'
-    bits, linkage = platform.architecture()
-    return {
-        'platform': platform.platform(),
-        'processor': platform.processor(),
-        'executable': sys.executable,
-        'implementation': getattr(platform, 'python_implementation',
-                                  lambda: 'n/a')(),
-        'python': python,
-        'compiler': platform.python_compiler(),
-        'buildno': buildno,
-        'builddate': builddate,
-        'unicode': unitype,
-        'bits': bits,
-    }
-
-
-# FIXME: use perf metadata?
-def print_machine_details(d, indent=''):
-
-    l = ['Machine Details:',
-         '   Platform ID:    %s' % d.get('platform', 'n/a'),
-         '   Processor:      %s' % d.get('processor', 'n/a'),
-         '',
-         'Python:',
-         '   Implementation: %s' % d.get('implementation', 'n/a'),
-         '   Executable:     %s' % d.get('executable', 'n/a'),
-         '   Version:        %s' % d.get('python', 'n/a'),
-         '   Compiler:       %s' % d.get('compiler', 'n/a'),
-         '   Bits:           %s' % d.get('bits', 'n/a'),
-         '   Build:          %s (#%s)' % (d.get('builddate', 'n/a'),
-                                          d.get('buildno', 'n/a')),
-         '   Unicode:        %s' % d.get('unicode', 'n/a'),
-         ]
-    joiner = '\n' + indent
-    print(indent + joiner.join(l) + '\n')
 
 # Test baseclass
-
 
 class Test:
 
@@ -162,62 +84,25 @@ class Test:
     # overhead per test round should be less than 1 second.
     operations = 1
 
-    # Number of inner loops
-    inner_loops = 1
+    # Number of inner loops (int)
+    inner_loops = None
 
     # Internal variables
 
     # Mark this class as implementing a test
+    # FIXME: remove this?
     is_a_test = 1
 
-    # List of test run timings
-    times = []
-
-    def __init__(self, runner):
+    def __init__(self):
         self.name = self.__class__.__name__
-        self.runner = runner
-        self.bench = None
-        self.loops = self.runner.args.loops
-        self._calibrate_warmups = None
-
-    def calibrate_test(self, runner):
-        if self.loops:
-            return
-        # FIXME: don't use private methods of the perf modume!
-        self.loops, self._calibrate_warmups = runner._calibrate(self.test)
 
     def run(self, runner, rounds):
-        """ Run the test in two phases: first calibrate, then
-            do the actual test. Be careful to keep the calibration
-            timing low w/r to the test timing.
-
-        """
         name = 'pybench.%s' % self.name
-        loops = self.loops
-        total_loops = loops * self.inner_loops
 
-        warmups = []
-        if self._calibrate_warmups:
-            warmups.extend(self._calibrate_warmups)
-        samples = []
-        for i in range(rounds):
-            dt = self.test(loops)
-            if i < runner.args.warmups:
-                warmups.append((loops, dt))
-            else:
-                dt /= total_loops
-                samples.append(dt)
-
-        metadata = {'name': name,
-                    'pybench_version': __version__,
-                    'loops': loops}
-        if self.inner_loops != 1:
-            metadata['inner_loops'] = self.inner_loops
-        run = perf.Run(samples, warmups=warmups, metadata=metadata)
-        if self.bench is not None:
-            self.bench.add_run(run)
-        else:
-            self.bench = perf.Benchmark([run])
+        kw = {}
+        if self.inner_loops is not None:
+            kw['inner_loops'] = self.inner_loops
+        return runner.bench_sample_func(name, self.test, **kw)
 
     def test(self):
         """ Run the test.
@@ -234,11 +119,11 @@ class Test:
 # This has to be done after the definition of the Test class, since
 # the Setup module will import subclasses using this class.
 
+# FIXME: break this circular dependency
 import Setup   # noqa
 
+
 # Benchmark base class
-
-
 class Benchmark:
 
     # Name of the benchmark
@@ -253,39 +138,24 @@ class Benchmark:
     # Produce verbose output ?
     verbose = 0
 
-    # Dictionary with the machine details
-    machine_details = None
-
     def __init__(self, runner, name, verbose=None):
 
-        self.name = '%04i-%02i-%02i %02i:%02i:%02i' % \
-                    (time.localtime(time.time())[:6])
         if verbose is not None:
             self.verbose = verbose
 
         # Init vars
         self.tests = []
-        if _debug:
-            print('Getting machine details...')
-        self.machine_details = get_machine_details()
 
-        self.suite = perf.BenchmarkSuite()
         self.runner = runner
 
     def load_tests(self, args, setupmod):
         limitnames = args.benchmarks
         if limitnames:
-            if _debug:
-                print('* limiting test names to one with substring "%s"' %
-                      limitnames)
             limitnames = re.compile(limitnames, re.I)
         else:
             limitnames = None
 
         # Add tests
-        if self.verbose:
-            print('Searching for tests ...')
-            print('--------------------------------------')
         for testclass in setupmod.__dict__.values():
             if not hasattr(testclass, 'is_a_test'):
                 continue
@@ -295,18 +165,11 @@ class Benchmark:
             if (limitnames is not None and
                     limitnames.search(name) is None):
                 continue
-            test = testclass(self.runner)
+            test = testclass()
             self.tests.append(test)
 
         # Sort tests by their name
         self.tests.sort(key=lambda test: test.name)
-
-        if self.verbose:
-            for test in self.tests:
-                print('  %s' % test.name)
-            print('--------------------------------------')
-            print('  %i tests found' % len(self.tests))
-            print()
 
     def list_benchmarks(self, args):
         self.load_tests(args, Setup)
@@ -315,67 +178,12 @@ class Benchmark:
         print()
         print("Total: %s benchmarks" % len(self.tests))
 
-    def calibrate(self):
-        print('Calibrating tests. Please wait...', end=' ')
-        sys.stdout.flush()
-        if self.verbose:
-            print()
-            print()
-            print('Test                             loops')
-            print('-' * LINE)
-        for test in self.tests:
-            test.calibrate_test(self.runner)
-            if self.verbose:
-                print('%30s:  %s' % (test.name, test.loops))
-        if self.verbose:
-            print()
-            print('Done with the calibration.')
-        else:
-            print('done.')
-        print()
-
     def run(self):
-        print('Running %i round(s) of the suite:' % self.rounds)
-        print()
         for test in self.tests:
             test.run(self.runner, self.rounds)
-            self.suite.add_benchmark(test.bench)
-            print('%30s: %s' % (test.name, test.bench))
-        print()
-
-    def print_header(self, title='Benchmark'):
-
-        print('-' * LINE)
-        print('%s: %s' % (title, self.name))
-        print('-' * LINE)
-        print()
-        print('    Rounds: %s' % self.rounds)
-        print()
-        if self.machine_details:
-            print_machine_details(self.machine_details, indent='    ')
-            print()
-
-    def print_benchmark(self, limitnames=None):
-
-        print('Test                          '
-              '   median')
-        print('-' * LINE)
-        total_avg_time = 0.0
-
-        for bench in self.suite.get_benchmarks():
-            median = bench.median()
-            total_avg_time += median
-            print('%30s:  %5.0f ns' %
-                  (bench.get_name(), median * NANO_SECONDS,))
-        print('-' * LINE)
-        print('Totals:                        '
-              ' %6.1f us' %
-              (total_avg_time * MICRO_SECONDS,))
-        print()
 
 
 def add_cmdline_args(cmd, args):
-    cmd.extend(('--min-time', str(args.min_time)))
     if args.benchmarks:
         cmd.extend(("--benchmarks", args.benchmarks))
     if args.with_gc:
@@ -384,180 +192,78 @@ def add_cmdline_args(cmd, args):
         cmd.append("--with-syscheck")
 
 
-class MyTextRunner(perf.Runner):
-    # FIXME: don't override private methods
+def main():
+    metadata = {'pybench_version': __version__}
+    runner = perf.Runner(metadata=metadata,
+                         add_cmdline_args=add_cmdline_args)
 
-    def _main(self):
-        start_time = perf.monotonic_clock()
+    cmd = runner.argparser
+    cmd.add_argument("-b", "--benchmarks", metavar="REGEX",
+                     help='run only tests with names matching REGEX')
+    cmd.add_argument('--with-gc', action="store_true",
+                     help='enable garbage collection')
+    cmd.add_argument('--with-syscheck', action="store_true",
+                     help='use default sys check interval')
+    cmd.add_argument('--copyright', action="store_true",
+                     help='show copyright')
+    cmd.add_argument('--list', action="store_true",
+                     help='display the list of benchmarks and exit')
 
-        self.parse_args()
+    args = runner.parse_args()
 
-        self._cpu_affinity()
+    bench = Benchmark(runner, args.output, verbose=runner.args.verbose)
+    bench.rounds = runner.args.warmups + runner.args.samples
 
-        suite = perf.BenchmarkSuite()
-        try:
-            self._spawn_workers(suite, start_time)
-        except KeyboardInterrupt:
-            print("Interrupted: exit", file=sys.stderr)
-            sys.exit(1)
-
-        return suite
-
-    def _spawn_workers(self, suite, start_time):
-        quiet = self.args.quiet
-        stream = self._stream()
-        nprocess = self.args.processes
-
-        for process in range(1, nprocess + 1):
-            start = perf.monotonic_clock()
-            run_suite = self._spawn_worker_suite()
-            dt = perf.monotonic_clock() - start
-
-            for run_bench in run_suite.get_benchmarks():
-                suite._add_benchmark_runs(run_bench)
-                # print("Process %s: %s: %s" % (process, run_bench.get_name(), run_bench))
-
-            if not quiet:
-                print('* Round %s/%s done in %.1f seconds.'
-                      % (process, nprocess, dt))
-
-        if not quiet:
-            print(file=stream)
-
-
-class PyBenchCmdline(Application):
-
-    header = ("PYBENCH - a benchmark test suite for Python "
-              "interpreters/compilers.")
-
-    version = __version__
-
-    copyright = __copyright__
-
-    def main(self):
-        runner = MyTextRunner(add_cmdline_args=add_cmdline_args)
-
-        # FIXME: add about to argparser help
-#         about = """\
-# The normal operation is to run the suite and display the
-# results. Use -f to save them for later reuse or comparisons.
-#
-# Examples:
-#
-# python2.1 pybench.py -f p21.json
-# python2.5 pybench.py -f p25.json
-# python pybench.py -s p25.json -c p21.json
-# """
-
-        parser = runner.argparser
-        parser.add_argument(
-            "-b", "--benchmarks", metavar="REGEX",
-            help='run only tests with names matching REGEX')
-        parser.add_argument('--with-gc', action="store_true",
-                            help='enable garbage collection')
-        parser.add_argument('--with-syscheck', action="store_true",
-                            help='use default sys check interval')
-        parser.add_argument('--copyright', action="store_true",
-                            help='show copyright')
-        parser.add_argument('--list', action="store_true",
-                            help='display the list of benchmarks and exit')
-
-        args = runner.parse_args()
-        self.verbose = args.verbose
-
-        orig_stdout = sys.stdout
-        if args.stdout:
-            # if --stdout is used: redirect all messages to stderr
-            sys.stdout = sys.stderr
-
-        # Create benchmark object
-        bench = Benchmark(runner, args.output, verbose=runner.args.verbose)
-        bench.rounds = runner.args.warmups + runner.args.samples
-
-        if args.copyright:
-            self.handle__copyright(None)
-            sys.exit()
-
-        if args.list:
-            bench.list_benchmarks(args)
-            sys.exit()
-
-        if not runner.args.worker:
-            bench.print_header()
-
-            bench_suite = runner._main()
-            bench.suite = bench_suite
-
-            # Ring bell
-            sys.stderr.write('\007')
-        else:
-            # FIXME: use TextRunner._main(), don't hardcode methods
-            runner._cpu_affinity()
-
-            bench_suite = self.worker(bench, runner)
-
-        bench.print_benchmark()
-
-        if args.output:
-            bench_suite.dump(args.output)
-
-        if args.append:
-            perf.add_runs(args.append, bench_suite)
-
-        if args.stdout:
-            bench_suite.dump(orig_stdout)
-
-    def worker(self, bench, runner):
-        print('-' * LINE)
-        print('PYBENCH %s' % __version__)
-        print('-' * LINE)
-        print('* using %s %s' % (
-            getattr(platform, 'python_implementation', lambda: 'Python')(),
-            ' '.join(sys.version.split())))
-
-        # Switch off garbage collection
-        if not runner.args.with_gc:
-            try:
-                import gc
-            except ImportError:
-                print('* Python version doesn\'t support garbage collection')
-            else:
-                try:
-                    gc.disable()
-                except NotImplementedError:
-                    print('* Python version doesn\'t support gc.disable')
-                else:
-                    print('* disabled garbage collection')
-
-        # "Disable" sys check interval
-        if not runner.args.with_syscheck:
-            # Too bad the check interval uses an int instead of a long...
-            value = 2147483647
-            try:
-                sys.setcheckinterval(value)
-            except (AttributeError, NotImplementedError):
-                print('* Python version doesn\'t support sys.setcheckinterval')
-            else:
-                print('* system check interval set to maximum: %s' % value)
-
+    if args.copyright:
+        print(__copyright__.strip())
         print()
+        sys.exit()
 
-        if runner.args.output:
-            print('Creating benchmark: %s (rounds=%i)' %
-                  (runner.args.output, bench.rounds))
-            print()
+    if args.list:
+        bench.list_benchmarks(args)
+        sys.exit()
 
-        bench.load_tests(runner.args, Setup)
+    # Switch off garbage collection
+    if not args.with_gc:
         try:
-            bench.calibrate()
-            bench.run()
-        except KeyboardInterrupt:
-            print()
-            print('*** KeyboardInterrupt -- Aborting')
-            print()
-            return
-        return bench.suite
+            import gc
+        except ImportError:
+            print('* Python version doesn\'t support garbage collection',
+                  file=sys.stderr)
+        else:
+            try:
+                gc.disable()
+            except NotImplementedError:
+                print('* Python version doesn\'t support gc.disable',
+                      file=sys.stderr)
+            else:
+                if args.verbose:
+                    print('* disabled garbage collection',
+                          file=sys.stderr)
+
+    # "Disable" sys check interval
+    if not args.with_syscheck:
+        # Too bad the check interval uses an int instead of a long...
+        value = 2147483647
+        try:
+            sys.setcheckinterval(value)
+        except (AttributeError, NotImplementedError):
+            print('* Python version doesn\'t support sys.setcheckinterval',
+                  file=sys.stderr)
+        else:
+            if args.verbose:
+                print('* system check interval set to maximum: %s' % value,
+                      file=sys.stderr)
+
+    bench.load_tests(runner.args, Setup)
+    try:
+        bench.run()
+    except KeyboardInterrupt:
+        print()
+        print('*** KeyboardInterrupt -- Aborting')
+        print()
+        return
 
 
 if __name__ == '__main__':
-    PyBenchCmdline()
+    main()

@@ -14,10 +14,7 @@ TODO
 * Add benchmarks from the Pyston benchmark suite:
   https://github.com/dropbox/pyston-perf
   and convince Pyston to use performance :-)
-* pybench: don't use private perf submodules/functions
 * Remove deprecated threading tests? bench.py -b threading doesn't run anything
-* pybench: calibrate once in the main process, then pass the number of loops
-  to workers? Or rewrite pybench as N subenchmarks?
 * html5lib: 1 warmup, 3 runs: run 2 is always 10% slower!?
 
 
