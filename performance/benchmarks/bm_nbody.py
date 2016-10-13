@@ -133,14 +133,13 @@ def bench_nbody(loops, reference, iterations):
     return perf.perf_counter() - t0
 
 
-def prepare_cmd(runner, cmd):
-    cmd.extend(("--iterations", str(runner.args.iterations)))
+def add_cmdline_args(cmd, args):
+    cmd.extend(("--iterations", str(args.iterations)))
 
 
 if __name__ == '__main__':
-    runner = perf.Runner()
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "n-body benchmark"
-    runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("--iterations",
                                   type=int, default=DEFAULT_ITERATIONS,
                                   help="Number of nbody advance() iterations "

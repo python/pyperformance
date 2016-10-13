@@ -113,8 +113,8 @@ def bench_formatted_output(loops, logger, stream, check):
     return dt
 
 
-def prepare_subprocess_args(runner, args):
-    args.append(runner.args.benchmark)
+def add_cmdline_args(cmd, args):
+    cmd.append(args.benchmark)
 
 
 BENCHMARKS = {
@@ -125,9 +125,8 @@ BENCHMARKS = {
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "Test the performance of logging."
-    runner.prepare_subprocess_args = prepare_subprocess_args
 
     parser = runner.argparser
     parser.add_argument("benchmark", choices=sorted(BENCHMARKS))

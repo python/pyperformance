@@ -287,19 +287,18 @@ def main(runner, args):
                       args.filename, args.rng_seed)
 
 
-def prepare_cmd(runner, cmd):
-    cmd.append("--width=%s" % runner.args.width)
-    cmd.append("--height=%s" % runner.args.height)
-    cmd.append("--thickness=%s" % runner.args.thickness)
-    cmd.append("--rng-seed=%s" % runner.args.rng_seed)
-    if runner.args.filename:
-        cmd.extend(("--filename", runner.args.filename))
+def add_cmdline_args(cmd, args):
+    cmd.append("--width=%s" % args.width)
+    cmd.append("--height=%s" % args.height)
+    cmd.append("--thickness=%s" % args.thickness)
+    cmd.append("--rng-seed=%s" % args.rng_seed)
+    if args.filename:
+        cmd.extend(("--filename", args.filename))
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "Create chaosgame-like fractals"
-    runner.prepare_subprocess_args = prepare_cmd
     cmd = runner.argparser
     cmd.add_argument("--thickness",
                      type=float, default=DEFAULT_THICKNESS,

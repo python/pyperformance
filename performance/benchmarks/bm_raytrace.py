@@ -380,16 +380,15 @@ def bench_raytrace(loops, width, height, filename):
     return dt
 
 
-def prepare_cmd(runner, cmd):
-    cmd.append("--width=%s" % runner.args.width)
-    cmd.append("--height=%s" % runner.args.height)
-    if runner.args.filename:
-        cmd.extend(("--filename", runner.args.filename))
+def add_cmdline_args(cmd, args):
+    cmd.append("--width=%s" % args.width)
+    cmd.append("--height=%s" % args.height)
+    if args.filename:
+        cmd.extend(("--filename", args.filename))
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
-    runner.prepare_subprocess_args = prepare_cmd
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     cmd = runner.argparser
     cmd.add_argument("--width",
                      type=int, default=DEFAULT_WIDTH,

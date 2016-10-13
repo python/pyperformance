@@ -52,13 +52,12 @@ def calc_ndigits(n):
     return list(islice(gen_pi_digits(), n))
 
 
-def prepare_cmd(runner, args):
-    args.extend(("--digits", str(runner.args.digits)))
+def add_cmdline_args(cmd, args):
+    cmd.extend(("--digits", str(args.digits)))
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
-    runner.prepare_subprocess_args = prepare_cmd
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
 
     cmd = runner.argparser
     cmd.add_argument("--digits", type=int, default=DEFAULT_DIGITS,

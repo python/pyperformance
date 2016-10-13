@@ -208,11 +208,11 @@ def bench_etree(iterations, etree, bench_func):
 BENCHMARKS = 'parse iterparse generate process'.split()
 
 
-def prepare_subprocess_args(runner, args):
-    args.extend(("--etree-module", runner.args.etree_module))
-    if runner.args.no_accelerator:
-        args.append("--no-accelerator")
-    args.append(runner.args.benchmark)
+def add_cmdline_args(cmd, args):
+    cmd.extend(("--etree-module", args.etree_module))
+    if args.no_accelerator:
+        cmd.append("--no-accelerator")
+    cmd.append(args.benchmark)
 
 
 if __name__ == "__main__":
@@ -223,10 +223,9 @@ if __name__ == "__main__":
     else:
         default_etmodule = "xml.etree.cElementTree"
 
-    runner = perf.Runner()
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = ("Test the performance of "
                                       "ElementTree XML processing.")
-    runner.prepare_subprocess_args = prepare_subprocess_args
 
     parser = runner.argparser
     parser.add_argument(

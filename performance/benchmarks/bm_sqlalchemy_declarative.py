@@ -87,15 +87,14 @@ def bench_sqlalchemy(loops, npeople):
     return total_dt
 
 
-def prepare_cmd(runner, cmd):
-    cmd.extend(("--rows", str(runner.args.rows)))
+def add_cmdline_args(cmd, args):
+    cmd.extend(("--rows", str(args.rows)))
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = ("SQLAlchemy Declarative benchmark "
                                       "using SQLite")
-    runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("--rows", type=int, default=100,
                                   help="Number of rows (default: 100)")
 

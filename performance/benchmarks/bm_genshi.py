@@ -39,8 +39,8 @@ def bench_genshi(loops, tmpl_cls, tmpl_str):
     return perf.perf_counter() - t0
 
 
-def prepare_cmd(runner, cmd):
-    cmd.append(runner.args.benchmark)
+def add_cmdline_args(cmd, args):
+    cmd.append(args.benchmark)
 
 
 BENCHMARKS = {
@@ -50,9 +50,8 @@ BENCHMARKS = {
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "Render a template using Genshi module"
-    runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("benchmark", choices=sorted(BENCHMARKS))
 
     args = runner.parse_args()

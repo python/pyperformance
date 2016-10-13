@@ -647,12 +647,12 @@ def main(loops, level):
     return dt
 
 
-def prepare_subprocess_args(runner, args):
-    args.extend(("--level", str(runner.args.level)))
+def add_cmdline_args(cmd, args):
+    cmd.extend(("--level", str(args.level)))
 
 
 if __name__ == "__main__":
-    kw = {}
+    kw = {'add_cmdline_args': add_cmdline_args}
     if perf.python_has_jit():
         # PyPy needs more samples to warmup its JIT
         kw['warmups'] = 15
@@ -663,7 +663,6 @@ if __name__ == "__main__":
                                   default=DEFAULT_LEVEL,
                                   help="Hexiom board level (default: %s)"
                                        % DEFAULT_LEVEL)
-    runner.prepare_subprocess_args = prepare_subprocess_args
 
     args = runner.parse_args()
     runner.metadata['description'] = "Solver of Hexiom board game"

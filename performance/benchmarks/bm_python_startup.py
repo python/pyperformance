@@ -19,15 +19,14 @@ def bench_startup(loops, command):
     return perf.perf_counter() - t0
 
 
-def prepare_cmd(runner, cmd):
-    if runner.args.no_site:
+def add_cmdline_args(cmd, args):
+    if args.no_site:
         cmd.append("--no-site")
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(samples=10)
+    runner = perf.Runner(samples=10, add_cmdline_args=add_cmdline_args)
     runner.argparser.add_argument("--no-site", action="store_true")
-    runner.prepare_subprocess_args = prepare_cmd
 
     runner.metadata['description'] = "Performance of the Python startup"
     args = runner.parse_args()

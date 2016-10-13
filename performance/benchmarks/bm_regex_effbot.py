@@ -156,16 +156,15 @@ def bench_regex_effbot(loops):
 bench_regex_effbot.data = None
 
 
-def prepare_cmd(runner, cmd):
-    if runner.args.force_bytes:
+def add_cmdline_args(cmd, args):
+    if args.force_bytes:
         cmd.append("--force_bytes")
 
 
 if __name__ == '__main__':
-    runner = perf.Runner()
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = ("Test the performance of regexps "
                                       "using Fredik Lundh's benchmarks.")
-    runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("-B", "--force_bytes", action="store_true",
                                   help="Force testing bytes regexps "
                                        "under 3.x.")

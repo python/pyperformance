@@ -431,19 +431,18 @@ def bench_all(loops):
     return dt1 + dt2
 
 
-def prepare_subprocess_args(runner, args):
-    if runner.args.benchmark:
-        args.append(runner.args.benchmark)
+def add_cmdline_args(cmd, args):
+    if args.benchmark:
+        cmd.append(args.benchmark)
 
 
 if __name__ == "__main__":
     benchmarks = {"tuple": bench_tuple_unpacking,
                   "list": bench_list_unpacking}
 
-    runner = perf.Runner()
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = ("Microbenchmark for "
                                       "Python's sequence unpacking.")
-    runner.prepare_subprocess_args = prepare_subprocess_args
 
     runner.argparser.add_argument("benchmark", nargs="?",
                                   choices=sorted(benchmarks))

@@ -24,15 +24,13 @@ def bench_json_dumps(data):
             json.dumps(obj)
 
 
-def prepare_cmd(runner, cmd):
-    args = runner.args
+def add_cmdline_args(cmd, args):
     if args.cases:
         cmd.extend(("--cases", args.cases))
 
 
 def main():
-    runner = perf.Runner()
-    runner.prepare_subprocess_args = prepare_cmd
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.argparser.add_argument("--cases",
                                   help="Comma separated list of cases. Available cases: %s. By default, run all cases."
                                        % ', '.join(CASES))

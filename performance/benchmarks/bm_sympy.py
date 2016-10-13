@@ -41,14 +41,13 @@ def bench_sympy(loops, func):
     return dt
 
 
-def prepare_cmd(runner, cmd):
-    cmd.append(runner.args.benchmark)
+def add_cmdline_args(cmd, args):
+    cmd.append(args.benchmark)
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "SymPy benchmark"
-    runner.prepare_subprocess_args = prepare_cmd
     runner.argparser.add_argument("benchmark",
                                   choices=("expand", "integrate", "sum",
                                            "str"))

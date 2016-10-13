@@ -52,19 +52,18 @@ def test_threaded_count(loops, num_threads):
     return perf.perf_counter() - t0
 
 
-def prepare_subprocess_args(runner, args):
-    if runner.args.num_threads:
-        args.extend(('--num_threads', str(runner.args.num_threads)))
-    if runner.args.check_interval:
-        args.extend(('--check_interval', str(runner.args.check_interval)))
-    args.append(runner.args.benchmark)
+def add_cmdline_args(cmd, args):
+    if args.num_threads:
+        cmd.extend(('--num_threads', str(args.num_threads)))
+    if args.check_interval:
+        cmd.extend(('--check_interval', str(args.check_interval)))
+    cmd.append(args.benchmark)
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata[
         'description'] = "Test the performance of Python's threads."
-    runner.prepare_subprocess_args = prepare_subprocess_args
 
     benchmarks = {"iterative_count": test_iterative_count,
                   "threaded_count": test_threaded_count}
