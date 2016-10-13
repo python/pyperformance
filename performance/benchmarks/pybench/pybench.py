@@ -175,7 +175,7 @@ class Test:
 
     def __init__(self, runner):
         self.runner = runner
-        self.bench = perf.Benchmark()
+        self.bench = None
         self.loops = self.runner.args.loops
         self._calibrate_warmups = None
 
@@ -183,8 +183,7 @@ class Test:
         if self.loops:
             return
         # FIXME: don't use private methods of the perf modume!
-        self.loops, self._calibrate_warmups = runner._calibrate(
-            self.bench, self.test)
+        self.loops, self._calibrate_warmups = runner._calibrate(self.test)
 
     def run(self, runner, rounds):
         """ Run the test in two phases: first calibrate, then
@@ -214,7 +213,11 @@ class Test:
         if self.inner_loops != 1:
             metadata['inner_loops'] = self.inner_loops
         run = perf.Run(samples, warmups=warmups, metadata=metadata)
-        self.bench.add_run(run)
+        if self.bench is not None:
+            self.bench.add_run(run)
+        else:
+            self.bench = perf.Benchmark([run])
+
 
     def test(self):
         """ Run the test.
@@ -294,7 +297,6 @@ class Benchmark:
                 continue
             test = testclass(self.runner)
             self.tests[name] = test
-            self.suite.add_benchmark(test.bench)
         l = sorted(self.tests)
         if self.verbose:
             for name in l:
@@ -339,6 +341,7 @@ class Benchmark:
         for j in range(len(tests)):
             name, test = tests[j]
             test.run(self.runner, self.rounds)
+            self.suite.add_benchmark(test.bench)
             print('%30s: %s' % (name, test.bench))
         print()
 
@@ -373,8 +376,7 @@ class Benchmark:
         print()
 
 
-def prepare_subprocess_args(runner, cmd):
-    args = runner.args
+def add_cmdline_args(cmd, args):
     cmd.extend(('--min-time', str(args.min_time)))
     if args.benchmarks:
         cmd.extend(("--benchmarks", args.benchmarks))
@@ -435,7 +437,7 @@ class PyBenchCmdline(Application):
     copyright = __copyright__
 
     def main(self):
-        runner = MyTextRunner(name='pybench')
+        runner = MyTextRunner(add_cmdline_args=add_cmdline_args)
 
         # FIXME: add about to argparser help
 #         about = """\
@@ -461,7 +463,6 @@ class PyBenchCmdline(Application):
                             help='show copyright')
         parser.add_argument('--list', action="store_true",
                             help='display the list of benchmarks and exit')
-        runner.prepare_subprocess_args = prepare_subprocess_args
 
         args = runner.parse_args()
         self.verbose = args.verbose
