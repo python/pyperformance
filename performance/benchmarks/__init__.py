@@ -313,24 +313,8 @@ def BM_deltablue(python, options):
     return run_perf_script(python, options, "deltablue")
 
 
-def BM_scimark_sor(python, options):
-    return run_perf_script(python, options, "scimark", extra_args=['sor'])
-
-
-def BM_scimark_sparse_mat_mult(python, options):
-    return run_perf_script(python, options, "scimark", extra_args=['sparse_mat_mult'])
-
-
-def BM_scimark_monte_carlo(python, options):
-    return run_perf_script(python, options, "scimark", extra_args=['monte_carlo'])
-
-
-def BM_scimark_lu(python, options):
-    return run_perf_script(python, options, "scimark", extra_args=['lu'])
-
-
-def BM_scimark_fft(python, options):
-    return run_perf_script(python, options, "scimark", extra_args=['fft'])
+def BM_scimark(python, options):
+    return run_perf_script(python, options, "scimark")
 
 
 def BM_dulwich_log(python, options):

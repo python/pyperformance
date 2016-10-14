@@ -385,7 +385,8 @@ def bench_FFT(loops, N, cycles):
 
 
 def add_cmdline_args(cmd, args):
-    cmd.append(args.benchmark)
+    if args.benchmark:
+        cmd.append(args.benchmark)
 
 
 BENCHMARKS = {
@@ -400,11 +401,16 @@ BENCHMARKS = {
 
 if __name__ == "__main__":
     runner = perf.Runner(add_cmdline_args=add_cmdline_args)
-    runner.argparser.add_argument("benchmark", choices=sorted(BENCHMARKS))
+    runner.argparser.add_argument("benchmark", nargs='?',
+                                  choices=sorted(BENCHMARKS))
 
     args = runner.parse_args()
-    bench = args.benchmark
+    if args.benchmark:
+        benchmarks = (args.benchmark,)
+    else:
+        benchmarks = sorted(BENCHMARKS)
 
-    name = 'scimark_%s' % bench
-    args = BENCHMARKS[bench]
-    runner.bench_sample_func(name, *args)
+    for bench in benchmarks:
+        name = 'scimark_%s' % bench
+        args = BENCHMARKS[bench]
+        runner.bench_sample_func(name, *args)
