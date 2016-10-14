@@ -344,6 +344,11 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
+Version 0.3.1
+-------------
+
+* Upgrade perf dependency to 0.8.0
+
 Version 0.3.0 (2016-10-11)
 --------------------------
 
