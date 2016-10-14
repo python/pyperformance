@@ -41,20 +41,27 @@ def bench_sympy(loops, func):
     return dt
 
 
+BENCHMARKS = ("expand", "integrate", "sum", "str")
+
+
 def add_cmdline_args(cmd, args):
-    cmd.append(args.benchmark)
+    if args.benchmark:
+        cmd.append(args.benchmark)
 
 
 if __name__ == "__main__":
     runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "SymPy benchmark"
-    runner.argparser.add_argument("benchmark",
-                                  choices=("expand", "integrate", "sum",
-                                           "str"))
+    runner.argparser.add_argument("benchmark", nargs='?',
+                                  choices=BENCHMARKS)
 
     args = runner.parse_args()
-    bench = args.benchmark
+    if args.benchmark:
+        benchmarks = (args.benchmark,)
+    else:
+        benchmarks = BENCHMARKS
 
-    name = 'sympy_%s' % bench
-    func = globals()['bench_' + bench]
-    runner.bench_sample_func(name, bench_sympy, func)
+    for bench in benchmarks:
+        name = 'sympy_%s' % bench
+        func = globals()['bench_' + bench]
+        runner.bench_sample_func(name, bench_sympy, func)

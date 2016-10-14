@@ -293,20 +293,8 @@ def BM_crypto_pyaes(python, options):
     return run_perf_script(python, options, "crypto_pyaes")
 
 
-def BM_sympy_expand(python, options):
-    return run_perf_script(python, options, "sympy", extra_args=['expand'])
-
-
-def BM_sympy_integrate(python, options):
-    return run_perf_script(python, options, "sympy", extra_args=['integrate'])
-
-
-def BM_sympy_str(python, options):
-    return run_perf_script(python, options, "sympy", extra_args=['str'])
-
-
-def BM_sympy_sum(python, options):
-    return run_perf_script(python, options, "sympy", extra_args=['sum'])
+def BM_sympy(python, options):
+    return run_perf_script(python, options, "sympy")
 
 
 def BM_deltablue(python, options):
