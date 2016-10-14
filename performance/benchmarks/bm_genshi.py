@@ -40,7 +40,8 @@ def bench_genshi(loops, tmpl_cls, tmpl_str):
 
 
 def add_cmdline_args(cmd, args):
-    cmd.append(args.benchmark)
+    if args.benchmark:
+        cmd.append(args.benchmark)
 
 
 BENCHMARKS = {
@@ -52,11 +53,16 @@ BENCHMARKS = {
 if __name__ == "__main__":
     runner = perf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "Render a template using Genshi module"
-    runner.argparser.add_argument("benchmark", choices=sorted(BENCHMARKS))
+    runner.argparser.add_argument("benchmark", nargs='?',
+                                  choices=sorted(BENCHMARKS))
 
     args = runner.parse_args()
-    bench = args.benchmark
+    if args.benchmark:
+        benchmarks = (args.benchmark,)
+    else:
+        benchmarks = sorted(BENCHMARKS)
 
-    name = 'genshi_%s' % bench
-    tmpl_cls, tmpl_str = BENCHMARKS[bench]
-    runner.bench_sample_func(name, bench_genshi, tmpl_cls, tmpl_str)
+    for bench in benchmarks:
+        name = 'genshi_%s' % bench
+        tmpl_cls, tmpl_str = BENCHMARKS[bench]
+        runner.bench_sample_func(name, bench_genshi, tmpl_cls, tmpl_str)
