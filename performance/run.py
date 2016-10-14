@@ -89,10 +89,7 @@ def run_perf_script(python, options, name, extra_args=[]):
 
     command = python + bench_args + extra_args
     stdout = run_command(command, hide_stderr=not options.verbose)
-
-    bench = perf.Benchmark.loads(stdout)
-    bench.update_metadata({'performance_version': performance.__version__})
-    return bench
+    return perf.BenchmarkSuite.loads(stdout)
 
 
 def expand_benchmark_name(bm_name, bench_groups):
@@ -154,12 +151,15 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
               (str(index + 1).rjust(len(run_count)), run_count, name))
         sys.stdout.flush()
 
-        def add_bench(dest_suite, bench):
-            if isinstance(bench, perf.BenchmarkSuite):
-                benchmarks = bench.get_benchmarks()
-                for bench in benchmarks:
-                    dest_suite.add_benchmark(bench)
+        def add_bench(dest_suite, obj):
+            if isinstance(obj, perf.BenchmarkSuite):
+                benchmarks = obj
             else:
+                benchmarks = (obj,)
+
+            version = performance.__version__
+            for bench in benchmarks:
+                bench.update_metadata({'performance_version': version})
                 dest_suite.add_benchmark(bench)
 
         try:
