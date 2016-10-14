@@ -114,7 +114,8 @@ def bench_formatted_output(loops, logger, stream, check):
 
 
 def add_cmdline_args(cmd, args):
-    cmd.append(args.benchmark)
+    if args.benchmark:
+        cmd.append(args.benchmark)
 
 
 BENCHMARKS = {
@@ -129,12 +130,9 @@ if __name__ == "__main__":
     runner.metadata['description'] = "Test the performance of logging."
 
     parser = runner.argparser
-    parser.add_argument("benchmark", choices=sorted(BENCHMARKS))
+    parser.add_argument("benchmark", nargs='?', choices=sorted(BENCHMARKS))
 
     options = runner.parse_args()
-    bench = options.benchmark
-    name = 'logging_%s' % bench
-    bench_func = BENCHMARKS[bench]
 
     # NOTE: StringIO performance will impact the results...
     if six.PY3:
@@ -148,7 +146,16 @@ if __name__ == "__main__":
     logger.addHandler(handler)
     logger.setLevel(logging.WARNING)
 
-    # Only check loggers in worker processes
-    runner.bench_sample_func(name, bench_func,
-                             logger, stream, runner.args.worker,
-                             inner_loops=10)
+    if options.benchmark:
+        benchmarks = (options.benchmark,)
+    else:
+        benchmarks = sorted(BENCHMARKS)
+
+    for bench in benchmarks:
+        name = 'logging_%s' % bench
+        bench_func = BENCHMARKS[bench]
+
+        # Only check loggers in worker processes
+        runner.bench_sample_func(name, bench_func,
+                                 logger, stream, runner.args.worker,
+                                 inner_loops=10)
