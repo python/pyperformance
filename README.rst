@@ -225,7 +225,6 @@ Available benchmark groups:
 * ``calls``: Microbenchmarks on function and method calls
 * ``default``: Group of benchmarks run by default by the ``run`` command
 * ``etree``: XML ElementTree
-* ``logging``: Benchmarks on the ``logging`` module
 * ``math``: Float and integers
 * ``regex``: Collection of regular expression benchmarks
 * ``serialize``: Benchmarks on ``pickle`` and ``json`` modules
@@ -252,7 +251,7 @@ Available Benchmarks
   block-cipher in CTR mode using the pyaes module.
 - ``deltablue`` - DeltaBlue benchmark
 - ``django_template`` - use the Django template system to build a 150x150-cell
-  HTML table.
+  HTML table (``django.template`` module).
 - ``dulwich_log``: Iterate on commits of the asyncio Git repository using
   the Dulwich module
 - ``fannkuch``
@@ -260,18 +259,24 @@ Available Benchmarks
 - ``fastunpickle`` - use the cPickle module to unnpickle a variety of datasets.
 - ``float`` - artificial, floating point-heavy benchmark originally used
   by Factor.
-- ``genshi_text``: Render template to plain text using the Genshi module
-- ``genshi_xml``: Render template to XML using the Genshi module
+- ``genshi``: Benchmark the ``genshi.template`` module
+
+  * ``genshi_text``: Render template to plain text
+  * ``genshi_xml``: Render template to XML
+
 - ``go``: Go board game
 - ``hexiom`` - Solver of Hexiom board game (level 25 by default)
 - ``hg_startup`` - Get Mercurial's help screen.
 - ``html5lib`` - parse the HTML 5 spec using html5lib.
 - ``json_dumps`` - Benchmark ``json.dumps()``
 - ``json_loads`` - Benchmark ``json.loads()``
-- ``logging_format`` - Benchmark ``logger.warn(fmt, str)`` of ``logging``
-- ``logging_simple`` - Benchmark ``logger.warn(msg)`` of ``logging``
-- ``logging_silent`` - Benchmark ``logger.warn(msg)`` of ``logging`` when
-  the message is ignored
+- ``logging`` - Benchmarks on the ``logging`` module
+
+  * ``logging_format``: Benchmark ``logger.warn(fmt, str)``
+  * ``logging_simple``: Benchmark ``logger.warn(msg)``
+  * ``logging_silent``: Benchmark ``logger.warn(msg)`` when the message is
+    ignored
+
 - ``mako`` - use the Mako template system to build a 150x150-cell HTML table.
 - ``meteor_contest`` - solver for Meteor Puzzle board
 - ``nbody`` - the N-body Shootout benchmark. Microbenchmark for floating point
@@ -298,18 +303,21 @@ Available Benchmarks
   Python's current regex engine.
 - ``regex_v8`` - Python port of V8's regex benchmark.
 - ``richards`` - the classic Richards benchmark.
-- ``scimark_sor`` - scimark: `Successive over-relaxation (SOR)
-  <https://en.wikipedia.org/wiki/Successive_over-relaxation>`_ benchmark
-- ``scimark_sparse_mat_mult`` - scimark: `sparse matrix
-  <https://en.wikipedia.org/wiki/Sparse_matrix>`_ `multiplication
-  <https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm>`_ benchmark
-- ``scimark_monte_carlo`` - scimark: benchmark on the `Monte Carlo algorithm
-  <https://en.wikipedia.org/wiki/Monte_Carlo_algorithm>`_ to compute the area
-  of a disc
-- ``scimark_lu`` - scimark: `LU decomposition
-  <https://en.wikipedia.org/wiki/LU_decomposition>`_ benchmark
-- ``scimark_fft`` - scimark: `Fast Fourier transform (FFT)
-  <https://en.wikipedia.org/wiki/Fast_Fourier_transform>`_ benchmark
+- ``scimark``:
+
+  * ``scimark_sor`` - scimark: `Successive over-relaxation (SOR)
+    <https://en.wikipedia.org/wiki/Successive_over-relaxation>`_ benchmark
+  * ``scimark_sparse_mat_mult`` - scimark: `sparse matrix
+    <https://en.wikipedia.org/wiki/Sparse_matrix>`_ `multiplication
+    <https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm>`_ benchmark
+  * ``scimark_monte_carlo`` - scimark: benchmark on the `Monte Carlo algorithm
+    <https://en.wikipedia.org/wiki/Monte_Carlo_algorithm>`_ to compute the area
+    of a disc
+  * ``scimark_lu`` - scimark: `LU decomposition
+    <https://en.wikipedia.org/wiki/LU_decomposition>`_ benchmark
+  * ``scimark_fft`` - scimark: `Fast Fourier transform (FFT)
+    <https://en.wikipedia.org/wiki/Fast_Fourier_transform>`_ benchmark
+
 - ``spambayes`` - run a canned mailbox through a SpamBayes ham/spam classifier.
 - ``spectral_norm`` - MathWorld: "Hundred-Dollar, Hundred-Digit Challenge
   Problems", Challenge #3.
@@ -318,10 +326,13 @@ Available Benchmarks
 - ``sqlite_synth`` - Benchmark Python aggregate for SQLite
 - ``startup_nosite`` - Measure the Python startup time without importing
   the ``site`` module (``python -S``)
-- ``sympy_expand`` - Benchmark ``sympy.expand()``
-- ``sympy_integrate`` - Benchmark ``sympy.integrate()``
-- ``sympy_str`` - Benchmark ``str(sympy.expand())``
-- ``sympy_sum`` - Benchmark ``sympy.summation()``
+- ``sympy`` - Benchmark on the ``sympy`` module
+
+  * ``sympy_expand``: Benchmark ``sympy.expand()``
+  * ``sympy_integrate``: Benchmark ``sympy.integrate()``
+  * ``sympy_str``: Benchmark ``str(sympy.expand())``
+  * ``sympy_sum``: Benchmark ``sympy.summation()``
+
 - ``telco`` - Benchmark the ``decimal`` module
 - ``tornado_http`` - Benchmark HTTP server of the ``tornado`` module
 - ``unpack_sequence`` - microbenchmark for unpacking lists and tuples.

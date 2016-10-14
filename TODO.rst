@@ -1,6 +1,8 @@
 TODO
 ====
 
+* Modify bm_pickle.py to run multiple benchmarks?
+* Write a test to ensure that benchmarks listed in groups exist
 * Installing dulwich on Windows fails with a compiler error,
   there is no prebuilt Windows wheel package.
 * bm_nqueens: Remove the "Pure-Python implementation of
