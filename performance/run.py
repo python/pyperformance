@@ -10,6 +10,7 @@ except ImportError:
     multiprocessing = None
 
 import perf
+from perf._bench import _load_suite_from_stdout
 
 import performance
 from performance.venv import PERFORMANCE_ROOT
@@ -89,7 +90,7 @@ def run_perf_script(python, options, name, extra_args=[]):
 
     command = python + bench_args + extra_args
     stdout = run_command(command, hide_stderr=not options.verbose)
-    return perf.BenchmarkSuite.loads(stdout)
+    return _load_suite_from_stdout(stdout)
 
 
 def expand_benchmark_name(bm_name, bench_groups):

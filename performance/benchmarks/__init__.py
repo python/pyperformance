@@ -3,7 +3,7 @@ from __future__ import division, with_statement, print_function, absolute_import
 import logging
 import subprocess
 
-import perf
+from perf._bench import _load_suite_from_stdout
 
 from performance.run import (run_perf_script, copy_perf_options,
                              BenchmarkException, run_command,
@@ -64,7 +64,7 @@ def BM_PyBench(python, options):
         cmd = python + args
         stdout = run_command(cmd, hide_stderr=False)
 
-        return perf.BenchmarkSuite.loads(stdout)
+        return _load_suite_from_stdout(stdout)
     except subprocess.CalledProcessError as exc:
         return BenchmarkException(exc)
 
