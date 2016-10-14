@@ -348,6 +348,8 @@ Version 0.3.1
 -------------
 
 * Upgrade perf dependency to 0.8.0
+* Rewrite pybench using perf: remove the old legacy code to calibrate and run
+  benchmarks, reuse perf.Runner API.
 
 Version 0.3.0 (2016-10-11)
 --------------------------
