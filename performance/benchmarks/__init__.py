@@ -25,10 +25,8 @@ BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
                               "threading_iterative_count"],
                 "serialize": ["pickle_pure_python", "unpickle_pure_python",  # Not for Python 3
                               "pickle", "unpickle",
-                              "etree",
+                              "xml_etree",
                               "json_dumps", "json_loads"],
-                "etree": ["etree_generate", "etree_parse",
-                          "etree_iterparse", "etree_process"],
                 "apps": ["2to3", "chameleon", "html5lib",
                          "spambayes", "tornado_http"],
                 "calls": ["call_simple", "call_method", "call_method_slots",
@@ -133,24 +131,8 @@ def BM_unpickle_pure_python(python, options):
     return pickle_benchmark(python, options, "--pure-python", "unpickle")
 
 
-def bench_xml_etree(python, options, arg):
-    return run_perf_script(python, options, "xml_etree", extra_args=[arg])
-
-
-def BM_xml_etree_parse(python, options):
-    return bench_xml_etree(python, options, 'parse')
-
-
-def BM_xml_etree_iterparse(python, options):
-    return bench_xml_etree(python, options, 'iterparse')
-
-
-def BM_xml_etree_generate(python, options):
-    return bench_xml_etree(python, options, 'generate')
-
-
-def BM_xml_etree_process(python, options):
-    return bench_xml_etree(python, options, 'process')
+def BM_xml_etree(python, options):
+    return run_perf_script(python, options, "xml_etree")
 
 
 def BM_json_loads(python, options):

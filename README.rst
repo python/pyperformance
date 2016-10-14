@@ -339,10 +339,12 @@ Available Benchmarks
 - ``unpickle_list``
 - ``unpickle_pure_python`` - use the pure-Python pickle module to unpickle a
   variety of datasets.
-- ``xml_etree_generate``
-- ``xml_etree_iterparse``
-- ``xml_etree_parse``
-- ``xml_etree_process``
+- ``xml_etree``: Benchmark the ``xml.etree`` module
+
+  - ``xml_etree_generate``: Create an XML document
+  - ``xml_etree_iterparse``: Benchmark ``etree.iterparse()``
+  - ``xml_etree_parse``: Benchmark ``etree.parse()``
+  - ``xml_etree_process``: Process an XML document
 
 There are also two disabled benchmarks:
 
@@ -361,6 +363,8 @@ Version 0.3.1
 * Upgrade perf dependency to 0.8.0
 * Rewrite pybench using perf: remove the old legacy code to calibrate and run
   benchmarks, reuse perf.Runner API.
+* genshi, logging, scimark, sympy and xml_etree scripts now run all
+  sub-benchmarks by default
 
 Version 0.3.0 (2016-10-11)
 --------------------------

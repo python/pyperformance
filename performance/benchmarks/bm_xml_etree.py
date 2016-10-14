@@ -212,7 +212,8 @@ def add_cmdline_args(cmd, args):
     cmd.extend(("--etree-module", args.etree_module))
     if args.no_accelerator:
         cmd.append("--no-accelerator")
-    cmd.append(args.benchmark)
+    if args.benchmark:
+        cmd.append(args.benchmark)
 
 
 if __name__ == "__main__":
@@ -228,19 +229,16 @@ if __name__ == "__main__":
                                       "ElementTree XML processing.")
 
     parser = runner.argparser
-    parser.add_argument(
-        "--etree-module", default=None, metavar="FQMN",
-        help="Select an ElementTree module to use (fully qualified module name). "
-             "Default is '%s'" % default_etmodule)
-    parser.add_argument(
-        "--no-accelerator", action="store_true", default=False,
-        help="Disable the '_elementree' accelerator module for ElementTree "
-             "in Python 3.3+.")
-    parser.add_argument(
-        "benchmark", nargs='?', choices=BENCHMARKS, default="parse")
+    parser.add_argument("--etree-module", default=None, metavar="FQMN",
+                        help="Select an ElementTree module to use "
+                             "(fully qualified module name). "
+                             "Default is '%s'" % default_etmodule)
+    parser.add_argument("--no-accelerator", action="store_true", default=False,
+                        help="Disable the '_elementree' accelerator module "
+                             "for ElementTree in Python 3.3+.")
+    parser.add_argument("benchmark", nargs='?', choices=BENCHMARKS)
 
     options = runner.parse_args()
-    bench_func = globals()['bench_%s' % options.benchmark]
 
     if not options.etree_module:
         if options.no_accelerator:
@@ -287,6 +285,13 @@ if __name__ == "__main__":
         module += ' (pure Python)'
     runner.metadata['elementtree_module'] = module
 
+    if options.benchmark:
+        benchmarks = (options.benchmark,)
+    else:
+        benchmarks = BENCHMARKS
+
     # Run the benchmark
-    name = 'xml_etree_%s' % options.benchmark
-    runner.bench_sample_func(name, bench_etree, etree_module, bench_func)
+    for bench in benchmarks:
+        name = 'xml_etree_%s' % bench
+        bench_func = globals()['bench_%s' % bench]
+        runner.bench_sample_func(name, bench_etree, etree_module, bench_func)
