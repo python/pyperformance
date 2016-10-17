@@ -5,17 +5,12 @@ TODO
 * Write a test to ensure that benchmarks listed in groups exist
 * Installing dulwich on Windows fails with a compiler error,
   there is no prebuilt Windows wheel package.
-* bm_nqueens: Remove the "Pure-Python implementation of
-  itertools.permutations()"?
 * Decide of sqlalchemy benchmarks should only benchmark SELECT ALL
   or INSERT+SELECT?
 * Run pep8 on Travis
 * python3 -m performance list: list Python 2 benchmarks, but mention that
   they are incompatible with Python 3?
 * Port bm_pyflate to Python 3?
-* Add benchmarks from the Pyston benchmark suite:
-  https://github.com/dropbox/pyston-perf
-  and convince Pyston to use performance :-)
 * Remove deprecated threading tests? bench.py -b threading doesn't run anything
 * html5lib: 1 warmup, 3 runs: run 2 is always 10% slower!?
 
@@ -107,6 +102,10 @@ Done:
 
 pyston benchmarks
 =================
+
+Add benchmarks from the Pyston benchmark suite:
+https://github.com/dropbox/pyston-perf
+and convince Pyston to use performance :-)
 
 TODO:
 
