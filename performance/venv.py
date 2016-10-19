@@ -285,7 +285,7 @@ def _create_virtualenv(python, venv_path, inherit_environ):
     print()
 
     # virtualenv command
-    cmd = ['virtualenv', '-p', python, venv_path]
+    cmd = ['virtualenv', '-p', python]
     if _create_virtualenv_impl(cmd, venv_path, inherit_environ):
         return
 
