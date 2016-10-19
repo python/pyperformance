@@ -235,42 +235,48 @@ def safe_rmtree(path):
     shutil.rmtree(path)
 
 
+def _create_virtualenv_impl(cmd, venv_path, inherit_environ):
+    cmd = cmd + [venv_path]
+    try:
+        exitcode = run_cmd_nocheck(cmd, inherit_environ)
+        if not exitcode:
+            return True
+
+        print("%s command failed" % ' '.join(cmd))
+    except OSError as exc:
+        if exc.errno != errno.ENOENT:
+            raise
+
+        # run_cmd_nocheck() failed with ENOENT
+        print("%s command failed: command not found" % ' '.join(cmd))
+
+    print()
+
+    safe_rmtree(venv_path)
+    return False
+
+
 def _create_virtualenv(python, venv_path, inherit_environ):
     # On Python 3.3 and newer, the venv module could be used, but it looks
     # like it doesn't work when run from a virtual environment on Fedora:
     # ensurepip fails with an error. First, try to use the virtualenv command.
 
     # python -m venv
-    cmd = [python, '-m', 'venv', venv_path]
-    exitcode = run_cmd_nocheck(cmd, inherit_environ)
-    if not exitcode:
+    cmd = [python, '-m', 'venv']
+    if _create_virtualenv_impl(cmd, venv_path, inherit_environ):
         return
-    safe_rmtree(venv_path)
-    print("%s -m venv failed!" % os.path.basename(python))
     print()
 
     # python -m virtualenv
-    cmd = [python, '-m', 'virtualenv', venv_path]
-    exitcode = run_cmd_nocheck(cmd, inherit_environ)
-    if not exitcode:
+    cmd = [python, '-m', 'virtualenv']
+    if _create_virtualenv_impl(cmd, venv_path, inherit_environ):
         return
-    safe_rmtree(venv_path)
-    print("%s -m virtualenv failed!" % os.path.basename(python))
     print()
 
     # virtualenv command
     cmd = ['virtualenv', '-p', python, venv_path]
-    try:
-        exitcode = run_cmd_nocheck(cmd, inherit_environ)
-        if not exitcode:
-            return
-        print("virtualenv failed!")
-    except OSError as exc:
-        if exc.errno != errno.ENOENT:
-            raise
-        print("virtualenv program not found!")
-    safe_rmtree(venv_path)
-    print()
+    if _create_virtualenv_impl(cmd, venv_path, inherit_environ):
+        return
 
     print("ERROR: failed to create the virtual environment")
     print()
