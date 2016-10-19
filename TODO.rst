@@ -116,7 +116,6 @@ TODO:
 - django_template3_10x
 - django_template3
 - django_template
-- fasta
 - interp2
 - pyxl_bench_10x
 - pyxl_bench2_10x
@@ -131,12 +130,15 @@ Done:
 - chaos
 - deltablue
 - fannkuch, fannkuch_med
+- fasta (called "regex_dna" in performance)
 - nbody
 - pidigits: pyston has a flat implementation, single function
-- raytrace, raytrace_small
+- raytrace, raytrace_small: use "--width=80 --height=60" cmdline option to get
+  raytrace_small profile
 - richards
-- sqlalchemy_imperative, sqlalchemy_imperative2, sqlalchemy_imperative2_10x
-- sre_compile_ubench: performance has a much more complete benchmark
+- sqlalchemy_imperative, sqlalchemy_imperative2, sqlalchemy_imperative2_10x:
+  use --rows cmdline option to control the number of SQL rows
+- sre_compile_ubench: performance has a much more complete benchmark on regex
 
 
 pybench
