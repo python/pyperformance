@@ -362,19 +362,21 @@ Version 0.3.1 (2016-10-19)
 --------------------------
 
 * Add ``regex_dna`` benchmark
+* The ``run`` command now fails with an error if no benchmark was run.
+* genshi, logging, scimark, sympy and xml_etree scripts now run all
+  sub-benchmarks by default
+* Rewrite pybench using perf: remove the old legacy code to calibrate and run
+  benchmarks, reuse perf.Runner API.
 * Change heuristic to create the virtual environment, tried commands:
 
   * ``python -m venv``
   * ``python -m virtualenv``
   * ``virtualenv -p python``
 
-* Ensure that pip works when creating the virtual environment.
-* The ``run`` command now fails with an error if no benchmark was run.
-* Upgrade perf dependency from 0.7.12 to 0.8.2
-* Rewrite pybench using perf: remove the old legacy code to calibrate and run
-  benchmarks, reuse perf.Runner API.
-* genshi, logging, scimark, sympy and xml_etree scripts now run all
-  sub-benchmarks by default
+* The creation of the virtual environment now ensures that pip works
+  to detect "python3 -m venv" which doesn't install pip.
+* Upgrade perf dependency from 0.7.12 to 0.8.2: update all benchmarks to
+  the new perf 0.8 API (which introduces incompatible changes)
 * Update SQLAlchemy from 1.1.1 to 1.1.2
 
 Version 0.3.0 (2016-10-11)
