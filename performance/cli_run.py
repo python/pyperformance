@@ -4,8 +4,6 @@ import logging
 import os.path
 import sys
 
-import perf
-
 import performance
 from performance.benchmarks import filter_benchmarks
 from performance.compare import display_benchmark_suite
@@ -41,10 +39,6 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
         print("ERROR: No benchmark was run")
         sys.exit(1)
 
-    if options.output:
-        suite.dump(options.output)
-    if options.append:
-        perf.add_runs(options.append, suite)
     display_benchmark_suite(suite)
 
 

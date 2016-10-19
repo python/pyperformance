@@ -358,6 +358,13 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
+Version 0.3.3
+-------------
+
+* Write JSON on disk after the completion of each benchmark. It allows to
+  process results before the full benchmark suite completes, and also to get
+  partial results when a benchmark crashs.
+
 Version 0.3.2 (2016-10-19)
 --------------------------
 
