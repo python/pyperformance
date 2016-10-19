@@ -37,6 +37,10 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
     should_run = filter_benchmarks_python(should_run, bench_funcs, cmd_prefix)
     suite = run_benchmarks(bench_funcs, should_run, cmd_prefix, options)
 
+    if not suite:
+        print("ERROR: No benchmark was run")
+        sys.exit(1)
+
     if options.output:
         suite.dump(options.output)
     if options.append:

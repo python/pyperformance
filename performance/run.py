@@ -143,7 +143,7 @@ def select_benchmarks(benchmarks, bench_groups):
 
 
 def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
-    suite = perf.BenchmarkSuite()
+    suite = None
     to_run = list(sorted(should_run))
     run_count = str(len(to_run))
     for index, name in enumerate(to_run):
@@ -161,7 +161,12 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
             version = performance.__version__
             for bench in benchmarks:
                 bench.update_metadata({'performance_version': version})
+
+                if dest_suite is None:
+                    dest_suite = perf.BenchmarkSuite()
                 dest_suite.add_benchmark(bench)
+
+            return dest_suite
 
         try:
             bench = func(cmd_prefix, options)
@@ -169,7 +174,7 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
             print("ERROR: Benchmark %s failed: %s" % (name, exc))
             sys.exit(1)
 
-        add_bench(suite, bench)
+        suite = add_bench(suite, bench)
 
     print()
 

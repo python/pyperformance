@@ -1,6 +1,7 @@
 TODO
 ====
 
+* Add a --log option to create a log file
 * Modify bm_pickle.py to run multiple benchmarks?
 * Write a test to ensure that benchmarks listed in groups exist
 * Installing dulwich on Windows fails with a compiler error,

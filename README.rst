@@ -360,6 +360,7 @@ Changelog
 Version 0.3.1
 -------------
 
+* The ``run`` command now fails with an error if no benchmark was run.
 * Upgrade perf dependency to 0.8.0
 * Rewrite pybench using perf: remove the old legacy code to calibrate and run
   benchmarks, reuse perf.Runner API.
