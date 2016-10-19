@@ -16,6 +16,8 @@
 #  - set release date in changelog (README.rst)
 #  - git commit -a -m "prepare release x.y"
 #  - git push
+#  - check Travis CI status:
+#    https://travis-ci.org/python/performance
 #
 # Release a new version:
 #
