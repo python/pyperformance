@@ -240,7 +240,25 @@ def _create_virtualenv(python, venv_path, inherit_environ):
     # like it doesn't work when run from a virtual environment on Fedora:
     # ensurepip fails with an error. First, try to use the virtualenv command.
 
-    # Case 1: try virtualenv command
+    # python -m venv
+    cmd = [python, '-m', 'venv', venv_path]
+    exitcode = run_cmd_nocheck(cmd, inherit_environ)
+    if not exitcode:
+        return
+    safe_rmtree(venv_path)
+    print("%s -m venv failed!" % os.path.basename(python))
+    print()
+
+    # python -m virtualenv
+    cmd = [python, '-m', 'virtualenv', venv_path]
+    exitcode = run_cmd_nocheck(cmd, inherit_environ)
+    if not exitcode:
+        return
+    safe_rmtree(venv_path)
+    print("%s -m virtualenv failed!" % os.path.basename(python))
+    print()
+
+    # virtualenv command
     cmd = ['virtualenv', '-p', python, venv_path]
     try:
         exitcode = run_cmd_nocheck(cmd, inherit_environ)
@@ -252,27 +270,8 @@ def _create_virtualenv(python, venv_path, inherit_environ):
             raise
         print("virtualenv program not found!")
     safe_rmtree(venv_path)
-
     print()
 
-    # Case 2: try python -m virtualenv
-    cmd = [python, '-m', 'virtualenv', venv_path]
-    exitcode = run_cmd_nocheck(cmd, inherit_environ)
-    if not exitcode:
-        return
-    safe_rmtree(venv_path)
-    print("%s -m virtualenv failed!" % os.path.basename(python))
-    print()
-
-    # Case 3: try python -m venv
-    cmd = [python, '-m', 'venv', venv_path]
-    exitcode = run_cmd_nocheck(cmd, inherit_environ)
-    if not exitcode:
-        return
-    safe_rmtree(venv_path)
-    print("%s -m venv failed!" % os.path.basename(python))
-
-    print()
     print("ERROR: failed to create the virtual environment")
     print()
     print("Make sure that virtualenv is installed:")
