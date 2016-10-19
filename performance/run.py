@@ -162,9 +162,10 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
             for bench in benchmarks:
                 bench.update_metadata({'performance_version': version})
 
-                if dest_suite is None:
-                    dest_suite = perf.BenchmarkSuite()
-                dest_suite.add_benchmark(bench)
+                if dest_suite is not None:
+                    dest_suite.add_benchmark(bench)
+                else:
+                    dest_suite = perf.BenchmarkSuite([bench])
 
             return dest_suite
 

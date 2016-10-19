@@ -367,7 +367,7 @@ Version 0.3.1
   * ``virtualenv -p python``
 
 * The ``run`` command now fails with an error if no benchmark was run.
-* Upgrade perf dependency to 0.8.0
+* Upgrade perf dependency to 0.8.2
 * Rewrite pybench using perf: remove the old legacy code to calibrate and run
   benchmarks, reuse perf.Runner API.
 * genshi, logging, scimark, sympy and xml_etree scripts now run all
