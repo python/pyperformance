@@ -366,6 +366,7 @@ Version 0.3.1
   * ``python -m virtualenv``
   * ``virtualenv -p python``
 
+* Ensure that pip works when creating the virtual environment.
 * The ``run`` command now fails with an error if no benchmark was run.
 * Upgrade perf dependency to 0.8.2
 * Rewrite pybench using perf: remove the old legacy code to calibrate and run

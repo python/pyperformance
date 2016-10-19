@@ -81,6 +81,13 @@ except ImportError:
 PERFORMANCE_ROOT = os.path.realpath(os.path.dirname(__file__))
 
 
+def get_pip_program(venv_path):
+    if os.name == "nt":
+        return os.path.join(venv_path, 'Scripts', 'pip')
+    else:
+        return os.path.join(venv_path, 'bin', 'pip')
+
+
 def python_implementation():
     if hasattr(sys, 'implementation'):
         # PEP 421, Python 3.3
@@ -235,12 +242,20 @@ def safe_rmtree(path):
     shutil.rmtree(path)
 
 
+def _test_pip(venv_path, inherit_environ):
+    venv_pip = get_pip_program(venv_path)
+    cmd = [venv_pip, '--version']
+    exitcode = run_cmd_nocheck(cmd, inherit_environ)
+    return (exitcode == 0)
+
+
 def _create_virtualenv_impl(cmd, venv_path, inherit_environ):
     cmd = cmd + [venv_path]
     try:
         exitcode = run_cmd_nocheck(cmd, inherit_environ)
         if not exitcode:
-            return True
+            if _test_pip(venv_path, inherit_environ):
+                return True
 
         print("%s command failed" % ' '.join(cmd))
     except OSError as exc:
@@ -257,10 +272,6 @@ def _create_virtualenv_impl(cmd, venv_path, inherit_environ):
 
 
 def _create_virtualenv(python, venv_path, inherit_environ):
-    # On Python 3.3 and newer, the venv module could be used, but it looks
-    # like it doesn't work when run from a virtual environment on Fedora:
-    # ensurepip fails with an error. First, try to use the virtualenv command.
-
     # python -m venv
     cmd = [python, '-m', 'venv']
     if _create_virtualenv_impl(cmd, venv_path, inherit_environ):
@@ -331,13 +342,12 @@ def create_virtualenv(python, venv_path, inherit_environ):
     if os.name == "nt":
         python_executable = os.path.basename(python)
         venv_python = os.path.join(venv_path, 'Scripts', python_executable)
-        venv_pip = os.path.join(venv_path, 'Scripts', 'pip')
     else:
         venv_python = os.path.join(venv_path, 'bin', 'python')
-        venv_pip = os.path.join(venv_path, 'bin', 'pip')
     if os.path.exists(venv_path):
         return venv_python
 
+    venv_pip = get_pip_program(venv_path)
     filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
     requirements = Requirements(filename,
                                 ['setuptools', 'pip', 'wheel'],
@@ -374,6 +384,10 @@ def create_virtualenv(python, venv_path, inherit_environ):
             version = performance.__version__
             cmd = [venv_python, '-m', 'pip',
                    'install', 'performance==%s' % version]
+        run_cmd(cmd, inherit_environ)
+
+        # pip freeze
+        cmd = [venv_pip, 'freeze']
         run_cmd(cmd, inherit_environ)
     except:
         print()
