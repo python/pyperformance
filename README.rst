@@ -299,6 +299,7 @@ Available Benchmarks
 - ``raytrace`` - Simple raytracer.
 - ``regex_compile`` - stress the performance of Python's regex compiler,
   rather than the regex execution speed.
+- ``regex_dna`` - regex DNA benchmark using "fasta" to generate the test case
 - ``regex_effbot`` - some of the original benchmarks used to tune mainline
   Python's current regex engine.
 - ``regex_v8`` - Python port of V8's regex benchmark.
@@ -373,6 +374,7 @@ Version 0.3.1
   benchmarks, reuse perf.Runner API.
 * genshi, logging, scimark, sympy and xml_etree scripts now run all
   sub-benchmarks by default
+* Add ``regex_dna`` benchmark
 
 Version 0.3.0 (2016-10-11)
 --------------------------

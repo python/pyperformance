@@ -20,7 +20,8 @@ BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
                             "regex_v8", "json_dumps", "json_loads"],
                 "startup": ["normal_startup", "startup_nosite",
                             "hg_startup"],
-                "regex": ["regex_v8", "regex_effbot", "regex_compile"],
+                "regex": ["regex_v8", "regex_effbot", "regex_compile",
+                          "regex_dna"],
                 "threading": ["threading_threaded_count",
                               "threading_iterative_count"],
                 "serialize": ["pickle_pure_python", "unpickle_pure_python",  # Not for Python 3
@@ -202,6 +203,10 @@ def BM_regex_effbot(python, options):
 
 def BM_regex_compile(python, options):
     return run_perf_script(python, options, "regex_compile")
+
+
+def BM_regex_dna(python, options):
+    return run_perf_script(python, options, "regex_dna")
 
 
 def bench_threading(python, options, bm_name):
