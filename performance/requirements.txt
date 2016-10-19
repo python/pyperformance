@@ -60,7 +60,7 @@ Chameleon==2.25                           # bm_chameleon
 Django==1.10.2                            # bm_django_template
 Genshi==0.7                               # bm_genshi
 Mako==1.0.4                               # bm_mako
-SQLAlchemy==1.1.1                         # bm_sqlalchemy_declarative
+SQLAlchemy==1.1.2                         # bm_sqlalchemy_declarative
 dulwich==0.15.0                           # dulwich_log
 mercurial==3.9.2; python_version < '3.0'  # bm_hg_startup
 html5lib==0.999999999                     # bm_html5lib
