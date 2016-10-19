@@ -358,8 +358,8 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
-Version 0.3.1
--------------
+Version 0.3.1 (2016-10-19)
+--------------------------
 
 * Add ``regex_dna`` benchmark
 * Change heuristic to create the virtual environment, tried commands:
