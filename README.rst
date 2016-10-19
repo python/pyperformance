@@ -358,6 +358,11 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
+Version 0.3.2
+-------------
+
+* Fix setup.py: include also ``performance/benchmarks/data/asyncio.git/``
+
 Version 0.3.1 (2016-10-19)
 --------------------------
 

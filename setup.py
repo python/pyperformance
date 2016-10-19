@@ -50,6 +50,7 @@ CLASSIFIERS = [
 # unit tests
 def main():
     import io
+    import os.path
     from setuptools import setup
 
     with io.open('README.rst', encoding="utf8") as fp:
@@ -65,19 +66,26 @@ def main():
         'performance.tests',
         'performance.tests.data',
     ]
-    data_files = [
-        'spambayes_hammie.pkl',
-        'spambayes_mailbox',
-        'telco-bench.b',
-        'w3_tr_html5.html',
-    ]
+
     data = {
         'performance': ['requirements.txt'],
-        'performance.benchmarks.data': data_files,
-        'performance.benchmarks.data.2to3': ['README', '*.txt'],
         'performance.benchmarks.pybench': ['LICENSE', 'README'],
-        'performance.tests.data': ['*.json'],
+        'performance.tests': ['data/*.json'],
     }
+
+    # Search for all files in performance/benchmarks/data/
+    data_dir = os.path.join('performance', 'benchmarks', 'data')
+    benchmarks_data = []
+    for root, dirnames, filenames in os.walk(data_dir):
+        # Strip performance/benchmarks/ prefix
+        root = os.path.normpath(root)
+        root = root.split(os.path.sep)
+        root = os.path.sep.join(root[2:])
+
+        for filename in filenames:
+            filename = os.path.join(root, filename)
+            benchmarks_data.append(filename)
+    data['performance.benchmarks'] = benchmarks_data
 
     options = {
         'name': 'performance',
