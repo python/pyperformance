@@ -5,9 +5,10 @@ import os.path
 import sys
 
 import performance
-from performance.benchmarks import filter_benchmarks
+from performance.benchmarks import (filter_benchmarks, get_benchmarks,
+                                    select_benchmarks)
 from performance.compare import display_benchmark_suite
-from performance.run import select_benchmarks, run_benchmarks
+from performance.run import run_benchmarks
 from performance.venv import interpreter_version
 
 
@@ -16,7 +17,9 @@ def filter_benchmarks_python(benchmarks, bench_funcs, python):
     return filter_benchmarks(benchmarks, bench_funcs, basever)
 
 
-def cmd_run(parser, options, bench_funcs, bench_groups):
+def cmd_run(parser, options):
+    bench_funcs, bench_groups = get_benchmarks()
+
     logging.basicConfig(level=logging.INFO)
 
     print("Python benchmark suite %s" % performance.__version__)
@@ -42,7 +45,9 @@ def cmd_run(parser, options, bench_funcs, bench_groups):
     display_benchmark_suite(suite)
 
 
-def cmd_list(options, bench_funcs, bench_groups):
+def cmd_list(options):
+    bench_funcs, bench_groups = get_benchmarks()
+
     funcs = bench_groups['all']
     python = [sys.executable]
     all_funcs = filter_benchmarks_python(set(funcs), bench_funcs, python)

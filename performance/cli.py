@@ -156,18 +156,15 @@ def _main():
 
     from performance.cli_run import cmd_run, cmd_list
     from performance.compare import cmd_compare, cmd_show
-    from performance.benchmarks import get_benchmark_groups
 
     if options.action == 'run':
-        bench_funcs, bench_groups = get_benchmark_groups()
-        cmd_run(parser, options, bench_funcs, bench_groups)
+        cmd_run(parser, options)
     elif options.action == 'show':
         cmd_show(options)
     elif options.action == 'compare':
         cmd_compare(options)
     elif options.action in ('list', 'list_groups'):
-        bench_funcs, bench_groups = get_benchmark_groups()
-        cmd_list(options, bench_funcs, bench_groups)
+        cmd_list(options)
     else:
         parser.print_help()
         sys.exit(1)

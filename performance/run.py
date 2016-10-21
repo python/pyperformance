@@ -93,55 +93,6 @@ def run_perf_script(python, options, name, extra_args=[]):
     return _load_suite_from_stdout(stdout)
 
 
-def expand_benchmark_name(bm_name, bench_groups):
-    """Recursively expand name benchmark names.
-
-    Args:
-        bm_name: string naming a benchmark or benchmark group.
-
-    Yields:
-        Names of actual benchmarks, with all group names fully expanded.
-    """
-    expansion = bench_groups.get(bm_name)
-    if expansion:
-        for name in expansion:
-            for name in expand_benchmark_name(name, bench_groups):
-                yield name
-    else:
-        yield bm_name
-
-
-def select_benchmarks(benchmarks, bench_groups):
-    legal_benchmarks = bench_groups["all"]
-    benchmarks = benchmarks.split(",")
-    positive_benchmarks = set(bm.lower()
-                              for bm in benchmarks
-                              if bm and not bm.startswith("-"))
-    negative_benchmarks = set(bm[1:].lower()
-                              for bm in benchmarks
-                              if bm and bm.startswith("-"))
-
-    should_run = set()
-    if not positive_benchmarks:
-        should_run = set(expand_benchmark_name("default", bench_groups))
-
-    for name in positive_benchmarks:
-        for bm in expand_benchmark_name(name, bench_groups):
-            if bm not in legal_benchmarks:
-                logging.warning("No benchmark named %s", bm)
-            else:
-                should_run.add(bm)
-
-    for bm in negative_benchmarks:
-        if bm in bench_groups:
-            raise ValueError("Negative groups not supported: -%s" % bm)
-        elif bm not in legal_benchmarks:
-            logging.warning("No benchmark named %s", bm)
-        else:
-            should_run.remove(bm)
-    return should_run
-
-
 def add_bench(suite, obj, options):
     if isinstance(obj, perf.BenchmarkSuite):
         benchmarks = obj
@@ -183,7 +134,7 @@ def add_bench(suite, obj, options):
 
 def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
     suite = None
-    to_run = list(sorted(should_run))
+    to_run = sorted(should_run)
     run_count = str(len(to_run))
     for index, name in enumerate(to_run):
         func = bench_funcs[name]

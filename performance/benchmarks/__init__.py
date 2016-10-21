@@ -301,7 +301,7 @@ def BM_SQLAlchemy_Declarative(python, options):
 
 # End benchmarks, begin main entry point support.
 
-def get_benchmark_groups():
+def get_benchmarks():
     bench_funcs = dict((name[3:].lower(), func)
                        for name, func in globals().items()
                        if name.startswith("BM_"))
@@ -337,10 +337,58 @@ def filter_benchmarks(benchmarks, bench_funcs, base_ver):
     """
     for bm in list(benchmarks):
         func = bench_funcs[bm]
-        if getattr(func, '_python2_only', False):
-            if (3, 0) <= base_ver:
-                benchmarks.discard(bm)
-                logging.info("Skipping Python2-only benchmark %s; "
-                             "not compatible with Python %s" % (bm, base_ver))
-                continue
+        if getattr(func, '_python2_only', False) and (3, 0) <= base_ver:
+            benchmarks.discard(bm)
+            logging.info("Skipping Python2-only benchmark %s; "
+                         "not compatible with Python %s" % (bm, base_ver))
+            continue
     return benchmarks
+
+
+def expand_benchmark_name(bm_name, bench_groups):
+    """Recursively expand name benchmark names.
+
+    Args:
+        bm_name: string naming a benchmark or benchmark group.
+
+    Yields:
+        Names of actual benchmarks, with all group names fully expanded.
+    """
+    expansion = bench_groups.get(bm_name)
+    if expansion:
+        for name in expansion:
+            for name in expand_benchmark_name(name, bench_groups):
+                yield name
+    else:
+        yield bm_name
+
+
+def select_benchmarks(benchmarks, bench_groups):
+    legal_benchmarks = bench_groups["all"]
+    benchmarks = benchmarks.split(",")
+    positive_benchmarks = set(bm.lower()
+                              for bm in benchmarks
+                              if bm and not bm.startswith("-"))
+    negative_benchmarks = set(bm[1:].lower()
+                              for bm in benchmarks
+                              if bm and bm.startswith("-"))
+
+    should_run = set()
+    if not positive_benchmarks:
+        should_run = set(expand_benchmark_name("default", bench_groups))
+
+    for name in positive_benchmarks:
+        for bm in expand_benchmark_name(name, bench_groups):
+            if bm not in legal_benchmarks:
+                logging.warning("No benchmark named %s", bm)
+            else:
+                should_run.add(bm)
+
+    for bm in negative_benchmarks:
+        if bm in bench_groups:
+            raise ValueError("Negative groups not supported: -%s" % bm)
+        elif bm not in legal_benchmarks:
+            logging.warning("No benchmark named %s", bm)
+        else:
+            should_run.remove(bm)
+    return should_run
