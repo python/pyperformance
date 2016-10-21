@@ -9,17 +9,20 @@ from performance.benchmarks import (filter_benchmarks, get_benchmarks,
                                     select_benchmarks)
 from performance.compare import display_benchmark_suite
 from performance.run import run_benchmarks
-from performance.venv import interpreter_version
 
 
-def filter_benchmarks_python(benchmarks, bench_funcs, python):
-    basever = interpreter_version(python)
-    return filter_benchmarks(benchmarks, bench_funcs, basever)
+def filter_benchmarks_python(benchmarks, bench_funcs):
+    return filter_benchmarks(benchmarks, bench_funcs, sys.version_info)
+
+
+def get_benchmarks_to_run(options):
+    bench_funcs, bench_groups = get_benchmarks()
+    should_run = select_benchmarks(options.benchmarks, bench_groups)
+    should_run = filter_benchmarks_python(should_run, bench_funcs)
+    return (bench_funcs, bench_groups, should_run)
 
 
 def cmd_run(parser, options):
-    bench_funcs, bench_groups = get_benchmarks()
-
     logging.basicConfig(level=logging.INFO)
 
     print("Python benchmark suite %s" % performance.__version__)
@@ -32,10 +35,8 @@ def cmd_run(parser, options):
     if not os.path.isabs(sys.executable):
         print("ERROR: sys.executable is not an absolute path")
         sys.exit(1)
+    bench_funcs, bench_groups, should_run = get_benchmarks_to_run(options)
     cmd_prefix = [sys.executable]
-
-    should_run = select_benchmarks(options.benchmarks, bench_groups)
-    should_run = filter_benchmarks_python(should_run, bench_funcs, cmd_prefix)
     suite = run_benchmarks(bench_funcs, should_run, cmd_prefix, options)
 
     if not suite:
@@ -46,25 +47,28 @@ def cmd_run(parser, options):
 
 
 def cmd_list(options):
+    bench_funcs, bench_groups, all_funcs = get_benchmarks_to_run(options)
+
+    print("%r benchmarks:" % options.benchmarks)
+    for func in sorted(all_funcs):
+        print("- %s" % func)
+    print()
+    print("Total: %s benchmarks" % len(all_funcs))
+
+
+def cmd_list_groups(options):
     bench_funcs, bench_groups = get_benchmarks()
 
-    funcs = bench_groups['all']
-    python = [sys.executable]
-    all_funcs = filter_benchmarks_python(set(funcs), bench_funcs, python)
+    funcs = set(bench_groups['all'])
+    all_funcs = filter_benchmarks_python(set(funcs), bench_funcs)
 
-    if options.action == 'list':
-        print("%s benchmarks:" % len(all_funcs))
-        for func in sorted(all_funcs):
+    for group, funcs in sorted(bench_groups.items()):
+        funcs = set(funcs) & all_funcs
+        if not funcs:
+            # skip empty groups
+            continue
+
+        print("%s (%s):" % (group, len(funcs)))
+        for func in sorted(funcs):
             print("- %s" % func)
-    else:
-        # list_groups
-        for group, funcs in sorted(bench_groups.items()):
-            funcs = set(funcs) & all_funcs
-            if not funcs:
-                # skip empty groups
-                continue
-
-            print("%s (%s):" % (group, len(funcs)))
-            for func in sorted(funcs):
-                print("- %s" % func)
-            print()
+        print()

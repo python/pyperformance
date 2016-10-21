@@ -97,32 +97,6 @@ def python_implementation():
     return name.lower()
 
 
-def interpreter_version(python, _cache={}):
-    """Return the interpreter version for the given Python interpreter.
-    *python* is the base command (as a list) to execute the interpreter.
-    """
-    key = tuple(python)
-    try:
-        return _cache[key]
-    except KeyError:
-        pass
-    code = "import sys; print('.'.join(map(str, sys.version_info[:2])))"
-    subproc = subprocess.Popen(python + ['-c', code],
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE,
-                               universal_newlines=True)
-    out, err = subproc.communicate()
-    if subproc.returncode != 0:
-        raise RuntimeError("Child interpreter died: " + err.decode())
-    version = out.rstrip()
-    major, _, minor = version.partition('.')
-    major = int(major)
-    minor = int(minor)
-    version = (major, minor)
-    _cache[key] = version
-    return version
-
-
 def get_venv_program(program):
     bin_path = os.path.dirname(sys.executable)
     bin_path = os.path.realpath(bin_path)

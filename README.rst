@@ -73,8 +73,8 @@ Actions::
     run                 Run benchmarks on the running python
     show                Display a benchmark file
     compare             Compare two benchmark files
-    list                List benchmarks of the running Python
-    list_groups         List benchmark groups of the running Python
+    list                List benchmarks which run command would run
+    list_groups         List all benchmark groups
     venv                Actions on the virtual environment
 
 Common options
@@ -134,6 +134,22 @@ Options of the ``compare`` command::
   -O STYLE, --output_style STYLE
                         What style the benchmark output should take. Valid
                         options are 'normal' and 'table'. Default is normal.
+
+list
+----
+
+Options of the ``list`` command::
+
+  -b BM_LIST, --benchmarks BM_LIST
+                        Comma-separated list of benchmarks to run. Can contain
+                        both positive and negative arguments:
+                        --benchmarks=run_this,also_this,-not_this. If there
+                        are no positive arguments, we'll run all benchmarks
+                        except the negative arguments. Otherwise we run only
+                        the positive arguments.
+
+Use ``python3 -m performance list -b all`` to list all benchmarks.
+
 
 venv
 ----
@@ -361,6 +377,8 @@ Changelog
 Version 0.3.3
 -------------
 
+* The ``list`` command now only lists the benchmark that the ``run`` command
+  will run. The ``list`` command gets a new ``-b/--benchmarks`` option.
 * Write JSON on disk after the completion of each benchmark. It allows to
   process results before the full benchmark suite completes, and also to get
   partial results when a benchmark crashs.

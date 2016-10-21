@@ -12,43 +12,14 @@ def comma_separated(values):
     return list(filter(None, values))
 
 
-def _add_run_options(cmd):
-    cmd.add_argument("-r", "--rigorous", action="store_true",
-                     help=("Spend longer running tests to get more" +
-                           " accurate results"))
-    cmd.add_argument("-f", "--fast", action="store_true",
-                     help="Get rough answers quickly")
-    cmd.add_argument("--debug-single-sample", action="store_true",
-                     help="Debug: fastest mode, only collect a single sample")
-    cmd.add_argument("-v", "--verbose", action="store_true",
-                     help="Print more output")
-    cmd.add_argument("-m", "--track-memory", action="store_true",
-                     help="Track memory usage. This only works on Linux.")
-    cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default="",
+def filter_opts(cmd):
+    cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default="default",
                      help=("Comma-separated list of benchmarks to run.  Can"
                            " contain both positive and negative arguments:"
                            "  --benchmarks=run_this,also_this,-not_this.  If"
                            " there are no positive arguments, we'll run all"
                            " benchmarks except the negative arguments. "
                            " Otherwise we run only the positive arguments."))
-    cmd.add_argument("--affinity", metavar="CPU_LIST", default=None,
-                     help=("Specify CPU affinity for benchmark runs. This "
-                           "way, benchmarks can be forced to run on a given "
-                           "CPU to minimize run to run variation."))
-
-
-def _add_compare_options(cmd):
-    cmd.add_argument("-O", "--output_style", metavar="STYLE",
-                     choices=("normal", "table"),
-                     default="normal",
-                     help=("What style the benchmark output should take."
-                           " Valid options are 'normal' and 'table'."
-                           " Default is normal."))
-    cmd.add_argument("--csv", metavar="CSV_FILE",
-                     action="store", default=None,
-                     help=("Name of a file the results will be written to,"
-                           " as a three-column CSV file containing minimum"
-                           " runtimes for each benchmark."))
 
 
 def parse_args():
@@ -63,7 +34,21 @@ def parse_args():
     cmd = subparsers.add_parser(
         'run', help='Run benchmarks on the running python')
     cmds.append(cmd)
-    _add_run_options(cmd)
+    cmd.add_argument("-r", "--rigorous", action="store_true",
+                     help=("Spend longer running tests to get more" +
+                           " accurate results"))
+    cmd.add_argument("-f", "--fast", action="store_true",
+                     help="Get rough answers quickly")
+    cmd.add_argument("--debug-single-sample", action="store_true",
+                     help="Debug: fastest mode, only collect a single sample")
+    cmd.add_argument("-v", "--verbose", action="store_true",
+                     help="Print more output")
+    cmd.add_argument("-m", "--track-memory", action="store_true",
+                     help="Track memory usage. This only works on Linux.")
+    cmd.add_argument("--affinity", metavar="CPU_LIST", default=None,
+                     help=("Specify CPU affinity for benchmark runs. This "
+                           "way, benchmarks can be forced to run on a given "
+                           "CPU to minimize run to run variation."))
     cmd.add_argument("-o", "--output", metavar="FILENAME",
                      help="Run the benchmarks on only one interpreter and "
                            "write benchmark into FILENAME. "
@@ -71,6 +56,7 @@ def parse_args():
     cmd.add_argument("--append", metavar="FILENAME",
                      help="Add runs to an existing file, or create it "
                      "if it doesn't exist")
+    filter_opts(cmd)
 
     # show
     cmd = subparsers.add_parser('show', help='Display a benchmark file')
@@ -82,7 +68,17 @@ def parse_args():
     cmds.append(cmd)
     cmd.add_argument("-v", "--verbose", action="store_true",
                      help="Print more output")
-    _add_compare_options(cmd)
+    cmd.add_argument("-O", "--output_style", metavar="STYLE",
+                     choices=("normal", "table"),
+                     default="normal",
+                     help=("What style the benchmark output should take."
+                           " Valid options are 'normal' and 'table'."
+                           " Default is normal."))
+    cmd.add_argument("--csv", metavar="CSV_FILE",
+                     action="store", default=None,
+                     help=("Name of a file the results will be written to,"
+                           " as a three-column CSV file containing minimum"
+                           " runtimes for each benchmark."))
     cmd.add_argument("baseline_filename", metavar="baseline_file.json")
     cmd.add_argument("changed_filename", metavar="changed_file.json")
 
@@ -90,6 +86,7 @@ def parse_args():
     cmd = subparsers.add_parser(
         'list', help='List benchmarks of the running Python')
     cmds.append(cmd)
+    filter_opts(cmd)
 
     # list_groups
     cmd = subparsers.add_parser(
@@ -154,7 +151,7 @@ def _main():
     if not options.inside_venv:
         exec_in_virtualenv(options)
 
-    from performance.cli_run import cmd_run, cmd_list
+    from performance.cli_run import cmd_run, cmd_list, cmd_list_groups
     from performance.compare import cmd_compare, cmd_show
 
     if options.action == 'run':
@@ -163,8 +160,10 @@ def _main():
         cmd_show(options)
     elif options.action == 'compare':
         cmd_compare(options)
-    elif options.action in ('list', 'list_groups'):
+    elif options.action == 'list':
         cmd_list(options)
+    elif options.action == 'list_groups':
+        cmd_list_groups(options)
     else:
         parser.print_help()
         sys.exit(1)
