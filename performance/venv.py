@@ -11,6 +11,15 @@ import textwrap
 import performance
 
 try:
+    import urllib2 as urllib_request   # Python 3
+except ImportError:
+    import urllib.request as urllib_request
+
+
+GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
+
+
+try:
     # Python 3.3
     from shutil import which
 except ImportError:
@@ -81,11 +90,53 @@ except ImportError:
 PERFORMANCE_ROOT = os.path.realpath(os.path.dirname(__file__))
 
 
-def get_pip_program(venv_path):
-    if os.name == "nt":
-        return os.path.join(venv_path, 'Scripts', 'pip')
-    else:
-        return os.path.join(venv_path, 'bin', 'pip')
+def is_build_dir():
+    root_dir = os.path.join(PERFORMANCE_ROOT, '..')
+    if not os.path.exists(os.path.join(root_dir, 'performance')):
+        return False
+    return os.path.exists(os.path.join(root_dir, 'setup.py'))
+
+
+class Requirements(object):
+    def __init__(self, filename, installer, optional):
+        # pre-requirements (setuptools, pip)
+        self.installer = []
+
+        # requirements
+        self.req = []
+
+        # optional requirements
+        self.optional = []
+
+        with open(filename) as fp:
+            for line in fp.readlines():
+                # strip comment
+                line = line.partition('#')[0]
+                line = line.rstrip()
+                if not line:
+                    continue
+
+                # strip env markers
+                req = line.partition(';')[0]
+
+                # strip version
+                req = req.partition('==')[0]
+                req = req.partition('>=')[0]
+
+                if req in installer:
+                    self.installer.append(line)
+                elif req in optional:
+                    self.optional.append(line)
+                else:
+                    self.req.append(line)
+
+
+def safe_rmtree(path):
+    if not os.path.exists(path):
+        return
+
+    print("Remove directory %s" % path)
+    shutil.rmtree(path)
 
 
 def python_implementation():
@@ -138,243 +189,251 @@ def create_environ(inherit_environ):
     return env
 
 
-def run_cmd_nocheck(cmd, inherit_environ):
-    print("Execute: %s" % ' '.join(cmd))
-    env = create_environ(inherit_environ)
-    proc = subprocess.Popen(cmd, env=env)
-    try:
-        proc.wait()
-    except:
-        proc.kill()
-        proc.wait()
-        raise
+def download(filename, url):
+    print("Download %s into %s" % (url, filename))
 
-    return proc.returncode
+    response = urllib_request.urlopen(url)
+    with response:
+        content = response.read()
+
+    with open(filename, 'wb') as fp:
+        fp.write(content)
+        fp.flush()
 
 
-def run_cmd(cmd, inherit_environ):
-    exitcode = run_cmd_nocheck(cmd, inherit_environ)
-    if exitcode:
-        sys.exit(exitcode)
-    print()
+class VirtualEnvironment(object):
+    def __init__(self, options):
+        self.options = options
+        self.python = options.python
+        self._venv_path = options.venv
 
-
-def virtualenv_path(options):
-    if options.venv:
-        return options.venv
-
-    script = textwrap.dedent("""
-        import hashlib
-        import platform
-        import sys
-
-        performance_version = sys.argv[1]
-        requirements = sys.argv[2]
-
-        data = performance_version + sys.executable + sys.version
-
-        pyver= sys.version_info
-
-        if hasattr(sys, 'implementation'):
-            # PEP 421, Python 3.3
-            implementation = sys.implementation.name
+    def get_pip_program(self):
+        venv_path = self.get_venv_path()
+        if os.name == "nt":
+            return os.path.join(venv_path, 'Scripts', 'pip')
         else:
-            implementation = platform.python_implementation()
-        implementation = implementation.lower()
+            return os.path.join(venv_path, 'bin', 'pip')
 
-        if not isinstance(data, bytes):
-            data = data.encode('utf-8')
-        with open(requirements, 'rb') as fp:
-            data += fp.read()
-        sha1 = hashlib.sha1(data).hexdigest()
+    def get_python_program(self):
+        venv_path = self.get_venv_path()
+        if os.name == "nt":
+            python_executable = os.path.basename(self.python)
+            return os.path.join(venv_path, 'Scripts', python_executable)
+        else:
+            return os.path.join(venv_path, 'bin', 'python')
 
-        name = ('%s%s.%s-%s'
-                % (implementation, pyver.major, pyver.minor, sha1[:12]))
-        print(name)
-    """)
-
-    python = options.python
-    requirements = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
-    cmd = (python, '-c', script, performance.__version__, requirements)
-    proc = subprocess.Popen(cmd,
-                            stdout=subprocess.PIPE,
-                            universal_newlines=True)
-    stdout = proc.communicate()[0]
-    if proc.returncode:
-        print("ERROR: failed to create the name of the virtual environment")
-        sys.exit(1)
-
-    venv_name = stdout.rstrip()
-    return os.path.join('venv', venv_name)
-
-
-def safe_rmtree(path):
-    if not os.path.exists(path):
-        return
-
-    print("Remove directory %s" % path)
-    shutil.rmtree(path)
-
-
-def _test_pip(venv_path, inherit_environ):
-    venv_pip = get_pip_program(venv_path)
-    cmd = [venv_pip, '--version']
-    exitcode = run_cmd_nocheck(cmd, inherit_environ)
-    return (exitcode == 0)
-
-
-def _create_virtualenv_impl(cmd, venv_path, inherit_environ):
-    cmd = cmd + [venv_path]
-    try:
-        exitcode = run_cmd_nocheck(cmd, inherit_environ)
-        if not exitcode:
-            if _test_pip(venv_path, inherit_environ):
-                return True
-
-        print("%s command failed" % ' '.join(cmd))
-    except OSError as exc:
-        if exc.errno != errno.ENOENT:
+    def run_cmd_nocheck(self, cmd):
+        print("Execute: %s" % ' '.join(cmd))
+        env = create_environ(self.options.inherit_environ)
+        proc = subprocess.Popen(cmd, env=env)
+        try:
+            proc.wait()
+        except:
+            proc.kill()
+            proc.wait()
             raise
 
-        # run_cmd_nocheck() failed with ENOENT
-        print("%s command failed: command not found" % ' '.join(cmd))
+        return proc.returncode
 
-    print()
-
-    safe_rmtree(venv_path)
-    return False
-
-
-def _create_virtualenv(python, venv_path, inherit_environ):
-    # python -m venv
-    cmd = [python, '-m', 'venv']
-    if _create_virtualenv_impl(cmd, venv_path, inherit_environ):
-        return
-    print()
-
-    # python -m virtualenv
-    cmd = [python, '-m', 'virtualenv']
-    if _create_virtualenv_impl(cmd, venv_path, inherit_environ):
-        return
-    print()
-
-    # virtualenv command
-    cmd = ['virtualenv', '-p', python]
-    if _create_virtualenv_impl(cmd, venv_path, inherit_environ):
-        return
-
-    print("ERROR: failed to create the virtual environment")
-    print()
-    print("Make sure that virtualenv is installed:")
-    print("%s -m pip install -U virtualenv" % python)
-    sys.exit(1)
-
-
-class Requirements:
-
-    def __init__(self, filename, installer, optional):
-        # pre-requirements (setuptools, pip)
-        self.installer = []
-
-        # requirements
-        self.req = []
-
-        # optional requirements
-        self.optional = []
-
-        with open(filename) as fp:
-            for line in fp.readlines():
-                # strip comment
-                line = line.partition('#')[0]
-                line = line.rstrip()
-                if not line:
-                    continue
-
-                # strip env markers
-                req = line.partition(';')[0]
-
-                # strip version
-                req = req.partition('==')[0]
-                req = req.partition('>=')[0]
-
-                if req in installer:
-                    self.installer.append(line)
-                elif req in optional:
-                    self.optional.append(line)
-                else:
-                    self.req.append(line)
-
-
-def is_build_dir():
-    root_dir = os.path.join(PERFORMANCE_ROOT, '..')
-    if not os.path.exists(os.path.join(root_dir, 'performance')):
-        return False
-    return os.path.exists(os.path.join(root_dir, 'setup.py'))
-
-
-def create_virtualenv(python, venv_path, inherit_environ):
-    if os.name == "nt":
-        python_executable = os.path.basename(python)
-        venv_python = os.path.join(venv_path, 'Scripts', python_executable)
-    else:
-        venv_python = os.path.join(venv_path, 'bin', 'python')
-    if os.path.exists(venv_path):
-        return venv_python
-
-    venv_pip = get_pip_program(venv_path)
-    filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
-    requirements = Requirements(filename,
-                                ['setuptools', 'pip', 'wheel'],
-                                ['psutil'])
-
-    print("Creating the virtual environment %s" % venv_path)
-    try:
-        _create_virtualenv(python, venv_path, inherit_environ)
-
-        # upgrade installer dependencies (ex: pip. Use venv/bin/pip rather than
-        # venv/bin/python -m pip, because pip 1.0 doesn't support "-m pip" CLI.
-        cmd = [venv_pip, 'install', '-U']
-        cmd.extend(requirements.installer)
-        run_cmd(cmd, inherit_environ)
-
-        # install requirements
-        cmd = [venv_python, '-m', 'pip', 'install']
-        cmd.extend(requirements.req)
-        run_cmd(cmd, inherit_environ)
-
-        # install optional requirements
-        for req in requirements.optional:
-            cmd = [venv_python, '-m', 'pip', 'install', '-U', req]
-            exitcode = run_cmd_nocheck(cmd, inherit_environ)
-            if exitcode:
-                print("WARNING: failed to install %s" % req)
-                print()
-
-        # install performance inside the virtual environment
-        if is_build_dir():
-            root_dir = os.path.dirname(PERFORMANCE_ROOT)
-            cmd = [venv_python, '-m', 'pip', 'install', '-e', root_dir]
-        else:
-            version = performance.__version__
-            cmd = [venv_python, '-m', 'pip',
-                   'install', 'performance==%s' % version]
-        run_cmd(cmd, inherit_environ)
-
-        # pip freeze
-        cmd = [venv_pip, 'freeze']
-        run_cmd(cmd, inherit_environ)
-    except:
+    def run_cmd(self, cmd):
+        exitcode = self.run_cmd_nocheck(cmd)
+        if exitcode:
+            sys.exit(exitcode)
         print()
-        safe_rmtree(venv_path)
-        raise
 
-    return venv_python
+    def get_venv_path(self):
+        if self._venv_path is not None:
+            return self._venv_path
+
+        script = textwrap.dedent("""
+            import hashlib
+            import platform
+            import sys
+
+            performance_version = sys.argv[1]
+            requirements = sys.argv[2]
+
+            data = performance_version + sys.executable + sys.version
+
+            pyver= sys.version_info
+
+            if hasattr(sys, 'implementation'):
+                # PEP 421, Python 3.3
+                implementation = sys.implementation.name
+            else:
+                implementation = platform.python_implementation()
+            implementation = implementation.lower()
+
+            if not isinstance(data, bytes):
+                data = data.encode('utf-8')
+            with open(requirements, 'rb') as fp:
+                data += fp.read()
+            sha1 = hashlib.sha1(data).hexdigest()
+
+            name = ('%s%s.%s-%s'
+                    % (implementation, pyver.major, pyver.minor, sha1[:12]))
+            print(name)
+        """)
+
+        requirements = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
+        cmd = (self.python, '-c', script, performance.__version__, requirements)
+        proc = subprocess.Popen(cmd,
+                                stdout=subprocess.PIPE,
+                                universal_newlines=True)
+        stdout = proc.communicate()[0]
+        if proc.returncode:
+            print("ERROR: failed to create the name of the virtual environment")
+            sys.exit(1)
+
+        venv_name = stdout.rstrip()
+        self._venv_path = venv_path = os.path.join('venv', venv_name)
+        return venv_path
+
+    def test_pip(self):
+        venv_pip = self.get_pip_program()
+        cmd = [venv_pip, '--version']
+        exitcode = self.run_cmd_nocheck(cmd)
+        return (exitcode == 0)
+
+    def install_pip(self):
+        venv_python = self.get_python_program()
+
+        # python -m ensurepip
+        cmd = [venv_python, '-m', 'ensurepip', '--verbose']
+        exitcode = self.run_cmd_nocheck(cmd)
+        if not exitcode:
+            return True
+
+        venv_path = self.get_venv_path()
+        filename = os.path.join(os.path.dirname(venv_path), 'get-pip.py')
+        if not os.path.exists(filename):
+            download(filename, GET_PIP_URL)
+
+        # python get-pip.py
+        cmd = [venv_python, filename]
+        exitcode = self.run_cmd_nocheck(cmd)
+        ok = (exitcode == 0)
+        if not ok:
+            # get-pip.py was maybe not properly downloaded: remove it to
+            # download it again next time
+            os.unlink(filename)
+
+        return ok
+
+    def _create_virtualenv_impl(self, cmd, install_pip=False):
+        venv_path = self.get_venv_path()
+
+        cmd = cmd + [venv_path]
+        try:
+            exitcode = self.run_cmd_nocheck(cmd)
+            if not exitcode:
+                if install_pip:
+                    pip_installed = self.install_pip()
+                else:
+                    pip_installed = True
+
+                if pip_installed and self.test_pip():
+                    return True
+
+            print("%s command failed" % ' '.join(cmd))
+        except OSError as exc:
+            if exc.errno != errno.ENOENT:
+                raise
+
+            # run_cmd_nocheck() failed with ENOENT
+            print("%s command failed: command not found" % ' '.join(cmd))
+
+        print()
+
+        safe_rmtree(venv_path)
+        return False
+
+    def _create_virtualenv(self):
+        # python -m venv
+        cmd = [self.python, '-m', 'venv', '--without-pip']
+        if self._create_virtualenv_impl(cmd, install_pip=True):
+            return
+        print()
+
+        # python -m virtualenv
+        cmd = [self.python, '-m', 'virtualenv']
+        if self._create_virtualenv_impl(cmd):
+            return
+        print()
+
+        # virtualenv command
+        cmd = ['virtualenv', '-p', self.python]
+        if self._create_virtualenv_impl(cmd):
+            return
+
+        print("ERROR: failed to create the virtual environment")
+        print()
+        print("Make sure that virtualenv is installed:")
+        print("%s -m pip install -U virtualenv" % self.python)
+        sys.exit(1)
+
+    def create_virtualenv(self):
+        venv_path = self.get_venv_path()
+        venv_python = self.get_python_program()
+        if os.path.exists(venv_path):
+            return venv_python
+
+        venv_pip = self.get_pip_program()
+        filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
+        requirements = Requirements(filename,
+                                    ['setuptools', 'pip', 'wheel'],
+                                    ['psutil'])
+
+        print("Creating the virtual environment %s" % venv_path)
+        try:
+            self._create_virtualenv()
+
+            # Upgrade installer dependencies (pip, setuptools, ...)
+            #
+            # Use "venv/bin/pip" program rather than "venv/bin/python -m pip",
+            # because pip 1.0 doesn't support "python -m pip" CLI.
+            cmd = [venv_pip, 'install', '-U']
+            cmd.extend(requirements.installer)
+            self.run_cmd(cmd)
+
+            # install requirements
+            cmd = [venv_python, '-m', 'pip', 'install']
+            cmd.extend(requirements.req)
+            self.run_cmd(cmd)
+
+            # install optional requirements
+            for req in requirements.optional:
+                cmd = [venv_python, '-m', 'pip', 'install', '-U', req]
+                exitcode = self.run_cmd_nocheck(cmd)
+                if exitcode:
+                    print("WARNING: failed to install %s" % req)
+                    print()
+
+            # install performance inside the virtual environment
+            if is_build_dir():
+                root_dir = os.path.dirname(PERFORMANCE_ROOT)
+                cmd = [venv_python, '-m', 'pip', 'install', '-e', root_dir]
+            else:
+                version = performance.__version__
+                cmd = [venv_python, '-m', 'pip',
+                       'install', 'performance==%s' % version]
+            self.run_cmd(cmd)
+
+            # pip freeze
+            cmd = [venv_pip, 'freeze']
+            self.run_cmd(cmd)
+        except:
+            print()
+            safe_rmtree(venv_path)
+            raise
+
+        return venv_python
 
 
 def exec_in_virtualenv(options):
-    venv_path = virtualenv_path(options)
-    venv_python = create_virtualenv(options.python, venv_path,
-                                    options.inherit_environ)
+    venv = VirtualEnvironment(options)
+
+    venv_python = venv.create_virtualenv()
 
     args = [venv_python, "-m", "performance"] + \
         sys.argv[1:] + ["--inside-venv"]
@@ -383,7 +442,7 @@ def exec_in_virtualenv(options):
     # * https://bugs.python.org/issue19124
     # * https://github.com/python/benchmarks/issues/5
     if os.name == "nt":
-        run_cmd(args, options.inherit_environ)
+        venv.run_cmd(args)
         sys.exit(0)
     else:
         os.execv(args[0], args)
@@ -392,7 +451,8 @@ def exec_in_virtualenv(options):
 def cmd_venv(options):
     action = options.venv_action
 
-    venv_path = virtualenv_path(options)
+    venv = VirtualEnvironment(options)
+    venv_path = venv.get_venv_path()
 
     if action in ('create', 'recreate'):
         recreated = False
@@ -403,8 +463,7 @@ def cmd_venv(options):
             print()
 
         if not os.path.exists(venv_path):
-            create_virtualenv(options.python, venv_path,
-                              options.inherit_environ)
+            venv.create_virtualenv()
 
             what = 'recreated' if recreated else 'created'
             print("The virtual environment %s has been %s" % (venv_path, what))
