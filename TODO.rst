@@ -1,7 +1,8 @@
 TODO
 ====
 
-* Add a --log option to create a log file
+* Add a --log option to create a log file. Use the logging module
+  and replace print() with logger.error().
 * Modify bm_pickle.py to run multiple benchmarks?
 * Write a test to ensure that benchmarks listed in groups exist
 * Installing dulwich on Windows fails with a compiler error,
