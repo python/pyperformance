@@ -382,8 +382,8 @@ Version 0.3.3
 * Write JSON on disk after the completion of each benchmark. It allows to
   process results before the full benchmark suite completes, and also to get
   partial results when a benchmark crashs.
-* ``venv create`` now uses ``python -m venv --without-pip`` and then try
-  ``python -m ensurepip`` or download ``get-pip.py`` and run it
+* Rewrite the code creating the virtual environment to test correctly pip.
+  Download and run ``get-pip.py`` if pip installation failed.
 
 Version 0.3.2 (2016-10-19)
 --------------------------
