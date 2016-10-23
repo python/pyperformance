@@ -302,7 +302,13 @@ class VirtualEnvironment(object):
         cmd = [venv_python, '-m', 'ensurepip', '--verbose']
         exitcode = self.run_cmd_nocheck(cmd)
         if not exitcode:
-            return True
+            # FIXME: python3 -m ensurepip creates venv/bin/pip3,
+            # but not venv/bin/pip
+            #
+            # get_pip_program() must get the python version to use
+            # venv/bin/pip3 rather than venv/bin/pip
+            if self.test_pip():
+                return True
 
         venv_path = self.get_venv_path()
         filename = os.path.join(os.path.dirname(venv_path), 'get-pip.py')
