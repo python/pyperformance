@@ -206,13 +206,7 @@ class VirtualEnvironment(object):
         self.options = options
         self.python = options.python
         self._venv_path = options.venv
-
-    def get_pip_program(self):
-        venv_path = self.get_venv_path()
-        if os.name == "nt":
-            return os.path.join(venv_path, 'Scripts', 'pip')
-        else:
-            return os.path.join(venv_path, 'bin', 'pip')
+        self._pip_program = None
 
     def get_python_program(self):
         venv_path = self.get_venv_path()
@@ -296,11 +290,37 @@ class VirtualEnvironment(object):
         self._venv_path = venv_path = os.path.join('venv', venv_name)
         return venv_path
 
-    def test_pip(self):
-        venv_pip = self.get_pip_program()
-        cmd = [venv_pip, '--version']
-        exitcode = self.run_cmd_nocheck(cmd)
-        return (exitcode == 0)
+    def _get_pip_program(self):
+        venv_path = self.get_venv_path()
+
+        # python -m pip
+        venv_python = self.get_python_program()
+        pip_program = [venv_python, '-m', 'pip']
+        if self.run_cmd_nocheck(pip_program + ['--version']) == 0:
+            self._pip_program = pip_program
+            return
+
+        # Note: "python -m pip" command doesn't work with pip 1.0
+
+        # pip program
+        if os.name == "nt":
+            venv_pip = os.path.join(venv_path, 'Scripts', 'pip')
+        else:
+            venv_pip = os.path.join(venv_path, 'bin', 'pip')
+        if not os.path.exists(venv_pip) and os.path.exists(venv_pip + '3'):
+            # ensurepip doesn't install "pip" program but only "pip3":
+            # so use "pip3"
+            venv_pip += '3'
+
+        pip_program = [venv_pip]
+        if self.run_cmd_nocheck(pip_program + ['--version']) == 0:
+            self._pip_program = pip_program
+            return
+
+    def get_pip_program(self):
+        if self._pip_program is None:
+            self._get_pip_program()
+        return self._pip_program
 
     def install_pip(self):
         venv_python = self.get_python_program()
@@ -309,12 +329,7 @@ class VirtualEnvironment(object):
         cmd = [venv_python, '-m', 'ensurepip', '--verbose']
         exitcode = self.run_cmd_nocheck(cmd)
         if not exitcode:
-            # FIXME: python3 -m ensurepip creates venv/bin/pip3,
-            # but not venv/bin/pip
-            #
-            # get_pip_program() must get the python version to use
-            # venv/bin/pip3 rather than venv/bin/pip
-            if self.test_pip():
+            if self.get_pip_program() is not None:
                 return True
 
         venv_path = self.get_venv_path()
@@ -339,16 +354,17 @@ class VirtualEnvironment(object):
         cmd = cmd + [venv_path]
         try:
             exitcode = self.run_cmd_nocheck(cmd)
-            if not exitcode:
+            if exitcode:
+                print("%s command failed" % ' '.join(cmd))
+            else:
                 if install_pip:
                     pip_installed = self.install_pip()
                 else:
                     pip_installed = True
 
-                if pip_installed and self.test_pip():
+                if pip_installed and self.get_pip_program() is not None:
                     return True
-
-            print("%s command failed" % ' '.join(cmd))
+                print("pip doesn't work")
         except OSError as exc:
             if exc.errno != errno.ENOENT:
                 raise
@@ -405,23 +421,21 @@ class VirtualEnvironment(object):
         print("Creating the virtual environment %s" % venv_path)
         try:
             self._create_virtualenv()
+            pip_program = self.get_pip_program()
 
             # Upgrade installer dependencies (pip, setuptools, ...)
-            #
-            # Use "venv/bin/pip" program rather than "venv/bin/python -m pip",
-            # because pip 1.0 doesn't support "python -m pip" CLI.
-            cmd = [venv_pip, 'install', '-U']
+            cmd = pip_program + ['install', '-U']
             cmd.extend(requirements.installer)
             self.run_cmd(cmd)
 
             # install requirements
-            cmd = [venv_python, '-m', 'pip', 'install']
+            cmd = pip_program + ['install']
             cmd.extend(requirements.req)
             self.run_cmd(cmd)
 
             # install optional requirements
             for req in requirements.optional:
-                cmd = [venv_python, '-m', 'pip', 'install', '-U', req]
+                cmd = pip_program + ['install', '-U', req]
                 exitcode = self.run_cmd_nocheck(cmd)
                 if exitcode:
                     print("WARNING: failed to install %s" % req)
@@ -430,11 +444,10 @@ class VirtualEnvironment(object):
             # install performance inside the virtual environment
             if is_build_dir():
                 root_dir = os.path.dirname(PERFORMANCE_ROOT)
-                cmd = [venv_python, '-m', 'pip', 'install', '-e', root_dir]
+                cmd = pip_program + ['install', '-e', root_dir]
             else:
                 version = performance.__version__
-                cmd = [venv_python, '-m', 'pip',
-                       'install', 'performance==%s' % version]
+                cmd = pip_program + ['install', 'performance==%s' % version]
             self.run_cmd(cmd)
 
             # pip freeze
