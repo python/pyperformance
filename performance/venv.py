@@ -386,7 +386,6 @@ class VirtualEnvironment(object):
         sys.exit(1)
 
     def exists(self):
-        venv_path = self.get_venv_path()
         venv_python = self.get_python_program()
         return os.path.exists(venv_python)
 
