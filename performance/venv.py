@@ -225,7 +225,14 @@ class VirtualEnvironment(object):
     def run_cmd_nocheck(self, cmd):
         print("Execute: %s" % ' '.join(cmd))
         env = create_environ(self.options.inherit_environ)
-        proc = subprocess.Popen(cmd, env=env)
+        try:
+            proc = subprocess.Popen(cmd, env=env)
+        except OSError as exc:
+            if exc.errno == errno.ENOENT:
+                # Command not found
+                return 127
+            raise
+
         try:
             proc.wait()
         except:
