@@ -23,7 +23,7 @@ def run_cmd(cmd):
     print("")
 
 
-def _main(venv):
+def run_tests(venv):
     # Move to the root directly
     root = os.path.dirname(__file__)
     if root:
@@ -82,8 +82,7 @@ def main():
     # Functional tests
     tmpdir = tempfile.mkdtemp()
     try:
-        venv = os.path.join(tmpdir, 'perf_test_venv')
-        _main(venv)
+        run_tests(tmpdir)
     finally:
         if os.path.exists(tmpdir):
             shutil.rmtree(tmpdir)

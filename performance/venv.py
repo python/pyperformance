@@ -372,11 +372,17 @@ class VirtualEnvironment(object):
         print("%s -m pip install -U virtualenv" % self.python)
         sys.exit(1)
 
-    def create_virtualenv(self):
+    def exists(self):
         venv_path = self.get_venv_path()
         venv_python = self.get_python_program()
-        if os.path.exists(venv_path):
-            return venv_python
+        return os.path.exists(venv_python)
+
+    def create_virtualenv(self):
+        if self.exists():
+            return self.get_python_program()
+
+        venv_path = self.get_venv_path()
+        venv_python = self.get_python_program()
 
         venv_pip = self.get_pip_program()
         filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
@@ -456,13 +462,13 @@ def cmd_venv(options):
 
     if action in ('create', 'recreate'):
         recreated = False
-        if action == 'recreate' and os.path.exists(venv_path):
+        if action == 'recreate' and venv.exists():
             recreated = True
             shutil.rmtree(venv_path)
             print("The old virtual environment %s has been removed" % venv_path)
             print()
 
-        if not os.path.exists(venv_path):
+        if not venv.exists():
             venv.create_virtualenv()
 
             what = 'recreated' if recreated else 'created'
@@ -480,12 +486,13 @@ def cmd_venv(options):
     else:
         # show command
         text = "Virtual environment path: %s" % venv_path
-        created = os.path.exists(venv_path)
+        created = venv.exists()
         if created:
             text += " (already created)"
         else:
             text += " (not created yet)"
         print(text)
+
         if not created:
             print()
             print("Command to create it:")
