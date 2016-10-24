@@ -412,7 +412,6 @@ class VirtualEnvironment(object):
         venv_path = self.get_venv_path()
         venv_python = self.get_python_program()
 
-        venv_pip = self.get_pip_program()
         filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
         requirements = Requirements(filename,
                                     ['setuptools', 'pip', 'wheel'],
@@ -451,7 +450,7 @@ class VirtualEnvironment(object):
             self.run_cmd(cmd)
 
             # pip freeze
-            cmd = [venv_pip, 'freeze']
+            cmd = pip_program + ['freeze']
             self.run_cmd(cmd)
         except:
             print()
