@@ -117,6 +117,7 @@ TODO:
 - django_template3_10x
 - django_template3
 - django_template
+- fasta (it's different than performance "regex_dna")
 - interp2
 - pyxl_bench_10x
 - pyxl_bench2_10x
@@ -131,7 +132,6 @@ Done:
 - chaos
 - deltablue
 - fannkuch, fannkuch_med
-- fasta (called "regex_dna" in performance)
 - nbody
 - pidigits: pyston has a flat implementation, single function
 - raytrace, raytrace_small: use "--width=80 --height=60" cmdline option to get
