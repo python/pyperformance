@@ -17,6 +17,13 @@ TODO
 * html5lib: 1 warmup, 3 runs: run 2 is always 10% slower!?
 
 
+numpy benchmarks?
+=================
+
+* https://morepypy.blogspot.fr/2016/11/vectorization-extended-powerpc-and-s390x.html
+* https://bitbucket.org/plan_rich/numpy-benchmark
+
+
 Port PyPy benchmarks
 ====================
 
