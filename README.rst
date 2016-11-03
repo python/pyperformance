@@ -187,6 +187,14 @@ Advices helping to get make stable benchmarks:
 
 Notes:
 
+* Development versions of Python 2.7, 3.6 and 3.7 have a --with-optimization
+  configure option
+* --with-optimization doesn't enable LTO because of compiler bugs:
+  http://bugs.python.org/issue28032
+  (see also: http://bugs.python.org/issue28605)
+* PGO is broken on Ubuntu 14.04 LTS with GCC 4.8.4-2ubuntu1~14.04:
+  ``Modules/socketmodule.c:7743:1: internal compiler error: in edge_badness,
+  at ipa-inline.c:895``
 * If nohz_full kernel option is used, the CPU frequency must be fixed,
   otherwise the CPU frequency will be instable. See `Bug 1378529: intel_pstate
   driver doesn't support NOHZ_FULL

@@ -14,10 +14,6 @@ DIRECTORY = '~/benchmarks'
 SRC = '~/cpython'
 PERF = '~/perf'
 OPTIONS = ['--lto']
-# FIXME: --pgo: PGO is broken on Ubuntu 14.04 LTS with GCC 4.8.4-2ubuntu1~14.04:
-# Modules/socketmodule.c:7743:1: internal compiler error: in edge_badness, at ipa-inline.c:895
-#
-# Other option: --revision
 
 BRANCHES = (
     "default",
