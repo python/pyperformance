@@ -295,8 +295,12 @@ def BM_genshi(python, options):
     return run_perf_script(python, options, "genshi")
 
 
-def BM_SQLAlchemy_Declarative(python, options):
+def BM_sqlalchemy_declarative(python, options):
     return run_perf_script(python, options, "sqlalchemy_declarative")
+
+
+def BM_sqlalchemy_imperative(python, options):
+    return run_perf_script(python, options, "sqlalchemy_imperative")
 
 
 # End benchmarks, begin main entry point support.
