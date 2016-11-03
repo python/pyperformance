@@ -20,10 +20,9 @@ possible.
 
 Other Python Benchmarks:
 
-* CPython: `speed.python.org <https://speed.python.org/>`_ uses the
-  `old Python benchmarks (hg.python.org/benchmarks)
-  <https://hg.python.org/benchmarks>`_ and
-  `Codespeed <https://github.com/tobami/codespeed/>`_ (web UI)
+* CPython: `speed.python.org <https://speed.python.org/>`_ uses perf,
+  performance and `Codespeed <https://github.com/tobami/codespeed/>`_ (Django
+  web application)
 * PyPy: `speed.pypy.org <http://speed.pypy.org/>`_
   uses `PyPy benchmarks <https://bitbucket.org/pypy/benchmarks>`_
 * Pyston: `pyston-perf <https://github.com/dropbox/pyston-perf>`_
