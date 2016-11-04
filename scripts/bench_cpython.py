@@ -64,7 +64,8 @@ class BenchmarkPython(object):
     def prepare_scm(self):
         args = self.args
 
-        self.run('hg', 'pull')
+        if args.pull:
+            self.run('hg', 'pull')
 
         self.logger.error('')
         text = "Benchmark CPython revision %s" % args.revision
@@ -179,6 +180,9 @@ class BenchmarkPython(object):
         parser.add_argument('--rigorous', action="store_true",
                             help="Enable the rigorous mode: "
                                  "run more benchmarks samples")
+        parser.add_argument('--pull',
+                            help='Run hg pull -u to update the Mercurial '
+                                 'repository')
         parser.add_argument('revision',
                             help='Python benchmarked revision')
         args = parser.parse_args()
