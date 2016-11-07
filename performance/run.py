@@ -93,45 +93,6 @@ def run_perf_script(python, options, name, extra_args=[]):
     return _load_suite_from_stdout(stdout)
 
 
-def add_bench(suite, obj, options):
-    if isinstance(obj, perf.BenchmarkSuite):
-        benchmarks = obj
-    else:
-        benchmarks = (obj,)
-
-    replace = (suite is not None)
-
-    if options.append:
-        filename = options.append
-        if os.path.exists(filename):
-            suite_append = perf.BenchmarkSuite.load(filename)
-        else:
-            suite_append = None
-
-    version = performance.__version__
-    for bench in benchmarks:
-        bench.update_metadata({'performance_version': version})
-
-        if suite is not None:
-            suite.add_benchmark(bench)
-        else:
-            suite = perf.BenchmarkSuite([bench])
-
-        if options.append:
-            if suite_append is not None:
-                suite_append.add_runs(bench)
-            else:
-                suite_append = perf.BenchmarkSuite([bench])
-
-    if options.output and suite is not None:
-        suite.dump(options.output, replace=replace)
-
-    if options.append and suite_append is not None:
-        suite_append.dump(options.append, replace=True)
-
-    return suite
-
-
 def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
     suite = None
     to_run = sorted(should_run)
@@ -142,13 +103,31 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
               (str(index + 1).rjust(len(run_count)), run_count, name))
         sys.stdout.flush()
 
+        def add_bench(dest_suite, obj):
+            if isinstance(obj, perf.BenchmarkSuite):
+                benchmarks = obj
+            else:
+                benchmarks = (obj,)
+
+            version = performance.__version__
+            for bench in benchmarks:
+                bench.update_metadata({'performance_version': version})
+
+                if dest_suite is not None:
+                    dest_suite.add_benchmark(bench)
+                else:
+                    dest_suite = perf.BenchmarkSuite([bench])
+
+            return dest_suite
+
         try:
             bench = func(cmd_prefix, options)
         except Exception as exc:
             print("ERROR: Benchmark %s failed: %s" % (name, exc))
             sys.exit(1)
 
-        suite = add_bench(suite, bench, options)
+        suite = add_bench(suite, bench)
 
     print()
+
     return suite

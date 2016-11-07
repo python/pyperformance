@@ -387,9 +387,6 @@ Version 0.3.3
 * Add ``sqlalchemy_imperative`` benchmark: it wasn't registered properly
 * The ``list`` command now only lists the benchmark that the ``run`` command
   will run. The ``list`` command gets a new ``-b/--benchmarks`` option.
-* Write JSON on disk after the completion of each benchmark. It allows to
-  process results before the full benchmark suite completes, and also to get
-  partial results when a benchmark crashs.
 * Rewrite the code creating the virtual environment to test correctly pip.
   Download and run ``get-pip.py`` if pip installation failed.
 
