@@ -176,6 +176,9 @@ How to get stable benchmarks
 
 Advices helping to get make stable benchmarks:
 
+* Run ``python3 -m perf system tune`` command
+* See also advices in the perf documentation: `Stable and reliable benchmarks
+  <http://perf.readthedocs.io/en/latest/perf.html#stable-and-reliable-benchmarks>`_
 * Compile Python using LTO (Link Time Optimization) and PGO (profile guided optimizations)::
 
     ./configure --with-lto
@@ -184,10 +187,6 @@ Advices helping to get make stable benchmarks:
   You should get the ``-flto`` option on GCC for example.
 
 * Use the ``--rigorous`` option of the ``run`` command
-* On Linux with multiple CPU cores: use CPU isolation, see ``isolcpus`` and
-  ``rcu_nocbs`` kernel option
-* On a laptop: plug the power cable.
-* For modern Intel CPUs: disable Turbo Boost
 
 Notes:
 
@@ -385,8 +384,8 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
-Version 0.4.0
--------------
+Version 0.4.0 (2016-11-07)
+--------------------------
 
 * Add ``sqlalchemy_imperative`` benchmark: it wasn't registered properly
 * The ``list`` command now only lists the benchmark that the ``run`` command
