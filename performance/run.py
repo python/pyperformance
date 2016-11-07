@@ -10,9 +10,9 @@ except ImportError:
     multiprocessing = None
 
 import perf
-from perf._bench import _load_suite_from_stdout
 
 import performance
+from performance.utils import temporary_file
 from performance.venv import PERFORMANCE_ROOT
 
 
@@ -37,13 +37,11 @@ def run_command(command, hide_stderr=True):
                  " ".join(list(map(str, command))))
 
     proc = subprocess.Popen(command,
-                            stdout=subprocess.PIPE,
                             universal_newlines=True,
                             **kw)
     try:
-        stdout, stderr = proc.communicate()
+        stderr = proc.communicate()[1]
     except:
-        proc.stdout.close()
         if proc.stderr:
             proc.stderr.close()
         try:
@@ -60,7 +58,6 @@ def run_command(command, hide_stderr=True):
             sys.stderr.write(stderr)
             sys.stderr.flush()
         raise RuntimeError("Benchmark died")
-    return stdout
 
 
 def copy_perf_options(cmd, options):
@@ -84,13 +81,15 @@ def copy_perf_options(cmd, options):
 
 def run_perf_script(python, options, name, extra_args=[]):
     bm_path = Relative("bm_%s.py" % name)
-    bench_args = [bm_path]
-    copy_perf_options(bench_args, options)
-    bench_args.append("--stdout")
+    cmd = list(python)
+    cmd.append(bm_path)
+    cmd.extend(extra_args)
+    copy_perf_options(cmd, options)
 
-    command = python + bench_args + extra_args
-    stdout = run_command(command, hide_stderr=not options.verbose)
-    return _load_suite_from_stdout(stdout)
+    with temporary_file() as tmp:
+        cmd.extend(('--output', tmp))
+        run_command(cmd, hide_stderr=not options.verbose)
+        return perf.BenchmarkSuite.load(tmp)
 
 
 def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):

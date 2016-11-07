@@ -3,11 +3,12 @@ from __future__ import division, with_statement, print_function, absolute_import
 import logging
 import subprocess
 
-from perf._bench import _load_suite_from_stdout
+import perf
 
 from performance.run import (run_perf_script, copy_perf_options,
                              BenchmarkException, run_command,
                              Relative)
+from performance.utils import temporary_file
 
 
 # Benchmark groups. The "default" group is what's run if no -b option is
@@ -51,19 +52,19 @@ def BM_PyBench(python, options):
 
     PYBENCH_PATH = Relative("pybench", "pybench.py")
 
-    args = [PYBENCH_PATH,
-            '--with-gc',
-            '--with-syscheck']
-    copy_perf_options(args, options)
-    args.append('--stdout')
+    cmd = list(python)
+    cmd.extend((PYBENCH_PATH, '--with-gc', '--with-syscheck'))
+    copy_perf_options(cmd, options)
 
-    try:
-        cmd = python + args
-        stdout = run_command(cmd, hide_stderr=False)
+    with temporary_file() as tmp:
+        cmd.extend(('--output', tmp))
 
-        return _load_suite_from_stdout(stdout)
-    except subprocess.CalledProcessError as exc:
-        return BenchmarkException(exc)
+        try:
+            run_command(cmd, hide_stderr=False)
+        except subprocess.CalledProcessError as exc:
+            return BenchmarkException(exc)
+
+        return perf.BenchmarkSuite.load(tmp)
 
 
 def BM_2to3(python, options):
