@@ -5,7 +5,7 @@
 #  - python2 -m performance venv create
 #  - venv/cpython2<tab>/bin/python -m pip list --outdated
 #  - update performance/requirements.txt
-#  - increase performance major version of a benchmark dependency is upgraded
+#  - increase performance major version if a benchmark dependency is upgraded
 #  - (see also pip-tools and pipdeptree tools)
 #
 # Prepare a release:
@@ -32,7 +32,7 @@
 #  - git commit -a -m "post-release"
 #  - git push
 
-VERSION = '0.3.3'
+VERSION = '0.4.0'
 
 DESCRIPTION = 'Python benchmark suite'
 CLASSIFIERS = [

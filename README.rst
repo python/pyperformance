@@ -381,7 +381,7 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
-Version 0.3.3
+Version 0.4.0
 -------------
 
 * Add ``sqlalchemy_imperative`` benchmark: it wasn't registered properly
@@ -389,6 +389,14 @@ Version 0.3.3
   will run. The ``list`` command gets a new ``-b/--benchmarks`` option.
 * Rewrite the code creating the virtual environment to test correctly pip.
   Download and run ``get-pip.py`` if pip installation failed.
+* Upgrade requirements:
+
+  * perf: 0.8.2 => 0.9.0
+  * Django: 1.10.2 => 1.10.3
+  * Mako: 1.0.4 => 1.0.5
+  * mercurial: 3.9.2 => 4.0.0
+  * psutil: 4.3.1 => 5.0.0
+  * SQLAlchemy: 1.1.2 => 1.1.3
 
 Version 0.3.2 (2016-10-19)
 --------------------------
