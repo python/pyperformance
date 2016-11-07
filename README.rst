@@ -45,6 +45,10 @@ Command to install performance::
 
     python3 -m pip install performance
 
+On Python 2, the ``virtualenv`` program (or the Python module) is required
+to create virtual environments. On Python 3, the ``venv`` module of the
+standard library is used.
+
 At runtime, Python development files (header files) may be needed to install
 some dependencies like ``dulwich_log`` or ``psutil``, to build their C
 extension. Commands on Fedora to install dependencies:
@@ -397,6 +401,8 @@ Version 0.4.0
   * mercurial: 3.9.2 => 4.0.0
   * psutil: 4.3.1 => 5.0.0
   * SQLAlchemy: 1.1.2 => 1.1.3
+
+* Remove ``virtualenv`` dependency
 
 Version 0.3.2 (2016-10-19)
 --------------------------
