@@ -8,3 +8,4 @@ include requirements.txt
 include runtests.py
 include pyperformance
 include tox.ini
+include scripts/*.py
