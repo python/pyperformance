@@ -98,9 +98,12 @@ def is_build_dir():
 
 
 class Requirements(object):
-    def __init__(self, filename, installer, optional):
+    def __init__(self, filename, installer, indirect_req, optional):
         # pre-requirements (setuptools, pip)
         self.installer = []
+
+        # indirect requirements
+        self.indirect_req = []
 
         # requirements
         self.req = []
@@ -127,6 +130,8 @@ class Requirements(object):
                     self.installer.append(line)
                 elif req in optional:
                     self.optional.append(line)
+                elif req in indirect_req:
+                    self.indirect_req.append(line)
                 else:
                     self.req.append(line)
 
@@ -414,7 +419,9 @@ class VirtualEnvironment(object):
 
         filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
         requirements = Requirements(filename,
+                                    # FIXME: don't hardcode requirements
                                     ['setuptools', 'pip', 'wheel'],
+                                    ['cffi'],
                                     ['psutil'])
 
         print("Creating the virtual environment %s" % venv_path)
@@ -425,6 +432,11 @@ class VirtualEnvironment(object):
             # Upgrade installer dependencies (pip, setuptools, ...)
             cmd = pip_program + ['install', '-U']
             cmd.extend(requirements.installer)
+            self.run_cmd(cmd)
+
+            # install indirect requirements
+            cmd = pip_program + ['install']
+            cmd.extend(requirements.indirect_req)
             self.run_cmd(cmd)
 
             # install requirements
