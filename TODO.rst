@@ -1,12 +1,14 @@
 TODO
 ====
 
+* Catch errors: scipy fails on a development version of Python 3.6 because
+  inspect.getargspec() was removed. Other benchmarks must not fail.
+* Installing dulwich on Windows fails with a compiler error,
+  there is no prebuilt Windows wheel package.
 * Add a --log option to create a log file. Use the logging module
   and replace print() with logger.error().
 * Modify bm_pickle.py to run multiple benchmarks?
 * Write a test to ensure that benchmarks listed in groups exist
-* Installing dulwich on Windows fails with a compiler error,
-  there is no prebuilt Windows wheel package.
 * Decide of sqlalchemy benchmarks should only benchmark SELECT ALL
   or INSERT+SELECT?
 * Run pep8 on Travis
