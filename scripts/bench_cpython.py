@@ -3,6 +3,7 @@ import argparse
 import datetime
 import logging
 import os.path
+import shutil
 import subprocess
 import sys
 import time
@@ -105,20 +106,30 @@ class BenchmarkPython(object):
         else:
             self.run('make')
 
+    def rmtree(self, directory):
+        if not os.path.exists(directory):
+            return
+
+        self.logger.error("Remove directory %s" % directory)
+        shutil.rmtree(directory)
+
     def install(self):
         args = self.args
+        prefix = args.prefix
 
         if sys.platform in ('darwin', 'win32'):
             program_ext = '.exe'
         else:
             program_ext = ''
 
-        if args.prefix:
+        if prefix:
+            self.rmtree(prefix)
+
             self.run('make', 'install')
 
-            self.python = os.path.join(args.prefix, "bin", "python" + program_ext)
+            self.python = os.path.join(prefix, "bin", "python" + program_ext)
             if not os.path.exists(self.python):
-                self.python = os.path.join(args.prefix, "bin", "python3" + program_ext)
+                self.python = os.path.join(prefix, "bin", "python3" + program_ext)
         else:
             self.python = "./python" + program_ext
 
@@ -211,11 +222,6 @@ class BenchmarkPython(object):
 
         if args.output and os.path.exists(args.output):
             print("ERROR: %s already exists" % args.output)
-            sys.exit(1)
-
-        if args.prefix and os.path.exists(args.prefix):
-            print("ERROR: Prefix %s already exists: remove it manually"
-                  % args.prefix)
             sys.exit(1)
 
         return args
