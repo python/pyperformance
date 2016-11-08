@@ -384,6 +384,11 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
+Version 0.4.1
+-------------
+
+* Upgrade mercurial requirement: 3.9.2 => 4.0.0
+
 Version 0.4.0 (2016-11-07)
 --------------------------
 
