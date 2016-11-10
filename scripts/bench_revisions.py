@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import argparse
+import configparser
 import datetime
 import errno
 import os.path
@@ -6,22 +8,6 @@ import shutil
 import subprocess
 import sys
 
-
-# FIXME: add command line options, don't hardcode options
-DIRECTORY = '~/benchmarks'
-# SRC = '~/prog/python/cpython_for_bench'
-# PERF = '~/prog/GIT/perf'
-SRC = '~/cpython'
-PERF = '~/perf'
-OPTIONS = ['--lto']
-
-BRANCHES = (
-    "default",
-    "3.6",
-    "3.5",
-    "3.4",
-    "2.7",
-)
 
 REVISIONS = (
     # OLD -> NEW
@@ -50,12 +36,6 @@ class Benchmark(object):
     def __init__(self):
         bench_dir = os.path.realpath(os.path.dirname(__file__))
         self.bench_cpython = os.path.join(bench_dir, 'bench_cpython.py')
-        self.directory = os.path.expanduser(DIRECTORY)
-        self.src = os.path.expanduser(SRC)
-        self.perf = os.path.expanduser(PERF)
-        self.prefix = os.path.join(self.directory, 'prefix')
-        self.venv = os.path.join(self.directory, 'venv')
-        self.log = os.path.join(self.directory, 'bench.log')
         self.outputs = []
         self.skipped = []
 
@@ -103,8 +83,10 @@ class Benchmark(object):
                '--venv', self.venv,
                '--prefix', self.prefix,
                revision]
-        if OPTIONS:
-            cmd.extend(OPTIONS)
+        if self.options:
+            cmd.append(self.options)
+        if self.debug:
+            cmd.append('--debug')
         self.run_cmd(cmd)
 
         self.outputs.append(filename)
@@ -116,17 +98,50 @@ class Benchmark(object):
             if exc.errno != errno.EEXIST:
                 raise
 
+    def parse_args(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('config_filename',
+                            help='Configuration filename')
+        return parser.parse_args()
+
+    def parse_config(self, filename):
+        cfgobj = configparser.ConfigParser()
+        cfgobj.read(filename)
+        config = cfgobj['config']
+
+        def get(section, key):
+            return section[key].strip()
+
+        self.directory = os.path.expanduser(get(config, 'bench_root'))
+        self.src = os.path.expanduser(get(config, 'cpython_dir'))
+        self.perf = os.path.expanduser(get(config, 'perf_dir'))
+        self.prefix = os.path.join(self.directory, 'prefix')
+        self.venv = os.path.join(self.directory, 'venv')
+        self.log = os.path.join(self.directory, 'bench.log')
+        self.options = get(config, 'options')
+        self.branches = get(config, 'branches').split()
+        self.update = config.getboolean('update', True)
+        self.debug = config.getboolean('debug', False)
+
+        self.revisions = []
+        section = cfgobj['revisions']
+        for revision, name in cfgobj.items('revisions'):
+            self.revisions.append((revision, name))
+
     def main(self):
+        args = self.parse_args()
+        self.parse_config(args.config_filename)
         self.safe_makedirs(self.directory)
         self.run_cmd(('sudo', 'python3', '-m', 'perf', 'system', 'tune'),
                      cwd=self.perf)
-        self.run_cmd(('hg', 'pull'), cwd=self.src)
+        if self.update:
+            self.run_cmd(('hg', 'pull'), cwd=self.src)
 
         try:
-            for branch in BRANCHES:
+            for branch in self.branches:
                 self.benchmark(branch)
 
-            for name, revision in REVISIONS:
+            for revision, name in self.revisions:
                 self.benchmark(revision, name)
         finally:
             for filename in self.skipped:
