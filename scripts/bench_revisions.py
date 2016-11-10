@@ -48,7 +48,8 @@ REVISIONS = (
 
 class Benchmark(object):
     def __init__(self):
-        self.bench_cpython = os.path.realpath('bench_cpython.py')
+        bench_dir = os.path.realpath(os.path.dirname(__file__))
+        self.bench_cpython = os.path.join(bench_dir, 'bench_cpython.py')
         self.directory = os.path.expanduser(DIRECTORY)
         self.src = os.path.expanduser(SRC)
         self.perf = os.path.expanduser(PERF)
