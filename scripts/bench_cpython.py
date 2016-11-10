@@ -133,25 +133,24 @@ class BenchmarkPython(object):
         else:
             self.python = "./python" + program_ext
 
-        exitcode = self.run_nocheck(self.python, '-m', 'pip', '--version')
+        exitcode = self.run_nocheck(self.python, '-u', '-m', 'pip', '--version')
         if exitcode:
             # pip is missing (or broken?): install it
             self.run('wget', GET_PIP_URL, '-O', 'get-pip.py')
-            self.run(self.python, 'get-pip.py')
+            self.run(self.python, '-u', 'get-pip.py')
 
         # Install performance
-        self.run(self.python, '-m', 'pip', 'install', '-U', 'performance')
+        self.run(self.python, '-u', '-m', 'pip', 'install', '-U', 'performance')
 
     def run_benchmark(self):
         args = self.args
 
         # Create venv
-        cmd = [self.python, '-m', 'performance', 'venv', 'recreate']
+        cmd = [self.python, '-u', '-m', 'performance', 'venv', 'recreate']
         if args.venv:
             cmd.extend(('--venv', args.venv))
         self.run(*cmd)
 
-        # python -u: unbuffered output to see output faster
         cmd = [self.python, '-u',
                '-m', 'performance',
                'run', '-b', 'all,-pybench',
