@@ -34,13 +34,6 @@ MarkupSafe==0.23
 # html5lib 0.999999999 dependencies
 webencodings==0.5
 
-# mercurial 4.0.0 uses cffi on PyPy. Travis CI uses PyPy 2.5
-# which uses cffi 0.8.6, but the installation on mercurial 4.0.0 fails with
-# cffi older than 1.0.
-#
-# Upgrade PyPy at Travis: https://github.com/travis-ci/travis-ci/issues/5027
-cffi>=1.0; platform_python_implementation=='PyPy'
-
 # sympy 1.0 dependency
 mpmath==0.19
 
@@ -69,7 +62,12 @@ Genshi==0.7                               # bm_genshi
 Mako==1.0.5                               # bm_mako
 SQLAlchemy==1.1.3                         # bm_sqlalchemy_declarative
 dulwich==0.15.0                           # dulwich_log
-mercurial==4.0.0; python_version < '3.0'  # bm_hg_startup
+# mercurial 4.0.0 uses cffi on PyPy. Travis CI uses PyPy 2.5
+# which uses cffi 0.8.6, but the installation on mercurial 4.0.0 fails with
+# cffi older than 1.0.
+#
+# Upgrade PyPy at Travis: https://github.com/travis-ci/travis-ci/issues/5027
+mercurial==3.9.2; python_version < '3.0'  # bm_hg_startup
 html5lib==0.999999999                     # bm_html5lib
 pathlib2==2.1.0; python_version < '3.4'   # bm_pathlib
 pyaes==1.6.0                              # bm_crypto_pyaes
