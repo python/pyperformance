@@ -169,8 +169,7 @@ class BenchmarkPython(object):
 
         cmd = [self.python, '-u',
                '-m', 'performance',
-               'run', '-b', 'all,-pybench',
-               '-v']
+               'run', '--verbose']
         if args.output:
             cmd.extend(('--output', args.output))
         if args.venv:

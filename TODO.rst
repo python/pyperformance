@@ -1,8 +1,6 @@
 TODO
 ====
 
-* After performance 0.4.1 release: modify scripts/bench_cpython.py to remove
-  "-b all,-pybench" option: use the default group
 * Add a --log option to create a log file. Use the logging module
   and replace print() with logger.error().
 * Write a test to ensure that benchmarks listed in groups exist
