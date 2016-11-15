@@ -32,7 +32,7 @@
 #  - git commit -a -m "post-release"
 #  - git push
 
-VERSION = '0.4.1'
+VERSION = '0.5.0'
 
 DESCRIPTION = 'Python benchmark suite'
 CLASSIFIERS = [

@@ -385,8 +385,8 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
-Version 0.4.1
--------------
+Version 0.5.0 (2016-11-16)
+--------------------------
 
 * Add ``mdp`` benchmark: battle with damages and topological sorting of nodes
   in a graph
