@@ -63,8 +63,8 @@ Run benchmarks
 
 Commands to compare Python 2 and Python 3 performances::
 
-    pyperformance run --python=python2 --rigorous -o py2.json
-    pyperformance run --python=python3 --rigorous -o py3.json
+    pyperformance run --python=python2 -o py2.json
+    pyperformance run --python=python3 -o py3.json
     pyperformance compare py2.json py3.json
 
 Note: ``python3 -m performance ...`` syntax works as well (ex: ``python3 -m
