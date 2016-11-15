@@ -4,6 +4,7 @@ import logging
 import os.path
 import subprocess
 import sys
+import traceback
 try:
     import multiprocessing
 except ImportError:
@@ -96,6 +97,8 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
     suite = None
     to_run = sorted(should_run)
     run_count = str(len(to_run))
+    errors = []
+
     for index, name in enumerate(to_run):
         func = bench_funcs[name]
         print("[%s/%s] %s..." %
@@ -123,10 +126,11 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
             bench = func(cmd_prefix, options)
         except Exception as exc:
             print("ERROR: Benchmark %s failed: %s" % (name, exc))
-            sys.exit(1)
-
-        suite = add_bench(suite, bench)
+            traceback.print_exc()
+            errors.append(name)
+        else:
+            suite = add_bench(suite, bench)
 
     print()
 
-    return suite
+    return (suite, errors)

@@ -39,7 +39,7 @@ def cmd_run(parser, options):
         sys.exit(1)
     bench_funcs, bench_groups, should_run = get_benchmarks_to_run(options)
     cmd_prefix = [sys.executable]
-    suite = run_benchmarks(bench_funcs, should_run, cmd_prefix, options)
+    suite, errors = run_benchmarks(bench_funcs, should_run, cmd_prefix, options)
 
     if not suite:
         print("ERROR: No benchmark was run")
@@ -50,6 +50,13 @@ def cmd_run(parser, options):
     if options.append:
         perf.add_runs(options.append, suite)
     display_benchmark_suite(suite)
+
+    if errors:
+        print("%s benchmarks failed:" % len(errors))
+        for name in errors:
+            print("- %s" % name)
+        print()
+        sys.exit(1)
 
 
 def cmd_list(options):
