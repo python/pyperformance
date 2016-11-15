@@ -14,9 +14,6 @@ TODO
 * Decide of sqlalchemy benchmarks should only benchmark SELECT ALL
   or INSERT+SELECT?
 * Run pep8 on Travis
-* python3 -m performance list: list Python 2 benchmarks, but mention that
-  they are incompatible with Python 3?
-* Port bm_pyflate to Python 3?
 * html5lib: 1 warmup, 3 runs: run 2 is always 10% slower!?
 
 

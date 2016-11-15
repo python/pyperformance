@@ -18,6 +18,7 @@ import hashlib
 import os
 
 import perf
+import six
 from six.moves import xrange
 
 
@@ -287,14 +288,16 @@ def move_to_front(l, c):
 
 def bwt_transform(L):
     # Semi-inefficient way to get the character counts
-    F = b''.join(sorted(L))
+    if six.PY3:
+        F = bytes(sorted(L))
+    else:
+        F = b''.join(sorted(L))
     base = []
     for i in range(256):
-        base.append(F.find(chr(i)))
+        base.append(F.find(six.int2byte(i)))
 
     pointers = [-1] * len(L)
-    for i, char in enumerate(L):
-        symbol = ord(char)
+    for i, symbol in enumerate(six.iterbytes(L)):
         pointers[base[symbol]] = i
         base[symbol] += 1
     return pointers
@@ -327,7 +330,10 @@ def bwt_reverse(L, end):
             end = T[end]
             out.append(L[end])
 
-    return "".join(out)
+    if six.PY3:
+        return bytes(out)
+    else:
+        return b"".join(out)
 
 
 def compute_used(b):
@@ -403,7 +409,7 @@ def decode_huffman_block(b, out):
     symbols_in_use = sum(used) + 2  # remember RUN[AB] RLE symbols
     tables = compute_tables(b, huffman_groups, symbols_in_use)
 
-    favourites = [chr(i) for i, x in enumerate(used) if x]
+    favourites = [six.int2byte(i) for i, x in enumerate(used) if x]
 
     selector_pointer = 0
     decoded = 0
@@ -440,15 +446,15 @@ def decode_huffman_block(b, out):
             buffer.append(o)
             pass
 
-    nt = nearly_there = bwt_reverse("".join(buffer), pointer)
+    nt = nearly_there = bwt_reverse(b"".join(buffer), pointer)
     i = 0
     # Pointless/irritating run-length encoding step
     while i < len(nearly_there):
         if i < len(nearly_there) - 4 and nt[i] == nt[i + 1] == nt[i + 2] == nt[i + 3]:
-            out.append(nearly_there[i] * (ord(nearly_there[i + 4]) + 4))
+            out.append(nearly_there[i:i + 1] * (ord(nearly_there[i + 4:i + 5]) + 4))
             i += 5
         else:
-            out.append(nearly_there[i])
+            out.append(nearly_there[i:i + 1])
             i += 1
 
 # Sixteen bits of magic have been removed by the time we start decoding
@@ -518,7 +524,7 @@ def gzip_main(field):
             if length & b.readbits(16):
                 raise Exception("stored block lengths do not match each other")
             for i in range(length):
-                out.append(chr(b.readbits(8)))
+                out.append(six.int2byte(b.readbits(8)))
 
         elif blocktype == 1 or blocktype == 2:  # Huffman
             main_literals, main_distances = None, None
@@ -586,7 +592,7 @@ def gzip_main(field):
                 r = main_literals.find_next_symbol(b)
                 if 0 <= r <= 255:
                     literal_count += 1
-                    out.append(chr(r))
+                    out.append(six.int2byte(r))
                 elif r == 256:
                     if literal_count > 0:
                         literal_count = 0
