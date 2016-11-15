@@ -210,7 +210,7 @@ class Benchmark(object):
             for filename in self.outputs:
                 print("Tested: %s" % filename)
 
-            for filename in self.uplodaded:
+            for filename in self.uploaded:
                 print("Tested and uploaded: %s" % filename)
 
 
