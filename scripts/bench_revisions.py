@@ -46,8 +46,6 @@ class Benchmark(object):
             sys.exit(exitcode)
 
     def encode_benchmark(self, bench, branch, revision):
-        metadata = bench.get_metadata()
-
         data = {}
         data['benchmark'] = bench.get_name()
         data['result_value'] = bench.median()
@@ -65,6 +63,8 @@ class Benchmark(object):
         return data
 
     def upload_json(self, filename, branch, revision):
+        import perf
+
         suite = perf.BenchmarkSuite.load(filename)
         data = [self.encode_benchmark(bench, branch, revision) for bench in suite]
         data = dict(json=json.dumps(data))
@@ -81,9 +81,10 @@ class Benchmark(object):
             response.close()
             return True
         except HTTPError as err:
-            print(str(e))
-            print(e.read().decode())
-            e.close()
+            print("HTTP Error: %s" % err)
+            errmsg = err.read().decode('utf8')
+            print(errmsg)
+            err.close()
             return False
 
     def benchmark(self, revision, name=None):
@@ -117,9 +118,9 @@ class Benchmark(object):
         self.run_cmd(cmd)
 
         if self.upload:
-            uplodaded = self.upload_json(filename, branch, revision)
+            uploaded = self.upload_json(filename, branch, revision)
         else:
-            uplodaded = False
+            uploaded = False
 
         if uploaded:
             self.uploaded.append(filename)
@@ -167,7 +168,6 @@ class Benchmark(object):
         self.environment = getstr('upload', 'environment')
 
         self.revisions = []
-        section = cfgobj['revisions']
         for revision, name in cfgobj.items('revisions'):
             self.revisions.append((revision, name))
 
@@ -187,6 +187,9 @@ class Benchmark(object):
     def main(self):
         args = self.parse_args()
         self.parse_config(args.config_filename)
+
+        # Import perf module from --perf directory
+        sys.path.insert(0, self.perf)
 
         self.safe_makedirs(self.directory)
         self.run_cmd(('sudo', 'python3', '-m', 'perf', 'system', 'tune'),
