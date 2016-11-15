@@ -3,33 +3,18 @@ import argparse
 import configparser
 import datetime
 import errno
+import json
 import os.path
 import shutil
+import statistics
 import subprocess
 import sys
+from urllib.error import HTTPError
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
 
-REVISIONS = (
-    # OLD -> NEW
-
-    # Before the sprint, Sep 04 2016
-    ("before-sprint", "8e9d3a5d47d5"),
-
-    # After: Compact dict
-    ("compact-dict", "0bd618fe0639"),
-    # After: Rework CALL_FUNCTION opcodes
-    ("rework-call-opcode", "a77756e480c2"),
-    # After: all FASTCALL changes
-    ("fastcall", "97a68adbe826"),
-
-    ("sept15", "b6ca2d734f8e"),
-    ("sept20", "0480b540a451"),
-    ("sept25", "1c5e0dbcb2a0"),
-
-    ("oct1", "f12f8a5960f0"),
-    ("oct10", "678fe178da0d"),
-    ("oct20", "1ce50f7027c1"),
-)
+UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')
 
 
 class Benchmark(object):
@@ -38,6 +23,7 @@ class Benchmark(object):
         self.bench_cpython = os.path.join(bench_dir, 'bench_cpython.py')
         self.outputs = []
         self.skipped = []
+        self.uploaded = []
 
     def get_revision_info(self, revision):
         cmd = ['hg', 'log', '--template', '{node}|{branch}|{date|isodate}', '-r', revision]
@@ -58,6 +44,47 @@ class Benchmark(object):
         exitcode = proc.wait()
         if exitcode:
             sys.exit(exitcode)
+
+    def encode_benchmark(self, bench, branch, revision):
+        metadata = bench.get_metadata()
+
+        data = {}
+        data['benchmark'] = bench.get_name()
+        data['result_value'] = bench.median()
+
+        samples = bench.get_samples()
+        data['min'] = min(samples)
+        data['max'] = max(samples)
+        data['std_dev'] = statistics.stdev(samples, bench.median())
+
+        data['executable'] = self.executable
+        data['commitid'] = revision
+        data['branch'] = branch
+        data['project'] = self.project
+        data['environment'] = self.environment
+        return data
+
+    def upload_json(self, filename, branch, revision):
+        suite = perf.BenchmarkSuite.load(filename)
+        data = [self.encode_benchmark(bench, branch, revision) for bench in suite]
+        data = dict(json=json.dumps(data))
+
+        url = self.url
+        if not url.endswith('/'):
+            url += '/'
+        url += 'result/add/json/'
+        print("Upload %s benchmarks to %s" % (len(suite), url))
+
+        try:
+            response = urlopen(data=urlencode(data).encode('utf-8'), url=url)
+            print('Response: "%s"' % response.read().decode('utf-8'))
+            response.close()
+            return True
+        except HTTPError as err:
+            print(str(e))
+            print(e.read().decode())
+            e.close()
+            return False
 
     def benchmark(self, revision, name=None):
         node, branch, date = self.get_revision_info(revision)
@@ -89,7 +116,15 @@ class Benchmark(object):
             cmd.append('--debug')
         self.run_cmd(cmd)
 
-        self.outputs.append(filename)
+        if self.upload:
+            uplodaded = self.upload_json(filename, branch, revision)
+        else:
+            uplodaded = False
+
+        if uploaded:
+            self.uploaded.append(filename)
+        else:
+            self.outputs.append(filename)
 
     def safe_makedirs(self, directory):
         try:
@@ -109,28 +144,50 @@ class Benchmark(object):
         cfgobj.read(filename)
         config = cfgobj['config']
 
-        def get(section, key):
-            return section[key].strip()
+        def getstr(section, key):
+            sectionobj = cfgobj[section]
+            value = sectionobj[key]
+            return value.strip()
 
-        self.directory = os.path.expanduser(get(config, 'bench_root'))
-        self.src = os.path.expanduser(get(config, 'cpython_dir'))
-        self.perf = os.path.expanduser(get(config, 'perf_dir'))
+        self.directory = os.path.expanduser(getstr('config', 'bench_root'))
+        self.src = os.path.expanduser(getstr('config', 'cpython_dir'))
+        self.perf = os.path.expanduser(getstr('config', 'perf_dir'))
         self.prefix = os.path.join(self.directory, 'prefix')
         self.venv = os.path.join(self.directory, 'venv')
         self.log = os.path.join(self.directory, 'bench.log')
-        self.options = get(config, 'options')
-        self.branches = get(config, 'branches').split()
+        self.options = getstr('config', 'options')
+        self.branches = getstr('config', 'branches').split()
         self.update = config.getboolean('update', True)
         self.debug = config.getboolean('debug', False)
+        self.upload = config.getboolean('upload', False)
+
+        self.url = getstr('upload', 'url')
+        self.executable = getstr('upload', 'executable')
+        self.project = getstr('upload', 'project')
+        self.environment = getstr('upload', 'environment')
 
         self.revisions = []
         section = cfgobj['revisions']
         for revision, name in cfgobj.items('revisions'):
             self.revisions.append((revision, name))
 
+        if self.upload and any(not getattr(self, attr)
+                               for attr in UPLOAD_OPTIONS):
+            print("ERROR: Upload requires to set the following "
+                  "configuration option in the the [upload] section "
+                  "of %s:"
+                  % filename)
+            for attr in UPLOAD_OPTIONS:
+                text = "- %s" % attr
+                if not getattr(self, attr):
+                    text += " (not set)"
+                print(text)
+            sys.exit(1)
+
     def main(self):
         args = self.parse_args()
         self.parse_config(args.config_filename)
+
         self.safe_makedirs(self.directory)
         self.run_cmd(('sudo', 'python3', '-m', 'perf', 'system', 'tune'),
                      cwd=self.perf)
@@ -149,6 +206,9 @@ class Benchmark(object):
 
             for filename in self.outputs:
                 print("Tested: %s" % filename)
+
+            for filename in self.uplodaded:
+                print("Tested and uploaded: %s" % filename)
 
 
 if __name__ == "__main__":
