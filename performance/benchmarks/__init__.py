@@ -343,8 +343,7 @@ def BM_sqlalchemy_imperative(python, options):
 
 
 def BM_mdp(python, options):
-    bm_path = Relative("bm_mdp.py")
-    return run_perf_script(python, options, bm_path)
+    return run_perf_script(python, options, "mdp")
 
 
 # End benchmarks, begin main entry point support.
