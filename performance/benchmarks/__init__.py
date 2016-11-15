@@ -13,32 +13,87 @@ from performance.utils import temporary_file
 
 # Benchmark groups. The "default" group is what's run if no -b option is
 # specified.
-# If you update the default group, be sure to update the module docstring, too.
-# An "all" group which includes every benchmark perf.py knows about is generated
-# automatically.
-BENCH_GROUPS = {"default": ["2to3", "chameleon", "django_template", "nbody",
-                            "tornado_http", "pickle", "unpickle",
-                            "regex_v8", "json_dumps", "json_loads"],
-                "startup": ["normal_startup", "startup_nosite",
-                            "hg_startup"],
-                "regex": ["regex_v8", "regex_effbot", "regex_compile",
-                          "regex_dna"],
-                "threading": ["threading_threaded_count",
-                              "threading_iterative_count"],
-                "serialize": ["pickle_pure_python", "unpickle_pure_python",  # Not for Python 3
-                              "pickle", "unpickle",
-                              "xml_etree",
-                              "json_dumps", "json_loads"],
-                "apps": ["2to3", "chameleon", "html5lib",
-                         "spambayes", "tornado_http"],
-                "calls": ["call_simple", "call_method", "call_method_slots",
-                          "call_method_unknown"],
-                "math": ["float", "nbody", "pidigits"],
-                "template": ["django_template", "mako"],
-                # These are removed from the "all" group
-                "deprecated": ["threading_iterative_count",
-                               "threading_threaded_count"],
-                }
+DEFAULT_GROUP = [
+    '2to3',
+    'call_method',
+    'call_method_slots',
+    'call_method_unknown',
+    'call_simple',
+    'chameleon',
+    'chaos',
+    'crypto_pyaes',
+    'deltablue',
+    'django_template',
+    'dulwich_log',
+    'fannkuch',
+    'float',
+    'genshi',
+    'go',
+    'hexiom',
+    'hg_startup',
+    'html5lib',
+    'json_dumps',
+    'json_loads',
+    'logging',
+    'mako',
+    'meteor_contest',
+    'nbody',
+    'nqueens',
+    'pathlib',
+    'pickle',
+    'pickle_dict',
+    'pickle_list',
+    'pickle_pure_python',
+    'pidigits',
+    'pyflate',
+    'python_startup',
+    'python_startup_no_site',
+    'raytrace',
+    'regex_compile',
+    'regex_dna',
+    'regex_effbot',
+    'regex_v8',
+    'richards',
+    'scimark',
+    'spambayes',
+    'spectral_norm',
+    'sqlalchemy_declarative',
+    'sqlalchemy_imperative',
+    'sqlite_synth',
+    'sympy',
+    'telco',
+    'tornado_http',
+    'unpack_sequence',
+    'unpickle',
+    'unpickle_list',
+    'unpickle_pure_python',
+    'xml_etree',
+]
+
+BENCH_GROUPS = {
+    # get_benchmarks() creates an "all" group which includes every benchmark
+    # performance knows about.
+    "default": DEFAULT_GROUP,
+    "startup": ["normal_startup", "startup_nosite",
+                "hg_startup"],
+    "regex": ["regex_v8", "regex_effbot", "regex_compile",
+              "regex_dna"],
+    "threading": ["threading_threaded_count",
+                  "threading_iterative_count"],
+    "serialize": ["pickle_pure_python", "unpickle_pure_python",  # Not for Python 3
+                  "pickle", "unpickle",
+                  "xml_etree",
+                  "json_dumps", "json_loads"],
+    "apps": ["2to3", "chameleon", "html5lib",
+             "spambayes", "tornado_http"],
+    "calls": ["call_simple", "call_method", "call_method_slots",
+              "call_method_unknown"],
+    "math": ["float", "nbody", "pidigits"],
+    "template": ["django_template", "mako"],
+    # These are removed from the "all" group
+    "deprecated": ["threading_iterative_count",
+                   "threading_threaded_count"],
+}
 
 
 def python2_only(func):

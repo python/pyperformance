@@ -1,6 +1,8 @@
 TODO
 ====
 
+* After performance 0.4.1 release: modify scripts/bench_cpython.py to remove
+  "-b all,-pybench" option: use the default group
 * Catch errors: scipy fails on a development version of Python 3.6 because
   inspect.getargspec() was removed. Other benchmarks must not fail.
 * Installing dulwich on Windows fails with a compiler error,

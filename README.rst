@@ -63,8 +63,8 @@ Run benchmarks
 
 Commands to compare Python 2 and Python 3 performances::
 
-    pyperformance run --python=python2 --rigorous -b all -o py2.json
-    pyperformance run --python=python3 --rigorous -b all -o py3.json
+    pyperformance run --python=python2 --rigorous -o py2.json
+    pyperformance run --python=python3 --rigorous -o py3.json
     pyperformance compare py2.json py3.json
 
 Note: ``python3 -m performance ...`` syntax works as well (ex: ``python3 -m
@@ -387,7 +387,7 @@ Changelog
 Version 0.4.1
 -------------
 
-* Upgrade mercurial requirement: 3.9.2 => 4.0.0
+* The ``default`` benchmark group now include all benchmarks but ``pybench``
 
 Version 0.4.0 (2016-11-07)
 --------------------------
