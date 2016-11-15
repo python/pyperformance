@@ -437,6 +437,7 @@ class UnicodePredicates(Test):
 
         return perf.perf_counter() - t0
 
+
 try:
     import unicodedata
 except ImportError:

@@ -89,4 +89,5 @@ if __name__ == "__main__":
                                   help="Number of rows (default: 100)")
 
     args = runner.parse_args()
-    runner.bench_sample_func('sqlalchemy_imperative', bench_sqlalchemy, args.rows)
+    runner.bench_sample_func('sqlalchemy_imperative',
+                             bench_sqlalchemy, args.rows)

@@ -172,6 +172,7 @@ class TaskWorkArea(object):
         self.holdCount = 0
         self.qpktCount = 0
 
+
 taskWorkArea = TaskWorkArea()
 
 

@@ -459,7 +459,8 @@ def bzip2_main(input):
 
     method = b.readbits(8)
     if method != ord('h'):
-        raise Exception("Unknown (not type 'h'uffman Bzip2) compression method")
+        raise Exception(
+            "Unknown (not type 'h'uffman Bzip2) compression method")
 
     blocksize = b.readbits(8)
     if ord('1') <= blocksize <= ord('9'):
@@ -564,7 +565,8 @@ def gzip_main(field):
                         count = 11 + b.readbits(7)
                         what = 0
                     else:
-                        raise Exception("next code length is outside of the range 0 <= r <= 18")
+                        raise Exception(
+                            "next code length is outside of the range 0 <= r <= 18")
                     code_lengths += [what] * count
                     n += count
 

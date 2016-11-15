@@ -90,6 +90,7 @@ Strength.WEAKEST = Strength(6, "weakest")
 
 
 class Constraint(object):
+
     def __init__(self, strength):
         super(Constraint, self).__init__()
         self.strength = strength
@@ -136,6 +137,7 @@ class Constraint(object):
 
 
 class UrnaryConstraint(Constraint):
+
     def __init__(self, v, strength):
         super(UrnaryConstraint, self).__init__(strength)
         self.my_output = v
@@ -185,6 +187,7 @@ class UrnaryConstraint(Constraint):
 
 
 class StayConstraint(UrnaryConstraint):
+
     def __init__(self, v, string):
         super(StayConstraint, self).__init__(v, string)
 
@@ -194,6 +197,7 @@ class StayConstraint(UrnaryConstraint):
 
 
 class EditConstraint(UrnaryConstraint):
+
     def __init__(self, v, string):
         super(EditConstraint, self).__init__(v, string)
 
@@ -213,6 +217,7 @@ class Direction(object):
 
 
 class BinaryConstraint(Constraint):
+
     def __init__(self, v1, v2, strength):
         super(BinaryConstraint, self).__init__(strength)
         self.v1 = v1
@@ -270,7 +275,8 @@ class BinaryConstraint(Constraint):
     def recalculate(self):
         ihn = self.input()
         out = self.output()
-        out.walk_strength = Strength.weakest_of(self.strength, ihn.walk_strength)
+        out.walk_strength = Strength.weakest_of(
+            self.strength, ihn.walk_strength)
         out.stay = ihn.stay
 
         if out.stay:
@@ -294,6 +300,7 @@ class BinaryConstraint(Constraint):
 
 
 class ScaleConstraint(BinaryConstraint):
+
     def __init__(self, src, scale, offset, dest, strength):
         self.direction = Direction.NONE
         self.scale = scale
@@ -323,12 +330,14 @@ class ScaleConstraint(BinaryConstraint):
         if self.direction == Direction.FORWARD:
             self.v2.value = self.v1.value * self.scale.value + self.offset.value
         else:
-            self.v1.value = (self.v2.value - self.offset.value) / self.scale.value
+            self.v1.value = (
+                self.v2.value - self.offset.value) / self.scale.value
 
     def recalculate(self):
         ihn = self.input()
         out = self.output()
-        out.walk_strength = Strength.weakest_of(self.strength, ihn.walk_strength)
+        out.walk_strength = Strength.weakest_of(
+            self.strength, ihn.walk_strength)
         out.stay = ihn.stay and self.scale.stay and self.offset.stay
 
         if out.stay:
@@ -336,11 +345,13 @@ class ScaleConstraint(BinaryConstraint):
 
 
 class EqualityConstraint(BinaryConstraint):
+
     def execute(self):
         self.output().value = self.input().value
 
 
 class Variable(object):
+
     def __init__(self, name, initial_value=0):
         super(Variable, self).__init__()
         self.name = name
@@ -369,6 +380,7 @@ class Variable(object):
 
 
 class Planner(object):
+
     def __init__(self):
         super(Planner, self).__init__()
         self.current_mark = 0
@@ -479,6 +491,7 @@ class Planner(object):
 
 
 class Plan(object):
+
     def __init__(self):
         super(Plan, self).__init__()
         self.v = OrderedCollection()

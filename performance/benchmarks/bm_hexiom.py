@@ -25,6 +25,7 @@ class Dir(object):
         self.x = x
         self.y = y
 
+
 DIRS = [Dir(1, 0),
         Dir(-1, 0),
         Dir(0, 1),
@@ -315,6 +316,7 @@ def constraint_pass(pos, last_move=None):
 
     return changed
 
+
 ASCENDING = 1
 DESCENDING = -1
 
@@ -370,6 +372,7 @@ def print_pos(pos, output):
                 c = u_lit("?")
             print(u_lit("%s ") % c, end=u_lit(""), file=output)
         print(end=u_lit("\n"), file=output)
+
 
 OPEN = 0
 SOLVED = 1

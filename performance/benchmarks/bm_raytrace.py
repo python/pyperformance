@@ -84,6 +84,7 @@ class Vector(object):
         d = normal.scale(self.dot(normal))
         return self - d.scale(2)
 
+
 Vector.ZERO = Vector(0, 0, 0)
 Vector.RIGHT = Vector(1, 0, 0)
 Vector.UP = Vector(0, 1, 0)
@@ -189,6 +190,7 @@ Point.ZERO = Point(0, 0, 0)
 
 
 class Canvas(object):
+
     def __init__(self, width, height):
         self.bytes = array.array('B', [0] * (width * height * 3))
         for i in xrange(width * height):

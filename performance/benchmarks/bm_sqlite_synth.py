@@ -10,6 +10,7 @@ from six.moves import xrange
 # really simple
 
 class AvgLength(object):
+
     def __init__(self):
         self.sum = 0
         self.count = 0

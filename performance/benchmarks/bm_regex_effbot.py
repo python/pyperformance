@@ -152,6 +152,7 @@ def bench_regex_effbot(loops):
 
     return perf.perf_counter() - t0
 
+
 # cached data, generated at the first call
 bench_regex_effbot.data = None
 
