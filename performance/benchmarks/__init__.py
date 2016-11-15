@@ -78,8 +78,6 @@ BENCH_GROUPS = {
                 "hg_startup"],
     "regex": ["regex_v8", "regex_effbot", "regex_compile",
               "regex_dna"],
-    "threading": ["threading_threaded_count",
-                  "threading_iterative_count"],
     "serialize": ["pickle_pure_python", "unpickle_pure_python",  # Not for Python 3
                   "pickle", "unpickle",
                   "xml_etree",
@@ -90,9 +88,6 @@ BENCH_GROUPS = {
               "call_method_unknown"],
     "math": ["float", "nbody", "pidigits"],
     "template": ["django_template", "mako"],
-    # These are removed from the "all" group
-    "deprecated": ["threading_iterative_count",
-                   "threading_threaded_count"],
 }
 
 
@@ -265,18 +260,6 @@ def BM_regex_dna(python, options):
     return run_perf_script(python, options, "regex_dna")
 
 
-def bench_threading(python, options, bm_name):
-    return run_perf_script(python, options, "threading", extra_args=[bm_name])
-
-
-def BM_threading_threaded_count(python, options):
-    return bench_threading(python, options, "threaded_count")
-
-
-def BM_threading_iterative_count(python, options):
-    return bench_threading(python, options, "iterative_count")
-
-
 def BM_unpack_sequence(python, options):
     return run_perf_script(python, options, "unpack_sequence")
 
@@ -367,19 +350,15 @@ def get_benchmarks():
                        if name.startswith("BM_"))
 
     bench_groups = BENCH_GROUPS.copy()
-    deprecated = set(bench_groups["deprecated"])
 
     # Calculate set of 2-and-3 compatible benchmarks.
     group2n3 = bench_groups["2n3"] = []
     for bm, func in bench_funcs.items():
-        if bm in deprecated:
-            continue
-
         if not getattr(func, '_python2_only', False):
             group2n3.append(bm)
 
     # create the 'all' group
-    bench_groups["all"] = sorted(b for b in bench_funcs if b not in deprecated)
+    bench_groups["all"] = sorted(bench_funcs)
 
     return (bench_funcs, bench_groups)
 

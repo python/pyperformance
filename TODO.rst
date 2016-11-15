@@ -17,7 +17,6 @@ TODO
 * python3 -m performance list: list Python 2 benchmarks, but mention that
   they are incompatible with Python 3?
 * Port bm_pyflate to Python 3?
-* Remove deprecated threading tests? bench.py -b threading doesn't run anything
 * html5lib: 1 warmup, 3 runs: run 2 is always 10% slower!?
 
 

@@ -388,6 +388,8 @@ Version 0.4.1
 -------------
 
 * The ``default`` benchmark group now include all benchmarks but ``pybench``
+* Remove deprecated benchmarks: ``threading_threaded_count`` and
+  ``threading_iterative_count``. It wasn't possible to run them anyway.
 
 Version 0.4.0 (2016-11-07)
 --------------------------
