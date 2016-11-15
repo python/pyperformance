@@ -20,7 +20,7 @@ wheel
 # Freeze indirect dependencies to get a more reproductible test environment
 
 # tornado 4.4.1 dependencies
-backports-abc==0.4
+backports-abc==0.5
 singledispatch==3.4.0.3
 certifi==2016.9.26
 
@@ -59,15 +59,10 @@ perf==0.9.0
 Chameleon==2.25                           # bm_chameleon
 Django==1.10.3                            # bm_django_template
 Genshi==0.7                               # bm_genshi
-Mako==1.0.5                               # bm_mako
-SQLAlchemy==1.1.3                         # bm_sqlalchemy_declarative
+Mako==1.0.6                               # bm_mako
+SQLAlchemy==1.1.4                         # bm_sqlalchemy_declarative
 dulwich==0.15.0                           # dulwich_log
-# mercurial 4.0.0 uses cffi on PyPy. Travis CI uses PyPy 2.5
-# which uses cffi 0.8.6, but the installation on mercurial 4.0.0 fails with
-# cffi older than 1.0.
-#
-# Upgrade PyPy at Travis: https://github.com/travis-ci/travis-ci/issues/5027
-mercurial==3.9.2; python_version < '3.0'  # bm_hg_startup
+mercurial==4.0.0; python_version < '3.0'  # bm_hg_startup
 html5lib==0.999999999                     # bm_html5lib
 pathlib2==2.1.0; python_version < '3.4'   # bm_pathlib
 pyaes==1.6.0                              # bm_crypto_pyaes

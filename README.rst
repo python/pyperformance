@@ -393,6 +393,12 @@ Version 0.4.1
 * The ``default`` benchmark group now include all benchmarks but ``pybench``
 * Remove deprecated benchmarks: ``threading_threaded_count`` and
   ``threading_iterative_count``. It wasn't possible to run them anyway.
+* Upgrade requirements:
+
+  - Mako: 1.0.5 => 1.0.6
+  - Mercurial: 3.9.2 => 4.0.0
+  - SQLAlchemy: 1.1.3 => 1.1.4
+  - backports-abc: 0.4 => 0.5
 
 Version 0.4.0 (2016-11-07)
 --------------------------
