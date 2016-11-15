@@ -30,21 +30,33 @@ class BenchmarkPython(object):
         self.logger.error("+ %s" % ' '.join(cmd))
         return subprocess.Popen(cmd, **kwargs)
 
-    def run_nocheck(self, *cmd):
+    def run_nocheck(self, *cmd, stdin_filename=None):
+        kwargs = {}
+        if stdin_filename:
+            stdin_file = open(stdin_filename, "rb", 0)
+            fd = stdin_file.fileno()
+            kwargs = {'stdin': fd, 'pass_fds': [fd]}
+        else:
+            stdin_file = None
         proc = self.create_subprocess(cmd,
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
-                                      universal_newlines=True)
-        with proc:
-            for line in proc.stdout:
-                line = line.rstrip()
-                self.logger.error(line)
-            exitcode = proc.wait()
+                                      universal_newlines=True,
+                                      **kwargs)
+        try:
+            with proc:
+                for line in proc.stdout:
+                    line = line.rstrip()
+                    self.logger.error(line)
+                exitcode = proc.wait()
+        finally:
+            if stdin_file is not None:
+                stdin_file.close()
 
         return exitcode
 
-    def run(self, *cmd):
-        exitcode = self.run_nocheck(*cmd)
+    def run(self, *cmd, **kw):
+        exitcode = self.run_nocheck(*cmd, **kw)
         if exitcode:
             sys.exit(exitcode)
 
@@ -62,7 +74,7 @@ class BenchmarkPython(object):
 
         return stdout
 
-    def prepare_scm(self):
+    def prepare_code(self):
         args = self.args
 
         if args.pull:
@@ -75,6 +87,10 @@ class BenchmarkPython(object):
         self.logger.error('')
 
         self.run('hg', 'up', '--clean', '-r', args.revision)
+
+        if args.patch:
+            self.logger.error('Apply patch %s' % args.patch)
+            self.run('patch', '-p1', stdin_filename=args.patch)
 
         # FIXME: run hg purge?
 
@@ -190,9 +206,12 @@ class BenchmarkPython(object):
         parser.add_argument('--rigorous', action="store_true",
                             help="Enable the rigorous mode: "
                                  "run more benchmarks samples")
-        parser.add_argument('--pull',
+        parser.add_argument('--pull', action="store_true",
                             help='Run hg pull -u to update the Mercurial '
                                  'repository')
+        parser.add_argument('--patch',
+                            help='Apply a patch on top on revision '
+                                 'before compiling Python')
         parser.add_argument('revision',
                             help='Python benchmarked revision')
         args = parser.parse_args()
@@ -237,7 +256,7 @@ class BenchmarkPython(object):
         self.logger.error("Move to %s" % self.args.src)
         os.chdir(self.args.src)
 
-        self.prepare_scm()
+        self.prepare_code()
         self.compile()
         self.install()
         self.run_benchmark()
