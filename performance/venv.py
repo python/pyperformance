@@ -422,7 +422,7 @@ class VirtualEnvironment(object):
                                     # FIXME: don't hardcode requirements
                                     ['setuptools', 'pip', 'wheel'],
                                     ['cffi'],
-                                    ['psutil'])
+                                    ['psutil', 'dulwich'])
 
         print("Creating the virtual environment %s" % venv_path)
         try:

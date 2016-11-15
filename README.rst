@@ -395,6 +395,8 @@ Version 0.4.1
   benchmarks, but exit with error code 1.
 * Remove deprecated benchmarks: ``threading_threaded_count`` and
   ``threading_iterative_count``. It wasn't possible to run them anyway.
+* ``dulwich`` requirement is now optional since its installation fails
+  on Windows.
 * Upgrade requirements:
 
   - Mako: 1.0.5 => 1.0.6
