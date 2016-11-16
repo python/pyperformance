@@ -89,8 +89,9 @@ class Benchmark(object):
 
     def benchmark(self, revision, name=None):
         node, branch, date = self.get_revision_info(revision)
+        short_node = node[:12]
         date = date.strftime('%Y-%m-%d_%H-%M')
-        filename = '%s-%s-%s' % (date, branch, node[:12])
+        filename = '%s-%s-%s' % (date, branch, short_node)
         if name:
             filename += '-%s' % name
         filename = os.path.join(self.directory, filename + ".json")
@@ -110,7 +111,7 @@ class Benchmark(object):
                '--output', filename,
                '--venv', self.venv,
                '--prefix', self.prefix,
-               revision]
+               node]
         if self.options:
             cmd.append(self.options)
         if self.debug:
@@ -118,7 +119,9 @@ class Benchmark(object):
         self.run_cmd(cmd)
 
         if self.upload:
-            uploaded = self.upload_json(filename, branch, revision)
+            # FIXME: pass the full node, not only the short node
+            # CodeSpeed needs to be modified to only displays short nodes
+            uploaded = self.upload_json(filename, branch, short_node)
         else:
             uploaded = False
 
