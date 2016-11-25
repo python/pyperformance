@@ -113,7 +113,7 @@ class Benchmark(object):
                '--prefix', self.prefix,
                node]
         if self.options:
-            cmd.append(self.options)
+            cmd.extend(self.options)
         if self.debug:
             cmd.append('--debug')
         self.run_cmd(cmd)
@@ -159,7 +159,7 @@ class Benchmark(object):
         self.prefix = os.path.join(self.directory, 'prefix')
         self.venv = os.path.join(self.directory, 'venv')
         self.log = os.path.join(self.directory, 'bench.log')
-        self.options = getstr('config', 'options')
+        self.options = getstr('config', 'options').split()
         self.branches = getstr('config', 'branches').split()
         self.update = config.getboolean('update', True)
         self.debug = config.getboolean('debug', False)
