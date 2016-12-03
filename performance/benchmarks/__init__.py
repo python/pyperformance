@@ -244,6 +244,11 @@ def BM_python_startup_no_site(python, options):
                            extra_args=["--no-site"])
 
 
+def BM_python_startup_stdlibs(python, options):
+    return run_perf_script(python, options, "python_startup",
+                           extra_args=["--stdlibs"])
+
+
 def BM_regex_v8(python, options):
     return run_perf_script(python, options, "regex_v8")
 
