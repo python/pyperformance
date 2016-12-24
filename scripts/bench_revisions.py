@@ -171,8 +171,13 @@ class Benchmark(object):
         self.environment = getstr('upload', 'environment')
 
         self.revisions = []
-        for revision, name in cfgobj.items('revisions'):
-            self.revisions.append((revision, name))
+        try:
+            revisions = cfgobj.items('revisions')
+        except configparser.NoSectionError:
+            pass
+        else:
+            for revision, name in revisons:
+                self.revisions.append((revision, name))
 
         if self.upload and any(not getattr(self, attr)
                                for attr in UPLOAD_OPTIONS):
