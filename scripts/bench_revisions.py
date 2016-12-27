@@ -176,7 +176,7 @@ class Benchmark(object):
         except configparser.NoSectionError:
             pass
         else:
-            for revision, name in revisons:
+            for revision, name in revisions:
                 self.revisions.append((revision, name))
 
         if self.upload and any(not getattr(self, attr)
