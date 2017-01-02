@@ -57,6 +57,11 @@ extension. Commands on Fedora to install dependencies:
 * Python 3: ``sudo dnf install python3-devel``
 * PyPy: ``sudo dnf install pypy-devel``
 
+In some cases, performance fails to create a virtual environment. In this case,
+upgrading virtualenv on the system can fix the issue. Example::
+
+    sudo python2 -m pip install -U virtualenv
+
 
 Run benchmarks
 ==============
