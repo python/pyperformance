@@ -24,6 +24,7 @@ class Benchmark(object):
         self.outputs = []
         self.skipped = []
         self.uploaded = []
+        self.failed = []
 
     def get_revision_info(self, revision):
         cmd = ['hg', 'log', '--template', '{node}|{branch}|{date|isodate}', '-r', revision]
@@ -39,11 +40,13 @@ class Benchmark(object):
         return (node, branch, date)
 
     def run_cmd(self, cmd, **kw):
+        check = kw.pop('check', True)
         print('+ %s' % ' '.join(cmd))
         proc = subprocess.Popen(cmd, **kw)
         exitcode = proc.wait()
-        if exitcode:
+        if check and exitcode:
             sys.exit(exitcode)
+        return exitcode
 
     def encode_benchmark(self, bench, branch, revision):
         data = {}
@@ -116,7 +119,12 @@ class Benchmark(object):
             cmd.extend(self.options)
         if self.debug:
             cmd.append('--debug')
-        self.run_cmd(cmd)
+
+        # FIXME: catch errors, don't crash
+        exitcode = self.run_cmd(cmd, check=False)
+        if exitcode:
+            self.failed.append(filename)
+            return
 
         if self.upload:
             # FIXME: pass the full node, not only the short node
@@ -220,6 +228,9 @@ class Benchmark(object):
 
             for filename in self.uploaded:
                 print("Tested and uploaded: %s" % filename)
+
+            for filename in self.failed:
+                print("FAILED: %s" % filename)
 
 
 if __name__ == "__main__":
