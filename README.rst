@@ -190,9 +190,9 @@ Advices helping to get make stable benchmarks:
 
 Notes:
 
-* Development versions of Python 2.7, 3.6 and 3.7 have a --with-optimization
+* Development versions of Python 2.7, 3.6 and 3.7 have a --enable-optimizations
   configure option
-* --with-optimization doesn't enable LTO because of compiler bugs:
+* --enable-optimizations doesn't enable LTO because of compiler bugs:
   http://bugs.python.org/issue28032
   (see also: http://bugs.python.org/issue28605)
 * PGO is broken on Ubuntu 14.04 LTS with GCC 4.8.4-2ubuntu1~14.04:
