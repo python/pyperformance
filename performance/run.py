@@ -37,6 +37,11 @@ def run_command(command, hide_stderr=True):
     logging.info("Running `%s`",
                  " ".join(list(map(str, command))))
 
+    # Explicitly flush standard streams, required if streams are buffered
+    # (not TTY) to write lines in the expected order
+    sys.stdout.flush()
+    sys.stderr.flush()
+
     proc = subprocess.Popen(command,
                             universal_newlines=True,
                             **kw)

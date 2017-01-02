@@ -223,6 +223,12 @@ class VirtualEnvironment(object):
 
     def run_cmd_nocheck(self, cmd):
         print("Execute: %s" % ' '.join(cmd))
+
+        # Explicitly flush standard streams, required if streams are buffered
+        # (not TTY) to write lines in the expected order
+        sys.stdout.flush()
+        sys.stderr.flush()
+
         env = create_environ(self.options.inherit_environ)
         try:
             proc = subprocess.Popen(cmd, env=env)
