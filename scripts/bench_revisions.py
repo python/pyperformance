@@ -14,9 +14,6 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 
-UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')
-
-
 class Benchmark(object):
     def __init__(self):
         bench_dir = os.path.realpath(os.path.dirname(__file__))
@@ -156,9 +153,14 @@ class Benchmark(object):
         cfgobj.read(filename)
         config = cfgobj['config']
 
-        def getstr(section, key):
-            sectionobj = cfgobj[section]
-            value = sectionobj[key]
+        def getstr(section, key, default=None):
+            try:
+                sectionobj = cfgobj[section]
+                value = sectionobj[key]
+            except KeyError:
+                if default is None:
+                    raise
+                value = default
             return value.strip()
 
         self.directory = os.path.expanduser(getstr('config', 'bench_root'))
@@ -173,10 +175,25 @@ class Benchmark(object):
         self.debug = config.getboolean('debug', False)
         self.upload = config.getboolean('upload', False)
 
-        self.url = getstr('upload', 'url')
-        self.executable = getstr('upload', 'executable')
-        self.project = getstr('upload', 'project')
-        self.environment = getstr('upload', 'environment')
+        if self.upload:
+            UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')
+
+            self.url = getstr('upload', 'url', default='')
+            self.executable = getstr('upload', 'executable', default='')
+            self.project = getstr('upload', 'project', default='')
+            self.environment = getstr('upload', 'environment', default='')
+
+            if any(not getattr(self, attr) for attr in UPLOAD_OPTIONS):
+                print("ERROR: Upload requires to set the following "
+                      "configuration option in the the [upload] section "
+                      "of %s:"
+                      % filename)
+                for attr in UPLOAD_OPTIONS:
+                    text = "- %s" % attr
+                    if not getattr(self, attr):
+                        text += " (not set)"
+                    print(text)
+                sys.exit(1)
 
         self.revisions = []
         try:
@@ -186,19 +203,6 @@ class Benchmark(object):
         else:
             for revision, name in revisions:
                 self.revisions.append((revision, name))
-
-        if self.upload and any(not getattr(self, attr)
-                               for attr in UPLOAD_OPTIONS):
-            print("ERROR: Upload requires to set the following "
-                  "configuration option in the the [upload] section "
-                  "of %s:"
-                  % filename)
-            for attr in UPLOAD_OPTIONS:
-                text = "- %s" % attr
-                if not getattr(self, attr):
-                    text += " (not set)"
-                print(text)
-            sys.exit(1)
 
     def main(self):
         args = self.parse_args()
