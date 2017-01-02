@@ -117,7 +117,6 @@ class Benchmark(object):
         if self.debug:
             cmd.append('--debug')
 
-        # FIXME: catch errors, don't crash
         exitcode = self.run_cmd(cmd, check=False)
         if exitcode:
             self.failed.append(filename)
