@@ -217,11 +217,11 @@ class Benchmark(object):
             self.run_cmd(('hg', 'pull'), cwd=self.src)
 
         try:
-            for branch in self.branches:
-                self.benchmark(branch)
-
             for revision, name in self.revisions:
                 self.benchmark(revision, name)
+
+            for branch in self.branches:
+                self.benchmark(branch)
         finally:
             for filename in self.skipped:
                 print("Skipped: %s" % filename)
