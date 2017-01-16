@@ -4,9 +4,9 @@ import csv
 import os.path
 import sys
 
-import statistics
-
 import perf
+import six
+import statistics
 
 
 NO_VERSION = "<not set>"
@@ -303,8 +303,12 @@ def format_csv(value):
 
 
 def write_csv(results, filename):
-    with open(filename, "w", newline='') as f:
-        writer = csv.writer(f)
+    if six.PY3:
+        fp = open(filename, "w", newline='', encoding='ascii')
+    else:
+        fp = open(filename, "wb")
+    with fp:
+        writer = csv.writer(fp)
         writer.writerow(['Benchmark', 'Base', 'Changed'])
         for result in results:
             name = result.base.get_name()
