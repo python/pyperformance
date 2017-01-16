@@ -5,5 +5,7 @@ python:
     - pypy-5.3.1
 install:
     - pip install -U 'setuptools>=18.5' 'pip>=6.0'
+    # Need to install performance, performance/tests/test_compare.py imports it
+    - pip install -e .
 script:
     - python runtests.py
