@@ -303,7 +303,7 @@ def format_csv(value):
 
 
 def write_csv(results, filename):
-    with open(filename, "w") as f:
+    with open(filename, "w", newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['Benchmark', 'Base', 'Changed'])
         for result in results:
