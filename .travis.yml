@@ -9,3 +9,6 @@ install:
     - pip install -e .
 script:
     - python runtests.py
+notifications:
+  email:
+    - victor.stinner@gmail.com
