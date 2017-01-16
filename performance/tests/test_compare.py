@@ -55,7 +55,7 @@ class CompareTests(unittest.TestCase):
                                 universal_newlines=True)
         stdout = proc.communicate()[0]
         self.assertEqual(proc.returncode, exitcode, repr(stdout))
-        return stdout
+        return stdout.rstrip() + "\n"
 
     def test_compare(self):
         stdout = self.compare()
