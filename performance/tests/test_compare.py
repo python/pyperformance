@@ -3,7 +3,6 @@ import io
 import os.path
 import subprocess
 import sys
-import tempfile
 import textwrap
 import unittest
 
