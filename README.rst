@@ -390,8 +390,8 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
-Version 0.5.1
--------------
+Version 0.5.1 (2017-01-16)
+--------------------------
 
 * Fix Windows support (upgrade perf from 0.9.0 to 0.9.3)
 * Upgrade requirements:
