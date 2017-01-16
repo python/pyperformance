@@ -221,8 +221,9 @@ class VirtualEnvironment(object):
         else:
             return os.path.join(venv_path, 'bin', 'python')
 
-    def run_cmd_nocheck(self, cmd):
-        print("Execute: %s" % ' '.join(cmd))
+    def run_cmd_nocheck(self, cmd, verbose=True):
+        if verbose:
+            print("Execute: %s" % ' '.join(cmd))
 
         # Explicitly flush standard streams, required if streams are buffered
         # (not TTY) to write lines in the expected order
@@ -247,8 +248,8 @@ class VirtualEnvironment(object):
 
         return proc.returncode
 
-    def run_cmd(self, cmd):
-        exitcode = self.run_cmd_nocheck(cmd)
+    def run_cmd(self, cmd, verbose=True):
+        exitcode = self.run_cmd_nocheck(cmd, verbose=verbose)
         if exitcode:
             sys.exit(exitcode)
         print()
@@ -490,7 +491,7 @@ def exec_in_virtualenv(options):
     # * https://bugs.python.org/issue19124
     # * https://github.com/python/benchmarks/issues/5
     if os.name == "nt":
-        venv.run_cmd(args)
+        venv.run_cmd(args, verbose=False)
         sys.exit(0)
     else:
         os.execv(args[0], args)
