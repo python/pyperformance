@@ -4,7 +4,7 @@ TODO
 * Add a --log option to create a log file. Use the logging module
   and replace print() with logger.error().
 * Write a test to ensure that benchmarks listed in groups exist
-* Decide of sqlalchemy benchmarks should only benchmark SELECT ALL
+* Decide if sqlalchemy benchmarks should only benchmark SELECT ALL
   or INSERT+SELECT?
 * Run pep8 on Travis
 * html5lib: 1 warmup, 3 runs: run 2 is always 10% slower!?

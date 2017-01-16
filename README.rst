@@ -390,6 +390,20 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
+Version 0.5.1
+-------------
+
+* Fix Windows support (upgrade perf from 0.9.0 to 0.9.3)
+* Upgrade requirements:
+
+  - Chameleon: 2.25 => 3.0
+  - Django: 1.10.3 => 1.10.5
+  - docutils: 0.12 => 0.13.1
+  - dulwich: 0.15.0 => 0.16.3
+  - mercurial: 4.0.0 => 4.0.2
+  - perf: 0.9.0 => 0.9.3
+  - psutil: 5.0.0 => 5.0.1
+
 Version 0.5.0 (2016-11-16)
 --------------------------
 

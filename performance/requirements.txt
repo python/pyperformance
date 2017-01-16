@@ -39,14 +39,14 @@ mpmath==0.19
 
 # perf dependencies (docutils is needed by statistics)
 statistics==1.0.3.5; python_version < '3.4'
-docutils==0.12
+docutils==0.13.1
 
 
 # performance dependencies
 # ------------------------
 
 six==1.10.0
-perf==0.9.0
+perf==0.9.3
 
 
 # Benchmarks dependencies
@@ -56,15 +56,15 @@ perf==0.9.0
 # should be increased to respect semantic versionning. Comparison between
 # two performance results of two different major versions is not reliable.
 
-Chameleon==2.25                           # bm_chameleon
-Django==1.10.3                            # bm_django_template
+Chameleon==3.0                            # bm_chameleon
+Django==1.10.5                            # bm_django_template
 Genshi==0.7                               # bm_genshi
 Mako==1.0.6                               # bm_mako
 SQLAlchemy==1.1.4                         # bm_sqlalchemy_declarative
-dulwich==0.15.0                           # dulwich_log
-mercurial==4.0.0; python_version < '3.0'  # bm_hg_startup
+dulwich==0.16.3                           # dulwich_log
+mercurial==4.0.2; python_version < '3.0'  # bm_hg_startup
 html5lib==0.999999999                     # bm_html5lib
-pathlib2==2.1.0; python_version < '3.4'   # bm_pathlib
+pathlib2==2.2.0; python_version < '3.4'   # bm_pathlib
 pyaes==1.6.0                              # bm_crypto_pyaes
 spambayes==1.1b2; python_version < '3.0'  # bm_spambayes
 sympy==1.0                                # bm_sympy
@@ -76,7 +76,7 @@ tornado==4.4.2                            # bm_tornado_http
 #
 # The list of optional dependencies is hardcoded in performance/venv.py
 
-psutil==5.0.0
+psutil==5.0.1
 
 
 # performance
