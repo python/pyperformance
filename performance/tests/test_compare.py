@@ -7,6 +7,8 @@ import tempfile
 import textwrap
 import unittest
 
+from performance import tests
+
 
 DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), 'data'))
 
@@ -111,16 +113,15 @@ class CompareTests(unittest.TestCase):
         ''').lstrip())
 
     def test_csv(self):
-        with tempfile.NamedTemporaryFile("w") as tmp:
-            self.compare("--csv", tmp.name)
+        with tests.temporary_file() as tmp:
+            self.compare("--csv", tmp)
 
-            with io.open(tmp.name, "r") as fp:
+            with io.open(tmp, "r") as fp:
                 csv = fp.read()
 
-            self.assertEqual(csv, textwrap.dedent('''
-                Benchmark,Base,Changed
-                call_simple,0.01143,0.01363
-            ''').lstrip())
+            self.assertEqual(csv,
+                             "Benchmark,Base,Changed\n"
+                             "call_simple,0.01143,0.01363\n")
 
     def test_compare_table(self):
         stdout = self.compare("-O", "table")
