@@ -37,7 +37,7 @@ def bench_startup(command, devnull_in, devnull_out):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(samples=25)
+    runner = perf.Runner(values=25)
 
     runner.metadata['description'] = "Performance of the Python startup"
     args = runner.parse_args()

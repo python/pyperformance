@@ -265,4 +265,4 @@ def bench_mdp(loops):
 if __name__ == "__main__":
     runner = perf.Runner()
     runner.metadata['description'] = "MDP benchmark"
-    runner.bench_sample_func('mdp', bench_mdp)
+    runner.bench_time_func('mdp', bench_mdp)

@@ -67,4 +67,4 @@ if __name__ == "__main__":
     runner.metadata['description'] = "Test regex compilation performance"
 
     regexes = capture_regexes()
-    runner.bench_sample_func('regex_compile', bench_regex_compile, regexes)
+    runner.bench_time_func('regex_compile', bench_regex_compile, regexes)

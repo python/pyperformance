@@ -292,5 +292,5 @@ if __name__ == "__main__":
     runner.metadata['pickle_protocol'] = str(options.protocol)
     runner.metadata['pickle_module'] = pickle.__name__
 
-    runner.bench_sample_func(name, benchmark,
-                             pickle, options, inner_loops=inner_loops)
+    runner.bench_time_func(name, benchmark,
+                           pickle, options, inner_loops=inner_loops)

@@ -6,28 +6,17 @@ import sys
 
 import perf
 import six
-import statistics
 
 
 NO_VERSION = "<not set>"
 
 
-def average(bench):
-    return bench.median()
-
-
-def stdev(bench):
-    center = average(bench)
-    samples = bench.get_samples()
-    return statistics.stdev(samples, center)
-
-
 def significant_msg(base, changed):
-    if base.get_nsample() < 2 or changed.get_nsample() < 2:
-        return "(benchmark only contains a single sample)"
+    if base.get_nvalue() < 2 or changed.get_nvalue() < 2:
+        return "(benchmark only contains a single value)"
 
-    avg_base = average(base)
-    avg_changed = average(changed)
+    avg_base = base.mean()
+    avg_changed = changed.mean()
 
     msg = "Not significant"
     significant = False
@@ -36,8 +25,8 @@ def significant_msg(base, changed):
     # are automatically considered insignificant. This helps present
     # a clear picture to the user.
     if abs(avg_base - avg_changed) > (avg_base + avg_changed) * 0.01:
-        base_times = base.get_samples()
-        changed_times = changed.get_samples()
+        base_times = base.get_values()
+        changed_times = changed.get_values()
 
         significant, t_score = perf.is_significant(base_times, changed_times)
         if significant:
@@ -50,15 +39,15 @@ def format_table(base_label, changed_label, results):
     table = [("Benchmark", base_label, changed_label, "Change", "Significance")]
 
     for (bench_name, result) in results:
-        format_sample = result.base.format_sample
-        avg_base = average(result.base)
-        avg_changed = average(result.changed)
+        format_value = result.base.format_value
+        avg_base = result.base.mean()
+        avg_changed = result.changed.mean()
         delta_avg = quantity_delta(result.base, result.changed)
         msg = significant_msg(result.base, result.changed)
         table.append((bench_name,
                       # Limit the precision for conciseness in the table.
-                      format_sample(avg_base),
-                      format_sample(avg_changed),
+                      format_value(avg_base),
+                      format_value(avg_changed),
                       delta_avg,
                       msg))
 
@@ -106,39 +95,39 @@ class BenchmarkResult(object):
             raise ValueError("not the same benchmark: %s != %s"
                              % (name, name2))
 
-        if base.get_nsample() != changed.get_nsample():
+        if base.get_nvalue() != changed.get_nvalue():
             raise RuntimeError("base and changed don't have "
-                               "the same number of samples")
+                               "the same number of values")
 
         self.base = base
         self.changed = changed
 
     def __str__(self):
-        if self.base.get_nsample() > 1:
-            base_stdev = stdev(self.base)
-            changed_stdev = stdev(self.changed)
-            values = (average(self.base), base_stdev,
-                      average(self.changed), changed_stdev)
-            text = "%s +- %s -> %s +- %s" % self.base.format_samples(values)
+        if self.base.get_nvalue() > 1:
+            base_stdev = self.base.stdev()
+            changed_stdev = self.changed.stdev()
+            values = (self.base.mean(), base_stdev,
+                      self.changed.mean(), changed_stdev)
+            text = "%s +- %s -> %s +- %s" % self.base.format_values(values)
 
             msg = significant_msg(self.base, self.changed)
             delta_avg = quantity_delta(self.base, self.changed)
-            return ("Median +- Std dev: %s: %s\n%s"
+            return ("Mean +- std dev: %s: %s\n%s"
                     % (text, delta_avg, msg))
         else:
-            format_sample = self.base.format_sample
-            base = average(self.base)
-            changed = average(self.changed)
+            format_value = self.base.format_value
+            base = self.base.mean()
+            changed = self.changed.mean()
             delta_avg = quantity_delta(self.base, self.changed)
             return ("%s -> %s: %s"
-                    % (format_sample(base),
-                       format_sample(changed),
+                    % (format_value(base),
+                       format_value(changed),
                        delta_avg))
 
 
 def quantity_delta(base, changed):
-    old = average(base)
-    new = average(changed)
+    old = base.mean()
+    new = changed.mean()
     is_time = (base.get_unit() == 'second')
 
     if old == 0 or new == 0:
@@ -312,8 +301,8 @@ def write_csv(results, filename):
         writer.writerow(['Benchmark', 'Base', 'Changed'])
         for result in results:
             name = result.base.get_name()
-            base = average(result.base)
-            changed = average(result.changed)
+            base = result.base.mean()
+            changed = result.changed.mean()
             row = [name, format_csv(base), format_csv(changed)]
             writer.writerow(row)
 

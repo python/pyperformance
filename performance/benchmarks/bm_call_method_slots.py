@@ -148,4 +148,4 @@ if __name__ == "__main__":
     runner = perf.Runner()
     runner.metadata['description'] = ("Test the performance of method calls "
                                       "on objects that use  __slots__")
-    runner.bench_sample_func('call_method_slots', test_calls, inner_loops=20)
+    runner.bench_time_func('call_method_slots', test_calls, inner_loops=20)

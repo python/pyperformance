@@ -96,7 +96,7 @@ class Test:
         kw = {}
         if self.inner_loops is not None:
             kw['inner_loops'] = self.inner_loops
-        return runner.bench_sample_func(name, self.test, **kw)
+        return runner.bench_time_func(name, self.test, **kw)
 
     def test(self):
         """ Run the benchmark."""

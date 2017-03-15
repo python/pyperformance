@@ -65,4 +65,4 @@ if __name__ == "__main__":
     for bench in benchmarks:
         name = 'genshi_%s' % bench
         tmpl_cls, tmpl_str = BENCHMARKS[bench]
-        runner.bench_sample_func(name, bench_genshi, tmpl_cls, tmpl_str)
+        runner.bench_time_func(name, bench_genshi, tmpl_cls, tmpl_str)

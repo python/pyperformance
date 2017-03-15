@@ -83,6 +83,6 @@ if __name__ == "__main__":
 
     tmp_path = setup(NUM_FILES)
     try:
-        runner.bench_sample_func('pathlib', bench_pathlib, tmp_path)
+        runner.bench_time_func('pathlib', bench_pathlib, tmp_path)
     finally:
         shutil.rmtree(tmp_path)

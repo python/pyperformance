@@ -150,5 +150,5 @@ if __name__ == '__main__':
                                        % DEFAULT_REFERENCE)
 
     args = runner.parse_args()
-    runner.bench_sample_func('nbody', bench_nbody,
-                             args.reference, args.iterations)
+    runner.bench_time_func('nbody', bench_nbody,
+                           args.reference, args.iterations)

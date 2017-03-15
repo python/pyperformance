@@ -173,5 +173,5 @@ if __name__ == '__main__':
     if options.force_bytes:
         USE_BYTES_IN_PY3K = True
 
-    runner.bench_sample_func('regex_effbot', bench_regex_effbot,
-                             inner_loops=10)
+    runner.bench_time_func('regex_effbot', bench_regex_effbot,
+                           inner_loops=10)

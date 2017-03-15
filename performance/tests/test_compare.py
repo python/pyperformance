@@ -70,7 +70,7 @@ class CompareTests(unittest.TestCase):
             Performance version: 0.2
 
             ### call_simple ###
-            Median +- Std dev: 11.4 ms +- 2.1 ms -> 13.6 ms +- 1.3 ms: 1.19x slower
+            Mean +- std dev: 12.2 ms +- 2.1 ms -> 14.0 ms +- 1.3 ms: 1.15x slower
             Significant (t=-3.38)
         ''').lstrip())
 
@@ -88,13 +88,13 @@ class CompareTests(unittest.TestCase):
             Performance version: 0.3
 
             ### call_simple ###
-            Median +- Std dev: 11.4 ms +- 2.1 ms -> 13.6 ms +- 1.3 ms: 1.19x slower
+            Mean +- std dev: 12.2 ms +- 2.1 ms -> 14.0 ms +- 1.3 ms: 1.15x slower
             Significant (t=-3.38)
 
             ERROR: Performance versions are different: 0.2 != 0.3
         ''').lstrip())
 
-    def test_compare_single_sample(self):
+    def test_compare_single_value(self):
         stdout = self.compare(dataset='mem')
         self.assertEqual(stdout, textwrap.dedent('''
             mem1.json
@@ -120,7 +120,7 @@ class CompareTests(unittest.TestCase):
 
             self.assertEqual(csv,
                              "Benchmark,Base,Changed\n"
-                             "call_simple,0.01143,0.01363\n")
+                             "call_simple,0.01218,0.01405\n")
 
     def test_compare_table(self):
         stdout = self.compare("-O", "table")
@@ -138,11 +138,11 @@ class CompareTests(unittest.TestCase):
             +-------------+----------+----------+--------------+-----------------------+
             | Benchmark   | py2.json | py3.json | Change       | Significance          |
             +=============+==========+==========+==============+=======================+
-            | call_simple | 11.4 ms  | 13.6 ms  | 1.19x slower | Significant (t=-3.38) |
+            | call_simple | 12.2 ms  | 14.0 ms  | 1.15x slower | Significant (t=-3.38) |
             +-------------+----------+----------+--------------+-----------------------+
         ''').lstrip())
 
-    def test_compare_table_single_sample(self):
+    def test_compare_table_single_value(self):
         stdout = self.compare("-O", "table", dataset='mem')
         self.assertEqual(stdout, textwrap.dedent('''
             mem1.json
@@ -155,11 +155,11 @@ class CompareTests(unittest.TestCase):
 
             Performance version: 0.2
 
-            +-------------+-----------+-----------+--------------+-------------------------------------------+
-            | Benchmark   | mem1.json | mem2.json | Change       | Significance                              |
-            +=============+===========+===========+==============+===========================================+
-            | call_simple | 7896.0 kB | 7900.0 kB | 1.00x larger | (benchmark only contains a single sample) |
-            +-------------+-----------+-----------+--------------+-------------------------------------------+
+            +-------------+-----------+-----------+--------------+------------------------------------------+
+            | Benchmark   | mem1.json | mem2.json | Change       | Significance                             |
+            +=============+===========+===========+==============+==========================================+
+            | call_simple | 7896.0 kB | 7900.0 kB | 1.00x larger | (benchmark only contains a single value) |
+            +-------------+-----------+-----------+--------------+------------------------------------------+
         ''').lstrip())
 
 

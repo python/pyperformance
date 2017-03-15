@@ -6,7 +6,6 @@ import errno
 import json
 import os.path
 import shutil
-import statistics
 import subprocess
 import sys
 from urllib.error import HTTPError
@@ -48,12 +47,12 @@ class Benchmark(object):
     def encode_benchmark(self, bench, branch, revision):
         data = {}
         data['benchmark'] = bench.get_name()
-        data['result_value'] = bench.median()
+        data['result_value'] = bench.mean()
 
-        samples = bench.get_samples()
-        data['min'] = min(samples)
-        data['max'] = max(samples)
-        data['std_dev'] = statistics.stdev(samples, bench.median())
+        values = bench.get_values()
+        data['min'] = min(values)
+        data['max'] = max(values)
+        data['std_dev'] = bench.stdev()
 
         data['executable'] = self.executable
         data['commitid'] = revision

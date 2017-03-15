@@ -142,4 +142,4 @@ if __name__ == "__main__":
     runner = perf.Runner()
     runner.metadata['description'] = ("Test the performance of simple "
                                       "Python-to-Python method calls")
-    runner.bench_sample_func('call_method', test_calls, inner_loops=20)
+    runner.bench_time_func('call_method', test_calls, inner_loops=20)

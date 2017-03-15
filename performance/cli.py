@@ -39,8 +39,8 @@ def parse_args():
                            " accurate results"))
     cmd.add_argument("-f", "--fast", action="store_true",
                      help="Get rough answers quickly")
-    cmd.add_argument("--debug-single-sample", action="store_true",
-                     help="Debug: fastest mode, only collect a single sample")
+    cmd.add_argument("--debug-single-value", action="store_true",
+                     help="Debug: fastest mode, only compute a single value")
     cmd.add_argument("-v", "--verbose", action="store_true",
                      help="Print more output")
     cmd.add_argument("-m", "--track-memory", action="store_true",
@@ -120,7 +120,7 @@ def parse_args():
 
     options = parser.parse_args()
 
-    if options.action == 'run' and options.debug_single_sample:
+    if options.action == 'run' and options.debug_single_value:
         options.fast = True
 
     if not options.action:

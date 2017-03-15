@@ -294,4 +294,4 @@ if __name__ == "__main__":
     for bench in benchmarks:
         name = 'xml_etree_%s' % bench
         bench_func = globals()['bench_%s' % bench]
-        runner.bench_sample_func(name, bench_etree, etree_module, bench_func)
+        runner.bench_time_func(name, bench_etree, etree_module, bench_func)

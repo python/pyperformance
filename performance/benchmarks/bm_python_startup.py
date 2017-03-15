@@ -25,7 +25,7 @@ def add_cmdline_args(cmd, args):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(samples=10, add_cmdline_args=add_cmdline_args)
+    runner = perf.Runner(values=10, add_cmdline_args=add_cmdline_args)
     runner.argparser.add_argument("--no-site", action="store_true")
 
     runner.metadata['description'] = "Performance of the Python startup"
@@ -39,4 +39,4 @@ if __name__ == "__main__":
         command.append("-S")
     command.extend(("-c", "pass"))
 
-    runner.bench_sample_func(name, bench_startup, command)
+    runner.bench_time_func(name, bench_startup, command)

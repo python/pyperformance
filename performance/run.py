@@ -67,8 +67,8 @@ def run_command(command, hide_stderr=True):
 
 
 def copy_perf_options(cmd, options):
-    if options.debug_single_sample:
-        cmd.append('--debug-single-sample')
+    if options.debug_single_value:
+        cmd.append('--debug-single-value')
     elif options.rigorous:
         cmd.append('--rigorous')
     elif options.fast:

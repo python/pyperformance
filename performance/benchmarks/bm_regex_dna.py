@@ -234,4 +234,4 @@ if __name__ == '__main__':
     if (expected_len is not None) and (len(seq) != expected_len):
         raise Exception("init_benchmarks() error")
 
-    runner.bench_sample_func('regex_dna', bench_regex_dna, seq, expected_res)
+    runner.bench_time_func('regex_dna', bench_regex_dna, seq, expected_res)

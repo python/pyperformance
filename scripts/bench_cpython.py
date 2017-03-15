@@ -175,7 +175,7 @@ class BenchmarkPython(object):
         if args.venv:
             cmd.extend(('--venv', args.venv))
         if args.debug:
-            cmd.append('--debug-single-sample')
+            cmd.append('--debug-single-value')
         elif args.rigorous:
             cmd.append('--rigorous')
         self.run(*cmd)
@@ -204,7 +204,7 @@ class BenchmarkPython(object):
                             help="Enable the debug mode")
         parser.add_argument('--rigorous', action="store_true",
                             help="Enable the rigorous mode: "
-                                 "run more benchmarks samples")
+                                 "run more benchmark values")
         parser.add_argument('--pull', action="store_true",
                             help='Run hg pull -u to update the Mercurial '
                                  'repository')

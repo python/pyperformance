@@ -221,8 +221,8 @@ def main():
     se_nh = get_senh(board, cti)
 
     solve_arg = SOLVE_ARG
-    runner.bench_sample_func('meteor_contest', bench_meteor_contest,
-                             board, pieces, solve_arg, fps, se_nh)
+    runner.bench_time_func('meteor_contest', bench_meteor_contest,
+                           board, pieces, solve_arg, fps, se_nh)
 
 
 if __name__ == "__main__":

@@ -426,6 +426,7 @@ Version 0.5.2
   - dulwich: 0.16.3 => 0.17.1
   - mercurial: 4.0.2 => 4.1.1
   - pathlib2: 2.2.0 => 2.2.1
+  - perf: 0.9.3 => 0.9.6
   - psutil: 5.0.1 => 5.2.0
   - SQLAlchemy: 1.1.4 => 1.1.6
 

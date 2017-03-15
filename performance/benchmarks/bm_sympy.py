@@ -64,4 +64,4 @@ if __name__ == "__main__":
     for bench in benchmarks:
         name = 'sympy_%s' % bench
         func = globals()['bench_' + bench]
-        runner.bench_sample_func(name, bench_sympy, func)
+        runner.bench_time_func(name, bench_sympy, func)

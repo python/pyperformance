@@ -84,9 +84,9 @@ def bench_tornado(loops):
 if __name__ == "__main__":
     kw = {}
     if perf.python_has_jit():
-        # PyPy needs more samples to warmup its JIT
+        # PyPy needs to compute more warmup values to warmup its JIT
         kw['warmups'] = 30
     runner = perf.Runner(**kw)
     runner.metadata['description'] = ("Test the performance of HTTP requests "
                                       "with Tornado.")
-    runner.bench_sample_func('tornado_http', bench_tornado)
+    runner.bench_time_func('tornado_http', bench_tornado)

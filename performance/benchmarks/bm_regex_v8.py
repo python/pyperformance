@@ -1790,4 +1790,4 @@ if __name__ == '__main__':
     runner = perf.Runner()
     runner.metadata['description'] = ("Test the performance of regexps "
                                       "using V8's benchmarks")
-    runner.bench_sample_func('regex_v8', bench_regex_v8)
+    runner.bench_time_func('regex_v8', bench_regex_v8)

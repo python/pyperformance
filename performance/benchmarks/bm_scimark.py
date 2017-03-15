@@ -413,4 +413,4 @@ if __name__ == "__main__":
     for bench in benchmarks:
         name = 'scimark_%s' % bench
         args = BENCHMARKS[bench]
-        runner.bench_sample_func(name, *args)
+        runner.bench_time_func(name, *args)

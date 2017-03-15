@@ -89,4 +89,4 @@ if __name__ == "__main__":
     runner.metadata['description'] = "Telco decimal benchmark"
 
     filename = rel_path("data", "telco-bench.b")
-    runner.bench_sample_func('telco', bench_telco, filename)
+    runner.bench_time_func('telco', bench_telco, filename)

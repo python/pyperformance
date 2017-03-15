@@ -455,4 +455,4 @@ if __name__ == "__main__":
     else:
         func = bench_all
 
-    runner.bench_sample_func(name, func, inner_loops=400)
+    runner.bench_time_func(name, func, inner_loops=400)

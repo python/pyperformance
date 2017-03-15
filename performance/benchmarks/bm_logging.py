@@ -156,6 +156,6 @@ if __name__ == "__main__":
         bench_func = BENCHMARKS[bench]
 
         # Only check loggers in worker processes
-        runner.bench_sample_func(name, bench_func,
-                                 logger, stream, runner.args.worker,
-                                 inner_loops=10)
+        runner.bench_time_func(name, bench_func,
+                               logger, stream, runner.args.worker,
+                               inner_loops=10)

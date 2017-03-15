@@ -665,4 +665,4 @@ if __name__ == '__main__':
 
     filename = os.path.join(os.path.dirname(__file__),
                             "data", "interpreter.tar.bz2")
-    runner.bench_sample_func('pyflate', bench_pyflake, filename)
+    runner.bench_time_func('pyflate', bench_pyflake, filename)
