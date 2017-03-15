@@ -414,6 +414,21 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
+Version 0.5.2
+-------------
+
+* Upgrade requirements:
+
+  - certifi: 2016.9.26 => 2017.1.23
+  - Chameleon: 3.0 => 3.1
+  - Django: 1.10.5 => 1.10.6
+  - MarkupSafe: 0.23 => 1.0
+  - dulwich: 0.16.3 => 0.17.1
+  - mercurial: 4.0.2 => 4.1.1
+  - pathlib2: 2.2.0 => 2.2.1
+  - psutil: 5.0.1 => 5.2.0
+  - SQLAlchemy: 1.1.4 => 1.1.6
+
 Version 0.5.1 (2017-01-16)
 --------------------------
 

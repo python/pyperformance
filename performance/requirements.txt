@@ -22,14 +22,14 @@ wheel
 # tornado 4.4.1 dependencies
 backports-abc==0.5
 singledispatch==3.4.0.3
-certifi==2016.9.26
+certifi==2017.1.23
 
 # spambayes 1.1b2 dependencies
 lockfile==0.12.2; python_version < '3.0'
 pydns==2.3.6; python_version < '3.0'
 
 # Mako 1.0.4 dependencies
-MarkupSafe==0.23
+MarkupSafe==1.0
 
 # html5lib 0.999999999 dependencies
 webencodings==0.5
@@ -56,15 +56,15 @@ perf==0.9.3
 # should be increased to respect semantic versionning. Comparison between
 # two performance results of two different major versions is not reliable.
 
-Chameleon==3.0                            # bm_chameleon
-Django==1.10.5                            # bm_django_template
+Chameleon==3.1                            # bm_chameleon
+Django==1.10.6                            # bm_django_template
 Genshi==0.7                               # bm_genshi
 Mako==1.0.6                               # bm_mako
-SQLAlchemy==1.1.4                         # bm_sqlalchemy_declarative
-dulwich==0.16.3                           # dulwich_log
-mercurial==4.0.2; python_version < '3.0'  # bm_hg_startup
+SQLAlchemy==1.1.6                         # bm_sqlalchemy_declarative
+dulwich==0.17.1                           # dulwich_log
+mercurial==4.1.1; python_version < '3.0'  # bm_hg_startup
 html5lib==0.999999999                     # bm_html5lib
-pathlib2==2.2.0; python_version < '3.4'   # bm_pathlib
+pathlib2==2.2.1; python_version < '3.4'   # bm_pathlib
 pyaes==1.6.0                              # bm_crypto_pyaes
 spambayes==1.1b2; python_version < '3.0'  # bm_spambayes
 sympy==1.0                                # bm_sympy
@@ -76,7 +76,7 @@ tornado==4.4.2                            # bm_tornado_http
 #
 # The list of optional dependencies is hardcoded in performance/venv.py
 
-psutil==5.0.1
+psutil==5.2.0
 
 
 # performance
