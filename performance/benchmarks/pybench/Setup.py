@@ -12,9 +12,6 @@
 # should then be embedded in try-except clauses in this configuration
 # module.
 
-# Defaults
-Number_of_rounds = 10
-
 # Import tests
 from Arithmetic import *   # noqa
 from Calls import *   # noqa

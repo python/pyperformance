@@ -682,12 +682,3 @@ class TryExcept(Test):
                 pass
 
         return perf.perf_counter() - t0
-
-
-# Test to make Fredrik happy...
-
-if __name__ == '__main__':
-    import timeit
-    timeit.TestClass = TryRaiseExcept
-    timeit.main(['-s', 'test = TestClass(); test.rounds = 1000',
-                 'test.test()'])

@@ -53,12 +53,6 @@ class Test:
     """ All test must have this class as baseclass. It provides
         the necessary interface to the benchmark machinery.
 
-        The tests must set .rounds to a value high enough to let the
-        test run between 20-50 seconds. This is needed because
-        clock()-timing only gives rather inaccurate values (on Linux,
-        for example, it is accurate to a few hundreths of a
-        second).
-
         It is also important to set the .operations variable to a
         value representing the number of "virtual operations" done per
         call of .run().
@@ -96,7 +90,7 @@ class Test:
     def __init__(self):
         self.name = self.__class__.__name__
 
-    def run(self, runner, rounds):
+    def run(self, runner):
         name = 'pybench.%s' % self.name
 
         kw = {}
@@ -105,12 +99,7 @@ class Test:
         return runner.bench_sample_func(name, self.test, **kw)
 
     def test(self):
-        """ Run the test.
-
-            The test needs to run self.rounds executing
-            self.operations number of operations each.
-
-        """
+        """ Run the benchmark."""
         return
 
 
@@ -128,9 +117,6 @@ class Benchmark:
 
     # Name of the benchmark
     name = ''
-
-    # Number of benchmark rounds to run
-    rounds = 1
 
     # Benchmark version number as float x.yy
     version = 2.1
@@ -180,7 +166,7 @@ class Benchmark:
 
     def run(self):
         for test in self.tests:
-            test.run(self.runner, self.rounds)
+            test.run(self.runner)
 
 
 def add_cmdline_args(cmd, args):
@@ -212,7 +198,6 @@ def main():
     args = runner.parse_args()
 
     bench = Benchmark(runner, args.output, verbose=runner.args.verbose)
-    bench.rounds = runner.args.warmups + runner.args.samples
 
     if args.copyright:
         print(__copyright__.strip())
