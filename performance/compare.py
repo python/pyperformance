@@ -11,6 +11,15 @@ import six
 NO_VERSION = "<not set>"
 
 
+def format_result(bench):
+    mean = bench.mean()
+    if bench.get_nvalue() >= 2:
+        args = bench.format_values((mean, bench.stdev()))
+        return 'Mean +- std dev: %s +- %s' % args
+    else:
+        return bench.format_value(mean)
+
+
 def significant_msg(base, changed):
     if base.get_nvalue() < 2 or changed.get_nvalue() < 2:
         return "(benchmark only contains a single value)"
@@ -104,10 +113,8 @@ class BenchmarkResult(object):
 
     def __str__(self):
         if self.base.get_nvalue() > 1:
-            base_stdev = self.base.stdev()
-            changed_stdev = self.changed.stdev()
-            values = (self.base.mean(), base_stdev,
-                      self.changed.mean(), changed_stdev)
+            values = (self.base.mean(), self.base.stdev(),
+                      self.changed.mean(), self.changed.stdev())
             text = "%s +- %s -> %s +- %s" % self.base.format_values(values)
 
             msg = significant_msg(self.base, self.changed)
@@ -183,7 +190,7 @@ def display_benchmark_suite(suite):
 
     for bench in suite.get_benchmarks():
         print("### %s ###" % bench.get_name())
-        print(bench)
+        print(format_result(bench))
         print()
 
 
