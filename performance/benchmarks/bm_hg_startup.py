@@ -1,4 +1,3 @@
-import os
 import sys
 import subprocess
 
@@ -25,17 +24,6 @@ def get_hg_version(hg_bin):
     return stdout.splitlines()[0]
 
 
-def bench_startup(command, devnull_in, devnull_out):
-    proc = subprocess.Popen(command,
-                            stdin=devnull_in,
-                            stdout=devnull_out,
-                            stderr=devnull_out)
-    returncode = proc.wait()
-    if returncode != 0:
-        print("ERROR: Mercurial command failed!")
-        sys.exit(1)
-
-
 if __name__ == "__main__":
     runner = perf.Runner(values=25)
 
@@ -46,8 +34,4 @@ if __name__ == "__main__":
     runner.metadata['hg_version'] = get_hg_version(hg_bin)
 
     command = [sys.executable, hg_bin, "help"]
-
-    with open(os.devnull, "rb") as devnull_in:
-        with open(os.devnull, "wb") as devnull_out:
-            runner.bench_func('hg_startup', bench_startup,
-                              command, devnull_in, devnull_out)
+    runner.bench_command('hg_startup', command)

@@ -2,21 +2,8 @@
 Benchmark Python startup.
 """
 import sys
-import subprocess
 
 import perf
-from six.moves import xrange
-
-
-def bench_startup(loops, command):
-    run = subprocess.check_call
-    range_it = xrange(loops)
-    t0 = perf.perf_counter()
-
-    for _ in range_it:
-        run(command)
-
-    return perf.perf_counter() - t0
 
 
 def add_cmdline_args(cmd, args):
@@ -39,4 +26,4 @@ if __name__ == "__main__":
         command.append("-S")
     command.extend(("-c", "pass"))
 
-    runner.bench_time_func(name, bench_startup, command)
+    runner.bench_command(name, command)
