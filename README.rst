@@ -414,8 +414,8 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
-Version 0.5.2
--------------
+Version 0.5.2 (2017-03-17)
+--------------------------
 
 * Upgrade requirements:
 

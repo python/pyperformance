@@ -7,6 +7,7 @@
 #  - update performance/requirements.txt
 #  - increase performance major version if a benchmark dependency is upgraded
 #  - (see also pip-tools and pipdeptree tools)
+#  - (pip install pip-review; pip-review --local --interactive)
 #
 # Prepare a release:
 #
