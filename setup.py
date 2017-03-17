@@ -26,6 +26,7 @@
 #  - git push --tags
 #  - rm -rf dist/
 #  - python3 setup.py sdist bdist_wheel
+#  - python2 setup.py bdist_wheel
 #  - twine upload dist/*
 #
 # After the release:
@@ -34,7 +35,7 @@
 #  - git commit -a -m "post-release"
 #  - git push
 
-VERSION = '0.5.2'
+VERSION = '0.5.3'
 
 DESCRIPTION = 'Python benchmark suite'
 CLASSIFIERS = [
