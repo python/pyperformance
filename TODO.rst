@@ -1,6 +1,7 @@
 TODO
 ====
 
+* Remove compare command or reimplement it using perf compare_to
 * Add a --log option to create a log file. Use the logging module
   and replace print() with logger.error().
 * Write a test to ensure that benchmarks listed in groups exist
