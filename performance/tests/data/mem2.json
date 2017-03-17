@@ -1,1 +1,1 @@
-{"benchmarks":[{"common_metadata":{"name":"call_simple","unit":"byte","performance_version":"0.2"},"runs":[{"samples":[8089600.0]}]}],"version":4}
+{"benchmarks":[{"runs":[{"values":[8089600.0]}]}],"metadata":{"name":"call_simple","performance_version":"0.2","unit":"byte"},"version":"1.0"}
