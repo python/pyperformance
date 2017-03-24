@@ -10,6 +10,8 @@ import time
 
 
 GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
+# FIXME: remove Mercurial support?
+GIT = True
 
 
 class BenchmarkPython(object):
@@ -78,7 +80,10 @@ class BenchmarkPython(object):
         args = self.args
 
         if args.pull:
-            self.run('hg', 'pull')
+            if GIT:
+                self.run('git', 'fetch')
+            else:
+                self.run('hg', 'pull')
 
         self.logger.error('')
         text = "Benchmark CPython revision %s" % args.revision
@@ -86,15 +91,25 @@ class BenchmarkPython(object):
         self.logger.error("=" * len(text))
         self.logger.error('')
 
-        self.run('hg', 'up', '--clean', '-r', args.revision)
+        if GIT:
+            # checkout to requested revision
+            self.run('git', 'reset', '--hard', 'HEAD')
+            self.run('git', 'checkout', args.revision)
+
+            # remove all untracked files
+            self.run('git', 'clean', '-fdx')
+        else:
+            self.run('hg', 'up', '--clean', '-r', args.revision)
+            # FIXME: run hg purge?
 
         if args.patch:
             self.logger.error('Apply patch %s' % args.patch)
             self.run('patch', '-p1', stdin_filename=args.patch)
 
-        # FIXME: run hg purge?
-
-        full_revision = self.get_output('hg', 'id', '-i').strip()
+        if GIT:
+            full_revision = self.get_output('git', 'rev-parse', 'HEAD').strip()
+        else:
+            full_revision = self.get_output('hg', 'id', '-i').strip()
         if not full_revision:
             self.logger.error("ERROR: unable to get the Mercurial revision")
             sys.exit(1)
@@ -182,8 +197,8 @@ class BenchmarkPython(object):
 
     def parse_args(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument('-o', '--output', metavar='FILENAME',
-                            help='write results encoded to JSON into FILENAME')
+        parser.add_argument('-o', '--output', metavar='JSON_FILENAME',
+                            help='write results encoded to JSON into JSON_FILENAME')
         parser.add_argument('--log', metavar='FILENAME',
                             help='Write logs into FILENAME log file')
         parser.add_argument('--pgo', action='store_true',
@@ -206,8 +221,7 @@ class BenchmarkPython(object):
                             help="Enable the rigorous mode: "
                                  "run more benchmark values")
         parser.add_argument('--pull', action="store_true",
-                            help='Run hg pull -u to update the Mercurial '
-                                 'repository')
+                            help='Run git fetch to fetch new commits')
         parser.add_argument('--patch',
                             help='Apply a patch on top on revision '
                                  'before compiling Python')
