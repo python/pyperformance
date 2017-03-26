@@ -10,7 +10,6 @@ import time
 
 
 GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
-# FIXME: remove Mercurial support?
 GIT = True
 
 

@@ -13,8 +13,8 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 
-# FIXME: remove Mercurial support?
 GIT = True
+DEFAULT_BRANCH = 'master' if GIT else 'default'
 
 
 class Benchmark(object):
@@ -30,7 +30,7 @@ class Benchmark(object):
         if GIT:
             cmd = ['git', 'log', '--format=%H|%ci', '%s^!' % revision]
         else:
-            cmd = ['hg', 'log', '--template', '{node}|{branch}|{date|isodate}', '-r', revision]
+            cmd = ['hg', 'log', '--template', '{node}|{date|isodate}', '-r', revision]
         proc = subprocess.Popen(cmd,
                                 stdout=subprocess.PIPE,
                                 cwd=self.src,
@@ -40,14 +40,12 @@ class Benchmark(object):
             sys.exit(proc.returncode)
         if GIT:
             node, date = stdout.split('|')
-            # FIXME!
-            branch = 'master'
             # drop second and timezone
             date = datetime.datetime.strptime(date[:16], '%Y-%m-%d %H:%M')
         else:
-            node, stdout = stdout.split('|')
-            date = datetime.datetime.strptime(stdout[:16], '%Y-%m-%d %H:%M')
-        return (node, branch, date)
+            node, date = stdout.split('|')
+            date = datetime.datetime.strptime(date[:16], '%Y-%m-%d %H:%M')
+        return (node, date)
 
     def run_cmd(self, cmd, **kw):
         check = kw.pop('check', True)
@@ -100,13 +98,11 @@ class Benchmark(object):
             err.close()
             return False
 
-    def benchmark(self, revision, name=None):
-        node, branch, date = self.get_revision_info(revision)
+    def benchmark(self, revision, branch):
+        node, date = self.get_revision_info(revision)
         short_node = node[:12]
         date = date.strftime('%Y-%m-%d_%H-%M')
         filename = '%s-%s-%s' % (date, branch, short_node)
-        if name:
-            filename += '-%s' % name
         filename = os.path.join(self.directory, filename + ".json")
 
         if os.path.exists(filename):
@@ -233,11 +229,11 @@ class Benchmark(object):
                 self.run_cmd(('hg', 'pull'), cwd=self.src)
 
         try:
-            for revision, name in self.revisions:
-                self.benchmark(revision, name)
+            for revision, branch in self.revisions:
+                self.benchmark(revision, branch or DEFAULT_BRANCH)
 
             for branch in self.branches:
-                self.benchmark(branch)
+                self.benchmark(branch, branch)
         finally:
             for filename in self.skipped:
                 print("Skipped: %s" % filename)
