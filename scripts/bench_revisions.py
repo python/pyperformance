@@ -13,6 +13,10 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 
+# FIXME: remove Mercurial support?
+GIT = True
+
+
 class Benchmark(object):
     def __init__(self):
         bench_dir = os.path.realpath(os.path.dirname(__file__))
@@ -23,7 +27,10 @@ class Benchmark(object):
         self.failed = []
 
     def get_revision_info(self, revision):
-        cmd = ['hg', 'log', '--template', '{node}|{branch}|{date|isodate}', '-r', revision]
+        if GIT:
+            cmd = ['git', 'log', '--format=%H|%ci', '%s^!' % revision]
+        else:
+            cmd = ['hg', 'log', '--template', '{node}|{branch}|{date|isodate}', '-r', revision]
         proc = subprocess.Popen(cmd,
                                 stdout=subprocess.PIPE,
                                 cwd=self.src,
@@ -31,8 +38,15 @@ class Benchmark(object):
         stdout = proc.communicate()[0]
         if proc.returncode:
             sys.exit(proc.returncode)
-        node, branch, stdout = stdout.split('|')
-        date = datetime.datetime.strptime(stdout[:16], '%Y-%m-%d %H:%M')
+        if GIT:
+            node, date = stdout.split('|')
+            # FIXME!
+            branch = 'master'
+            # drop second and timezone
+            date = datetime.datetime.strptime(date[:16], '%Y-%m-%d %H:%M')
+        else:
+            node, stdout = stdout.split('|')
+            date = datetime.datetime.strptime(stdout[:16], '%Y-%m-%d %H:%M')
         return (node, branch, date)
 
     def run_cmd(self, cmd, **kw):
@@ -213,7 +227,10 @@ class Benchmark(object):
         self.run_cmd(('sudo', 'python3', '-m', 'perf', 'system', 'tune'),
                      cwd=self.perf)
         if self.update:
-            self.run_cmd(('hg', 'pull'), cwd=self.src)
+            if GIT:
+                self.run_cmd(('git', 'fetch'), cwd=self.src)
+            else:
+                self.run_cmd(('hg', 'pull'), cwd=self.src)
 
         try:
             for revision, name in self.revisions:
