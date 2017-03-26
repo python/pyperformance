@@ -52,12 +52,14 @@ def make_http_server(loop, request_handler):
     sockets = bind_sockets(0, HOST, family=FAMILY)
     assert len(sockets) == 1
     server.add_sockets(sockets)
-    return sockets[0].getsockname()
+    sock = sockets[0]
+    return sock
 
 
 def bench_tornado(loops):
     loop = IOLoop.instance()
-    host, port = make_http_server(loop, make_application())
+    sock = make_http_server(loop, make_application())
+    host, port = sock.getsockname()
     url = "http://%s:%s/" % (host, port)
     namespace = {}
 
@@ -76,8 +78,11 @@ def bench_tornado(loops):
                 assert buf.tell() == len(CHUNK) * NCHUNKS
 
         namespace['dt'] = perf.perf_counter() - t0
+        client.close()
 
     loop.run_sync(run_client)
+    sock.close()
+
     return namespace['dt']
 
 
