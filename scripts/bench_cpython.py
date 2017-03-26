@@ -110,9 +110,9 @@ class BenchmarkPython(object):
         else:
             full_revision = self.get_output('hg', 'id', '-i').strip()
         if not full_revision:
-            self.logger.error("ERROR: unable to get the Mercurial revision")
+            self.logger.error("ERROR: unable to get the revision")
             sys.exit(1)
-        self.logger.error("Mercurial revision: %s" % full_revision)
+        self.logger.error("Revision: %s" % full_revision)
 
     def compile(self):
         args = self.args
