@@ -25,3 +25,4 @@ if __name__ == "__main__":
     repo = dulwich.repo.Repo(repo_path)
     head = repo.head()
     runner.bench_func('dulwich_log', iter_all_commits, repo)
+    repo.close()
