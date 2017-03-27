@@ -414,8 +414,8 @@ There are also two disabled benchmarks:
 Changelog
 =========
 
-Version 0.5.3
--------------
+Version 0.5.3 (2017-03-27)
+--------------------------
 
 * Upgrade Dulwich to 0.17.3 to support PyPy older than 5.6:
   see https://github.com/jelmer/dulwich/issues/509
