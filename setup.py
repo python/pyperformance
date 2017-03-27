@@ -12,16 +12,18 @@
 # Prepare a release:
 #
 #  - git pull --rebase
-#  - run tests: tox
+#  - Remove untracked files/dirs: git clean -fdx
 #  - maybe update version in setup.py and performance/__init__.py
 #  - set release date in changelog (README.rst)
 #  - git commit -a -m "prepare release x.y"
+#  - run tests: tox
 #  - git push
 #  - check Travis CI status:
 #    https://travis-ci.org/python/performance
 #
 # Release a new version:
 #
+#  - Remove untracked files/dirs: git clean -fdx
 #  - git tag VERSION
 #  - git push --tags
 #  - rm -rf dist/
