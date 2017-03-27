@@ -421,6 +421,7 @@ Version 0.5.3
   see https://github.com/jelmer/dulwich/issues/509
 * Fix ResourceWarning warnings: close explicitly files and sockets.
 * scripts: replace Mercurial commands with Git commands.
+* Upgrade perf from 1.0 to version 1.1
 
 Version 0.5.2 (2017-03-17)
 --------------------------
