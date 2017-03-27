@@ -61,7 +61,7 @@ Django==1.10.6                            # bm_django_template
 Genshi==0.7                               # bm_genshi
 Mako==1.0.6                               # bm_mako
 SQLAlchemy==1.1.6                         # bm_sqlalchemy_declarative
-dulwich==0.17.2                           # dulwich_log
+dulwich==0.17.3                           # dulwich_log
 mercurial==4.1.1; python_version < '3.0'  # bm_hg_startup
 html5lib==0.999999999                     # bm_html5lib
 pathlib2==2.2.1; python_version < '3.4'   # bm_pathlib
@@ -76,7 +76,7 @@ tornado==4.4.2                            # bm_tornado_http
 #
 # The list of optional dependencies is hardcoded in performance/venv.py
 
-psutil==5.2.0
+psutil==5.2.1
 
 
 # performance

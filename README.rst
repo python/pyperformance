@@ -417,11 +417,15 @@ Changelog
 Version 0.5.3
 -------------
 
-* Upgrade Dulwich to 0.17.2 to support PyPy older than 5.6:
+* Upgrade Dulwich to 0.17.3 to support PyPy older than 5.6:
   see https://github.com/jelmer/dulwich/issues/509
 * Fix ResourceWarning warnings: close explicitly files and sockets.
 * scripts: replace Mercurial commands with Git commands.
-* Upgrade perf from 1.0 to version 1.1
+* Upgrade requirements:
+
+  - dulwich: 0.17.1 => 0.17.3
+  - perf: 1.0 => 1.1
+  - psutil: 5.2.0 => 5.2.1
 
 Version 0.5.2 (2017-03-17)
 --------------------------
