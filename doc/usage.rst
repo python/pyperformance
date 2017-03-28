@@ -9,6 +9,10 @@ Command to install performance::
 
     python3 -m pip install performance
 
+The command installs a new ``pyperformance`` program.
+
+performance works on Python 2.7, 3.4 and newer.
+
 On Python 2, the ``virtualenv`` program (or the Python module) is required
 to create virtual environments. On Python 3, the ``venv`` module of the
 standard library is used.
@@ -40,7 +44,22 @@ Note: ``python3 -m performance ...`` syntax works as well (ex: ``python3 -m
 performance run -o py3.json``), but requires to install performance on each
 tested Python version.
 
-Actions::
+JSON files are produced by the perf module and so can be analyzed using perf
+commands::
+
+    python3 -m perf show py2.json
+    python3 -m perf check py2.json
+    python3 -m perf metadata py2.json
+    python3 -m perf stats py2.json
+    python3 -m perf hist py2.json
+    python3 -m perf dump py2.json
+    (...)
+
+It's also possible to use perf to compare results of two JSON files::
+
+    python3 -m perf compare_to py2.json py3.json --table
+
+pyperformance actions::
 
     run                 Run benchmarks on the running python
     show                Display a benchmark file
@@ -143,12 +162,16 @@ Actions of the ``venv`` command::
 How to get stable benchmarks
 ============================
 
+See also perf documentation: `How to get reproductible benchmark results
+<http://perf.readthedocs.io/en/latest/run_benchmark.html#how-to-get-reproductible-benchmark-results>`_.
+
 Advices helping to get make stable benchmarks:
 
 * Run ``python3 -m perf system tune`` command
 * See also advices in the perf documentation: `Stable and reliable benchmarks
   <http://perf.readthedocs.io/en/latest/perf.html#stable-and-reliable-benchmarks>`_
-* Compile Python using LTO (Link Time Optimization) and PGO (profile guided optimizations)::
+* Compile Python using LTO (Link Time Optimization) and PGO (profile guided
+  optimizations)::
 
     ./configure --with-lto
     make profile-opt
@@ -167,7 +190,7 @@ Notes:
 * PGO is broken on Ubuntu 14.04 LTS with GCC 4.8.4-2ubuntu1~14.04:
   ``Modules/socketmodule.c:7743:1: internal compiler error: in edge_badness,
   at ipa-inline.c:895``
-* If nohz_full kernel option is used, the CPU frequency must be fixed,
+* If the ``nohz_full`` kernel option is used, the CPU frequency must be fixed,
   otherwise the CPU frequency will be instable. See `Bug 1378529: intel_pstate
   driver doesn't support NOHZ_FULL
   <https://bugzilla.redhat.com/show_bug.cgi?id=1378529>`_.
