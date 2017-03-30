@@ -427,9 +427,6 @@ class BenchmarkRevision(Application):
         self.safe_makedirs(self.conf.json_directory)
         self.safe_makedirs(self.conf.uploaded_json_dir)
 
-        # FIXME: remove this, only kept to check that the code doesn't rely on current working directory anymore!
-        os.chdir('/')
-
         self.compile_install()
         self.run_benchmark()
         if self.conf.upload:
@@ -438,8 +435,6 @@ class BenchmarkRevision(Application):
         dt = time.monotonic() - self.start
         dt = datetime.timedelta(seconds=dt)
         self.logger.error("Benchmark completed in %s" % dt)
-
-        return self.filename
 
 
 class Configuration:
@@ -451,7 +446,7 @@ def parse_config(filename, command):
     parse_compile_all = False
     if command == 'compile_all':
         parse_compile = True
-        parse_compile_all = False
+        parse_compile_all = True
     elif command == 'compile':
         parse_compile = True
     else:
@@ -592,7 +587,6 @@ class BenchmarkAll(Application):
 
     def main(self):
         self.safe_makedirs(self.conf.directory)
-        self.update_repository()
 
         try:
             for revision, branch in self.conf.revisions:
