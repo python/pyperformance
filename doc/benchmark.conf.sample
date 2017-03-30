@@ -38,6 +38,12 @@ lto = True
 pgo = True
 
 # Install Python? If false, run Python from the build directory
+#
+# WARNING: Running Python from the build directory introduces subtle changes
+# compared to running an installed Python. Moreover, creating a virtual
+# environment using a Python run from the build directory fails in many cases,
+# especially on Python older than 3.4. Only disable installation if you
+# really understand what you are doing!
 install = True
 
 
