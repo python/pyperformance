@@ -39,7 +39,7 @@ project =
 # List of CPython Git branches
 branches = default 3.6 3.5 2.7
 
-# For compile_all: list of revisions to benchmark
-[revisions]
+# List of revisions to benchmark by compile_all
+[compile_all_revisions]
 # list of 'sha1=' (default branch: 'master') or 'sha1=branch'
 # used by the "pyperformance compile_all" command

@@ -5,6 +5,7 @@ import json
 import logging
 import os.path
 import perf
+import shlex
 import shutil
 import subprocess
 import sys
@@ -107,7 +108,7 @@ class Application(object):
         self.logger.addHandler(handler)
 
     def create_subprocess(self, cmd, **kwargs):
-        self.logger.error("+ %s" % ' '.join(cmd))
+        self.logger.error("+ %s" % ' '.join(map(shlex.quote, cmd)))
         return subprocess.Popen(cmd, **kwargs)
 
     def run_nocheck(self, *cmd, stdin_filename=None, **kwargs):
@@ -405,7 +406,7 @@ class BenchmarkRevision(Application):
         return self.filename
 
 
-def parse_config(filename):
+def parse_config(filename, compile_all=False):
     class Configuration:
         pass
 
@@ -464,16 +465,17 @@ def parse_config(filename):
                 print(text)
             sys.exit(1)
 
-    # compile_all
-    conf.branches = getstr('compile_all', 'branches').split()
-    conf.revisions = []
-    try:
-        revisions = cfgobj.items('revisions')
-    except configparser.NoSectionError:
-        pass
-    else:
-        for revision, name in revisions:
-            conf.revisions.append((revision, name))
+    if compile_all:
+        # compile_all
+        conf.branches = getstr('compile_all', 'branches').split()
+        conf.revisions = []
+        try:
+            revisions = cfgobj.items('compile_all_revisions')
+        except configparser.NoSectionError:
+            pass
+        else:
+            for revision, name in revisions:
+                conf.revisions.append((revision, name))
 
     return conf
 
@@ -481,7 +483,7 @@ def parse_config(filename):
 class BenchmarkAll(Application):
     def __init__(self, config_filename):
         super().__init__()
-        self.conf = parse_config(config_filename)
+        self.conf = parse_config(config_filename, compile_all=True)
         self.safe_makedirs(self.conf.directory)
         if self.conf.log:
             self.setup_log()
@@ -510,8 +512,16 @@ class BenchmarkAll(Application):
 
     def main(self):
         self.safe_makedirs(self.conf.directory)
-        self.run('sudo', '--preserve-env',
-                 'python3', '-m', 'perf', 'system', 'tune')
+        pythonpath = os.environ.get('PYTHONPATH')
+        args = ('-m', 'perf', 'system', 'tune')
+        if pythonpath:
+            cmd = ('PYTHONPATH=%s %s %s'
+                   % (shlex.quote(pythonpath),
+                      shlex.quote(sys.executable),
+                      ' '.join(args)))
+            self.run('sudo', 'bash', '-c', cmd)
+        else:
+            self.run('sudo', sys.executable, *args)
 
         self.repository = Repository(self, self.conf.cpython_srcdir)
         if self.conf.update:
