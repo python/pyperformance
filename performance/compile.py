@@ -3,10 +3,12 @@ import datetime
 import errno
 import json
 import logging
+import math
 import os.path
 import perf
 import shlex
 import shutil
+import statistics
 import subprocess
 import sys
 import time
@@ -407,10 +409,6 @@ class BenchmarkRevision(Application):
         self.uploaded = True
 
     def sanity_checks(self):
-        if self.conf.debug and self.conf.upload:
-            self.logger.error("ERROR: debug mode is incompatible with upload")
-            sys.exit(1)
-
         # FIXME: support run without prefix?
         if not self.conf.prefix:
             self.logger.error("ERROR: running benchmark without installation "
@@ -450,9 +448,14 @@ class BenchmarkRevision(Application):
         if self.conf.log:
             self.logger.error("Write logs into %s" % self.conf.log)
 
-        if self.patch:
-            # Don't upload resuls of patched Python
+        if self.patch and self.conf.upload:
+            self.logger.error("Disable upload on patched Python")
             self.conf.upload = False
+
+        if self.conf.debug and self.conf.upload:
+            self.logger.error("Disable upload in debug mode")
+            self.conf.upload = False
+
         self.sanity_checks()
         if self.conf.tune:
             self.perf_system_tune()
@@ -541,7 +544,7 @@ def parse_config(filename, command):
 
         date = datetime.datetime.now()
         conf.log = os.path.join(conf.directory,
-                                date.strftime('bench-%Y-%m-%d_%H-%M.log'))
+                                date.strftime('bench-%Y-%m-%d_%H-%M-%S.log'))
 
     # [upload]
     UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')
@@ -594,10 +597,13 @@ class BenchmarkAll(Application):
         self.skipped = []
         self.uploaded = []
         self.failed = []
+        self.timings = []
         self.logger = logging.getLogger()
         self.updated = False
 
     def benchmark(self, revision, branch):
+        self.start = time.monotonic()
+
         bench = BenchmarkRevision(self.conf, revision, branch,
                                   setup_log=False)
         if os.path.exists(bench.upload_filename):
@@ -626,6 +632,38 @@ class BenchmarkAll(Application):
         else:
             self.outputs.append(bench.filename)
 
+        dt = time.monotonic() - self.start
+        self.timings.append(dt)
+
+    def report(self):
+        for filename in self.skipped:
+            self.logger.error("Skipped: %s" % filename)
+
+        for filename in self.outputs:
+            self.logger.error("Tested: %s" % filename)
+
+        for filename in self.uploaded:
+            self.logger.error("Tested and uploaded: %s" % filename)
+
+        for filename in self.failed:
+            self.logger.error("FAILED: %s" % filename)
+
+    def report_timings(self):
+        def format_time(seconds):
+            if seconds >= 100:
+                return "%.0f min %.0f sec" % divmod(seconds, 60)
+            else:
+                return "%.0f sec" % math.ceil(seconds)
+
+        self.logger.error("Timings:")
+        self.logger.error("- min: %s" % format_time(min(self.timings)))
+        stdev = statistics.stdev(self.timings)
+        text = "- avg: %s" % format_time(statistics.mean(self.timings))
+        if len(self.timings) >= 2:
+            text = "%s -- std dev: %s" % (text, format_time(stdev))
+        self.logger.error(text)
+        self.logger.error("- max: %s" % format_time(max(self.timings)))
+
     def main(self):
         self.safe_makedirs(self.conf.directory)
 
@@ -640,17 +678,9 @@ class BenchmarkAll(Application):
                     revision = branch
                 self.benchmark(revision, branch)
         finally:
-            for filename in self.skipped:
-                self.logger.error("Skipped: %s" % filename)
-
-            for filename in self.outputs:
-                self.logger.error("Tested: %s" % filename)
-
-            for filename in self.uploaded:
-                self.logger.error("Tested and uploaded: %s" % filename)
-
-            for filename in self.failed:
-                self.logger.error("FAILED: %s" % filename)
+            self.report()
+            if self.timings:
+                self.report_timings()
 
 
 def cmd_compile(options):
