@@ -1,32 +1,44 @@
 [config]
-# Directory where Python is installed, venv is created, bench.log is written,
-# etc.
-bench_dir = ~/bench_tmpdir
-# Directory where JSON files are written. Uploaded files are moved
-# to json_dir/uploaded/
-json_dir = ~/json
-# Directory of CPython source code
-cpython_srcdir = ~/cpython
-# Update the Git repository before Git checkout?
-update = True
 # If True, compile CPython is debug mode and run benchmarks with
 # --debug-single-sample. Option used to check a configuration.
 # LTO and PGO are disabled if debug is true.
 debug = False
-# Upload generated JSON file?
-upload = False
-# Comma-separated list of benchmarks to run:
-# value passed to "performance run --benchmarks=".
-# 'default' uses the default benchmark group.
-benchmarks = default
+
+
+[scm]
+# Directory of CPython source code
+cpython_srcdir = ~/cpython
+# Update the Git repository before Git checkout?
+update = True
 # Name of the Git remote, used to create revision of Git branch.
 # For example, use revision 'remotes/origin/3.6' for the branch '3.6'
 git_remote = remotes/origin
 
+
+[compile]
+# Directory where: logs are written, Python is installed, venv is created, ...
+bench_dir = ~/bench_tmpdir
 # Link Time Optimization (LTO)?
 lto = True
 # Profiled Guided Optimization (PGO)?
 pgo = True
+
+
+[run_benchmark]
+# Run "sudo python3 -m perf system tune" before running benchmarks?
+tune = True
+# Comma-separated list of benchmarks to run:
+# value passed to "performance run --benchmarks=".
+# 'default' uses the default benchmark group.
+benchmarks = default
+# --affinity parameter
+affinity =
+# Directory where JSON files are written. Uploaded files are moved
+# to json_dir/uploaded/
+json_dir = ~/json
+# Upload generated JSON file?
+upload = False
+
 
 # Configuration to upload results to a Codespeed website
 [upload]
@@ -35,9 +47,11 @@ environment =
 executable =
 project =
 
+
 [compile_all]
 # List of CPython Git branches
 branches = default 3.6 3.5 2.7
+
 
 # List of revisions to benchmark by compile_all
 [compile_all_revisions]

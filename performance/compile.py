@@ -68,21 +68,9 @@ class Repository(object):
             self.run('hg', 'up', '--clean', '-r', revision)
             # FIXME: run hg purge?
 
-    def get_revision(self):
-        if GIT:
-            revision = self.get_output('git', 'show', '-s',
-                                       '--pretty=format:%H')
-        else:
-            revision = self.get_output('hg', 'id', '-i')
-        revision = revision.strip()
-        if not revision:
-            self.logger.error("ERROR: unable to get the revision")
-            sys.exit(1)
-        return revision
-
     def get_revision_info(self, revision):
         if GIT:
-            cmd = ['git', 'log', '--format=%H|%ci', '%s^!' % revision]
+            cmd = ['git', 'show', '-s', '--pretty=format:%H|%ci', '%s^!' % revision]
         else:
             cmd = ['hg', 'log', '--template', '{node}|{date|isodate}', '-r', revision]
         stdout = self.get_output(*cmd)
@@ -102,6 +90,8 @@ class Application(object):
         self.logger = logging.getLogger()
 
     def setup_log(self):
+        self.safe_makedirs(os.path.dirname(self.conf.log))
+
         handler = logging.FileHandler(self.conf.log)
         formatter = logging.Formatter(LOG_FORMAT)
         handler.setFormatter(formatter)
@@ -166,53 +156,26 @@ class Application(object):
                 raise
 
 
-class BenchmarkRevision(Application):
-    def __init__(self, conf, revision, branch, patch=None, setup_log=False, filename=None):
-        super().__init__()
+class Python(object):
+    def __init__(self, app, conf):
+        self.app = app
         self.conf = conf
-        self.branch = branch
-        self.patch = patch
-        self.python = None
-        self.uploaded = False
+        self.logger = app.logger
+        self.cwd = conf.cpython_srcdir
+        self.program = None
 
-        self.safe_makedirs(self.conf.directory)
-        self.safe_makedirs(self.conf.json_directory)
-        self.safe_makedirs(self.conf.uploaded_json_dir)
+    def run_nocheck(self, *cmd):
+        return self.app.run_nocheck(*cmd, cwd=self.cwd)
 
-        if setup_log and self.conf.log:
-            self.setup_log()
+    def run(self, *cmd):
+        self.app.run(*cmd, cwd=self.cwd)
 
-        self.repository = Repository(self, conf.cpython_srcdir)
-        if filename is None:
-            self.revision, date = self.repository.get_revision_info(revision)
-            date = date.strftime('%Y-%m-%d_%H-%M')
+    def patch(self, filename):
+        if not filename:
+            return
 
-            filename = '%s-%s-%s' % (date, branch, self.revision[:12])
-            filename = filename + ".json.gz"
-            self.filename = os.path.join(self.conf.json_directory, filename)
-        else:
-            self.filename = filename
-
-        self.upload_filename = os.path.join(self.conf.uploaded_json_dir,
-                                            os.path.basename(filename))
-
-    def prepare_code(self):
-        self.logger.error('')
-        text = "Benchmark CPython revision %s" % self.revision
-        self.logger.error(text)
-        self.logger.error("=" * len(text))
-        self.logger.error('')
-
-        if self.conf.update:
-            self.repository.fetch()
-        self.repository.checkout(self.revision)
-
-        if self.patch:
-            self.logger.error('Apply patch %s' % self.patch)
-            self.run('patch', '-p1', stdin_filename=self.patch)
-
-        full_revision = self.repository.get_revision()
-        self.logger.error("Revision: %s" % full_revision)
+        self.logger.error('Apply patch %s' % filename)
+        self.run('patch', '-p1', stdin_filename=filename)
 
     def compile(self):
         self.run_nocheck('make', 'distclean')
@@ -224,6 +187,8 @@ class BenchmarkRevision(Application):
             config_args.append('--with-lto')
         if self.conf.prefix:
             config_args.extend(('--prefix', self.conf.prefix))
+        if self.conf.debug:
+            config_args.append('CFLAGS=-O0')
         self.run('./configure', *config_args)
 
         self.run_nocheck('make', 'clean')
@@ -241,7 +206,7 @@ class BenchmarkRevision(Application):
         self.logger.error("Remove directory %s" % directory)
         shutil.rmtree(directory)
 
-    def install(self):
+    def install_python(self):
         prefix = self.conf.prefix
 
         if sys.platform in ('darwin', 'win32'):
@@ -249,44 +214,95 @@ class BenchmarkRevision(Application):
         else:
             program_ext = ''
 
-        if prefix:
-            self.rmtree(prefix)
+        if not prefix:
+            self.program = "./python" + program_ext
+            return
 
-            self.run('make', 'install')
+        self.rmtree(prefix)
 
-            self.python = os.path.join(prefix, "bin", "python" + program_ext)
-            if not os.path.exists(self.python):
-                self.python = os.path.join(prefix, "bin", "python3" + program_ext)
-        else:
-            self.python = "./python" + program_ext
+        self.run('make', 'install')
 
-        exitcode = self.run_nocheck(self.python, '-u', '-m', 'pip', '--version')
+        self.program = os.path.join(prefix, "bin", "python" + program_ext)
+        if not os.path.exists(self.program):
+            self.program = os.path.join(prefix, "bin", "python3" + program_ext)
+
+    def install_performance(self):
+        exitcode = self.run_nocheck(self.program, '-u', '-m', 'pip', '--version')
         if exitcode:
             # pip is missing (or broken?): install it
             self.run('wget', GET_PIP_URL, '-O', 'get-pip.py')
-            self.run(self.python, '-u', 'get-pip.py')
+            self.run(self.program, '-u', 'get-pip.py')
 
         # Install performance
-        self.run(self.python, '-u', '-m', 'pip', 'install', '-U', 'performance')
+        self.run(self.program, '-u', '-m', 'pip', 'install', '-U', 'performance')
+
+
+class BenchmarkRevision(Application):
+    def __init__(self, conf, revision, branch, patch=None, setup_log=False,
+                 filename=None):
+        super().__init__()
+        self.conf = conf
+        self.branch = branch
+        self.patch = patch
+        self.python = Python(self, conf)
+        self.uploaded = False
+
+        if setup_log and self.conf.log:
+            self.setup_log()
+
+        self.repository = Repository(self, conf.cpython_srcdir)
+        if filename is None:
+            self.init_revision_filenename(revision)
+        else:
+            # path used by cmd_upload()
+            self.filename = filename
+            self.revision = revision
+
+        self.upload_filename = os.path.join(self.conf.uploaded_json_dir,
+                                            os.path.basename(self.filename))
+
+    def init_revision_filenename(self, revision):
+        self.revision, date = self.repository.get_revision_info(revision)
+        date = date.strftime('%Y-%m-%d_%H-%M')
+
+        filename = '%s-%s-%s' % (date, self.branch, self.revision[:12])
+        filename = filename + ".json.gz"
+        self.filename = os.path.join(self.conf.json_directory, filename)
+
+    def compile_install(self):
+        if self.conf.update:
+            self.repository.fetch()
+        self.repository.checkout(self.revision)
+
+        self.python.patch(self.patch)
+
+        self.python.compile()
+        self.python.install_python()
+        self.python.install_performance()
 
     def run_benchmark(self):
         # Create venv
-        cmd = [self.python, '-u', '-m', 'performance', 'venv', 'recreate']
+        cmd = [self.python.program, '-u', '-m', 'performance',
+               'venv', 'recreate']
         if self.conf.venv:
             cmd.extend(('--venv', self.conf.venv))
         self.run(*cmd)
 
-        cmd = [self.python, '-u',
+        cmd = [self.python.program, '-u',
                '-m', 'performance',
                'run',
                '--verbose',
-               '--benchmarks', self.conf.benchmarks]
-        cmd.extend(('--output', self.filename))
+               '--benchmarks', self.conf.benchmarks,
+               '--output', self.filename]
+        if self.conf.affinity:
+            cmd.extend(('--affinity', self.conf.affinity))
         if self.conf.venv:
             cmd.extend(('--venv', self.conf.venv))
         if self.conf.debug:
             cmd.append('--debug-single-value')
         self.run(*cmd)
+
+        self.update_metadata()
 
     def update_metadata(self):
         if GIT:
@@ -359,13 +375,7 @@ class BenchmarkRevision(Application):
 
         self.uploaded = True
 
-    def main(self):
-        self.start = time.monotonic()
-
-        self.logger.error("Compile and benchmarks Python rev %s (branch %s)"
-                          % (self.revision, self.branch))
-        self.logger.error('')
-
+    def sanity_checks(self):
         if self.conf.debug and self.conf.upload:
             self.logger.error("ERROR: debug mode is incompatible with upload")
             sys.exit(1)
@@ -386,18 +396,42 @@ class BenchmarkRevision(Application):
                               % self.upload_filename)
             sys.exit(1)
 
+    def perf_system_tune(self):
+        pythonpath = os.environ.get('PYTHONPATH')
+        args = ['-m', 'perf', 'system', 'tune']
+        if self.conf.affinity:
+            args.extend(('--affinity', self.conf.affinity))
+        if pythonpath:
+            cmd = ('PYTHONPATH=%s %s %s'
+                   % (shlex.quote(pythonpath),
+                      shlex.quote(sys.executable),
+                      ' '.join(args)))
+            self.run('sudo', 'bash', '-c', cmd)
+        else:
+            self.run('sudo', sys.executable, *args)
+
+    def main(self):
+        self.start = time.monotonic()
+
+        self.logger.error("Compile and benchmarks Python rev %s (branch %s)"
+                          % (self.revision, self.branch))
+        self.logger.error('')
         if self.conf.log:
             self.logger.error("Write logs into %s" % self.conf.log)
 
-        self.logger.error("Move to %s" % self.conf.cpython_srcdir)
-        # FIXME: don't rely on the current directory
-        os.chdir(self.conf.cpython_srcdir)
+        self.sanity_checks()
+        if self.conf.tune:
+            self.perf_system_tune()
 
-        self.prepare_code()
-        self.compile()
-        self.install()
+        self.safe_makedirs(self.conf.directory)
+        self.safe_makedirs(self.conf.json_directory)
+        self.safe_makedirs(self.conf.uploaded_json_dir)
+
+        # FIXME: remove this, only kept to check that the code doesn't rely on current working directory anymore!
+        os.chdir('/')
+
+        self.compile_install()
         self.run_benchmark()
-        self.update_metadata()
         if self.conf.upload:
             self.upload()
 
@@ -408,14 +442,24 @@ class BenchmarkRevision(Application):
         return self.filename
 
 
-def parse_config(filename, compile_all=False):
-    class Configuration:
-        pass
+class Configuration:
+    pass
+
+
+def parse_config(filename, command):
+    parse_compile = False
+    parse_compile_all = False
+    if command == 'compile_all':
+        parse_compile = True
+        parse_compile_all = False
+    elif command == 'compile':
+        parse_compile = True
+    else:
+        assert command == 'upload'
 
     conf = Configuration()
     cfgobj = configparser.ConfigParser()
     cfgobj.read(filename)
-    config = cfgobj['config']
 
     def getstr(section, key, default=None):
         try:
@@ -427,26 +471,42 @@ def parse_config(filename, compile_all=False):
             value = default
         return value.strip()
 
-    conf.directory = os.path.expanduser(getstr('config', 'bench_dir'))
-    conf.json_directory = os.path.expanduser(getstr('config', 'json_dir'))
-    conf.cpython_srcdir = os.path.expanduser(getstr('config', 'cpython_srcdir'))
-    conf.prefix = os.path.join(conf.directory, 'prefix')
-    conf.venv = os.path.join(conf.directory, 'venv')
-    conf.log = os.path.join(conf.directory, 'bench.log')
-    conf.lto = config.getboolean('lto', False)
-    conf.pgo = config.getboolean('pgo', False)
-    conf.update = config.getboolean('update', True)
-    conf.benchmarks = getstr('config', 'benchmarks', default='default')
-    conf.git_remote = getstr('config', 'git_remote', default='remotes/origin')
-    conf.debug = config.getboolean('debug', False)
+    def getboolean(section, key, default):
+        try:
+            sectionobj = cfgobj[section]
+            return sectionobj.getboolean(key, default)
+        except KeyError:
+            return default
 
-    if conf.debug:
-        conf.pgo = False
-        conf.lto = False
+    # [config]
+    conf.debug = getboolean('config', 'debug', False)
 
-    # upload
-    conf.upload = config.getboolean('upload', False)
-    conf.uploaded_json_dir = os.path.join(conf.json_directory, 'uploaded')
+    if parse_compile:
+        # [scm]
+        conf.cpython_srcdir = os.path.expanduser(getstr('scm', 'cpython_srcdir'))
+        conf.update = getboolean('scm', 'update', True)
+        conf.git_remote = getstr('config', 'git_remote', default='remotes/origin')
+
+        # [compile]
+        conf.directory = os.path.expanduser(getstr('compile', 'bench_dir'))
+        conf.lto = getboolean('compile', 'lto', False)
+        conf.pgo = getboolean('compile', 'pgo', False)
+
+        # [run_benchmark]
+        conf.tune = getboolean('run_benchmark', 'tune', True)
+        conf.benchmarks = getstr('run_benchmark', 'benchmarks', default='default')
+        conf.affinity = getstr('run_benchmark', 'affinity', default='')
+        conf.json_directory = os.path.expanduser(getstr('run_benchmark', 'json_dir'))
+        conf.uploaded_json_dir = os.path.join(conf.json_directory, 'uploaded')
+        conf.upload = getboolean('run_benchmark', 'upload', False)
+
+        # paths
+        conf.prefix = os.path.join(conf.directory, 'prefix')
+        conf.venv = os.path.join(conf.directory, 'venv')
+        # FIXME: create a different log file at each run
+        conf.log = os.path.join(conf.directory, 'bench.log')
+
+    # [upload]
     if conf.upload:
         UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')
 
@@ -467,8 +527,8 @@ def parse_config(filename, compile_all=False):
                 print(text)
             sys.exit(1)
 
-    if compile_all:
-        # compile_all
+    if parse_compile_all:
+        # [compile_all]
         conf.branches = getstr('compile_all', 'branches').split()
         conf.revisions = []
         try:
@@ -479,13 +539,18 @@ def parse_config(filename, compile_all=False):
             for revision, name in revisions:
                 conf.revisions.append((revision, name))
 
+    # process config
+    if conf.debug:
+        conf.pgo = False
+        conf.lto = False
+
     return conf
 
 
 class BenchmarkAll(Application):
     def __init__(self, config_filename):
         super().__init__()
-        self.conf = parse_config(config_filename, compile_all=True)
+        self.conf = parse_config(config_filename, "compile_all")
         self.safe_makedirs(self.conf.directory)
         if self.conf.log:
             self.setup_log()
@@ -494,13 +559,26 @@ class BenchmarkAll(Application):
         self.uploaded = []
         self.failed = []
         self.logger = logging.getLogger()
+        self.updated = False
 
     def benchmark(self, revision, branch):
-        bench = BenchmarkRevision(self.conf, revision, branch, setup_log=False)
+        bench = BenchmarkRevision(self.conf, revision, branch,
+                                  setup_log=False)
         if os.path.exists(bench.upload_filename):
             # Benchmark already uploaded
             self.skipped.append(bench.upload_filename)
             return
+
+        if self.conf.tune:
+            bench.perf_system_tune()
+            # only tune the system once
+            self.conf.tune = False
+
+        if self.conf.update:
+            bench.repository.fetch()
+            # Ony update the repository once
+            self.conf.update = False
+
         try:
             bench.main()
         except SystemExit:
@@ -514,20 +592,7 @@ class BenchmarkAll(Application):
 
     def main(self):
         self.safe_makedirs(self.conf.directory)
-        pythonpath = os.environ.get('PYTHONPATH')
-        args = ('-m', 'perf', 'system', 'tune')
-        if pythonpath:
-            cmd = ('PYTHONPATH=%s %s %s'
-                   % (shlex.quote(pythonpath),
-                      shlex.quote(sys.executable),
-                      ' '.join(args)))
-            self.run('sudo', 'bash', '-c', cmd)
-        else:
-            self.run('sudo', sys.executable, *args)
-
-        self.repository = Repository(self, self.conf.cpython_srcdir)
-        if self.conf.update:
-            self.repository.fetch()
+        self.update_repository()
 
         try:
             for revision, branch in self.conf.revisions:
@@ -554,14 +619,14 @@ class BenchmarkAll(Application):
 
 
 def cmd_compile(options):
-    conf = parse_config(options.config_file)
+    conf = parse_config(options.config_file, "compile")
     bench = BenchmarkRevision(conf, options.revision, options.branch,
-                            patch=conf.patch)
+                              patch=options.patch)
     bench.main()
 
 
 def cmd_upload(options):
-    conf = parse_config(options.config_file)
+    conf = parse_config(options.config_file, "upload")
 
     filename = options.json_file
     bench = perf.BenchmarkSuite.load(filename)
