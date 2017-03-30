@@ -93,9 +93,13 @@ class Application(object):
         self.logger = logging.getLogger()
 
     def setup_log(self):
-        self.safe_makedirs(os.path.dirname(self.conf.log))
+        log = self.conf.log
+        if os.path.exists(log):
+            print("ERROR: Log file %s already exists" % log)
+            sys.exit(1)
+        self.safe_makedirs(os.path.dirname(log))
 
-        handler = logging.FileHandler(self.conf.log)
+        handler = logging.FileHandler(log)
         formatter = logging.Formatter(LOG_FORMAT)
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
@@ -274,7 +278,8 @@ class BenchmarkRevision(Application):
 
         filename = '%s-%s-%s' % (date, self.branch, self.revision[:12])
         if self.patch:
-            patch = os.path.splitext(self.patch)[0]
+            patch = os.path.basename(self.patch)
+            patch = os.path.splitext(patch)[0]
             filename = "%s-patch-%s" % (filename, patch)
         filename = filename + ".json.gz"
         if self.patch:
@@ -533,8 +538,10 @@ def parse_config(filename, command):
         conf.build_dir = os.path.join(conf.directory, 'build')
         conf.prefix = os.path.join(conf.directory, 'prefix')
         conf.venv = os.path.join(conf.directory, 'venv')
-        # FIXME: create a different log file at each run
-        conf.log = os.path.join(conf.directory, 'bench.log')
+
+        date = datetime.datetime.now()
+        conf.log = os.path.join(conf.directory,
+                                date.strftime('bench-%Y-%m-%d_%H-%M.log'))
 
     # [upload]
     UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')

@@ -1,9 +1,3 @@
-performance compile
-===================
-
-* Write one log file per run
-* Add --rigorous option
-
 TODO
 ====
 
