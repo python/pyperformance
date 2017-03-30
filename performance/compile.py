@@ -30,6 +30,9 @@ class Repository(object):
         self.logger = app.logger
         self.app = app
 
+    def get_output_nocheck(self, *cmd):
+        return self.app.get_output_nocheck(*cmd, cwd=self.path)
+
     def get_output(self, *cmd):
         return self.app.get_output(*cmd, cwd=self.path)
 
@@ -42,7 +45,7 @@ class Repository(object):
         else:
             self.run('hg', 'pull')
 
-    def get_branch(self):
+    def get_current_branch(self):
         stdout = self.get_output('git', 'branch')
         for line in stdout.splitlines():
             if line.startswith('* '):
@@ -51,6 +54,22 @@ class Repository(object):
                 return branch
 
         self.logger.error("ERROR: fail to get the current Git branch")
+        sys.exit(1)
+
+    def parse_revision(self, revision, remote):
+        branch_rev = '%s/%s' % (remote, revision)
+
+        exitcode, stdout = self.get_output_nocheck('git', 'rev-parse',
+                                                   '--verify', branch_rev)
+        if not exitcode:
+            return (True, stdout)
+
+        exitcode, stdout = self.get_output_nocheck('git', 'rev-parse',
+                                                   '--verify', revision)
+        if not exitcode and stdout.startswith(revision):
+            return (False, stdout)
+
+        print("ERROR: unable to parse revision %r" % (revision,))
         sys.exit(1)
 
     def checkout(self, revision):
@@ -62,7 +81,7 @@ class Repository(object):
             self.run('git', 'reset', '--hard', 'HEAD')
             self.run('git', 'checkout', revision)
 
-            branch = self.get_branch()
+            branch = self.get_current_branch()
             if revision == branch:
                 # revision is a branch
                 self.run('git', 'merge', '--ff')
@@ -140,7 +159,9 @@ class Application(object):
         if exitcode:
             sys.exit(exitcode)
 
-    def get_output(self, *cmd, **kwargs):
+    def get_output_nocheck(self, *cmd, **kwargs):
+        check_exitcode = kwargs.pop('check_exitcode', True)
+
         proc = self.create_subprocess(cmd,
                                       stdout=subprocess.PIPE,
                                       universal_newlines=True,
@@ -149,9 +170,16 @@ class Application(object):
         with proc:
             stdout = proc.communicate()[0]
 
+        stdout = stdout.rstrip()
+
         exitcode = proc.wait()
+        return (exitcode, stdout)
+
+    def get_output(self, *cmd, **kwargs):
+        exitcode, stdout = self.get_output_nocheck(*cmd, **kwargs)
         if exitcode:
-            self.logger.error(stdout, end='')
+            for line in stdout.splitlines():
+                self.logger.error(line)
             sys.exit(exitcode)
 
         return stdout
@@ -275,6 +303,11 @@ class BenchmarkRevision(Application):
                                             os.path.basename(self.filename))
 
     def init_revision_filenename(self, revision):
+        is_branch, full_revision = self.repository.parse_revision(self.branch, self.conf.git_remote)
+        if not is_branch:
+            print("ERROR: %r is not a Git branch" % self.branch)
+            sys.exit(1)
+
         self.revision, date = self.repository.get_revision_info(revision)
         date = date.strftime('%Y-%m-%d_%H-%M')
 
@@ -499,7 +532,11 @@ def parse_config(filename, command):
         except KeyError:
             if default is None:
                 raise
-            value = default
+            return default
+
+        # strip comments
+        value = value.partition('#')[0]
+        # strip spaces
         return value.strip()
 
     def getboolean(section, key, default):
@@ -576,6 +613,10 @@ def parse_config(filename, command):
             pass
         else:
             for revision, name in revisions:
+                # strip comments
+                name = name.partition('#')[0]
+                # strip spaces
+                name = name.strip()
                 conf.revisions.append((revision, name))
 
     # process config
