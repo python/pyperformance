@@ -98,7 +98,16 @@ class Benchmark(object):
             err.close()
             return False
 
-    def benchmark(self, revision, branch):
+    def benchmark(self, is_branch, revision):
+        if is_branch:
+            branch = revision
+        else:
+            branch = branch or DEFAULT_BRANCH
+
+        if is_branch:
+            self.run_cmd(('git', 'checkout', branch), cwd=self.src)
+            self.run_cmd(('git', 'merge', '--ff'), cwd=self.src)
+
         node, date = self.get_revision_info(revision)
         short_node = node[:12]
         date = date.strftime('%Y-%m-%d_%H-%M')
@@ -230,10 +239,10 @@ class Benchmark(object):
 
         try:
             for revision, branch in self.revisions:
-                self.benchmark(revision, branch or DEFAULT_BRANCH)
+                self.benchmark(False, revision)
 
             for branch in self.branches:
-                self.benchmark(branch, branch)
+                self.benchmark(True, branch)
         finally:
             for filename in self.skipped:
                 print("Skipped: %s" % filename)

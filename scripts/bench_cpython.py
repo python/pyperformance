@@ -75,6 +75,14 @@ class BenchmarkPython(object):
 
         return stdout
 
+    def get_branch(self):
+        stdout = self.get_output('git', 'branch')
+        for line in stdout.splitlines():
+            if line.startswith('* '):
+                return line[2:]
+        self.logger.error("ERROR: fail to get the current Git branch")
+        sys.exit(1)
+
     def prepare_code(self):
         args = self.args
 
@@ -91,9 +99,16 @@ class BenchmarkPython(object):
         self.logger.error('')
 
         if GIT:
+            # remove all untracked files
+            self.run('git', 'clean', '-fdx')
+
             # checkout to requested revision
             self.run('git', 'reset', '--hard', 'HEAD')
             self.run('git', 'checkout', args.revision)
+
+            branch = self.get_branch()
+            if args.revision == branch:
+                self.run('git', 'merge', '--ff')
 
             # remove all untracked files
             self.run('git', 'clean', '-fdx')
