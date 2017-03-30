@@ -18,6 +18,7 @@ from performance.venv import GET_PIP_URL
 
 GIT = True
 DEFAULT_BRANCH = 'master' if GIT else 'default'
+LOG_FORMAT = '%(asctime)-15s: %(message)s'
 
 
 class Repository(object):
@@ -68,7 +69,7 @@ class Repository(object):
     def get_revision(self):
         if GIT:
             revision = self.get_output('git', 'show', '-s',
-                                            '--pretty=format:%H')
+                                       '--pretty=format:%H')
         else:
             revision = self.get_output('hg', 'id', '-i')
         revision = revision.strip()
@@ -95,8 +96,7 @@ class Repository(object):
 
 class Application(object):
     def __init__(self):
-        log_format = '%(asctime)-15s: %(message)s'
-        logging.basicConfig(format=log_format)
+        logging.basicConfig(format=LOG_FORMAT)
         self.logger = logging.getLogger()
 
     def create_subprocess(self, cmd, **kwargs):
@@ -152,14 +152,15 @@ class Application(object):
 
 
 class BenchmarkPython(Application):
-    def __init__(self):
+    def __init__(self, conf):
         super().__init__()
+        self.conf = conf
         self.args = self.parse_args()
         self.python = None
 
         if self.args.log:
             handler = logging.FileHandler(self.args.log)
-            formatter = logging.Formatter(log_format)
+            formatter = logging.Formatter(LOG_FORMAT)
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
 
@@ -275,9 +276,6 @@ class BenchmarkPython(Application):
                             help='Enable Profile Guided Optimization (PGO)')
         parser.add_argument('--lto', action='store_true',
                             help='Enable Link Time Optimization (LTO)')
-        parser.add_argument('--src',
-                            help='Directory of Python source code',
-                            required=True)
         parser.add_argument('--venv',
                             help="Directory of virtual environmented used "
                                  "to run performance benchmarks. Create it "
@@ -336,8 +334,9 @@ class BenchmarkPython(Application):
         if self.args.log:
             self.logger.error("Write logs into %s" % self.args.log)
 
-        self.logger.error("Move to %s" % self.args.src)
-        os.chdir(self.args.src)
+        self.logger.error("Move to %s" % self.conf.cpython_srcdir)
+        # FIXME: don't rely on the current directory
+        os.chdir(self.conf.cpython_srcdir)
 
         self.prepare_code()
         self.compile()
@@ -347,6 +346,69 @@ class BenchmarkPython(Application):
         dt = time.monotonic() - self.start
         dt = datetime.timedelta(seconds=dt)
         self.logger.error("Benchmark completed in %s" % dt)
+
+
+def parse_config(filename):
+    class Configuration:
+        pass
+
+    conf = Configuration()
+    cfgobj = configparser.ConfigParser()
+    cfgobj.read(filename)
+    config = cfgobj['config']
+
+    def getstr(section, key, default=None):
+        try:
+            sectionobj = cfgobj[section]
+            value = sectionobj[key]
+        except KeyError:
+            if default is None:
+                raise
+            value = default
+        return value.strip()
+
+    conf.directory = os.path.expanduser(getstr('config', 'bench_root'))
+    conf.json_directory = os.path.expanduser(getstr('config', 'json_dir'))
+    conf.uploaded_json_dir = os.path.join(conf.json_directory, 'uploaded')
+    conf.cpython_srcdir = os.path.expanduser(getstr('config', 'cpython_srcdir'))
+    conf.perf = os.path.expanduser(getstr('config', 'perf_dir'))
+    conf.prefix = os.path.join(conf.directory, 'prefix')
+    conf.venv = os.path.join(conf.directory, 'venv')
+    conf.log = os.path.join(conf.directory, 'bench.log')
+    conf.options = getstr('config', 'options').split()
+    conf.branches = getstr('config', 'branches').split()
+    conf.update = config.getboolean('update', True)
+    conf.debug = config.getboolean('debug', False)
+    conf.upload = config.getboolean('upload', False)
+
+    if conf.upload:
+        UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')
+
+        conf.url = getstr('upload', 'url', default='')
+        conf.executable = getstr('upload', 'executable', default='')
+        conf.project = getstr('upload', 'project', default='')
+        conf.environment = getstr('upload', 'environment', default='')
+
+        if any(not getattr(conf, attr) for attr in UPLOAD_OPTIONS):
+            print("ERROR: Upload requires to set the following "
+                  "configuration option in the the [upload] section "
+                  "of %s:"
+                  % filename)
+            for attr in UPLOAD_OPTIONS:
+                text = "- %s" % attr
+                if not getattr(conf, attr):
+                    text += " (not set)"
+                print(text)
+            sys.exit(1)
+
+    conf.revisions = []
+    try:
+        revisions = cfgobj.items('revisions')
+    except configparser.NoSectionError:
+        pass
+    else:
+        for revision, name in revisions:
+            conf.revisions.append((revision, name))
 
 
 class Benchmark(Application):
@@ -370,16 +432,16 @@ class Benchmark(Application):
         data['max'] = max(values)
         data['std_dev'] = bench.stdev()
 
-        data['executable'] = self.executable
+        data['executable'] = self.conf.executable
         data['commitid'] = revision
         data['branch'] = branch
-        data['project'] = self.project
-        data['environment'] = self.environment
+        data['project'] = self.conf.project
+        data['environment'] = self.conf.environment
         return data
 
     def upload_json(self, filename, branch, revision):
         # Import perf module from --perf directory
-        sys.path.insert(0, self.perf)
+        sys.path.insert(0, self.conf.perf)
 
         import perf
 
@@ -387,7 +449,7 @@ class Benchmark(Application):
         data = [self.encode_benchmark(bench, branch, revision) for bench in suite]
         data = dict(json=json.dumps(data))
 
-        url = self.url
+        url = self.conf.url
         if not url.endswith('/'):
             url += '/'
         url += 'result/add/json/'
@@ -419,22 +481,22 @@ class Benchmark(Application):
         short_node = node[:12]
         date = date.strftime('%Y-%m-%d_%H-%M')
         filename = '%s-%s-%s' % (date, branch, short_node)
-        filename = os.path.join(self.json_directory, filename + ".json.gz")
+        filename = os.path.join(self.conf.json_directory, filename + ".json.gz")
 
         if os.path.exists(filename):
             self.skipped.append(filename)
             return
 
         cmd = ['python3', self.bench_cpython,
-               '--src', self.src,
-               '--log', self.log,
+               '--src', self.conf.cpython_srcdir,
+               '--log', self.conf.log,
                '--output', filename,
-               '--venv', self.venv,
-               '--prefix', self.prefix,
+               '--venv', self.conf.venv,
+               '--prefix', self.conf.prefix,
                node]
         if self.options:
-            cmd.extend(self.options)
-        if self.debug:
+            cmd.extend(self.conf.options)
+        if self.conf.debug:
             cmd.append('--debug')
 
         exitcode = self.run_nocheck(cmd)
@@ -442,8 +504,8 @@ class Benchmark(Application):
             self.failed.append(filename)
             return
 
-        if self.upload:
-            filename2 = os.path.join(self.uploaded_json_dir,
+        if self.conf.upload:
+            filename2 = os.path.join(self.conf.uploaded_json_dir,
                                      os.path.basename(filename))
             if os.path.exists(filename2):
                 self.error("cannot upload, %s file ready exists!" % filename2)
@@ -476,85 +538,27 @@ class Benchmark(Application):
                             help='Configuration filename')
         return parser.parse_args()
 
-    def parse_config(self, filename):
-        cfgobj = configparser.ConfigParser()
-        cfgobj.read(filename)
-        config = cfgobj['config']
-
-        def getstr(section, key, default=None):
-            try:
-                sectionobj = cfgobj[section]
-                value = sectionobj[key]
-            except KeyError:
-                if default is None:
-                    raise
-                value = default
-            return value.strip()
-
-        self.directory = os.path.expanduser(getstr('config', 'bench_root'))
-        self.json_directory = os.path.expanduser(getstr('config', 'json_dir'))
-        self.uploaded_json_dir = os.path.join(self.json_directory, 'uploaded')
-        self.src = os.path.expanduser(getstr('config', 'cpython_dir'))
-        self.perf = os.path.expanduser(getstr('config', 'perf_dir'))
-        self.prefix = os.path.join(self.directory, 'prefix')
-        self.venv = os.path.join(self.directory, 'venv')
-        self.log = os.path.join(self.directory, 'bench.log')
-        self.options = getstr('config', 'options').split()
-        self.branches = getstr('config', 'branches').split()
-        self.update = config.getboolean('update', True)
-        self.debug = config.getboolean('debug', False)
-        self.upload = config.getboolean('upload', False)
-
-        if self.upload:
-            UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')
-
-            self.url = getstr('upload', 'url', default='')
-            self.executable = getstr('upload', 'executable', default='')
-            self.project = getstr('upload', 'project', default='')
-            self.environment = getstr('upload', 'environment', default='')
-
-            if any(not getattr(self, attr) for attr in UPLOAD_OPTIONS):
-                print("ERROR: Upload requires to set the following "
-                      "configuration option in the the [upload] section "
-                      "of %s:"
-                      % filename)
-                for attr in UPLOAD_OPTIONS:
-                    text = "- %s" % attr
-                    if not getattr(self, attr):
-                        text += " (not set)"
-                    print(text)
-                sys.exit(1)
-
-        self.revisions = []
-        try:
-            revisions = cfgobj.items('revisions')
-        except configparser.NoSectionError:
-            pass
-        else:
-            for revision, name in revisions:
-                self.revisions.append((revision, name))
-
     def main(self):
         args = self.parse_args()
-        self.parse_config(args.config_filename)
+        self.conf = parse_config(args.config_filename)
 
-        if args.debug and self.upload:
+        if self.conf.debug and self.conf.upload:
             print("ERROR: debug mode is incompatible with upload")
             sys.exit(1)
 
-        self.safe_makedirs(self.directory)
+        self.safe_makedirs(self.conf.directory)
         self.run('sudo', 'python3', '-m', 'perf', 'system', 'tune',
-                 cwd=self.perf)
+                 cwd=self.conf.perf)
 
-        self.repository = Repository(self, self.src)
-        if self.update:
+        self.repository = Repository(self, self.conf.cpython_srcdir)
+        if self.conf.update:
             self.repository.fetch()
 
         try:
-            for revision, branch in self.revisions:
+            for revision, branch in self.conf.revisions:
                 self.benchmark(False, revision)
 
-            for branch in self.branches:
+            for branch in self.conf.branches:
                 self.benchmark(True, branch)
         finally:
             for filename in self.skipped:
@@ -571,3 +575,9 @@ class Benchmark(Application):
 
             for error in self.errors:
                 print("ERROR: %s" % error)
+
+
+def cmd_compile(options):
+    conf = parse_config(options.config_filename)
+    revision = options.revision
+    BenchmarkPython(conf).main(revision)

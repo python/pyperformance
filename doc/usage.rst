@@ -64,6 +64,7 @@ pyperformance actions::
     run                 Run benchmarks on the running python
     show                Display a benchmark file
     compare             Compare two benchmark files
+    compile             Compile, install and benchmark CPython
     list                List benchmarks which run command would run
     list_groups         List all benchmark groups
     venv                Actions on the virtual environment
@@ -140,6 +141,16 @@ Options of the ``list`` command::
                         the positive arguments.
 
 Use ``python3 -m performance list -b all`` to list all benchmarks.
+
+
+compile
+-------
+
+Usage::
+
+    pyperformance compile CONFIG_FILE REVISION
+
+Compile Python, install Python and run benchmarks on the installed Python.
 
 
 venv

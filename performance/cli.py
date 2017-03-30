@@ -93,6 +93,16 @@ def parse_args():
         'list_groups', help='List benchmark groups of the running Python')
     cmds.append(cmd)
 
+    # compile
+    cmd = subparsers.add_parser(
+        'compile', help='Compile and install CPython and run benchmarks '
+                        'on installed Python')
+    cmd.add_argument('config_filename',
+                     help='Configuration filename')
+    cmd.add_argument('revision',
+                     help='Python benchmarked revision')
+    cmds.append(cmd)
+
     # venv
     cmd = subparsers.add_parser('venv',
                                 help='Actions on the virtual environment')
@@ -146,6 +156,10 @@ def _main():
 
     if options.action == 'venv':
         cmd_venv(options)
+        sys.exit()
+    elif options.action == 'compile':
+        from performance.compile import cmd_compile
+        cmd_compile(options)
         sys.exit()
 
     if not options.inside_venv:

@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 0.5.4
+-------------
+
+* Add ``pyperformance compile`` command
+
 Version 0.5.3 (2017-03-27)
 --------------------------
 
