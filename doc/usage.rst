@@ -149,7 +149,8 @@ compile
 
 Usage::
 
-    pyperformance compile CONFIG_FILE REVISION
+    pyperformance compile CONFIG_FILE REVISION BRANCH
+        [--patch=PATCH_FILE]
 
 Compile Python, install Python and run benchmarks on the installed Python.
 

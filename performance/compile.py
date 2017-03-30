@@ -160,7 +160,6 @@ class Application(object):
 
 
 class BenchmarkPython(Application):
-    # FIXME: make branch optional
     def __init__(self, conf, revision, branch, patch=None):
         super().__init__()
         self.conf = conf
@@ -538,9 +537,9 @@ class Benchmark(Application):
 
 def cmd_compile(options):
     conf = parse_config(options.config_filename)
-    revision = options.revision
-    branch = options.branch
-    BenchmarkPython(conf, revision, branch).main()
+    bench = BenchmarkPython(conf, options.revision, options.branch,
+                            patch=conf.patch)
+    bench.main()
 
 
 def cmd_upload(options):

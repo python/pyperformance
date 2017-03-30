@@ -103,6 +103,8 @@ def parse_args():
                      help='Python benchmarked revision')
     cmd.add_argument('branch',
                      help='Git branch')
+    cmd.add_argument('--patch',
+                     help='Patch file')
     cmds.append(cmd)
 
     # upload
