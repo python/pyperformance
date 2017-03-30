@@ -518,6 +518,9 @@ class BenchmarkRevision(Application):
             self.logger.error("Benchmark result written into %s"
                               % self.filename)
 
+        if self.failed:
+            sys.exit(1)
+
 
 class Configuration:
     pass
@@ -731,6 +734,9 @@ class BenchmarkAll(Application):
             self.report()
             if self.timings:
                 self.report_timings()
+
+        if self.failed:
+            sys.exit(1)
 
 
 def cmd_compile(options):
