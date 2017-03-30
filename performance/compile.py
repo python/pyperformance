@@ -377,6 +377,9 @@ class Benchmark(Application):
         return data
 
     def upload_json(self, filename, branch, revision):
+        # Import perf module from --perf directory
+        sys.path.insert(0, self.perf)
+
         import perf
 
         suite = perf.BenchmarkSuite.load(filename)
@@ -523,9 +526,6 @@ class Benchmark(Application):
     def main(self):
         args = self.parse_args()
         self.parse_config(args.config_filename)
-
-        # Import perf module from --perf directory
-        sys.path.insert(0, self.perf)
 
         self.safe_makedirs(self.directory)
         self.run('sudo', 'python3', '-m', 'perf', 'system', 'tune',

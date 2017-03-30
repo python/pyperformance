@@ -1,3 +1,18 @@
+scripts
+=======
+
+* Move json files into a directory, so it would be simpler to remove temporary
+  files (prefix/, venv/, bench.log)
+* Use .gz suffix to use less disk space
+* Compile CPython in a temporary directory, not in the source directory
+* Add "upload" CLI command
+* performance.command: Merge Benchmark and BenchmarkPython classes into one unique class?
+* Replace scripts with performance subcommands?
+
+  - performance compile bench.conf
+  - performance compile_all bench.conf # pick branches and revisions from conf file
+  - performance upload bench.conf file.json
+
 TODO
 ====
 
