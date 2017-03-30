@@ -244,17 +244,17 @@ class BenchmarkRevision(Application):
         self.conf = conf
         self.branch = branch
         self.patch = patch
-        self.python = Python(self, conf)
         self.uploaded = False
 
         if setup_log and self.conf.log:
             self.setup_log()
 
-        self.repository = Repository(self, conf.repo_dir)
         if filename is None:
+            self.repository = Repository(self, conf.repo_dir)
             self.init_revision_filenename(revision)
         else:
             # path used by cmd_upload()
+            self.repository = None
             self.filename = filename
             self.revision = revision
 
@@ -267,7 +267,7 @@ class BenchmarkRevision(Application):
 
         filename = '%s-%s-%s' % (date, self.branch, self.revision[:12])
         filename = filename + ".json.gz"
-        self.filename = os.path.join(self.conf.json_directory, filename)
+        self.filename = os.path.join(self.conf.json_dir, filename)
 
     def compile_install(self):
         if self.conf.update:
@@ -424,9 +424,10 @@ class BenchmarkRevision(Application):
             self.perf_system_tune()
 
         self.safe_makedirs(self.conf.directory)
-        self.safe_makedirs(self.conf.json_directory)
+        self.safe_makedirs(self.conf.json_dir)
         self.safe_makedirs(self.conf.uploaded_json_dir)
 
+        self.python = Python(self, conf)
         self.compile_install()
         self.run_benchmark()
         if self.conf.upload:
@@ -474,6 +475,8 @@ def parse_config(filename, command):
             return default
 
     # [config]
+    conf.json_dir = os.path.expanduser(getstr('config', 'json_dir'))
+    conf.uploaded_json_dir = os.path.join(conf.json_dir, 'uploaded')
     conf.debug = getboolean('config', 'debug', False)
 
     if parse_compile:
@@ -491,8 +494,6 @@ def parse_config(filename, command):
         conf.tune = getboolean('run_benchmark', 'tune', True)
         conf.benchmarks = getstr('run_benchmark', 'benchmarks', default='default')
         conf.affinity = getstr('run_benchmark', 'affinity', default='')
-        conf.json_directory = os.path.expanduser(getstr('run_benchmark', 'json_dir'))
-        conf.uploaded_json_dir = os.path.join(conf.json_directory, 'uploaded')
         conf.upload = getboolean('run_benchmark', 'upload', False)
 
         # paths
@@ -502,25 +503,24 @@ def parse_config(filename, command):
         conf.log = os.path.join(conf.directory, 'bench.log')
 
     # [upload]
-    if conf.upload:
-        UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')
+    UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')
 
-        conf.url = getstr('upload', 'url', default='')
-        conf.executable = getstr('upload', 'executable', default='')
-        conf.project = getstr('upload', 'project', default='')
-        conf.environment = getstr('upload', 'environment', default='')
+    conf.url = getstr('upload', 'url', default='')
+    conf.executable = getstr('upload', 'executable', default='')
+    conf.project = getstr('upload', 'project', default='')
+    conf.environment = getstr('upload', 'environment', default='')
 
-        if any(not getattr(conf, attr) for attr in UPLOAD_OPTIONS):
-            print("ERROR: Upload requires to set the following "
-                  "configuration option in the the [upload] section "
-                  "of %s:"
-                  % filename)
-            for attr in UPLOAD_OPTIONS:
-                text = "- %s" % attr
-                if not getattr(conf, attr):
-                    text += " (not set)"
-                print(text)
-            sys.exit(1)
+    if any(not getattr(conf, attr) for attr in UPLOAD_OPTIONS):
+        print("ERROR: Upload requires to set the following "
+              "configuration option in the the [upload] section "
+              "of %s:"
+              % filename)
+        for attr in UPLOAD_OPTIONS:
+            text = "- %s" % attr
+            if not getattr(conf, attr):
+                text += " (not set)"
+            print(text)
+        sys.exit(1)
 
     if parse_compile_all:
         # [compile_all]

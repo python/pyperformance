@@ -1,4 +1,7 @@
 [config]
+# Directory where JSON files are written. Uploaded files are moved
+# to json_dir/uploaded/
+json_dir = ~/json
 # If True, compile CPython is debug mode and run benchmarks with
 # --debug-single-sample. Option used to check a configuration.
 # LTO and PGO are disabled if debug is true.
@@ -31,9 +34,6 @@ tune = True
 benchmarks = default
 # --affinity option for 'perf system tune' and 'performance run'
 affinity =
-# Directory where JSON files are written. Uploaded files are moved
-# to json_dir/uploaded/
-json_dir = ~/json
 # Upload generated JSON file?
 upload = False
 

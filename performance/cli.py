@@ -124,10 +124,6 @@ def parse_args():
                      help='Configuration filename')
     cmd.add_argument('json_file',
                      help='JSON filename')
-    cmd.add_argument('revision',
-                     help='Python benchmarked revision')
-    cmd.add_argument('branch',
-                     help='Git branch')
     cmds.append(cmd)
 
     # venv
