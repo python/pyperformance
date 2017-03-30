@@ -1,10 +1,8 @@
-scripts
-=======
+performance compile
+===================
 
 * Write one log file per run
-* Compile CPython in a temporary directory, not in the source directory
 * Add --rigorous option
-* Add -b option
 
 TODO
 ====

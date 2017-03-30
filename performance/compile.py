@@ -163,25 +163,31 @@ class Python(object):
         self.app = app
         self.conf = conf
         self.logger = app.logger
-        self.cwd = conf.repo_dir
         self.program = None
 
     def run_nocheck(self, *cmd, **kw):
-        return self.app.run_nocheck(*cmd, cwd=self.cwd, **kw)
+        return self.app.run_nocheck(*cmd, cwd=self.conf.build_dir, **kw)
 
     def run(self, *cmd, **kw):
-        self.app.run(*cmd, cwd=self.cwd, **kw)
+        self.app.run(*cmd, cwd=self.conf.build_dir, **kw)
 
     def patch(self, filename):
         if not filename:
             return
 
-        self.logger.error('Apply patch %s on revision %s'
-                          % (filename, self.app.revision))
-        self.run('patch', '-p1', stdin_filename=filename)
+        self.logger.error('Apply patch %s in %s (revision %s)'
+                          % (filename, self.conf.repo_dir, self.app.revision))
+        self.app.run('patch', '-p1',
+                     cwd=self.conf.repo_dir,
+                     stdin_filename=filename)
 
     def compile(self):
-        self.run_nocheck('make', 'distclean')
+        build_dir = self.conf.build_dir
+
+        if os.path.exists(build_dir):
+            self.logger.error("Remove directory %s" % build_dir)
+            shutil.rmtree(build_dir)
+        self.app.safe_makedirs(build_dir)
 
         config_args = []
         if self.conf.debug:
@@ -192,7 +198,8 @@ class Python(object):
             config_args.extend(('--prefix', self.conf.prefix))
         if self.conf.debug:
             config_args.append('CFLAGS=-O0')
-        self.run('./configure', *config_args)
+        configure = os.path.join(self.conf.repo_dir, 'configure')
+        self.run(configure, *config_args)
 
         self.run_nocheck('make', 'clean')
 
@@ -218,8 +225,8 @@ class Python(object):
         if os.path.exists(prefix):
             self.logger.error("Remove directory %s" % prefix)
             shutil.rmtree(prefix)
+        self.app.safe_makedirs(prefix)
 
-        self.app.safe_makedirs(self.conf.directory)
         self.run('make', 'install')
 
         self.program = os.path.join(prefix, "bin", "python" + program_ext)
@@ -523,6 +530,7 @@ def parse_config(filename, command):
         conf.upload = getboolean('run_benchmark', 'upload', False)
 
         # paths
+        conf.build_dir = os.path.join(conf.directory, 'build')
         conf.prefix = os.path.join(conf.directory, 'prefix')
         conf.venv = os.path.join(conf.directory, 'venv')
         # FIXME: create a different log file at each run
