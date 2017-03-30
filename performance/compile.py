@@ -107,8 +107,7 @@ class Application(object):
     def run_nocheck(self, *cmd, stdin_filename=None, **kwargs):
         if stdin_filename:
             stdin_file = open(stdin_filename, "rb", 0)
-            fd = stdin_file.fileno()
-            kwargs = {'stdin': fd, 'pass_fds': [fd]}
+            kwargs['stdin'] = stdin_file.fileno()
         else:
             stdin_file = None
         try:
