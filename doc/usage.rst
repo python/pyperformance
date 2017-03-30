@@ -64,8 +64,6 @@ pyperformance actions::
     run                 Run benchmarks on the running python
     show                Display a benchmark file
     compare             Compare two benchmark files
-    compile             Compile, install and benchmark CPython
-    upload              Upload JSON file
     list                List benchmarks which run command would run
     list_groups         List all benchmark groups
     venv                Actions on the virtual environment
@@ -144,6 +142,38 @@ Options of the ``list`` command::
 Use ``python3 -m performance list -b all`` to list all benchmarks.
 
 
+venv
+----
+
+Options of the ``venv`` command::
+
+  -p PYTHON, --python PYTHON
+                        Python executable (default: use running Python)
+  --venv VENV           Path to the virtual environment
+
+Actions of the ``venv`` command::
+
+  show      Display the path to the virtual environment and it's status (created or not)
+  create    Create the virtual environment
+  recreate  Force the recreation of the the virtual environment
+  remove    Remove the virtual environment
+
+
+Compile Python to run benchmarks
+================================
+
+pyperformance actions::
+
+    compile        Compile, install and benchmark CPython
+    compile_all    Compile, install and benchmark multiple branches and revisions of CPython
+    upload         Upload JSON file
+
+All these commands require a configuration file. Sample of configuration
+file (``doc/benchmark.conf.sample``):
+
+.. literalinclude:: benchmark.conf.sample
+
+
 compile
 -------
 
@@ -175,21 +205,6 @@ Usage::
 Upload results from a JSON file to a Codespeed website.
 
 
-venv
-----
-
-Options of the ``venv`` command::
-
-  -p PYTHON, --python PYTHON
-                        Python executable (default: use running Python)
-  --venv VENV           Path to the virtual environment
-
-Actions of the ``venv`` command::
-
-  show      Display the path to the virtual environment and it's status (created or not)
-  create    Create the virtual environment
-  recreate  Force the recreation of the the virtual environment
-  remove    Remove the virtual environment
 
 
 How to get stable benchmarks
