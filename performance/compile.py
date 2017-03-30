@@ -161,8 +161,6 @@ class Application(object):
             sys.exit(exitcode)
 
     def get_output_nocheck(self, *cmd, **kwargs):
-        check_exitcode = kwargs.pop('check_exitcode', True)
-
         proc = self.create_subprocess(cmd,
                                       stdout=subprocess.PIPE,
                                       universal_newlines=True,
