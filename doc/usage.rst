@@ -188,10 +188,16 @@ compile
 
 Usage::
 
-    pyperformance compile CONFIG_FILE REVISION BRANCH
+    pyperformance compile CONFIG_FILE REVISION [BRANCH]
         [--patch=PATCH_FILE]
 
 Compile Python, install Python and run benchmarks on the installed Python.
+
+If the branch is not set:
+
+* If ``REVISION`` is a branch name: use it as a the branch, and get the
+  latest revision of this branch
+* Otherwise, use ``master`` branch by default
 
 
 compile_all

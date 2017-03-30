@@ -101,7 +101,7 @@ def parse_args():
                      help='Configuration filename')
     cmd.add_argument('revision',
                      help='Python benchmarked revision')
-    cmd.add_argument('branch',
+    cmd.add_argument('branch', nargs='?',
                      help='Git branch')
     cmd.add_argument('--patch',
                      help='Patch file')

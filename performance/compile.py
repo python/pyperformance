@@ -29,6 +29,7 @@ class Repository(object):
         self.path = path
         self.logger = app.logger
         self.app = app
+        self.conf = app.conf
 
     def get_output_nocheck(self, *cmd):
         return self.app.get_output_nocheck(*cmd, cwd=self.path)
@@ -45,29 +46,19 @@ class Repository(object):
         else:
             self.run('hg', 'pull')
 
-    def get_current_branch(self):
-        stdout = self.get_output('git', 'branch')
-        for line in stdout.splitlines():
-            if line.startswith('* '):
-                branch = line[2:]
-                self.logger.error('Git branch: %r' % branch)
-                return branch
-
-        self.logger.error("ERROR: fail to get the current Git branch")
-        sys.exit(1)
-
-    def parse_revision(self, revision, remote):
-        branch_rev = '%s/%s' % (remote, revision)
+    def parse_revision(self, revision):
+        branch_rev = '%s/%s' % (self.conf.git_remote, revision)
 
         exitcode, stdout = self.get_output_nocheck('git', 'rev-parse',
                                                    '--verify', branch_rev)
         if not exitcode:
-            return (True, stdout)
+            return (True, branch_rev, stdout)
 
         exitcode, stdout = self.get_output_nocheck('git', 'rev-parse',
                                                    '--verify', revision)
         if not exitcode and stdout.startswith(revision):
-            return (False, stdout)
+            revision = stdout
+            return (False, revision, revision)
 
         print("ERROR: unable to parse revision %r" % (revision,))
         sys.exit(1)
@@ -80,11 +71,6 @@ class Repository(object):
             # checkout to requested revision
             self.run('git', 'reset', '--hard', 'HEAD')
             self.run('git', 'checkout', revision)
-
-            branch = self.get_current_branch()
-            if revision == branch:
-                # revision is a branch
-                self.run('git', 'merge', '--ff')
 
             # remove all untracked files
             self.run('git', 'clean', '-fdx')
@@ -278,11 +264,10 @@ class Python(object):
 
 
 class BenchmarkRevision(Application):
-    def __init__(self, conf, revision, branch, patch=None, setup_log=False,
+    def __init__(self, conf, revision, branch=None, patch=None, setup_log=False,
                  filename=None):
         super().__init__()
         self.conf = conf
-        self.branch = branch
         self.patch = patch
         self.uploaded = False
 
@@ -291,24 +276,44 @@ class BenchmarkRevision(Application):
 
         if filename is None:
             self.repository = Repository(self, conf.repo_dir)
-            self.init_revision_filenename(revision)
+            self.init_revision(revision, branch)
         else:
             # path used by cmd_upload()
             self.repository = None
             self.filename = filename
             self.revision = revision
+            if not branch:
+                raise ValueError("if filename is set, branch is mandatory")
+            self.branch = branch
+            self.logger.error("Commit: branch=%s, revision=%s"
+                              % (self.branch, self.revision))
 
         self.upload_filename = os.path.join(self.conf.uploaded_json_dir,
                                             os.path.basename(self.filename))
 
-    def init_revision_filenename(self, revision):
-        is_branch, full_revision = self.repository.parse_revision(self.branch, self.conf.git_remote)
-        if not is_branch:
-            print("ERROR: %r is not a Git branch" % self.branch)
-            sys.exit(1)
+    def init_revision(self, revision, branch=None):
+        if branch:
+            is_branch, rev_name, full_revision = self.repository.parse_revision(branch)
+            if not is_branch:
+                print("ERROR: %r is not a Git branch" % self.branch)
+                sys.exit(1)
+            self.branch = branch
+        else:
+            self.branch = None
 
-        self.revision, date = self.repository.get_revision_info(revision)
-        self.logger.error("Commit %s: %s" % (self.revision, date))
+        is_branch, rev_name, full_revision = self.repository.parse_revision(revision)
+        if is_branch:
+            if self.branch and revision != self.branch:
+                raise ValueError("inconsistenct branches: "
+                                 "revision=%r, branch=%r"
+                                 % (revision, branch))
+            self.branch = revision
+        elif not self.branch:
+            self.branch = DEFAULT_BRANCH
+
+        self.revision, date = self.repository.get_revision_info(rev_name)
+        self.logger.error("Commit: branch=%s, revision=%s, date=%s"
+                          % (self.branch, self.revision, date))
 
         date = date.strftime('%Y-%m-%d_%H-%M')
 
@@ -711,14 +716,10 @@ class BenchmarkAll(Application):
 
         try:
             for revision, branch in self.conf.revisions:
-                self.benchmark(revision, branch or DEFAULT_BRANCH)
+                self.benchmark(revision, branch)
 
             for branch in self.conf.branches:
-                if GIT:
-                    revision = '%s/%s' % (self.conf.git_remote, branch)
-                else:
-                    revision = branch
-                self.benchmark(revision, branch)
+                self.benchmark(branch, branch)
         finally:
             self.report()
             if self.timings:
