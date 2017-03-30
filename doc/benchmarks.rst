@@ -61,7 +61,7 @@ Available Benchmarks
   block-cipher in CTR mode using the pyaes module.
 - ``deltablue`` - DeltaBlue benchmark
 - ``django_template`` - use the Django template system to build a 150x150-cell
-  HTML table (``django.template`` module).
+  HTML table (``django.template`` module). Require Python 3.4 or newer.
 - ``dulwich_log``: Iterate on commits of the asyncio Git repository using
   the Dulwich module
 - ``fannkuch``
