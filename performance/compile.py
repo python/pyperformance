@@ -289,13 +289,15 @@ class BenchmarkRevision(Application):
         self.run(*cmd)
 
     def update_metadata(self):
-        bench = perf.BenchmarkSuite.load(self.filename)
         if GIT:
             metadata = {'git_branch': self.branch, 'git_revision': self.revision}
         else:
             metadata = {'hg_branch': self.branch, 'hg_revision': self.revision}
-        bench.update_metadata(metadata)
-        bench.dump(self.filename, replace=True)
+
+        suite = perf.BenchmarkSuite.load(self.filename)
+        for bench in suite:
+            bench.update_metadata(metadata)
+        suite.dump(self.filename, replace=True)
 
     def encode_benchmark(self, bench):
         data = {}
