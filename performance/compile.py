@@ -216,18 +216,18 @@ class Python(object):
             self.run('make')
 
     def install_python(self):
-        prefix = self.conf.prefix
-
         if sys.platform in ('darwin', 'win32'):
             program_ext = '.exe'
         else:
             program_ext = ''
 
-        if not prefix:
+        if not self.conf.install:
             # don't install: run python from the compilation directory
-            self.program = "./python" + program_ext
+            self.program = os.path.join(self.conf.build_dir,
+                                        "python" + program_ext)
             return
 
+        prefix = self.conf.prefix
         if os.path.exists(prefix):
             self.logger.error("Remove directory %s" % prefix)
             shutil.rmtree(prefix)
@@ -410,12 +410,6 @@ class BenchmarkRevision(Application):
         self.uploaded = True
 
     def sanity_checks(self):
-        # FIXME: support run without prefix?
-        if not self.conf.prefix:
-            self.logger.error("ERROR: running benchmark without installation "
-                              "is currently broken")
-            sys.exit(1)
-
         if os.path.exists(self.filename):
             self.logger.error("ERROR: %s file already exists!"
                               % self.filename)
@@ -531,6 +525,7 @@ def parse_config(filename, command):
         conf.directory = os.path.expanduser(getstr('compile', 'bench_dir'))
         conf.lto = getboolean('compile', 'lto', True)
         conf.pgo = getboolean('compile', 'pgo', True)
+        conf.install = getboolean('compile', 'install', True)
 
         # [run_benchmark]
         conf.tune = getboolean('run_benchmark', 'tune', True)
