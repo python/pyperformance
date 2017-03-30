@@ -1,6 +1,8 @@
 TODO
 ====
 
+* bm_python_startup: add again python metadata, to get back the Python version
+  in benchmark suite metadata. Same for bm_hg_startup.
 * Remove compare command or reimplement it using perf compare_to
 * Add a --log option to create a log file. Use the logging module
   and replace print() with logger.error().

@@ -646,7 +646,6 @@ class BenchmarkAll(Application):
         self.failed = []
         self.timings = []
         self.logger = logging.getLogger()
-        self.updated = False
 
     def benchmark(self, revision, branch):
         self.start = time.monotonic()

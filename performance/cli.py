@@ -61,7 +61,6 @@ def parse_args():
     # show
     cmd = subparsers.add_parser('show', help='Display a benchmark file')
     cmd.add_argument("filename", metavar="FILENAME")
-    cmds.append(cmd)
 
     # compare
     cmd = subparsers.add_parser('compare', help='Compare two benchmark files')
@@ -161,15 +160,16 @@ def parse_args():
         parser.print_help()
         sys.exit(1)
 
-    # Replace "~" with the user home directory
-    options.python = os.path.expanduser(options.python)
-    # Try to the absolute path to the binary
-    abs_python = which(options.python)
-    if not abs_python:
-        print("ERROR: Unable to locate the Python executable: %r" %
-              options.python)
-        sys.exit(1)
-    options.python = os.path.realpath(abs_python)
+    if hasattr(options, 'python'):
+        # Replace "~" with the user home directory
+        options.python = os.path.expanduser(options.python)
+        # Try to the absolute path to the binary
+        abs_python = which(options.python)
+        if not abs_python:
+            print("ERROR: Unable to locate the Python executable: %r" %
+                  options.python)
+            sys.exit(1)
+        options.python = os.path.realpath(abs_python)
 
     return (parser, options)
 
@@ -192,18 +192,20 @@ def _main():
         from performance.compile import cmd_upload
         cmd_upload(options)
         sys.exit()
+    elif options.action == 'show':
+        from performance.compare import cmd_show
+        cmd_show(options)
+        sys.exit()
 
     if not options.inside_venv:
         exec_in_virtualenv(options)
 
     from performance.cli_run import cmd_run, cmd_list, cmd_list_groups
-    from performance.compare import cmd_compare, cmd_show
 
     if options.action == 'run':
         cmd_run(parser, options)
-    elif options.action == 'show':
-        cmd_show(options)
     elif options.action == 'compare':
+        from performance.compare import cmd_compare
         cmd_compare(options)
     elif options.action == 'list':
         cmd_list(options)
