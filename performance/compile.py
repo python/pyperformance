@@ -427,6 +427,7 @@ def parse_config(filename):
     conf.pgo = config.getboolean('pgo', False)
     conf.update = config.getboolean('update', True)
     conf.benchmarks = getstr('config', 'benchmarks', default='default')
+    conf.git_remote = getstr('config', 'git_remote', default='remotes/origin')
     conf.debug = config.getboolean('debug', False)
 
     if conf.debug:
@@ -483,12 +484,7 @@ class BenchmarkAll(Application):
         self.failed = []
         self.logger = logging.getLogger()
 
-    def benchmark(self, is_branch, revision):
-        if is_branch:
-            branch = revision
-        else:
-            branch = DEFAULT_BRANCH
-
+    def benchmark(self, revision, branch):
         bench = BenchmarkRevision(self.conf, revision, branch, setup_log=False)
         if os.path.exists(bench.upload_filename):
             # Benchmark already uploaded
@@ -516,10 +512,14 @@ class BenchmarkAll(Application):
 
         try:
             for revision, branch in self.conf.revisions:
-                self.benchmark(False, revision)
+                self.benchmark(revision, branch or DEFAULT_BRANCH)
 
             for branch in self.conf.branches:
-                self.benchmark(True, branch)
+                if GIT:
+                    revision = '%s/%s' % (self.conf.git_remote, branch)
+                else:
+                    revision = branch
+                self.benchmark(revision, branch)
         finally:
             for filename in self.skipped:
                 self.logger.error("Skipped: %s" % filename)

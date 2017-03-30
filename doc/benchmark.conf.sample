@@ -22,6 +22,9 @@ upload = False
 # value passed to "performance run --benchmarks=".
 # 'default' uses the default benchmark group.
 benchmarks = default
+# Name of the Git remote, used to create revision of Git branch.
+# For example, use revision 'remotes/origin/3.6' for the branch '3.6'
+git_remote = remotes/origin
 
 # Link Time Optimization (LTO)?
 lto = True
