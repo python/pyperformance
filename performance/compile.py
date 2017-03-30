@@ -31,8 +31,8 @@ class Repository(object):
     def get_output(self, *cmd):
         return self.app.get_output(*cmd, cwd=self.path)
 
-    def run(self, *cmd):
-        self.app.run(*cmd, cwd=self.path)
+    def run(self, *cmd, **kw):
+        self.app.run(*cmd, cwd=self.path, **kw)
 
     def fetch(self):
         if GIT:
@@ -167,8 +167,8 @@ class Python(object):
         self.cwd = conf.repo_dir
         self.program = None
 
-    def run_nocheck(self, *cmd):
-        return self.app.run_nocheck(*cmd, cwd=self.cwd)
+    def run_nocheck(self, *cmd, **kw):
+        return self.app.run_nocheck(*cmd, cwd=self.cwd, **kw)
 
     def run(self, *cmd, **kw):
         self.app.run(*cmd, cwd=self.cwd, **kw)
