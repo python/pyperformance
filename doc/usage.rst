@@ -168,10 +168,19 @@ pyperformance actions::
     compile_all    Compile, install and benchmark multiple branches and revisions of CPython
     upload         Upload JSON file
 
-All these commands require a configuration file. Sample of configuration
-file (``doc/benchmark.conf.sample``):
+All these commands require a configuration file.
+
+Simple configuration usable for ``compile`` (but not for ``compile_all`` nor
+``upload``), ``doc/benchmark.conf``:
+
+.. literalinclude:: benchmark.conf
+   :language: ini
+
+Configuration file sample with comments, ``doc/benchmark.conf.sample``:
 
 .. literalinclude:: benchmark.conf.sample
+   :language: ini
+
 
 
 compile

@@ -3,30 +3,37 @@
 # - uploaded files are moved to json_dir/uploaded/
 # - results of patched Python are written into json_dir/patch/
 json_dir = ~/json
-# If True, compile CPython is debug mode and run benchmarks with
-# --debug-single-sample. Option used to check a configuration.
-# LTO and PGO are disabled if debug is true.
+
+# If True, compile CPython is debug mode (LTO and PGO disabled),
+# run benchmarks with --debug-single-sample, and disable upload.
+#
+# Use this option used to quickly test a configuration.
 debug = False
 
 
 [scm]
-# Directory of CPython source code
+# Directory of CPython source code (Git repository)
 repo_dir = ~/cpython
-# Update the Git repository before Git checkout?
+
+# Update the Git repository (git fetch)?
 update = True
-# Name of the Git remote, used to create revision of Git branch.
-# For example, use revision 'remotes/origin/3.6' for the branch '3.6'
+
+# Name of the Git remote, used to create revision of
+# the Git branch. For example, use revision 'remotes/origin/3.6'
+# for the branch '3.6'.
 git_remote = remotes/origin
 
 
 [compile]
 # Create files into bench_dir:
-# - bench_dir/bench.log
+# - bench_dir/bench-xxx.log
 # - bench_dir/prefix/: where Python is installed
 # - bench_dir/venv/: Virtual environment used by performance
 bench_dir = ~/bench_tmpdir
+
 # Link Time Optimization (LTO)?
 lto = True
+
 # Profiled Guided Optimization (PGO)?
 pgo = True
 
@@ -34,10 +41,13 @@ pgo = True
 [run_benchmark]
 # Run "sudo python3 -m perf system tune" before running benchmarks?
 tune = True
+
 # --benchmarks option for 'performance run'
-benchmarks = default
+benchmarks =
+
 # --affinity option for 'perf system tune' and 'performance run'
 affinity =
+
 # Upload generated JSON file?
 upload = False
 
