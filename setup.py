@@ -104,9 +104,8 @@ def main():
         'package_data': data,
         'entry_points': {
             'console_scripts': ['pyperformance=performance.cli:main']
-        }
-        # Note: the performance package has no direct external dependencies:
-        # it installs dependencies itself by creating virtual environments
+        },
+        'install_requires': ["perf", "six"],
     }
     setup(**options)
 

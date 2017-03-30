@@ -11,6 +11,8 @@ Command to install performance::
 
 The command installs a new ``pyperformance`` program.
 
+If needed, ``perf`` and ``six`` dependencies are installed automatically.
+
 performance works on Python 2.7, 3.4 and newer.
 
 On Python 2, the ``virtualenv`` program (or the Python module) is required

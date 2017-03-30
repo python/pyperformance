@@ -10,6 +10,7 @@ Version 0.5.4
   instance
 * Add ``pyperformance compile_all`` command to benchmark multiple branches and
   revisions of Python
+* setup.py: add dependencies to ``perf`` and ``six`` modules.
 
 Version 0.5.3 (2017-03-27)
 --------------------------
