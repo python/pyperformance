@@ -414,16 +414,11 @@ class Benchmark(Application):
         short_node = node[:12]
         date = date.strftime('%Y-%m-%d_%H-%M')
         filename = '%s-%s-%s' % (date, branch, short_node)
-        filename = os.path.join(self.directory, filename + ".json")
+        filename = os.path.join(self.directory, filename + ".json.gz")
 
         if os.path.exists(filename):
             self.skipped.append(filename)
             return
-
-        try:
-            shutil.rmtree(self.prefix)
-        except FileNotFoundError:
-            pass
 
         cmd = ['python3', self.bench_cpython,
                '--src', self.src,
