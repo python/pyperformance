@@ -106,9 +106,11 @@ class BenchmarkPython(object):
             self.run('patch', '-p1', stdin_filename=args.patch)
 
         if GIT:
-            full_revision = self.get_output('git', 'rev-parse', 'HEAD').strip()
+            full_revision = self.get_output('git', 'show', '-s',
+                                            '--pretty=format:%H')
         else:
-            full_revision = self.get_output('hg', 'id', '-i').strip()
+            full_revision = self.get_output('hg', 'id', '-i')
+        full_revision = full_revision.strip()
         if not full_revision:
             self.logger.error("ERROR: unable to get the revision")
             sys.exit(1)
