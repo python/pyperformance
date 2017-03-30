@@ -44,7 +44,10 @@ class Repository(object):
         stdout = self.get_output('git', 'branch')
         for line in stdout.splitlines():
             if line.startswith('* '):
-                return line[2:]
+                branch = line[2:]
+                self.logger.error('Git branch: %r' % branch)
+                return branch
+
         self.logger.error("ERROR: fail to get the current Git branch")
         sys.exit(1)
 
@@ -167,14 +170,15 @@ class Python(object):
     def run_nocheck(self, *cmd):
         return self.app.run_nocheck(*cmd, cwd=self.cwd)
 
-    def run(self, *cmd):
-        self.app.run(*cmd, cwd=self.cwd)
+    def run(self, *cmd, **kw):
+        self.app.run(*cmd, cwd=self.cwd, **kw)
 
     def patch(self, filename):
         if not filename:
             return
 
-        self.logger.error('Apply patch %s' % filename)
+        self.logger.error('Apply patch %s on revision %s'
+                          % (filename, self.app.revision))
         self.run('patch', '-p1', stdin_filename=filename)
 
     def compile(self):
@@ -264,10 +268,11 @@ class BenchmarkRevision(Application):
 
         filename = '%s-%s-%s' % (date, self.branch, self.revision[:12])
         if self.patch:
-            filename = "%s-patch-%s" % os.path.splitext(self.patch)[0]
+            patch = os.path.splitext(self.patch)[0]
+            filename = "%s-patch-%s" % (filename, patch)
         filename = filename + ".json.gz"
         if self.patch:
-            self.filename = os.path.join(conf.json_patch_dir, filename)
+            self.filename = os.path.join(self.conf.json_patch_dir, filename)
         else:
             self.filename = os.path.join(self.conf.json_dir, filename)
 
@@ -432,14 +437,14 @@ class BenchmarkRevision(Application):
         if self.conf.log:
             self.logger.error("Write logs into %s" % self.conf.log)
 
-        self.sanity_checks()
         if self.patch:
             # Don't upload resuls of patched Python
             self.conf.upload = False
+        self.sanity_checks()
         if self.conf.tune:
             self.perf_system_tune()
 
-        self.python = Python(self, conf)
+        self.python = Python(self, self.conf)
         self.compile_install()
         self.run_benchmark()
         if self.conf.upload:
