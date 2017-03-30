@@ -97,7 +97,7 @@ def parse_args():
     cmd = subparsers.add_parser(
         'compile', help='Compile and install CPython and run benchmarks '
                         'on installed Python')
-    cmd.add_argument('config_filename',
+    cmd.add_argument('config_file',
                      help='Configuration filename')
     cmd.add_argument('revision',
                      help='Python benchmarked revision')
@@ -107,10 +107,20 @@ def parse_args():
                      help='Patch file')
     cmds.append(cmd)
 
+    # compile_all
+    cmd = subparsers.add_parser(
+        'compile_all',
+        help='Compile and install CPython and run benchmarks '
+             'on installed Python on all branches and revisions '
+             'of CONFIG_FILE')
+    cmd.add_argument('config_file',
+                     help='Configuration filename')
+    cmds.append(cmd)
+
     # upload
     cmd = subparsers.add_parser(
         'upload', help='Upload JSON results to a Codespeed website')
-    cmd.add_argument('config_filename',
+    cmd.add_argument('config_file',
                      help='Configuration filename')
     cmd.add_argument('json_file',
                      help='JSON filename')
@@ -177,6 +187,10 @@ def _main():
     elif options.action == 'compile':
         from performance.compile import cmd_compile
         cmd_compile(options)
+        sys.exit()
+    elif options.action == 'compile_all':
+        from performance.compile import cmd_compile_all
+        cmd_compile_all(options)
         sys.exit()
     elif options.action == 'upload':
         from performance.compile import cmd_upload

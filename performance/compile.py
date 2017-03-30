@@ -1,4 +1,3 @@
-import argparse
 import configparser
 import datetime
 import errno
@@ -100,6 +99,12 @@ class Application(object):
         logging.basicConfig(format=LOG_FORMAT)
         self.logger = logging.getLogger()
 
+    def setup_log(self):
+        handler = logging.FileHandler(self.conf.log)
+        formatter = logging.Formatter(LOG_FORMAT)
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
+
     def create_subprocess(self, cmd, **kwargs):
         self.logger.error("+ %s" % ' '.join(cmd))
         return subprocess.Popen(cmd, **kwargs)
@@ -160,7 +165,7 @@ class Application(object):
 
 
 class BenchmarkPython(Application):
-    def __init__(self, conf, revision, branch, patch=None):
+    def __init__(self, conf, revision, branch, patch=None, setup_log=False):
         super().__init__()
         self.conf = conf
         self.branch = branch
@@ -172,12 +177,8 @@ class BenchmarkPython(Application):
         self.safe_makedirs(self.conf.json_directory)
         self.safe_makedirs(self.conf.uploaded_json_dir)
 
-        # FIXME: don't add multiple handlers when BenchmarkPython is created from Benchmark
-        if self.conf.log:
-            handler = logging.FileHandler(self.conf.log)
-            formatter = logging.Formatter(LOG_FORMAT)
-            handler.setFormatter(formatter)
-            self.logger.addHandler(handler)
+        if setup_log and self.conf.log:
+            self.setup_log()
 
         self.repository = Repository(self, conf.cpython_srcdir)
 
@@ -348,6 +349,15 @@ class BenchmarkPython(Application):
         self.uploaded = True
 
     def main(self):
+        self.start = time.monotonic()
+
+        self.logger.error("Run benchmarks on Python %s" % self.revision)
+        self.logger.error('')
+
+        if self.conf.debug and self.conf.upload:
+            self.logger.error("ERROR: debug mode is incompatible with upload")
+            sys.exit(1)
+
         # FIXME: support run without prefix?
         if not self.conf.prefix:
             self.logger.error("ERROR: running benchmark without installation "
@@ -363,11 +373,6 @@ class BenchmarkPython(Application):
             self.logger.error("ERROR: cannot upload, %s file already exists!"
                               % self.upload_filename)
             sys.exit(1)
-
-        self.start = time.monotonic()
-
-        self.logger.error("Run benchmarks")
-        self.logger.error('')
 
         if self.conf.log:
             self.logger.error("Write logs into %s" % self.conf.log)
@@ -460,11 +465,13 @@ def parse_config(filename):
     return conf
 
 
-class Benchmark(Application):
-    def __init__(self):
+class BenchmarkAll(Application):
+    def __init__(self, config_filename):
         super().__init__()
-        bench_dir = os.path.realpath(os.path.dirname(__file__))
-        self.bench_cpython = os.path.join(bench_dir, 'bench_cpython.py')
+        self.conf = parse_config(config_filename)
+        self.safe_makedirs(self.conf.directory)
+        if self.conf.log:
+            self.setup_log()
         self.outputs = []
         self.skipped = []
         self.uploaded = []
@@ -477,13 +484,13 @@ class Benchmark(Application):
         else:
             branch = branch or DEFAULT_BRANCH
 
-        bench = BenchmarkPython(self.conf, node, branch)
+        bench = BenchmarkPython(self.conf, revision, branch, setup_log=False)
         if os.path.exists(bench.upload_filename):
             # Benchmark already uploaded
             self.skipped.append(bench.upload_filename)
             return
         try:
-            bench.main(node)
+            bench.main()
         except SystemExit:
             self.failed.append(bench.filename)
             return
@@ -493,20 +500,7 @@ class Benchmark(Application):
         else:
             self.outputs.append(bench.filename)
 
-    def parse_args(self):
-        parser = argparse.ArgumentParser()
-        parser.add_argument('config_filename',
-                            help='Configuration filename')
-        return parser.parse_args()
-
     def main(self):
-        args = self.parse_args()
-        self.conf = parse_config(args.config_filename)
-
-        if self.conf.debug and self.conf.upload:
-            self.logger.error("ERROR: debug mode is incompatible with upload")
-            sys.exit(1)
-
         self.safe_makedirs(self.conf.directory)
         self.run('sudo', 'python3', '-m', 'perf', 'system', 'tune',
                  cwd=self.conf.perf)
@@ -536,14 +530,14 @@ class Benchmark(Application):
 
 
 def cmd_compile(options):
-    conf = parse_config(options.config_filename)
+    conf = parse_config(options.config_file)
     bench = BenchmarkPython(conf, options.revision, options.branch,
                             patch=conf.patch)
     bench.main()
 
 
 def cmd_upload(options):
-    conf = parse_config(options.config_filename)
+    conf = parse_config(options.config_file)
     revision = options.revision
     branch = options.branch
     bench = BenchmarkPython(conf, revision, branch)
@@ -551,3 +545,8 @@ def cmd_upload(options):
     bench.upload_filename = os.path.join(conf.uploaded_json_dir,
                                          os.path.basename(bench.filename))
     bench.upload()
+
+
+def cmd_compile_all(options):
+    bench = BenchmarkAll(options.config_file)
+    bench.main()

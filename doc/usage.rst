@@ -155,6 +155,16 @@ Usage::
 Compile Python, install Python and run benchmarks on the installed Python.
 
 
+compile_all
+-----------
+
+Usage::
+
+    pyperformance compile_all CONFIG_FILE
+
+Compile all branches and revisions of CONFIG_FILE.
+
+
 upload
 ------
 

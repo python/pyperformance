@@ -6,8 +6,10 @@ Version 0.5.4
 
 * Add ``pyperformance compile`` command to compile, install and benchmark
   Python
-* Add ``pyperformance compile`` command to upload a JSON file to a Codespeed
+* Add ``pyperformance upload`` command to upload a JSON file to a Codespeed
   instance
+* Add ``pyperformance compile_all`` command to benchmark multiple branches and
+  revisions of Python
 
 Version 0.5.3 (2017-03-27)
 --------------------------
