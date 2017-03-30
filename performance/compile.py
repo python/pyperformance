@@ -340,6 +340,11 @@ class BenchmarkRevision(Application):
         if self.uploaded:
             raise Exception("already uploaded")
 
+        if self.filename == self.upload_filename:
+            self.logger.error("ERROR: %s was already uploaded!"
+                              % self.filename)
+            sys.exit(1)
+
         if os.path.exists(self.upload_filename):
             self.logger.error("ERROR: cannot upload, %s file ready exists!"
                               % self.upload_filename)
