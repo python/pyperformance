@@ -467,7 +467,7 @@ class BenchmarkRevision(Application):
 
         if self.uploaded:
             self.logger.error("Benchmark result uploaded and written into %s"
-                              % self.filename)
+                              % self.upload_filename)
         else:
             self.logger.error("Benchmark result written into %s"
                               % self.filename)
