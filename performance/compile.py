@@ -510,7 +510,8 @@ class BenchmarkAll(Application):
 
     def main(self):
         self.safe_makedirs(self.conf.directory)
-        self.run('sudo', 'python3', '-m', 'perf', 'system', 'tune')
+        self.run('sudo', '--preserve-env',
+                 'python3', '-m', 'perf', 'system', 'tune')
 
         self.repository = Repository(self, self.conf.cpython_srcdir)
         if self.conf.update:
