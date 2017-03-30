@@ -1,8 +1,6 @@
 scripts
 =======
 
-* Move json files into a directory, so it would be simpler to remove temporary
-  files (prefix/, venv/, bench.log)
 * Compile CPython in a temporary directory, not in the source directory
 * Add "upload" CLI command
 * performance.command: Merge Benchmark and BenchmarkPython classes into one unique class?

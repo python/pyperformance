@@ -358,6 +358,7 @@ class Benchmark(Application):
         self.skipped = []
         self.uploaded = []
         self.failed = []
+        self.errors = []
 
     def encode_benchmark(self, bench, branch, revision):
         data = {}
@@ -404,6 +405,10 @@ class Benchmark(Application):
             err.close()
             return False
 
+    def error(self, msg):
+        print("ERROR: %s" % msg)
+        self.errors.append(msg)
+
     def benchmark(self, is_branch, revision):
         if is_branch:
             branch = revision
@@ -414,7 +419,7 @@ class Benchmark(Application):
         short_node = node[:12]
         date = date.strftime('%Y-%m-%d_%H-%M')
         filename = '%s-%s-%s' % (date, branch, short_node)
-        filename = os.path.join(self.directory, filename + ".json.gz")
+        filename = os.path.join(self.json_directory, filename + ".json.gz")
 
         if os.path.exists(filename):
             self.skipped.append(filename)
@@ -438,9 +443,18 @@ class Benchmark(Application):
             return
 
         if self.upload:
-            # FIXME: pass the full node, not only the short node
-            # CodeSpeed needs to be modified to only displays short nodes
-            uploaded = self.upload_json(filename, branch, short_node)
+            filename2 = os.path.join(self.uploaded_json_dir,
+                                     os.path.basename(filename))
+            if os.path.exists(filename2):
+                self.error("cannot upload, %s file ready exists!" % filename2)
+            else:
+                # FIXME: pass the full node, not only the short node
+                # CodeSpeed needs to be modified to only displays short nodes
+                uploaded = self.upload_json(filename, branch, short_node)
+
+                if uploaded:
+                    os.move(filename, filename2)
+                    filename = filename2
         else:
             uploaded = False
 
@@ -478,6 +492,8 @@ class Benchmark(Application):
             return value.strip()
 
         self.directory = os.path.expanduser(getstr('config', 'bench_root'))
+        self.json_directory = os.path.expanduser(getstr('config', 'json_dir'))
+        self.uploaded_json_dir = os.path.join(self.json_directory, 'uploaded')
         self.src = os.path.expanduser(getstr('config', 'cpython_dir'))
         self.perf = os.path.expanduser(getstr('config', 'perf_dir'))
         self.prefix = os.path.join(self.directory, 'prefix')
@@ -522,6 +538,10 @@ class Benchmark(Application):
         args = self.parse_args()
         self.parse_config(args.config_filename)
 
+        if args.debug and self.upload:
+            print("ERROR: debug mode is incompatible with upload")
+            sys.exit(1)
+
         self.safe_makedirs(self.directory)
         self.run('sudo', 'python3', '-m', 'perf', 'system', 'tune',
                  cwd=self.perf)
@@ -548,3 +568,6 @@ class Benchmark(Application):
 
             for filename in self.failed:
                 print("FAILED: %s" % filename)
+
+            for error in self.errors:
+                print("ERROR: %s" % error)
