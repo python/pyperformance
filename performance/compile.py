@@ -164,7 +164,7 @@ class Application(object):
                 raise
 
 
-class BenchmarkPython(Application):
+class BenchmarkRevision(Application):
     def __init__(self, conf, revision, branch, patch=None, setup_log=False):
         super().__init__()
         self.conf = conf
@@ -487,9 +487,9 @@ class BenchmarkAll(Application):
         if is_branch:
             branch = revision
         else:
-            branch = branch or DEFAULT_BRANCH
+            branch = DEFAULT_BRANCH
 
-        bench = BenchmarkPython(self.conf, revision, branch, setup_log=False)
+        bench = BenchmarkRevision(self.conf, revision, branch, setup_log=False)
         if os.path.exists(bench.upload_filename):
             # Benchmark already uploaded
             self.skipped.append(bench.upload_filename)
@@ -536,7 +536,7 @@ class BenchmarkAll(Application):
 
 def cmd_compile(options):
     conf = parse_config(options.config_file)
-    bench = BenchmarkPython(conf, options.revision, options.branch,
+    bench = BenchmarkRevision(conf, options.revision, options.branch,
                             patch=conf.patch)
     bench.main()
 
@@ -545,7 +545,7 @@ def cmd_upload(options):
     conf = parse_config(options.config_file)
     revision = options.revision
     branch = options.branch
-    bench = BenchmarkPython(conf, revision, branch)
+    bench = BenchmarkRevision(conf, revision, branch)
     bench.filename = options.json_file
     bench.upload_filename = os.path.join(conf.uploaded_json_dir,
                                          os.path.basename(bench.filename))
