@@ -269,6 +269,7 @@ class BenchmarkRevision(Application):
         super().__init__()
         self.conf = conf
         self.patch = patch
+        self.failed = False
         self.uploaded = False
 
         if setup_log and self.conf.log:
@@ -364,9 +365,12 @@ class BenchmarkRevision(Application):
             cmd.extend(('--venv', self.conf.venv))
         if self.conf.debug:
             cmd.append('--debug-single-value')
-        self.run(*cmd)
+        exitcode = self.run_nocheck(*cmd)
+        if exitcode:
+            self.failed = True
 
-        self.update_metadata()
+        if os.path.exists(self.filename):
+            self.update_metadata()
 
     def update_metadata(self):
         if GIT:
@@ -497,7 +501,7 @@ class BenchmarkRevision(Application):
         self.python = Python(self, self.conf)
         self.compile_install()
         self.run_benchmark()
-        if self.conf.upload:
+        if not self.failed and self.conf.upload:
             self.upload()
 
         dt = time.monotonic() - self.start
@@ -505,8 +509,11 @@ class BenchmarkRevision(Application):
         self.logger.error("Benchmark completed in %s" % dt)
 
         if self.uploaded:
-            self.logger.error("Benchmark result uploaded and written into %s"
+            self.logger.error("Benchmark results uploaded and written into %s"
                               % self.upload_filename)
+        elif self.failed:
+            self.logger.error("Benchmark failed but results written into %s"
+                              % self.filename)
         else:
             self.logger.error("Benchmark result written into %s"
                               % self.filename)
@@ -670,11 +677,12 @@ class BenchmarkAll(Application):
         try:
             bench.main()
         except SystemExit:
-            self.failed.append(bench.filename)
-            return
+            bench.failed = True
 
         if bench.uploaded:
             self.uploaded.append(bench.upload_filename)
+        elif bench.failed:
+            self.failed.append(bench.filename)
         else:
             self.outputs.append(bench.filename)
 
