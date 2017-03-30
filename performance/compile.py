@@ -452,7 +452,7 @@ class BenchmarkRevision(Application):
             self.conf.upload = False
 
         self.sanity_checks()
-        if self.conf.tune:
+        if self.conf.system_tune:
             self.perf_system_tune()
 
         self.python = Python(self, self.conf)
@@ -528,7 +528,7 @@ def parse_config(filename, command):
         conf.install = getboolean('compile', 'install', True)
 
         # [run_benchmark]
-        conf.tune = getboolean('run_benchmark', 'tune', True)
+        conf.system_tune = getboolean('run_benchmark', 'system_tune', True)
         conf.benchmarks = getstr('run_benchmark', 'benchmarks', default='')
         conf.affinity = getstr('run_benchmark', 'affinity', default='')
         conf.upload = getboolean('run_benchmark', 'upload', False)
@@ -611,10 +611,10 @@ class BenchmarkAll(Application):
             self.skipped.append(bench.upload_filename)
             return
 
-        if self.conf.tune:
+        if self.conf.system_tune:
             bench.perf_system_tune()
             # only tune the system once
-            self.conf.tune = False
+            self.conf.system_tune = False
 
         if self.conf.update:
             bench.repository.fetch()

@@ -43,7 +43,7 @@ install = True
 
 [run_benchmark]
 # Run "sudo python3 -m perf system tune" before running benchmarks?
-tune = True
+system_tune = True
 
 # --benchmarks option for 'performance run'
 benchmarks =
