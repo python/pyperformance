@@ -414,7 +414,7 @@ def parse_config(filename):
             value = default
         return value.strip()
 
-    conf.directory = os.path.expanduser(getstr('config', 'bench_root'))
+    conf.directory = os.path.expanduser(getstr('config', 'bench_dir'))
     conf.json_directory = os.path.expanduser(getstr('config', 'json_dir'))
     conf.uploaded_json_dir = os.path.join(conf.json_directory, 'uploaded')
     conf.cpython_srcdir = os.path.expanduser(getstr('config', 'cpython_srcdir'))
@@ -424,7 +424,7 @@ def parse_config(filename):
     conf.log = os.path.join(conf.directory, 'bench.log')
     conf.lto = config.getboolean('lto', False)
     conf.pgo = config.getboolean('pgo', False)
-    conf.branches = getstr('config', 'branches').split()
+    conf.branches = getstr('compile_all', 'branches').split()
     conf.update = config.getboolean('update', True)
     conf.debug = config.getboolean('debug', False)
     conf.upload = config.getboolean('upload', False)

@@ -1,7 +1,7 @@
 [config]
 # Directory where Python is installed, venv is created, bench.log is written,
 # etc.
-bench_root = ~/bench_tmpdir
+bench_dir = ~/bench_tmpdir
 # Directory where JSON files are written. Uploaded files are moved
 # to json_dir/uploaded/
 json_dir = ~/json
@@ -10,8 +10,6 @@ cpython_srcdir = ~/cpython
 # local checkout of perf module used to run "perf system tune" and to load
 # the JSON file
 perf_dir = ~/perf
-# List of CPython Git branches
-branches = default 3.6 3.5 2.7
 # Update the Git repository before Git checkout?
 update = True
 # If True, compile CPython is debug mode and run benchmarks with
@@ -33,6 +31,11 @@ environment =
 executable =
 project =
 
+[compile_all]
+# List of CPython Git branches
+branches = default 3.6 3.5 2.7
+
+# For compile_all: list of revisions to benchmark
 [revisions]
 # list of 'sha1=' (default branch: 'master') or 'sha1=branch'
 # used by the "pyperformance compile_all" command
