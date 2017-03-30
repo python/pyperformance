@@ -7,7 +7,7 @@ debug = False
 
 [scm]
 # Directory of CPython source code
-cpython_srcdir = ~/cpython
+repo_dir = ~/cpython
 # Update the Git repository before Git checkout?
 update = True
 # Name of the Git remote, used to create revision of Git branch.
@@ -27,11 +27,9 @@ pgo = True
 [run_benchmark]
 # Run "sudo python3 -m perf system tune" before running benchmarks?
 tune = True
-# Comma-separated list of benchmarks to run:
-# value passed to "performance run --benchmarks=".
-# 'default' uses the default benchmark group.
+# --benchmarks option for 'performance run'
 benchmarks = default
-# --affinity parameter
+# --affinity option for 'perf system tune' and 'performance run'
 affinity =
 # Directory where JSON files are written. Uploaded files are moved
 # to json_dir/uploaded/

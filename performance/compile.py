@@ -161,7 +161,7 @@ class Python(object):
         self.app = app
         self.conf = conf
         self.logger = app.logger
-        self.cwd = conf.cpython_srcdir
+        self.cwd = conf.repo_dir
         self.program = None
 
     def run_nocheck(self, *cmd):
@@ -250,7 +250,7 @@ class BenchmarkRevision(Application):
         if setup_log and self.conf.log:
             self.setup_log()
 
-        self.repository = Repository(self, conf.cpython_srcdir)
+        self.repository = Repository(self, conf.repo_dir)
         if filename is None:
             self.init_revision_filenename(revision)
         else:
@@ -483,14 +483,14 @@ def parse_config(filename, command):
 
     if parse_compile:
         # [scm]
-        conf.cpython_srcdir = os.path.expanduser(getstr('scm', 'cpython_srcdir'))
+        conf.repo_dir = os.path.expanduser(getstr('scm', 'repo_dir'))
         conf.update = getboolean('scm', 'update', True)
         conf.git_remote = getstr('config', 'git_remote', default='remotes/origin')
 
         # [compile]
         conf.directory = os.path.expanduser(getstr('compile', 'bench_dir'))
-        conf.lto = getboolean('compile', 'lto', False)
-        conf.pgo = getboolean('compile', 'pgo', False)
+        conf.lto = getboolean('compile', 'lto', True)
+        conf.pgo = getboolean('compile', 'pgo', True)
 
         # [run_benchmark]
         conf.tune = getboolean('run_benchmark', 'tune', True)
