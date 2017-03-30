@@ -316,8 +316,9 @@ class BenchmarkRevision(Application):
                '-m', 'performance',
                'run',
                '--verbose',
-               '--benchmarks', self.conf.benchmarks,
                '--output', self.filename]
+        if self.conf.benchmarks:
+            cmd.extend(('--benchmarks', self.conf.benchmarks))
         if self.conf.affinity:
             cmd.extend(('--affinity', self.conf.affinity))
         if self.conf.venv:
@@ -533,7 +534,7 @@ def parse_config(filename, command):
 
         # [run_benchmark]
         conf.tune = getboolean('run_benchmark', 'tune', True)
-        conf.benchmarks = getstr('run_benchmark', 'benchmarks', default='default')
+        conf.benchmarks = getstr('run_benchmark', 'benchmarks', default='')
         conf.affinity = getstr('run_benchmark', 'affinity', default='')
         conf.upload = getboolean('run_benchmark', 'upload', False)
 
@@ -546,6 +547,10 @@ def parse_config(filename, command):
         conf.log = os.path.join(conf.directory,
                                 date.strftime('bench-%Y-%m-%d_%H-%M-%S.log'))
 
+        check_upload = conf.upload
+    else:
+        check_upload = True
+
     # [upload]
     UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')
 
@@ -554,7 +559,7 @@ def parse_config(filename, command):
     conf.project = getstr('upload', 'project', default='')
     conf.environment = getstr('upload', 'environment', default='')
 
-    if any(not getattr(conf, attr) for attr in UPLOAD_OPTIONS):
+    if check_upload and any(not getattr(conf, attr) for attr in UPLOAD_OPTIONS):
         print("ERROR: Upload requires to set the following "
               "configuration option in the the [upload] section "
               "of %s:"
