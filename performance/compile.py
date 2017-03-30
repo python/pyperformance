@@ -20,38 +20,104 @@ GIT = True
 DEFAULT_BRANCH = 'master' if GIT else 'default'
 
 
-class BenchmarkPython(object):
-    def __init__(self):
-        self.args = self.parse_args()
-        self.python = None
+class Repository(object):
+    def __init__(self, app, path):
+        self.path = path
+        self.logger = app.logger
 
+    def get_output(self, *cmd):
+        return self.app.get_output(*cmd, cwd=self.path)
+
+    def run(self, *cmd):
+        self.app.run(*cmd, cwd=self.path)
+
+    def fetch(self):
+        if GIT:
+            self.run('git', 'fetch')
+        else:
+            self.run('hg', 'pull')
+
+    def get_branch(self):
+        stdout = self.get_output('git', 'branch')
+        for line in stdout.splitlines():
+            if line.startswith('* '):
+                return line[2:]
+        self.logger.error("ERROR: fail to get the current Git branch")
+        sys.exit(1)
+
+    def checkout(self, revision, fetch):
+        if GIT:
+            # remove all untracked files
+            self.run('git', 'clean', '-fdx')
+
+            # checkout to requested revision
+            self.run('git', 'reset', '--hard', 'HEAD')
+            self.run('git', 'checkout', revision)
+
+            branch = self.get_branch()
+            if revision == branch:
+                # revision is a branch
+                self.run('git', 'merge', '--ff')
+
+            # remove all untracked files
+            self.run('git', 'clean', '-fdx')
+        else:
+            self.run('hg', 'up', '--clean', '-r', revision)
+            # FIXME: run hg purge?
+
+    def get_revision(self):
+        if GIT:
+            revision = self.get_output('git', 'show', '-s',
+                                            '--pretty=format:%H')
+        else:
+            revision = self.get_output('hg', 'id', '-i')
+        revision = revision.strip()
+        if not revision:
+            self.logger.error("ERROR: unable to get the revision")
+            sys.exit(1)
+        return revision
+
+    def get_revision_info(self, revision):
+        if GIT:
+            cmd = ['git', 'log', '--format=%H|%ci', '%s^!' % revision]
+        else:
+            cmd = ['hg', 'log', '--template', '{node}|{date|isodate}', '-r', revision]
+        stdout = self.get_output(*cmd)
+        if GIT:
+            node, date = stdout.split('|')
+            # drop second and timezone
+            date = datetime.datetime.strptime(date[:16], '%Y-%m-%d %H:%M')
+        else:
+            node, date = stdout.split('|')
+            date = datetime.datetime.strptime(date[:16], '%Y-%m-%d %H:%M')
+        return (node, date)
+
+
+class Application(object):
+    def __init__(self):
         log_format = '%(asctime)-15s: %(message)s'
         logging.basicConfig(format=log_format)
         self.logger = logging.getLogger()
-        if self.args.log:
-            handler = logging.FileHandler(self.args.log)
-            formatter = logging.Formatter(log_format)
-            handler.setFormatter(formatter)
-            self.logger.addHandler(handler)
 
     def create_subprocess(self, cmd, **kwargs):
         self.logger.error("+ %s" % ' '.join(cmd))
         return subprocess.Popen(cmd, **kwargs)
 
-    def run_nocheck(self, *cmd, stdin_filename=None):
-        kwargs = {}
+    def run_nocheck(self, *cmd, stdin_filename=None, **kwargs):
         if stdin_filename:
             stdin_file = open(stdin_filename, "rb", 0)
             fd = stdin_file.fileno()
             kwargs = {'stdin': fd, 'pass_fds': [fd]}
         else:
             stdin_file = None
-        proc = self.create_subprocess(cmd,
-                                      stdout=subprocess.PIPE,
-                                      stderr=subprocess.STDOUT,
-                                      universal_newlines=True,
-                                      **kwargs)
         try:
+            proc = self.create_subprocess(cmd,
+                                          stdout=subprocess.PIPE,
+                                          stderr=subprocess.STDOUT,
+                                          universal_newlines=True,
+                                          **kwargs)
+
+            # FIXME: support Python 2?
             with proc:
                 for line in proc.stdout:
                     line = line.rstrip()
@@ -68,10 +134,12 @@ class BenchmarkPython(object):
         if exitcode:
             sys.exit(exitcode)
 
-    def get_output(self, *cmd):
+    def get_output(self, *cmd, **kwargs):
         proc = self.create_subprocess(cmd,
                                       stdout=subprocess.PIPE,
-                                      universal_newlines=True)
+                                      universal_newlines=True,
+                                      **kwargs)
+        # FIXME: support Python 2?
         with proc:
             stdout = proc.communicate()[0]
 
@@ -82,22 +150,23 @@ class BenchmarkPython(object):
 
         return stdout
 
-    def get_branch(self):
-        stdout = self.get_output('git', 'branch')
-        for line in stdout.splitlines():
-            if line.startswith('* '):
-                return line[2:]
-        self.logger.error("ERROR: fail to get the current Git branch")
-        sys.exit(1)
+
+class BenchmarkPython(Application):
+    def __init__(self):
+        super().__init__()
+        self.args = self.parse_args()
+        self.python = None
+
+        if self.args.log:
+            handler = logging.FileHandler(self.args.log)
+            formatter = logging.Formatter(log_format)
+            handler.setFormatter(formatter)
+            self.logger.addHandler(handler)
 
     def prepare_code(self):
         args = self.args
 
-        if args.pull:
-            if GIT:
-                self.run('git', 'fetch')
-            else:
-                self.run('hg', 'pull')
+        self.repository = Repository(self, os.getcwd())
 
         self.logger.error('')
         text = "Benchmark CPython revision %s" % args.revision
@@ -105,37 +174,15 @@ class BenchmarkPython(object):
         self.logger.error("=" * len(text))
         self.logger.error('')
 
-        if GIT:
-            # remove all untracked files
-            self.run('git', 'clean', '-fdx')
-
-            # checkout to requested revision
-            self.run('git', 'reset', '--hard', 'HEAD')
-            self.run('git', 'checkout', args.revision)
-
-            branch = self.get_branch()
-            if args.revision == branch:
-                self.run('git', 'merge', '--ff')
-
-            # remove all untracked files
-            self.run('git', 'clean', '-fdx')
-        else:
-            self.run('hg', 'up', '--clean', '-r', args.revision)
-            # FIXME: run hg purge?
+        if args.pull:
+            self.repository.fetch()
+        self.repository.checkout(args.revision)
 
         if args.patch:
             self.logger.error('Apply patch %s' % args.patch)
             self.run('patch', '-p1', stdin_filename=args.patch)
 
-        if GIT:
-            full_revision = self.get_output('git', 'show', '-s',
-                                            '--pretty=format:%H')
-        else:
-            full_revision = self.get_output('hg', 'id', '-i')
-        full_revision = full_revision.strip()
-        if not full_revision:
-            self.logger.error("ERROR: unable to get the revision")
-            sys.exit(1)
+        full_revision = self.repository.get_revision()
         self.logger.error("Revision: %s" % full_revision)
 
     def compile(self):
@@ -302,44 +349,15 @@ class BenchmarkPython(object):
         self.logger.error("Benchmark completed in %s" % dt)
 
 
-class Benchmark(object):
+class Benchmark(Application):
     def __init__(self):
+        super().__init__()
         bench_dir = os.path.realpath(os.path.dirname(__file__))
         self.bench_cpython = os.path.join(bench_dir, 'bench_cpython.py')
         self.outputs = []
         self.skipped = []
         self.uploaded = []
         self.failed = []
-
-    def get_revision_info(self, revision):
-        if GIT:
-            cmd = ['git', 'log', '--format=%H|%ci', '%s^!' % revision]
-        else:
-            cmd = ['hg', 'log', '--template', '{node}|{date|isodate}', '-r', revision]
-        proc = subprocess.Popen(cmd,
-                                stdout=subprocess.PIPE,
-                                cwd=self.src,
-                                universal_newlines=True)
-        stdout = proc.communicate()[0]
-        if proc.returncode:
-            sys.exit(proc.returncode)
-        if GIT:
-            node, date = stdout.split('|')
-            # drop second and timezone
-            date = datetime.datetime.strptime(date[:16], '%Y-%m-%d %H:%M')
-        else:
-            node, date = stdout.split('|')
-            date = datetime.datetime.strptime(date[:16], '%Y-%m-%d %H:%M')
-        return (node, date)
-
-    def run_cmd(self, cmd, **kw):
-        check = kw.pop('check', True)
-        print('+ %s' % ' '.join(cmd))
-        proc = subprocess.Popen(cmd, **kw)
-        exitcode = proc.wait()
-        if check and exitcode:
-            sys.exit(exitcode)
-        return exitcode
 
     def encode_benchmark(self, bench, branch, revision):
         data = {}
@@ -389,11 +407,7 @@ class Benchmark(object):
         else:
             branch = branch or DEFAULT_BRANCH
 
-        if is_branch:
-            self.run_cmd(('git', 'checkout', branch), cwd=self.src)
-            self.run_cmd(('git', 'merge', '--ff'), cwd=self.src)
-
-        node, date = self.get_revision_info(revision)
+        node, date = self.repository.get_revision_info(revision)
         short_node = node[:12]
         date = date.strftime('%Y-%m-%d_%H-%M')
         filename = '%s-%s-%s' % (date, branch, short_node)
@@ -420,7 +434,7 @@ class Benchmark(object):
         if self.debug:
             cmd.append('--debug')
 
-        exitcode = self.run_cmd(cmd, check=False)
+        exitcode = self.run_nocheck(cmd)
         if exitcode:
             self.failed.append(filename)
             return
@@ -514,13 +528,12 @@ class Benchmark(object):
         sys.path.insert(0, self.perf)
 
         self.safe_makedirs(self.directory)
-        self.run_cmd(('sudo', 'python3', '-m', 'perf', 'system', 'tune'),
-                     cwd=self.perf)
+        self.run('sudo', 'python3', '-m', 'perf', 'system', 'tune',
+                 cwd=self.perf)
+
+        self.repository = Repository(self, self.src)
         if self.update:
-            if GIT:
-                self.run_cmd(('git', 'fetch'), cwd=self.src)
-            else:
-                self.run_cmd(('hg', 'pull'), cwd=self.src)
+            self.repository.fetch()
 
         try:
             for revision, branch in self.revisions:
