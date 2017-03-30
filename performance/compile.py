@@ -275,7 +275,9 @@ class BenchmarkPython(Application):
 
         cmd = [self.python, '-u',
                '-m', 'performance',
-               'run', '--verbose']
+               'run',
+               '--verbose',
+               '--benchmarks', self.conf.benchmarks]
         cmd.extend(('--output', self.filename))
         if self.conf.venv:
             cmd.extend(('--venv', self.conf.venv))
@@ -416,7 +418,6 @@ def parse_config(filename):
 
     conf.directory = os.path.expanduser(getstr('config', 'bench_dir'))
     conf.json_directory = os.path.expanduser(getstr('config', 'json_dir'))
-    conf.uploaded_json_dir = os.path.join(conf.json_directory, 'uploaded')
     conf.cpython_srcdir = os.path.expanduser(getstr('config', 'cpython_srcdir'))
     conf.perf = os.path.expanduser(getstr('config', 'perf_dir'))
     conf.prefix = os.path.join(conf.directory, 'prefix')
@@ -424,15 +425,17 @@ def parse_config(filename):
     conf.log = os.path.join(conf.directory, 'bench.log')
     conf.lto = config.getboolean('lto', False)
     conf.pgo = config.getboolean('pgo', False)
-    conf.branches = getstr('compile_all', 'branches').split()
     conf.update = config.getboolean('update', True)
+    conf.benchmarks = getstr('config', 'benchmarks', default='default')
     conf.debug = config.getboolean('debug', False)
-    conf.upload = config.getboolean('upload', False)
 
     if conf.debug:
         conf.pgo = False
         conf.lto = False
 
+    # upload
+    conf.upload = config.getboolean('upload', False)
+    conf.uploaded_json_dir = os.path.join(conf.json_directory, 'uploaded')
     if conf.upload:
         UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')
 
@@ -453,6 +456,8 @@ def parse_config(filename):
                 print(text)
             sys.exit(1)
 
+    # compile_all
+    conf.branches = getstr('compile_all', 'branches').split()
     conf.revisions = []
     try:
         revisions = cfgobj.items('revisions')

@@ -18,6 +18,10 @@ update = True
 debug = False
 # Upload generated JSON file?
 upload = False
+# Comma-separated list of benchmarks to run:
+# value passed to "performance run --benchmarks=".
+# 'default' uses the default benchmark group.
+benchmarks = default
 
 # Link Time Optimization (LTO)?
 lto = True
