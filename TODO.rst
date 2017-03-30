@@ -10,6 +10,9 @@ scripts
   - performance compile_all bench.conf # pick branches and revisions from conf file
   - performance upload bench.conf file.json
 
+* Add --rigorous option
+* Add -b option
+
 TODO
 ====
 
