@@ -4,7 +4,10 @@ Changelog
 Version 0.5.4
 -------------
 
-* Add ``pyperformance compile`` command
+* Add ``pyperformance compile`` command to compile, install and benchmark
+  Python
+* Add ``pyperformance compile`` command to upload a JSON file to a Codespeed
+  instance
 
 Version 0.5.3 (2017-03-27)
 --------------------------

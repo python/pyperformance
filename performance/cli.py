@@ -103,6 +103,19 @@ def parse_args():
                      help='Python benchmarked revision')
     cmds.append(cmd)
 
+    # upload
+    cmd = subparsers.add_parser(
+        'upload', help='Upload JSON results to a Codespeed website')
+    cmd.add_argument('config_filename',
+                     help='Configuration filename')
+    cmd.add_argument('json_file',
+                     help='JSON filename')
+    cmd.add_argument('revision',
+                     help='Python benchmarked revision')
+    cmd.add_argument('branch',
+                     help='Git branch')
+    cmds.append(cmd)
+
     # venv
     cmd = subparsers.add_parser('venv',
                                 help='Actions on the virtual environment')
@@ -160,6 +173,10 @@ def _main():
     elif options.action == 'compile':
         from performance.compile import cmd_compile
         cmd_compile(options)
+        sys.exit()
+    elif options.action == 'upload':
+        from performance.compile import cmd_upload
+        cmd_upload(options)
         sys.exit()
 
     if not options.inside_venv:

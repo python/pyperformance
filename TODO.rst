@@ -12,6 +12,7 @@ scripts
 
 * Add --rigorous option
 * Add -b option
+* pyperformance upload: get revision and branch from the JSON file directly
 
 TODO
 ====

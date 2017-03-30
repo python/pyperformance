@@ -165,8 +165,10 @@ class BenchmarkPython(Application):
         super().__init__()
         self.conf = conf
         self.revision = revision
+        self.branch = branch
         self.patch = patch
         self.python = None
+        self.uploaded = False
 
         self.safe_makedirs(self.conf.directory)
         self.safe_makedirs(self.conf.json_directory)
@@ -189,7 +191,10 @@ class BenchmarkPython(Application):
             filename = '%s-%s-%s' % (date, branch, short_node)
         else:
             filename = '%s-%s' % (date, short_node)
-        self.filename = os.path.join(self.conf.json_directory, filename + ".json.gz")
+        filename = filename + ".json.gz"
+        self.filename = os.path.join(self.conf.json_directory, filename)
+        self.upload_filename = os.path.join(self.conf.uploaded_json_dir,
+                                            os.path.basename(filename))
 
     def prepare_code(self):
         self.logger.error('')
@@ -281,15 +286,65 @@ class BenchmarkPython(Application):
             cmd.append('--debug-single-value')
         self.run(*cmd)
 
+    def upload(self):
+        if self.uploaded:
+            raise Exception("already uploaded")
+
+        if os.path.exists(self.upload_filename):
+            self.logger.error("ERROR: cannot upload, %s file ready exists!"
+                              % self.upload_filename)
+            sys.exit(1)
+
+        # Import perf module from --perf directory
+        sys.path.insert(0, self.conf.perf)
+
+        import perf
+
+        suite = perf.BenchmarkSuite.load(self.filename)
+        data = [self.encode_benchmark(bench, self.branch, self.revision)
+                for bench in suite]
+        data = dict(json=json.dumps(data))
+
+        url = self.conf.url
+        if not url.endswith('/'):
+            url += '/'
+        url += 'result/add/json/'
+        self.logger.error("Upload %s benchmarks to %s" % (len(suite), url))
+
+        try:
+            response = urlopen(data=urlencode(data).encode('utf-8'), url=url)
+            body = response.read()
+            response.close()
+        except HTTPError as err:
+            self.logger.error("HTTP Error: %s" % err)
+            errmsg = err.read().decode('utf8')
+            self.logger.error(errmsg)
+            err.close()
+            return
+
+        self.logger.error('Response: "%s"' % body.decode('utf-8'))
+
+        self.logger.error("Move %s to %s"
+                          % (self.filename, self.upload_filename))
+        os.move(self.filename, self.upload_filename)
+
+        self.uploaded = True
+
     def main(self):
-        # FIXME
+        # FIXME: support run without prefix?
         if not self.conf.prefix:
             self.logger.error("ERROR: running benchmark without installation "
                               "is currently broken")
             sys.exit(1)
 
         if os.path.exists(self.filename):
-            self.logger.error("ERROR: %s already exists" % self.filename)
+            self.logger.error("ERROR: %s file already exists!"
+                              % self.filename)
+            sys.exit(1)
+
+        if self.conf.upload and os.path.exists(self.upload_filename):
+            self.logger.error("ERROR: cannot upload, %s file already exists!"
+                              % self.upload_filename)
             sys.exit(1)
 
         self.start = time.monotonic()
@@ -308,6 +363,8 @@ class BenchmarkPython(Application):
         self.compile()
         self.install()
         self.run_benchmark()
+        if self.conf.upload:
+            self.upload()
 
         dt = time.monotonic() - self.start
         dt = datetime.timedelta(seconds=dt)
@@ -395,7 +452,6 @@ class Benchmark(Application):
         self.skipped = []
         self.uploaded = []
         self.failed = []
-        self.errors = []
         self.logger = logging.getLogger()
 
     def encode_benchmark(self, bench, branch, revision):
@@ -415,38 +471,6 @@ class Benchmark(Application):
         data['environment'] = self.conf.environment
         return data
 
-    def upload_json(self, filename, branch, revision):
-        # Import perf module from --perf directory
-        sys.path.insert(0, self.conf.perf)
-
-        import perf
-
-        suite = perf.BenchmarkSuite.load(filename)
-        data = [self.encode_benchmark(bench, branch, revision) for bench in suite]
-        data = dict(json=json.dumps(data))
-
-        url = self.conf.url
-        if not url.endswith('/'):
-            url += '/'
-        url += 'result/add/json/'
-        self.logger.error("Upload %s benchmarks to %s" % (len(suite), url))
-
-        try:
-            response = urlopen(data=urlencode(data).encode('utf-8'), url=url)
-            self.logger.error('Response: "%s"' % response.read().decode('utf-8'))
-            response.close()
-            return True
-        except HTTPError as err:
-            self.logger.error("HTTP Error: %s" % err)
-            errmsg = err.read().decode('utf8')
-            self.logger.error(errmsg)
-            err.close()
-            return False
-
-    def error(self, msg):
-        self.logger.error("ERROR: %s" % msg)
-        self.errors.append(msg)
-
     def benchmark(self, is_branch, revision):
         if is_branch:
             branch = revision
@@ -454,42 +478,20 @@ class Benchmark(Application):
             branch = branch or DEFAULT_BRANCH
 
         bench = BenchmarkPython(self.conf, node, branch)
-        filename = bench.filename
-        if os.path.exists(filename):
-            self.skipped.append(filename)
+        if os.path.exists(bench.upload_filename):
+            # Benchmark already uploaded
+            self.skipped.append(bench.upload_filename)
             return
-        bench.main(node)
-
-        if self.options:
-            cmd.extend(self.conf.options)
-        if self.conf.debug:
-            cmd.append('--debug')
-
-        exitcode = self.run_nocheck(cmd)
-        if exitcode:
-            self.failed.append(filename)
+        try:
+            bench.main(node)
+        except SystemExit:
+            self.failed.append(bench.filename)
             return
 
-        if self.conf.upload:
-            filename2 = os.path.join(self.conf.uploaded_json_dir,
-                                     os.path.basename(filename))
-            if os.path.exists(filename2):
-                self.error("cannot upload, %s file ready exists!" % filename2)
-            else:
-                # FIXME: pass the full node, not only the short node
-                # CodeSpeed needs to be modified to only displays short nodes
-                uploaded = self.upload_json(filename, branch, short_node)
-
-                if uploaded:
-                    os.move(filename, filename2)
-                    filename = filename2
+        if bench.uploaded:
+            self.uploaded.append(bench.upload_filename)
         else:
-            uploaded = False
-
-        if uploaded:
-            self.uploaded.append(filename)
-        else:
-            self.outputs.append(filename)
+            self.outputs.append(bench.filename)
 
     def parse_args(self):
         parser = argparse.ArgumentParser()
@@ -532,11 +534,15 @@ class Benchmark(Application):
             for filename in self.failed:
                 self.logger.error("FAILED: %s" % filename)
 
-            for error in self.errors:
-                self.logger.error("ERROR: %s" % error)
-
 
 def cmd_compile(options):
     conf = parse_config(options.config_filename)
     revision = options.revision
     BenchmarkPython(conf, revision).main()
+
+
+def cmd_upload(options):
+    conf = parse_config(options.config_filename)
+    revision = options.revision
+    branch = optioins.branch
+    BenchmarkPython(conf, revision, branch).upload()

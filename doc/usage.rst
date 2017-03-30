@@ -65,6 +65,7 @@ pyperformance actions::
     show                Display a benchmark file
     compare             Compare two benchmark files
     compile             Compile, install and benchmark CPython
+    upload              Upload JSON file
     list                List benchmarks which run command would run
     list_groups         List all benchmark groups
     venv                Actions on the virtual environment
@@ -151,6 +152,16 @@ Usage::
     pyperformance compile CONFIG_FILE REVISION
 
 Compile Python, install Python and run benchmarks on the installed Python.
+
+
+upload
+------
+
+Usage::
+
+    pyperformance upload CONFIG_FILE JSON_FILE REVISION BRANCH
+
+Upload results from a JSON file to a Codespeed website.
 
 
 venv
