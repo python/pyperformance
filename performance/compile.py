@@ -711,9 +711,9 @@ class BenchmarkAll(Application):
 
         self.logger.error("Timings:")
         self.logger.error("- min: %s" % format_time(min(self.timings)))
-        stdev = statistics.stdev(self.timings)
         text = "- avg: %s" % format_time(statistics.mean(self.timings))
         if len(self.timings) >= 2:
+            stdev = statistics.stdev(self.timings)
             text = "%s -- std dev: %s" % (text, format_time(stdev))
         self.logger.error(text)
         self.logger.error("- max: %s" % format_time(max(self.timings)))
