@@ -353,7 +353,8 @@ class BenchmarkRevision(Application):
     def main(self):
         self.start = time.monotonic()
 
-        self.logger.error("Run benchmarks on Python %s" % self.revision)
+        self.logger.error("Compile and benchmarks Python rev %s (branch %s)"
+                          % (self.revision, self.branch))
         self.logger.error('')
 
         if self.conf.debug and self.conf.upload:
