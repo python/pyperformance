@@ -169,6 +169,8 @@ class BenchmarkPython(Application):
         self.python = None
 
         self.safe_makedirs(self.conf.directory)
+        self.safe_makedirs(self.conf.json_directory)
+        self.safe_makedirs(self.conf.uploaded_json_dir)
 
         # FIXME: don't add multiple handlers when BenchmarkPython is created from Benchmark
         if self.conf.log:
