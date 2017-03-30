@@ -7,9 +7,6 @@ bench_dir = ~/bench_tmpdir
 json_dir = ~/json
 # Directory of CPython source code
 cpython_srcdir = ~/cpython
-# local checkout of perf module used to run "perf system tune" and to load
-# the JSON file
-perf_dir = ~/perf
 # Update the Git repository before Git checkout?
 update = True
 # If True, compile CPython is debug mode and run benchmarks with

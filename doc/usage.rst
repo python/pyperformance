@@ -200,7 +200,7 @@ upload
 
 Usage::
 
-    pyperformance upload CONFIG_FILE JSON_FILE REVISION BRANCH
+    pyperformance upload CONFIG_FILE JSON_FILE
 
 Upload results from a JSON file to a Codespeed website.
 

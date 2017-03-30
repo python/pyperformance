@@ -4,6 +4,7 @@ import errno
 import json
 import logging
 import os.path
+import perf
 import shutil
 import subprocess
 import sys
@@ -165,7 +166,7 @@ class Application(object):
 
 
 class BenchmarkRevision(Application):
-    def __init__(self, conf, revision, branch, patch=None, setup_log=False):
+    def __init__(self, conf, revision, branch, patch=None, setup_log=False, filename=None):
         super().__init__()
         self.conf = conf
         self.branch = branch
@@ -181,15 +182,16 @@ class BenchmarkRevision(Application):
             self.setup_log()
 
         self.repository = Repository(self, conf.cpython_srcdir)
+        if filename is None:
+            self.revision, date = self.repository.get_revision_info(revision)
+            date = date.strftime('%Y-%m-%d_%H-%M')
 
-        self.revision, date = self.repository.get_revision_info(revision)
-        date = date.strftime('%Y-%m-%d_%H-%M')
+            filename = '%s-%s-%s' % (date, branch, self.revision[:12])
+            filename = filename + ".json.gz"
+            self.filename = os.path.join(self.conf.json_directory, filename)
+        else:
+            self.filename = filename
 
-        filename = '%s-%s-%s' % (date, branch, self.revision[:12])
-        filename = filename + ".json.gz"
-        self.filename = os.path.join(self.conf.json_directory, filename)
-        # FIXME: convert to a property to avoid inconsistencies if filename
-        # is modified? see cmd_upload()
         self.upload_filename = os.path.join(self.conf.uploaded_json_dir,
                                             os.path.basename(filename))
 
@@ -285,6 +287,15 @@ class BenchmarkRevision(Application):
             cmd.append('--debug-single-value')
         self.run(*cmd)
 
+    def update_metadata(self):
+        bench = perf.BenchmarkSuite.load(self.filename)
+        if GIT:
+            metadata = {'git_branch': self.branch, 'git_revision': self.revision}
+        else:
+            metadata = {'hg_branch': self.branch, 'hg_revision': self.revision}
+        bench.update_metadata(metadata)
+        bench.dump(self.filename, replace=True)
+
     def encode_benchmark(self, bench):
         data = {}
         data['benchmark'] = bench.get_name()
@@ -314,11 +325,6 @@ class BenchmarkRevision(Application):
             self.logger.error("ERROR: cannot upload, %s file ready exists!"
                               % self.upload_filename)
             sys.exit(1)
-
-        # Import perf module from --perf directory
-        sys.path.insert(0, self.conf.perf)
-
-        import perf
 
         suite = perf.BenchmarkSuite.load(self.filename)
         data = [self.encode_benchmark(bench)
@@ -388,6 +394,7 @@ class BenchmarkRevision(Application):
         self.compile()
         self.install()
         self.run_benchmark()
+        self.update_metadata()
         if self.conf.upload:
             self.upload()
 
@@ -420,7 +427,6 @@ def parse_config(filename):
     conf.directory = os.path.expanduser(getstr('config', 'bench_dir'))
     conf.json_directory = os.path.expanduser(getstr('config', 'json_dir'))
     conf.cpython_srcdir = os.path.expanduser(getstr('config', 'cpython_srcdir'))
-    conf.perf = os.path.expanduser(getstr('config', 'perf_dir'))
     conf.prefix = os.path.join(conf.directory, 'prefix')
     conf.venv = os.path.join(conf.directory, 'venv')
     conf.log = os.path.join(conf.directory, 'bench.log')
@@ -504,8 +510,7 @@ class BenchmarkAll(Application):
 
     def main(self):
         self.safe_makedirs(self.conf.directory)
-        self.run('sudo', 'python3', '-m', 'perf', 'system', 'tune',
-                 cwd=self.conf.perf)
+        self.run('sudo', 'python3', '-m', 'perf', 'system', 'tune')
 
         self.repository = Repository(self, self.conf.cpython_srcdir)
         if self.conf.update:
@@ -544,12 +549,18 @@ def cmd_compile(options):
 
 def cmd_upload(options):
     conf = parse_config(options.config_file)
-    revision = options.revision
-    branch = options.branch
-    bench = BenchmarkRevision(conf, revision, branch)
-    bench.filename = options.json_file
-    bench.upload_filename = os.path.join(conf.uploaded_json_dir,
-                                         os.path.basename(bench.filename))
+
+    filename = options.json_file
+    bench = perf.BenchmarkSuite.load(filename)
+    metadata = bench.get_metadata()
+    try:
+        revision = metadata['git_revision']
+        branch = metadata['git_branch']
+    except KeyError:
+        revision = metadata['hg_revision']
+        branch = metadata['hg_branch']
+
+    bench = BenchmarkRevision(conf, revision, branch, filename=filename)
     bench.upload()
 
 
