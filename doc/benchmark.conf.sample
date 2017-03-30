@@ -20,7 +20,10 @@ git_remote = remotes/origin
 
 
 [compile]
-# Directory where: logs are written, Python is installed, venv is created, ...
+# Create files into bench_dir:
+# - bench_dir/bench.log
+# - bench_dir/prefix/: where Python is installed
+# - bench_dir/venv/: Virtual environment used by performance
 bench_dir = ~/bench_tmpdir
 # Link Time Optimization (LTO)?
 lto = True

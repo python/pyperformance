@@ -319,6 +319,8 @@ class BenchmarkRevision(Application):
             metadata = {'git_branch': self.branch, 'git_revision': self.revision}
         else:
             metadata = {'hg_branch': self.branch, 'hg_revision': self.revision}
+        if self.patch:
+            metadata['patch_file'] = self.patch
 
         suite = perf.BenchmarkSuite.load(self.filename)
         for bench in suite:
@@ -453,6 +455,13 @@ class BenchmarkRevision(Application):
         dt = datetime.timedelta(seconds=dt)
         self.logger.error("Benchmark completed in %s" % dt)
 
+        if self.uploaded:
+            self.logger.error("Benchmark result uploaded and written into %s"
+                              % self.filename)
+        else:
+            self.logger.error("Benchmark result written into %s"
+                              % self.filename)
+
 
 class Configuration:
     pass
@@ -541,7 +550,7 @@ def parse_config(filename, command):
 
     if parse_compile_all:
         # [compile_all]
-        conf.branches = getstr('compile_all', 'branches').split()
+        conf.branches = getstr('compile_all', 'branches', '').split()
         conf.revisions = []
         try:
             revisions = cfgobj.items('compile_all_revisions')
