@@ -199,13 +199,6 @@ class Python(object):
         else:
             self.run('make')
 
-    def rmtree(self, directory):
-        if not os.path.exists(directory):
-            return
-
-        self.logger.error("Remove directory %s" % directory)
-        shutil.rmtree(directory)
-
     def install_python(self):
         prefix = self.conf.prefix
 
@@ -215,11 +208,15 @@ class Python(object):
             program_ext = ''
 
         if not prefix:
+            # don't install: run python from the compilation directory
             self.program = "./python" + program_ext
             return
 
-        self.rmtree(prefix)
+        if os.path.exists(prefix):
+            self.logger.error("Remove directory %s" % prefix)
+            shutil.rmtree(prefix)
 
+        self.app.safe_makedirs(self.conf.directory)
         self.run('make', 'install')
 
         self.program = os.path.join(prefix, "bin", "python" + program_ext)
@@ -266,8 +263,13 @@ class BenchmarkRevision(Application):
         date = date.strftime('%Y-%m-%d_%H-%M')
 
         filename = '%s-%s-%s' % (date, self.branch, self.revision[:12])
+        if self.patch:
+            filename = "%s-patch-%s" % os.path.splitext(self.patch)[0]
         filename = filename + ".json.gz"
-        self.filename = os.path.join(self.conf.json_dir, filename)
+        if self.patch:
+            self.filename = os.path.join(conf.json_patch_dir, filename)
+        else:
+            self.filename = os.path.join(self.conf.json_dir, filename)
 
     def compile_install(self):
         if self.conf.update:
@@ -277,10 +279,14 @@ class BenchmarkRevision(Application):
         self.python.patch(self.patch)
 
         self.python.compile()
+
         self.python.install_python()
+
         self.python.install_performance()
 
     def run_benchmark(self):
+        self.safe_makedirs(os.path.dirname(self.filename))
+
         # Create venv
         cmd = [self.python.program, '-u', '-m', 'performance',
                'venv', 'recreate']
@@ -349,6 +355,8 @@ class BenchmarkRevision(Application):
             self.logger.error("ERROR: cannot upload, %s file ready exists!"
                               % self.upload_filename)
             sys.exit(1)
+
+        self.safe_makedirs(self.conf.uploaded_json_dir)
 
         suite = perf.BenchmarkSuite.load(self.filename)
         data = [self.encode_benchmark(bench)
@@ -425,12 +433,11 @@ class BenchmarkRevision(Application):
             self.logger.error("Write logs into %s" % self.conf.log)
 
         self.sanity_checks()
+        if self.patch:
+            # Don't upload resuls of patched Python
+            self.conf.upload = False
         if self.conf.tune:
             self.perf_system_tune()
-
-        self.safe_makedirs(self.conf.directory)
-        self.safe_makedirs(self.conf.json_dir)
-        self.safe_makedirs(self.conf.uploaded_json_dir)
 
         self.python = Python(self, conf)
         self.compile_install()
@@ -481,6 +488,7 @@ def parse_config(filename, command):
 
     # [config]
     conf.json_dir = os.path.expanduser(getstr('config', 'json_dir'))
+    conf.json_patch_dir = os.path.join(conf.json_dir, 'patch')
     conf.uploaded_json_dir = os.path.join(conf.json_dir, 'uploaded')
     conf.debug = getboolean('config', 'debug', False)
 

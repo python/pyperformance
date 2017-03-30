@@ -1,6 +1,7 @@
 [config]
-# Directory where JSON files are written. Uploaded files are moved
-# to json_dir/uploaded/
+# Directory where JSON files are written.
+# - uploaded files are moved to json_dir/uploaded/
+# - results of patched Python are written into json_dir/patch/
 json_dir = ~/json
 # If True, compile CPython is debug mode and run benchmarks with
 # --debug-single-sample. Option used to check a configuration.
