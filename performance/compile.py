@@ -100,8 +100,9 @@ class Repository(object):
         stdout = self.get_output(*cmd)
         if GIT:
             node, date = stdout.split('|')
-            # drop second and timezone
-            date = datetime.datetime.strptime(date[:16], '%Y-%m-%d %H:%M')
+            date = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S %z')
+            # convert local date to UTC
+            date = (date - date.utcoffset()).replace(tzinfo=datetime.timezone.utc)
         else:
             node, date = stdout.split('|')
             date = datetime.datetime.strptime(date[:16], '%Y-%m-%d %H:%M')
@@ -309,6 +310,8 @@ class BenchmarkRevision(Application):
             sys.exit(1)
 
         self.revision, date = self.repository.get_revision_info(revision)
+        self.logger.error("Commit %s: %s" % (self.revision, date))
+
         date = date.strftime('%Y-%m-%d_%H-%M')
 
         filename = '%s-%s-%s' % (date, self.branch, self.revision[:12])
