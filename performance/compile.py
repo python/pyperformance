@@ -282,12 +282,12 @@ class BenchmarkPython(Application):
     def main(self):
         # FIXME
         if not self.conf.prefix:
-            print("ERROR: running benchmark without installation "
-                  "is currently broken")
+            self.logger.error("ERROR: running benchmark without installation "
+                              "is currently broken")
             sys.exit(1)
 
         if os.path.exists(self.filename):
-            print("ERROR: %s already exists" % self.filename)
+            self.logger.error("ERROR: %s already exists" % self.filename)
             sys.exit(1)
 
         self.start = time.monotonic()
@@ -394,6 +394,7 @@ class Benchmark(Application):
         self.uploaded = []
         self.failed = []
         self.errors = []
+        self.logger = logging.getLogger()
 
     def encode_benchmark(self, bench, branch, revision):
         data = {}
@@ -426,22 +427,22 @@ class Benchmark(Application):
         if not url.endswith('/'):
             url += '/'
         url += 'result/add/json/'
-        print("Upload %s benchmarks to %s" % (len(suite), url))
+        self.logger.error("Upload %s benchmarks to %s" % (len(suite), url))
 
         try:
             response = urlopen(data=urlencode(data).encode('utf-8'), url=url)
-            print('Response: "%s"' % response.read().decode('utf-8'))
+            self.logger.error('Response: "%s"' % response.read().decode('utf-8'))
             response.close()
             return True
         except HTTPError as err:
-            print("HTTP Error: %s" % err)
+            self.logger.error("HTTP Error: %s" % err)
             errmsg = err.read().decode('utf8')
-            print(errmsg)
+            self.logger.error(errmsg)
             err.close()
             return False
 
     def error(self, msg):
-        print("ERROR: %s" % msg)
+        self.logger.error("ERROR: %s" % msg)
         self.errors.append(msg)
 
     def benchmark(self, is_branch, revision):
@@ -499,7 +500,7 @@ class Benchmark(Application):
         self.conf = parse_config(args.config_filename)
 
         if self.conf.debug and self.conf.upload:
-            print("ERROR: debug mode is incompatible with upload")
+            self.logger.error("ERROR: debug mode is incompatible with upload")
             sys.exit(1)
 
         self.safe_makedirs(self.conf.directory)
@@ -518,19 +519,19 @@ class Benchmark(Application):
                 self.benchmark(True, branch)
         finally:
             for filename in self.skipped:
-                print("Skipped: %s" % filename)
+                self.logger.error("Skipped: %s" % filename)
 
             for filename in self.outputs:
-                print("Tested: %s" % filename)
+                self.logger.error("Tested: %s" % filename)
 
             for filename in self.uploaded:
-                print("Tested and uploaded: %s" % filename)
+                self.logger.error("Tested and uploaded: %s" % filename)
 
             for filename in self.failed:
-                print("FAILED: %s" % filename)
+                self.logger.error("FAILED: %s" % filename)
 
             for error in self.errors:
-                print("ERROR: %s" % error)
+                self.logger.error("ERROR: %s" % error)
 
 
 def cmd_compile(options):
