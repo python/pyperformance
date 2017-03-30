@@ -161,10 +161,9 @@ class Application(object):
 
 class BenchmarkPython(Application):
     # FIXME: make branch optional
-    def __init__(self, conf, revision, branch=None, patch=None):
+    def __init__(self, conf, revision, branch, patch=None):
         super().__init__()
         self.conf = conf
-        self.revision = revision
         self.branch = branch
         self.patch = patch
         self.python = None
@@ -183,16 +182,14 @@ class BenchmarkPython(Application):
 
         self.repository = Repository(self, conf.cpython_srcdir)
 
-        node, date = self.repository.get_revision_info(revision)
-        short_node = node[:12]
+        self.revision, date = self.repository.get_revision_info(revision)
         date = date.strftime('%Y-%m-%d_%H-%M')
 
-        if branch:
-            filename = '%s-%s-%s' % (date, branch, short_node)
-        else:
-            filename = '%s-%s' % (date, short_node)
+        filename = '%s-%s-%s' % (date, branch, self.revision[:12])
         filename = filename + ".json.gz"
         self.filename = os.path.join(self.conf.json_directory, filename)
+        # FIXME: convert to a property to avoid inconsistencies if filename
+        # is modified? see cmd_upload()
         self.upload_filename = os.path.join(self.conf.uploaded_json_dir,
                                             os.path.basename(filename))
 
@@ -286,6 +283,27 @@ class BenchmarkPython(Application):
             cmd.append('--debug-single-value')
         self.run(*cmd)
 
+    def encode_benchmark(self, bench):
+        data = {}
+        data['benchmark'] = bench.get_name()
+        data['result_value'] = bench.mean()
+
+        values = bench.get_values()
+        data['min'] = min(values)
+        data['max'] = max(values)
+        if self.conf.debug and bench.get_nvalue() == 1:
+            # only allow to upload 1 point in debug mode
+            data['std_dev'] = 0
+        else:
+            data['std_dev'] = bench.stdev()
+
+        data['executable'] = self.conf.executable
+        data['commitid'] = self.revision
+        data['branch'] = self.branch
+        data['project'] = self.conf.project
+        data['environment'] = self.conf.environment
+        return data
+
     def upload(self):
         if self.uploaded:
             raise Exception("already uploaded")
@@ -301,7 +319,7 @@ class BenchmarkPython(Application):
         import perf
 
         suite = perf.BenchmarkSuite.load(self.filename)
-        data = [self.encode_benchmark(bench, self.branch, self.revision)
+        data = [self.encode_benchmark(bench)
                 for bench in suite]
         data = dict(json=json.dumps(data))
 
@@ -326,7 +344,7 @@ class BenchmarkPython(Application):
 
         self.logger.error("Move %s to %s"
                           % (self.filename, self.upload_filename))
-        os.move(self.filename, self.upload_filename)
+        os.rename(self.filename, self.upload_filename)
 
         self.uploaded = True
 
@@ -454,23 +472,6 @@ class Benchmark(Application):
         self.failed = []
         self.logger = logging.getLogger()
 
-    def encode_benchmark(self, bench, branch, revision):
-        data = {}
-        data['benchmark'] = bench.get_name()
-        data['result_value'] = bench.mean()
-
-        values = bench.get_values()
-        data['min'] = min(values)
-        data['max'] = max(values)
-        data['std_dev'] = bench.stdev()
-
-        data['executable'] = self.conf.executable
-        data['commitid'] = revision
-        data['branch'] = branch
-        data['project'] = self.conf.project
-        data['environment'] = self.conf.environment
-        return data
-
     def benchmark(self, is_branch, revision):
         if is_branch:
             branch = revision
@@ -538,11 +539,16 @@ class Benchmark(Application):
 def cmd_compile(options):
     conf = parse_config(options.config_filename)
     revision = options.revision
-    BenchmarkPython(conf, revision).main()
+    branch = options.branch
+    BenchmarkPython(conf, revision, branch).main()
 
 
 def cmd_upload(options):
     conf = parse_config(options.config_filename)
     revision = options.revision
-    branch = optioins.branch
-    BenchmarkPython(conf, revision, branch).upload()
+    branch = options.branch
+    bench = BenchmarkPython(conf, revision, branch)
+    bench.filename = options.json_file
+    bench.upload_filename = os.path.join(conf.uploaded_json_dir,
+                                         os.path.basename(bench.filename))
+    bench.upload()
