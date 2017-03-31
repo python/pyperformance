@@ -73,7 +73,7 @@ class Repository(object):
             revision = stdout
             return (False, revision, revision)
 
-        print("ERROR: unable to parse revision %r" % (revision,))
+        self.logger.error("ERROR: unable to parse revision %r" % (revision,))
         sys.exit(1)
 
     def checkout(self, revision):
@@ -116,7 +116,7 @@ class Application(object):
     def setup_log(self):
         log = self.conf.log
         if os.path.exists(log):
-            print("ERROR: Log file %s already exists" % log)
+            self.logger.error("ERROR: Log file %s already exists" % log)
             sys.exit(1)
         self.safe_makedirs(os.path.dirname(log))
 
@@ -308,7 +308,7 @@ class BenchmarkRevision(Application):
         if branch:
             is_branch, rev_name, full_revision = self.repository.parse_revision(branch)
             if not is_branch:
-                print("ERROR: %r is not a Git branch" % self.branch)
+                self.logger.error("ERROR: %r is not a Git branch" % self.branch)
                 sys.exit(1)
             self.branch = branch
         else:
@@ -740,7 +740,8 @@ class BenchmarkAll(Application):
         self.safe_makedirs(self.conf.directory)
 
         if not self.conf.revisions and not self.conf.branches:
-            print("ERROR: no branches nor revisions configured for compile_all")
+            self.logger.error("ERROR: no branches nor revisions "
+                              "configured for compile_all")
             sys.exit(1)
 
         try:
