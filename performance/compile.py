@@ -37,21 +37,30 @@ def parse_date(text):
     return datetime.datetime.strptime(text2, "%Y-%m-%dT%H:%M:%S%z")
 
 
-class Repository(object):
+class Task(object):
+    def __init__(self, app, cwd):
+        self.app = app
+        self.cwd = cwd
+
+    def get_output_nocheck(self, *cmd):
+        return self.app.get_output_nocheck(*cmd, cwd=self.cwd)
+
+    def get_output(self, *cmd):
+        return self.app.get_output(*cmd, cwd=self.cwd)
+
+    def run_nocheck(self, *cmd, **kw):
+        return self.app.run_nocheck(*cmd, cwd=self.cwd, **kw)
+
+    def run(self, *cmd, **kw):
+        self.app.run(*cmd, cwd=self.cwd, **kw)
+
+
+class Repository(Task):
     def __init__(self, app, path):
-        self.path = path
+        super().__init__(app, path)
         self.logger = app.logger
         self.app = app
         self.conf = app.conf
-
-    def get_output_nocheck(self, *cmd):
-        return self.app.get_output_nocheck(*cmd, cwd=self.path)
-
-    def get_output(self, *cmd):
-        return self.app.get_output(*cmd, cwd=self.path)
-
-    def run(self, *cmd, **kw):
-        self.app.run(*cmd, cwd=self.path, **kw)
 
     def fetch(self):
         if GIT:
@@ -190,18 +199,13 @@ class Application(object):
                 raise
 
 
-class Python(object):
+class Python(Task):
     def __init__(self, app, conf):
+        super().__init__(app, conf.build_dir)
         self.app = app
         self.conf = conf
         self.logger = app.logger
         self.program = None
-
-    def run_nocheck(self, *cmd, **kw):
-        return self.app.run_nocheck(*cmd, cwd=self.conf.build_dir, **kw)
-
-    def run(self, *cmd, **kw):
-        self.app.run(*cmd, cwd=self.conf.build_dir, **kw)
 
     def patch(self, filename):
         if not filename:
@@ -266,8 +270,8 @@ class Python(object):
         self.logger.error("Installed Python version:")
         self.run(self.program, '--version')
 
-    def install_performance(self):
-        exitcode = self.run_nocheck(self.program, '-u', '-m', 'pip', '--version')
+    def install_pip(self):
+        exitcode, stdout = self.get_output_nocheck(self.program, '-u', '-m', 'pip', '--version')
         if exitcode:
             # pip is missing (or broken?): install it
             self.run('wget', GET_PIP_URL, '-O', 'get-pip.py')
@@ -279,8 +283,14 @@ class Python(object):
         # Get the new pip version
         self.run(self.program, '-u', '-m', 'pip', '--version')
 
-        # Install performance
+    def install_performance(self):
         self.run(self.program, '-u', '-m', 'pip', 'install', '-U', 'performance')
+
+    def compile_install(self):
+        self.compile()
+        self.install_python()
+        self.install_pip()
+        self.install_performance()
 
 
 class BenchmarkRevision(Application):
@@ -355,12 +365,7 @@ class BenchmarkRevision(Application):
         self.repository.checkout(self.revision)
 
         self.python.patch(self.patch)
-
-        self.python.compile()
-
-        self.python.install_python()
-
-        self.python.install_performance()
+        self.python.compile_install()
 
     def run_benchmark(self):
         self.safe_makedirs(os.path.dirname(self.filename))
