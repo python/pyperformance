@@ -739,6 +739,10 @@ class BenchmarkAll(Application):
     def main(self):
         self.safe_makedirs(self.conf.directory)
 
+        if not self.conf.revisions and not self.conf.branches:
+            print("ERROR: no branches nor revisions configured for compile_all")
+            sys.exit(1)
+
         try:
             for revision, branch in self.conf.revisions:
                 self.benchmark(revision, branch)
