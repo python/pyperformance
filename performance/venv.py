@@ -3,11 +3,14 @@ from __future__ import division, with_statement, print_function, absolute_import
 import errno
 import os
 import platform
-import shlex
 import shutil
 import subprocess
 import sys
 import textwrap
+try:
+    from shlex import quote as shell_quote
+except ImportError:
+    from pipes import quote as shell_quote   # Python 2
 
 import performance
 
@@ -224,7 +227,7 @@ class VirtualEnvironment(object):
 
     def run_cmd_nocheck(self, cmd, verbose=True):
         if verbose:
-            print("Execute: %s" % ' '.join(map(shlex.quote, cmd)))
+            print("Execute: %s" % ' '.join(map(shell_quote, cmd)))
 
         # Explicitly flush standard streams, required if streams are buffered
         # (not TTY) to write lines in the expected order
