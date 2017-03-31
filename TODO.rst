@@ -1,6 +1,11 @@
 TODO
 ====
 
+* upload:
+
+  - add Q1 and Q3: keys 'q1' and 'q3'
+  - "description"
+
 * bm_python_startup: add again python metadata, to get back the Python version
   in benchmark suite metadata. Same for bm_hg_startup.
 * Skip bm_django_template on Python 3 older than 3.4

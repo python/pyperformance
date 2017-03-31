@@ -401,23 +401,26 @@ class BenchmarkRevision(Application):
 
     def encode_benchmark(self, bench):
         data = {}
+        data['environment'] = self.conf.environment
+        data['project'] = self.conf.project
+        data['branch'] = self.branch
         data['benchmark'] = bench.get_name()
+        # Other benchmark metadata:
+        # - description
+        # - units="seconds", units_title="Time", lessisbetter=True
+        data['commitid'] = self.revision
+        data['revision_date'] = self.commit_date.isoformat()
+        data['executable'] = self.conf.executable
         data['result_value'] = bench.mean()
-
-        values = bench.get_values()
-        data['min'] = min(values)
-        data['max'] = max(values)
+        # Other result metadata: result_date
         if bench.get_nvalue() == 1:
             data['std_dev'] = 0
         else:
             data['std_dev'] = bench.stdev()
-
-        data['executable'] = self.conf.executable
-        data['commitid'] = self.revision
-        data['branch'] = self.branch
-        data['project'] = self.conf.project
-        data['environment'] = self.conf.environment
-        data['revision_date'] = self.commit_date.isoformat()
+        values = bench.get_values()
+        data['min'] = min(values)
+        data['max'] = max(values)
+        # Other stats metadata: q1, q3
         return data
 
     def upload(self):
