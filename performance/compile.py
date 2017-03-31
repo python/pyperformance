@@ -6,6 +6,7 @@ import logging
 import math
 import os.path
 import perf
+import re
 import shlex
 import shutil
 import statistics
@@ -22,6 +23,18 @@ from performance.venv import GET_PIP_URL
 GIT = True
 DEFAULT_BRANCH = 'master' if GIT else 'default'
 LOG_FORMAT = '%(asctime)-15s: %(message)s'
+
+
+def parse_date(text):
+    def replace_timezone(regs):
+        text = regs.group(0)
+        return text[:2] + text[3:]
+
+    # replace '+01:00' with '+0100'
+    text2 = re.sub(r'[0-9]{2}:[0-9]{2}$', replace_timezone, text)
+
+    # ISO 8601 with timezone: '2017-03-30T19:12:18+00:00'
+    return datetime.datetime.strptime(text2, "%Y-%m-%dT%H:%M:%S%z")
 
 
 class Repository(object):
@@ -264,8 +277,8 @@ class Python(object):
 
 
 class BenchmarkRevision(Application):
-    def __init__(self, conf, revision, branch=None, patch=None, setup_log=False,
-                 filename=None):
+    def __init__(self, conf, revision, branch=None, patch=None,
+                 setup_log=False, filename=None, commit_date=None):
         super().__init__()
         self.conf = conf
         self.patch = patch
@@ -283,9 +296,8 @@ class BenchmarkRevision(Application):
             self.repository = None
             self.filename = filename
             self.revision = revision
-            if not branch:
-                raise ValueError("if filename is set, branch is mandatory")
             self.branch = branch
+            self.commit_date = commit_date
             self.logger.error("Commit: branch=%s, revision=%s"
                               % (self.branch, self.revision))
 
@@ -315,6 +327,7 @@ class BenchmarkRevision(Application):
         self.revision, date = self.repository.get_revision_info(rev_name)
         self.logger.error("Commit: branch=%s, revision=%s, date=%s"
                           % (self.branch, self.revision, date))
+        self.commit_date = date
 
         date = date.strftime('%Y-%m-%d_%H-%M')
 
@@ -373,10 +386,11 @@ class BenchmarkRevision(Application):
             self.update_metadata()
 
     def update_metadata(self):
-        if GIT:
-            metadata = {'git_branch': self.branch, 'git_revision': self.revision}
-        else:
-            metadata = {'hg_branch': self.branch, 'hg_revision': self.revision}
+        metadata = {
+            'commit_id': self.revision,
+            'commit_branch': self.branch,
+            'commit_date': self.commit_date.isoformat(),
+        }
         if self.patch:
             metadata['patch_file'] = self.patch
 
@@ -404,6 +418,7 @@ class BenchmarkRevision(Application):
         data['branch'] = self.branch
         data['project'] = self.conf.project
         data['environment'] = self.conf.environment
+        data['revision_date'] = self.commit_date.isoformat()
         return data
 
     def upload(self):
@@ -752,14 +767,12 @@ def cmd_upload(options):
     filename = options.json_file
     bench = perf.BenchmarkSuite.load(filename)
     metadata = bench.get_metadata()
-    try:
-        revision = metadata['git_revision']
-        branch = metadata['git_branch']
-    except KeyError:
-        revision = metadata['hg_revision']
-        branch = metadata['hg_branch']
+    revision = metadata['commit_id']
+    branch = metadata['commit_branch']
+    commit_date = parse_date(metadata['commit_date'])
 
-    bench = BenchmarkRevision(conf, revision, branch, filename=filename)
+    bench = BenchmarkRevision(conf, revision, branch,
+                              filename=filename, commit_date=commit_date)
     bench.upload()
 
 
