@@ -407,8 +407,7 @@ class BenchmarkRevision(Application):
         values = bench.get_values()
         data['min'] = min(values)
         data['max'] = max(values)
-        if self.conf.debug and bench.get_nvalue() == 1:
-            # only allow to upload 1 point in debug mode
+        if bench.get_nvalue() == 1:
             data['std_dev'] = 0
         else:
             data['std_dev'] = bench.stdev()
