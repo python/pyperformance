@@ -3,6 +3,7 @@ from __future__ import division, with_statement, print_function, absolute_import
 import errno
 import os
 import platform
+import shlex
 import shutil
 import subprocess
 import sys
@@ -223,7 +224,7 @@ class VirtualEnvironment(object):
 
     def run_cmd_nocheck(self, cmd, verbose=True):
         if verbose:
-            print("Execute: %s" % ' '.join(cmd))
+            print("Execute: %s" % ' '.join(map(shlex.quote, cmd)))
 
         # Explicitly flush standard streams, required if streams are buffered
         # (not TTY) to write lines in the expected order
