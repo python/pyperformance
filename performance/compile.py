@@ -233,8 +233,6 @@ class Python(object):
         configure = os.path.join(self.conf.repo_dir, 'configure')
         self.run(configure, *config_args)
 
-        self.run_nocheck('make', 'clean')
-
         if self.conf.pgo:
             # FIXME: use taskset (isolated CPUs) for PGO?
             self.run('make', 'profile-opt')
@@ -247,23 +245,26 @@ class Python(object):
         else:
             program_ext = ''
 
-        if not self.conf.install:
+        if self.conf.install:
+            prefix = self.conf.prefix
+            if os.path.exists(prefix):
+                self.logger.error("Remove directory %s" % prefix)
+                shutil.rmtree(prefix)
+            self.app.safe_makedirs(prefix)
+
+            self.run('make', 'install')
+
+            self.program = os.path.join(prefix, "bin", "python" + program_ext)
+            if not os.path.exists(self.program):
+                self.program = os.path.join(prefix, "bin", "python3" + program_ext)
+        else:
             # don't install: run python from the compilation directory
             self.program = os.path.join(self.conf.build_dir,
                                         "python" + program_ext)
-            return
 
-        prefix = self.conf.prefix
-        if os.path.exists(prefix):
-            self.logger.error("Remove directory %s" % prefix)
-            shutil.rmtree(prefix)
-        self.app.safe_makedirs(prefix)
-
-        self.run('make', 'install')
-
-        self.program = os.path.join(prefix, "bin", "python" + program_ext)
-        if not os.path.exists(self.program):
-            self.program = os.path.join(prefix, "bin", "python3" + program_ext)
+        # Get the Python version
+        self.logger.error("Installed Python version:")
+        self.run(self.program, '--version')
 
     def install_performance(self):
         exitcode = self.run_nocheck(self.program, '-u', '-m', 'pip', '--version')
