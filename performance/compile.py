@@ -271,6 +271,12 @@ class Python(object):
             # pip is missing (or broken?): install it
             self.run('wget', GET_PIP_URL, '-O', 'get-pip.py')
             self.run(self.program, '-u', 'get-pip.py')
+        else:
+            # Upgrade pip
+            self.run(self.program, '-u', '-m', 'pip', 'install', '-U', 'pip')
+
+        # Get the new pip version
+        self.run(self.program, '-u', '-m', 'pip', '--version')
 
         # Install performance
         self.run(self.program, '-u', '-m', 'pip', 'install', '-U', 'performance')
