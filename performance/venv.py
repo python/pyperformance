@@ -14,6 +14,7 @@ except ImportError:
 
 import performance
 
+# Avoid six dependency to easy installation of performance itself
 try:
     import urllib2 as urllib_request   # Python 3
 except ImportError:
@@ -224,7 +225,7 @@ class VirtualEnvironment(object):
         self._force_old_pip = False
 
     def get_python_program(self):
-        venv_path = self.get_venv_path()
+        venv_path = self.get_path()
         if os.name == "nt":
             python_executable = os.path.basename(self.python)
             return os.path.join(venv_path, 'Scripts', python_executable)
@@ -264,7 +265,7 @@ class VirtualEnvironment(object):
             sys.exit(exitcode)
         print()
 
-    def get_venv_path(self):
+    def get_path(self):
         if self._venv_path is not None:
             return self._venv_path
 
@@ -313,7 +314,7 @@ class VirtualEnvironment(object):
         return venv_path
 
     def _get_pip_program(self):
-        venv_path = self.get_venv_path()
+        venv_path = self.get_path()
         args = ['--version']
 
         # python -m pip
@@ -376,7 +377,7 @@ class VirtualEnvironment(object):
                 return True
 
         # download get-pip.py
-        venv_path = self.get_venv_path()
+        venv_path = self.get_path()
         filename = os.path.join(os.path.dirname(venv_path), 'get-pip.py')
         if not os.path.exists(filename):
             print("Download %s into %s" % (GET_PIP_URL, filename))
@@ -396,7 +397,7 @@ class VirtualEnvironment(object):
 
         return ok
 
-    def _create_virtualenv_cmd(self, cmd, install_pip=False):
+    def _create_venv_cmd(self, cmd, install_pip=False):
         try:
             exitcode = self.run_cmd_nocheck(cmd)
         except OSError as exc:
@@ -425,8 +426,8 @@ class VirtualEnvironment(object):
 
         return True
 
-    def _create_virtualenv(self):
-        venv_path = self.get_venv_path()
+    def _create_venv(self):
+        venv_path = self.get_path()
 
         for install_pip, cmd in (
             # python -m venv
@@ -436,7 +437,7 @@ class VirtualEnvironment(object):
             # virtualenv command
             (False, ['virtualenv', '-p', self.python]),
         ):
-            ok = self._create_virtualenv_cmd(cmd + [venv_path], install_pip)
+            ok = self._create_venv_cmd(cmd + [venv_path], install_pip)
             if ok:
                 return True
 
@@ -454,7 +455,7 @@ class VirtualEnvironment(object):
         venv_python = self.get_python_program()
         return os.path.exists(venv_python)
 
-    def _install_requirements(self):
+    def _install_req(self):
         pip_program = self.get_pip_program()
 
         # parse requirements
@@ -514,16 +515,16 @@ class VirtualEnvironment(object):
         cmd = pip_program + ['freeze']
         self.run_cmd(cmd)
 
-    def create_virtualenv(self):
+    def create(self):
         if self.exists():
             return
 
-        venv_path = self.get_venv_path()
+        venv_path = self.get_path()
 
         print("Creating the virtual environment %s" % venv_path)
         try:
-            self._create_virtualenv()
-            self._install_requirements()
+            self._create_venv()
+            self._install_req()
         except:
             print()
             safe_rmtree(venv_path)
@@ -533,7 +534,7 @@ class VirtualEnvironment(object):
 def exec_in_virtualenv(options):
     venv = VirtualEnvironment(options)
 
-    venv.create_virtualenv()
+    venv.create()
     venv_python = venv.get_python_program()
 
     args = [venv_python, "-m", "performance"] + \
@@ -553,7 +554,7 @@ def cmd_venv(options):
     action = options.venv_action
 
     venv = VirtualEnvironment(options)
-    venv_path = venv.get_venv_path()
+    venv_path = venv.get_path()
 
     if action in ('create', 'recreate'):
         recreated = False
@@ -564,7 +565,7 @@ def cmd_venv(options):
             print()
 
         if not venv.exists():
-            venv.create_virtualenv()
+            venv.create()
 
             what = 'recreated' if recreated else 'created'
             print("The virtual environment %s has been %s" % (venv_path, what))
