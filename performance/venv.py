@@ -395,7 +395,7 @@ class VirtualEnvironment(object):
 
         return ok
 
-    def _create_virtualenv_impl2(self, cmd, install_pip=False):
+    def _create_virtualenv_cmd(self, cmd, install_pip=False):
         try:
             exitcode = self.run_cmd_nocheck(cmd)
         except OSError as exc:
@@ -424,36 +424,25 @@ class VirtualEnvironment(object):
 
         return True
 
-    def _create_virtualenv_impl(self, cmd, install_pip=False):
+    def _create_virtualenv(self):
         venv_path = self.get_venv_path()
 
-        cmd = cmd + [venv_path]
-        if self._create_virtualenv_impl2(cmd, install_pip):
-            return True
+        for install_pip, cmd in (
+            # python -m venv
+            (True, [self.python, '-m', 'venv', '--without-pip']),
+            # python -m virtualenv
+            (False, [self.python, '-m', 'virtualenv']),
+            # virtualenv command
+            (False, ['virtualenv', '-p', self.python]),
+        ):
+            ok = self._create_virtualenv_cmd(cmd + [venv_path], install_pip)
+            if ok:
+                return True
 
-        print()
+            # Command failed: remove the directory
+            safe_rmtree(venv_path)
 
-        safe_rmtree(venv_path)
-        return False
-
-    def _create_virtualenv(self):
-        # python -m venv
-        cmd = [self.python, '-m', 'venv', '--without-pip']
-        if self._create_virtualenv_impl(cmd, install_pip=True):
-            return
-        print()
-
-        # python -m virtualenv
-        cmd = [self.python, '-m', 'virtualenv']
-        if self._create_virtualenv_impl(cmd):
-            return
-        print()
-
-        # virtualenv command
-        cmd = ['virtualenv', '-p', self.python]
-        if self._create_virtualenv_impl(cmd):
-            return
-
+        # All commands failed
         print("ERROR: failed to create the virtual environment")
         print()
         print("Make sure that virtualenv is installed:")
