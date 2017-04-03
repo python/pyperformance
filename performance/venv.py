@@ -22,6 +22,7 @@ except ImportError:
 
 GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
 REQ_OLD_PIP = 'pip==7.1.2'
+REQ_OLD_SETUPTOOLS = 'setuptools==18.5'
 
 
 try:
@@ -103,9 +104,9 @@ def is_build_dir():
 
 
 class Requirements(object):
-    def __init__(self, filename, installer, indirect_req, optional):
+    def __init__(self, filename, pip, installer, indirect_req, optional):
         # pip requirement
-        self.pip = 'pip'
+        self.pip = []
 
         # pre-requirements (setuptools, pip)
         self.installer = []
@@ -134,8 +135,8 @@ class Requirements(object):
                 req = req.partition('==')[0]
                 req = req.partition('>=')[0]
 
-                if req == 'pip':
-                    self.pip = line
+                if req in pip:
+                    self.pip.append(line)
                 elif req in installer:
                     self.installer.append(line)
                 elif req in optional:
@@ -460,16 +461,17 @@ class VirtualEnvironment(object):
         filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
         requirements = Requirements(filename,
                                     # FIXME: don't hardcode requirements
-                                    ['setuptools', 'wheel'],
+                                    ['pip', 'setuptools'],
+                                    ['wheel'],
                                     ['cffi'],
                                     ['psutil', 'dulwich'])
 
         # Upgrade pip
         cmd = pip_program + ['install', '-U']
         if self._force_old_pip:
-            cmd.append(REQ_OLD_PIP)
+            cmd.extend((REQ_OLD_PIP, REQ_OLD_SETUPTOOLS))
         else:
-            cmd.append(requirements.pip)
+            cmd.extend(requirements.pip)
         self.run_cmd(cmd)
 
         # Upgrade installer dependencies (setuptools, ...)
