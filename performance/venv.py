@@ -21,6 +21,7 @@ except ImportError:
 
 
 GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
+REQ_PIP_8 = 'pip==8.1.2'
 
 
 try:
@@ -103,6 +104,9 @@ def is_build_dir():
 
 class Requirements(object):
     def __init__(self, filename, installer, indirect_req, optional):
+        # pip requirement
+        self.pip = 'pip'
+
         # pre-requirements (setuptools, pip)
         self.installer = []
 
@@ -130,7 +134,9 @@ class Requirements(object):
                 req = req.partition('==')[0]
                 req = req.partition('>=')[0]
 
-                if req in installer:
+                if req == 'pip':
+                    self.pip = line
+                elif req in installer:
                     self.installer.append(line)
                 elif req in optional:
                     self.optional.append(line)
@@ -198,9 +204,7 @@ def create_environ(inherit_environ):
     return env
 
 
-def download(filename, url):
-    print("Download %s into %s" % (url, filename))
-
+def download(url, filename):
     response = urllib_request.urlopen(url)
     with response:
         content = response.read()
@@ -216,6 +220,7 @@ class VirtualEnvironment(object):
         self.python = options.python
         self._venv_path = options.venv
         self._pip_program = None
+        self._force_pip_8 = False
 
     def get_python_program(self):
         venv_path = self.get_venv_path()
@@ -308,11 +313,12 @@ class VirtualEnvironment(object):
 
     def _get_pip_program(self):
         venv_path = self.get_venv_path()
+        args = ['--version']
 
         # python -m pip
         venv_python = self.get_python_program()
         pip_program = [venv_python, '-m', 'pip']
-        if self.run_cmd_nocheck(pip_program + ['--version']) == 0:
+        if self.run_cmd_nocheck(pip_program + args) == 0:
             self._pip_program = pip_program
             return
 
@@ -329,7 +335,7 @@ class VirtualEnvironment(object):
             venv_pip += '3'
 
         pip_program = [venv_pip]
-        if self.run_cmd_nocheck(pip_program + ['--version']) == 0:
+        if self.run_cmd_nocheck(pip_program + args) == 0:
             self._pip_program = pip_program
             return
 
@@ -337,6 +343,26 @@ class VirtualEnvironment(object):
         if self._pip_program is None:
             self._get_pip_program()
         return self._pip_program
+
+    def _get_python_version(self):
+        venv_python = self.get_python_program()
+
+        # FIXME: use a get_output() function
+        code = 'import sys; print(sys.hexversion)'
+        proc = subprocess.Popen([venv_python, '-c', code],
+                                stdout=subprocess.PIPE,
+                                universal_newlines=True)
+        stdout = proc.communicate()[0]
+        if proc.returncode:
+            print("ERROR: failed to get the Python version")
+            sys.exit(proc.returncode)
+        hexversion = int(stdout.rstrip())
+        print("Python hexversion: %x" % hexversion)
+
+        # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 8.1.2,
+        # the last version working on Python 3.5a0:
+        # https://github.com/pypa/pip/issues/4408
+        self._force_pip_8 = (0x30500a0 <= hexversion < 0x30500f0)
 
     def install_pip(self):
         venv_python = self.get_python_program()
@@ -348,13 +374,18 @@ class VirtualEnvironment(object):
             if self.get_pip_program() is not None:
                 return True
 
+        # download get-pip.py
         venv_path = self.get_venv_path()
         filename = os.path.join(os.path.dirname(venv_path), 'get-pip.py')
         if not os.path.exists(filename):
-            download(filename, GET_PIP_URL)
+            print("Download %s into %s" % (GET_PIP_URL, filename))
+            download(GET_PIP_URL, filename)
 
         # python get-pip.py
-        cmd = [venv_python, filename]
+        if self._force_pip_8:
+            cmd = [venv_python, '-u', filename, REQ_PIP_8]
+        else:
+            cmd = [venv_python, '-u', filename]
         exitcode = self.run_cmd_nocheck(cmd)
         ok = (exitcode == 0)
         if not ok:
@@ -364,29 +395,41 @@ class VirtualEnvironment(object):
 
         return ok
 
-    def _create_virtualenv_impl(self, cmd, install_pip=False):
-        venv_path = self.get_venv_path()
-
-        cmd = cmd + [venv_path]
+    def _create_virtualenv_impl2(self, cmd, install_pip=False):
         try:
             exitcode = self.run_cmd_nocheck(cmd)
-            if exitcode:
-                print("%s command failed" % ' '.join(cmd))
-            else:
-                if install_pip:
-                    pip_installed = self.install_pip()
-                else:
-                    pip_installed = True
-
-                if pip_installed and self.get_pip_program() is not None:
-                    return True
-                print("pip doesn't work")
         except OSError as exc:
             if exc.errno != errno.ENOENT:
                 raise
 
             # run_cmd_nocheck() failed with ENOENT
             print("%s command failed: command not found" % ' '.join(cmd))
+            return False
+
+        if exitcode:
+            print("%s command failed" % ' '.join(cmd))
+            return False
+
+        self._get_python_version()
+
+        if install_pip:
+            ok = self.install_pip()
+            if not ok:
+                print("failed to install pip")
+                return False
+
+        if self.get_pip_program() is None:
+            print("ERROR: pip doesn't work")
+            return False
+
+        return True
+
+    def _create_virtualenv_impl(self, cmd, install_pip=False):
+        venv_path = self.get_venv_path()
+
+        cmd = cmd + [venv_path]
+        if self._create_virtualenv_impl2(cmd, install_pip):
+            return True
 
         print()
 
@@ -424,7 +467,23 @@ class VirtualEnvironment(object):
     def _install_requirements(self):
         pip_program = self.get_pip_program()
 
-        # Upgrade installer dependencies (pip, setuptools, ...)
+        # parse requirements
+        filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
+        requirements = Requirements(filename,
+                                    # FIXME: don't hardcode requirements
+                                    ['setuptools', 'wheel'],
+                                    ['cffi'],
+                                    ['psutil', 'dulwich'])
+
+        # Upgrade pip
+        cmd = pip_program + ['install', '-U']
+        if self._force_pip_8:
+            cmd.append(REQ_PIP_8)
+        else:
+            cmd.append(requirements.pip)
+        self.run_cmd(cmd)
+
+        # Upgrade installer dependencies (setuptools, ...)
         cmd = pip_program + ['install', '-U']
         cmd.extend(requirements.installer)
         self.run_cmd(cmd)
@@ -456,7 +515,11 @@ class VirtualEnvironment(object):
             cmd = pip_program + ['install', 'performance==%s' % version]
         self.run_cmd(cmd)
 
-        # pip freeze
+        # Display the pip version
+        cmd = pip_program + ['--version']
+        self.run_cmd(cmd)
+
+        # Dump the package list and their versions: pip freeze
         cmd = pip_program + ['freeze']
         self.run_cmd(cmd)
 
@@ -465,13 +528,6 @@ class VirtualEnvironment(object):
             return
 
         venv_path = self.get_venv_path()
-
-        filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
-        requirements = Requirements(filename,
-                                    # FIXME: don't hardcode requirements
-                                    ['setuptools', 'pip', 'wheel'],
-                                    ['cffi'],
-                                    ['psutil', 'dulwich'])
 
         print("Creating the virtual environment %s" % venv_path)
         try:
@@ -487,7 +543,7 @@ def exec_in_virtualenv(options):
     venv = VirtualEnvironment(options)
 
     venv.create_virtualenv()
-    venv_python = self.get_python_program()
+    venv_python = venv.get_python_program()
 
     args = [venv_python, "-m", "performance"] + \
         sys.argv[1:] + ["--inside-venv"]
