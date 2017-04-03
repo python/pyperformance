@@ -421,12 +421,50 @@ class VirtualEnvironment(object):
         venv_python = self.get_python_program()
         return os.path.exists(venv_python)
 
+    def _install_requirements(self):
+        pip_program = self.get_pip_program()
+
+        # Upgrade installer dependencies (pip, setuptools, ...)
+        cmd = pip_program + ['install', '-U']
+        cmd.extend(requirements.installer)
+        self.run_cmd(cmd)
+
+        # install indirect requirements
+        cmd = pip_program + ['install']
+        cmd.extend(requirements.indirect_req)
+        self.run_cmd(cmd)
+
+        # install requirements
+        cmd = pip_program + ['install']
+        cmd.extend(requirements.req)
+        self.run_cmd(cmd)
+
+        # install optional requirements
+        for req in requirements.optional:
+            cmd = pip_program + ['install', '-U', req]
+            exitcode = self.run_cmd_nocheck(cmd)
+            if exitcode:
+                print("WARNING: failed to install %s" % req)
+                print()
+
+        # install performance inside the virtual environment
+        if is_build_dir():
+            root_dir = os.path.dirname(PERFORMANCE_ROOT)
+            cmd = pip_program + ['install', '-e', root_dir]
+        else:
+            version = performance.__version__
+            cmd = pip_program + ['install', 'performance==%s' % version]
+        self.run_cmd(cmd)
+
+        # pip freeze
+        cmd = pip_program + ['freeze']
+        self.run_cmd(cmd)
+
     def create_virtualenv(self):
         if self.exists():
-            return self.get_python_program()
+            return
 
         venv_path = self.get_venv_path()
-        venv_python = self.get_python_program()
 
         filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
         requirements = Requirements(filename,
@@ -438,55 +476,18 @@ class VirtualEnvironment(object):
         print("Creating the virtual environment %s" % venv_path)
         try:
             self._create_virtualenv()
-            pip_program = self.get_pip_program()
-
-            # Upgrade installer dependencies (pip, setuptools, ...)
-            cmd = pip_program + ['install', '-U']
-            cmd.extend(requirements.installer)
-            self.run_cmd(cmd)
-
-            # install indirect requirements
-            cmd = pip_program + ['install']
-            cmd.extend(requirements.indirect_req)
-            self.run_cmd(cmd)
-
-            # install requirements
-            cmd = pip_program + ['install']
-            cmd.extend(requirements.req)
-            self.run_cmd(cmd)
-
-            # install optional requirements
-            for req in requirements.optional:
-                cmd = pip_program + ['install', '-U', req]
-                exitcode = self.run_cmd_nocheck(cmd)
-                if exitcode:
-                    print("WARNING: failed to install %s" % req)
-                    print()
-
-            # install performance inside the virtual environment
-            if is_build_dir():
-                root_dir = os.path.dirname(PERFORMANCE_ROOT)
-                cmd = pip_program + ['install', '-e', root_dir]
-            else:
-                version = performance.__version__
-                cmd = pip_program + ['install', 'performance==%s' % version]
-            self.run_cmd(cmd)
-
-            # pip freeze
-            cmd = pip_program + ['freeze']
-            self.run_cmd(cmd)
+            self._install_requirements()
         except:
             print()
             safe_rmtree(venv_path)
             raise
 
-        return venv_python
-
 
 def exec_in_virtualenv(options):
     venv = VirtualEnvironment(options)
 
-    venv_python = venv.create_virtualenv()
+    venv.create_virtualenv()
+    venv_python = self.get_python_program()
 
     args = [venv_python, "-m", "performance"] + \
         sys.argv[1:] + ["--inside-venv"]
