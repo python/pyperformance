@@ -21,7 +21,7 @@ except ImportError:
 
 
 GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
-REQ_PIP_8 = 'pip==8.1.2'
+REQ_OLD_PIP = 'pip==7.1.2'
 
 
 try:
@@ -220,7 +220,7 @@ class VirtualEnvironment(object):
         self.python = options.python
         self._venv_path = options.venv
         self._pip_program = None
-        self._force_pip_8 = False
+        self._force_old_pip = False
 
     def get_python_program(self):
         venv_path = self.get_venv_path()
@@ -359,10 +359,10 @@ class VirtualEnvironment(object):
         hexversion = int(stdout.rstrip())
         print("Python hexversion: %x" % hexversion)
 
-        # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 8.1.2,
+        # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 7.1.2,
         # the last version working on Python 3.5a0:
         # https://github.com/pypa/pip/issues/4408
-        self._force_pip_8 = (0x30500a0 <= hexversion < 0x30500f0)
+        self._force_old_pip = (0x30500a0 <= hexversion < 0x30500f0)
 
     def install_pip(self):
         venv_python = self.get_python_program()
@@ -382,8 +382,8 @@ class VirtualEnvironment(object):
             download(GET_PIP_URL, filename)
 
         # python get-pip.py
-        if self._force_pip_8:
-            cmd = [venv_python, '-u', filename, REQ_PIP_8]
+        if self._force_old_pip:
+            cmd = [venv_python, '-u', filename, REQ_OLD_PIP]
         else:
             cmd = [venv_python, '-u', filename]
         exitcode = self.run_cmd_nocheck(cmd)
@@ -466,8 +466,8 @@ class VirtualEnvironment(object):
 
         # Upgrade pip
         cmd = pip_program + ['install', '-U']
-        if self._force_pip_8:
-            cmd.append(REQ_PIP_8)
+        if self._force_old_pip:
+            cmd.append(REQ_OLD_PIP)
         else:
             cmd.append(requirements.pip)
         self.run_cmd(cmd)

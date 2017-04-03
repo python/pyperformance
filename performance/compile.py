@@ -18,7 +18,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 import performance
-from performance.venv import (GET_PIP_URL, REQ_PIP_8, PERFORMANCE_ROOT,
+from performance.venv import (GET_PIP_URL, REQ_OLD_PIP, PERFORMANCE_ROOT,
                               download, is_build_dir)
 
 
@@ -285,16 +285,16 @@ class Python(Task):
         download(url, filename)
 
     def _install_pip(self):
-        # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 8.1.2,
+        # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 7.1.2,
         # the last version working on Python 3.5a0:
         # https://github.com/pypa/pip/issues/4408
-        force_pip_8 = (0x30500a0 <= self.hexversion < 0x30500f0)
+        force_old_pip = (0x30500a0 <= self.hexversion < 0x30500f0)
 
         # is pip already installed and working?
         exitcode = self.run_nocheck(self.program, '-u', '-m', 'pip', '--version')
         if not exitcode:
-            if force_pip_8:
-                self.run(self.program, '-u', '-m', 'pip', 'install', REQ_PIP_8)
+            if force_old_pip:
+                self.run(self.program, '-u', '-m', 'pip', 'install', REQ_OLD_PIP)
             else:
                 # Upgrade pip
                 self.run(self.program, '-u', '-m', 'pip', 'install', '-U', 'pip')
@@ -305,8 +305,8 @@ class Python(Task):
         if not os.path.exists(filename):
             self.download(GET_PIP_URL, filename)
 
-        if force_pip_8:
-            self.run(self.program, '-u', REQ_PIP_8)
+        if force_old_pip:
+            self.run(self.program, '-u', REQ_OLD_PIP)
         else:
             # Install pip
             self.run(self.program, '-u', filename)
