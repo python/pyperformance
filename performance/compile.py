@@ -17,7 +17,9 @@ from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
-from performance.venv import GET_PIP_URL, REQ_PIP_8, download
+import performance
+from performance.venv import (GET_PIP_URL, REQ_PIP_8, PERFORMANCE_ROOT,
+                              download, is_build_dir)
 
 
 GIT = True
@@ -316,7 +318,16 @@ class Python(Task):
         self.run(self.program, '-u', '-m', 'pip', '--version')
 
     def install_performance(self):
-        self.run(self.program, '-u', '-m', 'pip', 'install', '-U', 'performance')
+        cmd = [self.program, '-u', '-m', 'pip', 'install']
+
+        if is_build_dir():
+            root_dir = os.path.dirname(PERFORMANCE_ROOT)
+            cmd.extend(('-e', root_dir))
+        else:
+            version = performance.__version__
+            cmd.append('performance==%s' % version)
+
+        self.run(*cmd)
 
     def compile_install(self):
         self.compile()
