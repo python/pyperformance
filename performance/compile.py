@@ -28,6 +28,9 @@ DEFAULT_BRANCH = 'master' if GIT else 'default'
 LOG_FORMAT = '%(asctime)-15s: %(message)s'
 
 EXIT_ALREADY_EXIST = 10
+EXIT_COMPILE_ERROR = 11
+EXIT_VENV_ERROR = 11
+EXIT_BENCH_ERROR = 12
 
 
 def parse_date(text):
@@ -149,18 +152,22 @@ class Application(object):
             kwargs['stdin'] = stdin_file.fileno()
         else:
             stdin_file = None
+        log_stdout = kwargs.pop('log_stdout', True)
+
+        if log_stdout:
+            kwargs['stdout'] = subprocess.PIPE
+            kwargs['stderr'] = subprocess.STDOUT
+            kwargs['universal_newlines'] = True
+
         try:
-            proc = self.create_subprocess(cmd,
-                                          stdout=subprocess.PIPE,
-                                          stderr=subprocess.STDOUT,
-                                          universal_newlines=True,
-                                          **kwargs)
+            proc = self.create_subprocess(cmd, **kwargs)
 
             # FIXME: support Python 2?
             with proc:
-                for line in proc.stdout:
-                    line = line.rstrip()
-                    self.logger.error(line)
+                if log_stdout:
+                    for line in proc.stdout:
+                        line = line.rstrip()
+                        self.logger.error(line)
                 exitcode = proc.wait()
         finally:
             if stdin_file is not None:
@@ -362,7 +369,7 @@ class BenchmarkRevision(Application):
             if options.no_tune:
                 self.conf.system_tune = False
         self.patch = patch
-        self.failed = False
+        self.exitcode = 0
         self.uploaded = False
 
         if setup_log and self.conf.log:
@@ -423,23 +430,23 @@ class BenchmarkRevision(Application):
             self.filename = os.path.join(self.conf.json_dir, filename)
 
     def compile_install(self):
-        if self.conf.update:
-            self.repository.fetch()
         self.repository.checkout(self.revision)
 
         self.python.patch(self.patch)
         self.python.compile_install()
 
-    def run_benchmark(self):
-        self.safe_makedirs(os.path.dirname(self.filename))
-
+    def create_venv(self):
         # Create venv
         cmd = [self.python.program, '-u', '-m', 'performance',
                'venv', 'recreate']
         if self.conf.venv:
             cmd.extend(('--venv', self.conf.venv))
-        self.run(*cmd)
+        exitcode = self.run_nocheck(*cmd)
+        if exitcode:
+            sys.exit(EXIT_VENV_ERROR)
 
+    def run_benchmark(self):
+        self.safe_makedirs(os.path.dirname(self.filename))
         cmd = [self.python.program, '-u',
                '-m', 'performance',
                'run',
@@ -454,11 +461,11 @@ class BenchmarkRevision(Application):
         if self.conf.debug:
             cmd.append('--debug-single-value')
         exitcode = self.run_nocheck(*cmd)
-        if exitcode:
-            self.failed = True
 
         if os.path.exists(self.filename):
             self.update_metadata()
+
+        return bool(exitcode)
 
     def update_metadata(self):
         metadata = {
@@ -596,17 +603,29 @@ class BenchmarkRevision(Application):
         if self.conf.system_tune:
             self.perf_system_tune()
 
+    def compile_bench(self):
+        self.python = Python(self, self.conf)
+
+        if self.conf.update:
+            self.repository.fetch()
+
+        try:
+            self.compile_install()
+        except SystemExit:
+            sys.exit(EXIT_COMPILE_ERROR)
+
+        self.create_venv()
+
+        failed = self.run_benchmark()
+        if not failed and self.conf.upload:
+            self.upload()
+        return failed
+
     def main(self):
         self.start = time.monotonic()
 
         self.prepare()
-
-
-        self.python = Python(self, self.conf)
-        self.compile_install()
-        self.run_benchmark()
-        if not self.failed and self.conf.upload:
-            self.upload()
+        failed = self.compile_bench()
 
         dt = time.monotonic() - self.start
         dt = datetime.timedelta(seconds=dt)
@@ -615,15 +634,15 @@ class BenchmarkRevision(Application):
         if self.uploaded:
             self.logger.error("Benchmark results uploaded and written into %s"
                               % self.upload_filename)
-        elif self.failed:
+        elif failed:
             self.logger.error("Benchmark failed but results written into %s"
                               % self.filename)
         else:
             self.logger.error("Benchmark result written into %s"
                               % self.filename)
 
-        if self.failed:
-            sys.exit(1)
+        if failed:
+            sys.exit(EXIT_BENCH_ERROR)
 
 
 class Configuration:
@@ -750,6 +769,7 @@ def parse_config(filename, command):
 class BenchmarkAll(Application):
     def __init__(self, config_filename):
         super().__init__()
+        self.config_filename = config_filename
         self.conf = parse_config(config_filename, "compile_all")
         self.safe_makedirs(self.conf.directory)
         if self.conf.log:
@@ -762,39 +782,48 @@ class BenchmarkAll(Application):
         self.logger = logging.getLogger()
 
     def benchmark(self, revision, branch):
+        if branch:
+            key = '%s-%s' % (branch, revision)
+        else:
+            key = revision
+
+        cmd = [sys.executable, '-m', 'performance', 'compile',
+               self.config_filename, revision, branch]
+        if not self.conf.update:
+            cmd.append('--no-update')
+        if not self.conf.system_tune:
+            cmd.append('--no-tune')
+
         self.start = time.monotonic()
-
-        bench = BenchmarkRevision(self.conf, revision, branch,
-                                  setup_log=False)
-
-        if self.conf.system_tune:
-            bench.perf_system_tune()
-            # only tune the system once
-            self.conf.system_tune = False
-
-        if self.conf.update:
-            bench.repository.fetch()
-            # Ony update the repository once
-            self.conf.update = False
-
-        try:
-            bench.main()
-        except SystemExit as exc:
-            bench.failed = True
-            exitcode = exc.code
-
+        exitcode = self.run_nocheck(*cmd, log_stdout=False)
         dt = time.monotonic() - self.start
+
+        if exitcode:
+            self.logger.error("Benchmark exit code: %s" % exitcode)
 
         if exitcode == EXIT_ALREADY_EXIST:
             # Benchmark already uploaded
-            self.skipped.append(bench.upload_filename)
-        elif bench.uploaded:
-            self.uploaded.append(bench.upload_filename)
+            self.skipped.append(key)
+            return
+
+        # compile, venv and bench errors occur after repository update
+        # and system tune
+        if exitcode >= EXIT_COMPILE_ERROR:
+            if self.conf.system_tune:
+                # only tune the system once
+                self.conf.system_tune = False
+
+            if self.conf.update:
+                # Ony update the repository once
+                self.conf.update = False
+
+        if exitcode == 0:
+            self.uploaded.append(key)
             self.timings.append(dt)
-        elif bench.failed:
-            self.failed.append(bench.filename)
+        elif exitcode == EXIT_BENCH_ERROR:
+            self.failed.append(key)
         else:
-            self.outputs.append(bench.filename)
+            self.outputs.append(key)
 
     def report(self):
         for filename in self.skipped:
