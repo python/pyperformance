@@ -832,12 +832,13 @@ class BenchmarkAll(Application):
                 self.conf.update = False
 
         if exitcode == 0:
-            self.uploaded.append(key)
+            if self.conf.upload:
+                self.uploaded.append(key)
+            else:
+                self.outputs.append(key)
             self.timings.append(dt)
-        elif exitcode == EXIT_BENCH_ERROR:
-            self.failed.append(key)
         else:
-            self.outputs.append(key)
+            self.failed.append(key)
 
     def report(self):
         for filename in self.skipped:
