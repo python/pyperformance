@@ -839,19 +839,17 @@ class BenchmarkAll(Application):
             self.failed.append(key)
 
     def report(self):
-        for filename in self.skipped:
-            self.logger.error("Skipped: %s" % filename)
+        for key in self.skipped:
+            self.logger.error("Skipped: %s" % key)
 
-        for filename in self.outputs:
-            self.logger.error("Tested: %s" % filename)
+        for key in self.outputs:
+            self.logger.error("Tested: %s" % key)
 
-        for filename in self.uploaded:
-            self.logger.error("Tested and uploaded: %s" % filename)
+        for key in self.uploaded:
+            self.logger.error("Tested and uploaded: %s" % key)
 
-        for filename in self.failed:
-            text = "FAILED: %s" % filename
-            if not os.path.exists(filename):
-                text = '%s (not created)' % text
+        for key in self.failed:
+            text = "FAILED: %s" % key
             self.logger.error(text)
 
     def report_timings(self):
