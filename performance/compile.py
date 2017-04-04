@@ -163,6 +163,11 @@ class Application(object):
             if stdin_file is not None:
                 stdin_file.close()
 
+        if exitcode:
+            cmd_str = ' '.join(map(shlex.quote, cmd))
+            self.logger.error("Command %s failed with exit code %s"
+                              % (cmd_str, exitcode))
+
         return exitcode
 
     def run(self, *cmd, **kw):
@@ -182,6 +187,11 @@ class Application(object):
         stdout = stdout.rstrip()
 
         exitcode = proc.wait()
+        if exitcode:
+            cmd_str = ' '.join(map(shlex.quote, cmd))
+            self.logger.error("Command %s failed with exit code %s"
+                              % (cmd_str, exitcode))
+
         return (exitcode, stdout)
 
     def get_output(self, *cmd, **kwargs):
@@ -776,7 +786,10 @@ class BenchmarkAll(Application):
             self.logger.error("Tested and uploaded: %s" % filename)
 
         for filename in self.failed:
-            self.logger.error("FAILED: %s" % filename)
+            text = "FAILED: %s" % filename
+            if not os.path.exists(filename):
+                text = '%s (not created)' % text
+            self.logger.error(text)
 
     def report_timings(self):
         def format_time(seconds):

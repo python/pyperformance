@@ -233,8 +233,9 @@ class VirtualEnvironment(object):
             return os.path.join(venv_path, 'bin', 'python')
 
     def run_cmd_nocheck(self, cmd, verbose=True):
+        cmd_str = ' '.join(map(shell_quote, cmd))
         if verbose:
-            print("Execute: %s" % ' '.join(map(shell_quote, cmd)))
+            print("Execute: %s" % cmd_str)
 
         # Explicitly flush standard streams, required if streams are buffered
         # (not TTY) to write lines in the expected order
@@ -257,13 +258,29 @@ class VirtualEnvironment(object):
             proc.wait()
             raise
 
-        return proc.returncode
+        exitcode = proc.returncode
+        if exitcode and verbose:
+            print("Command %s failed with exit code %s" % (cmd_str, exitcode))
+        return exitcode
 
     def run_cmd(self, cmd, verbose=True):
         exitcode = self.run_cmd_nocheck(cmd, verbose=verbose)
         if exitcode:
             sys.exit(exitcode)
         print()
+
+    def get_output_nocheck(self, *cmd):
+        cmd_str = ' '.join(map(shell_quote, cmd))
+        print("Execute: %s" % cmd_str)
+
+        proc = subprocess.Popen(cmd,
+                                stdout=subprocess.PIPE,
+                                universal_newlines=True)
+        stdout = proc.communicate()[0]
+        exitcode = proc.returncode
+        if exitcode:
+            print("Command %s failed with exit code %s" % (cmd_str, exitcode))
+        return (exitcode, stdout)
 
     def get_path(self):
         if self._venv_path is not None:
@@ -351,13 +368,10 @@ class VirtualEnvironment(object):
 
         # FIXME: use a get_output() function
         code = 'import sys; print(sys.hexversion)'
-        proc = subprocess.Popen([venv_python, '-c', code],
-                                stdout=subprocess.PIPE,
-                                universal_newlines=True)
-        stdout = proc.communicate()[0]
-        if proc.returncode:
+        exitcode, stdout = self.get_output_nocheck(venv_python, '-c', code)
+        if exitcode:
             print("ERROR: failed to get the Python version")
-            sys.exit(proc.returncode)
+            sys.exit(exitcode)
         hexversion = int(stdout.rstrip())
         print("Python hexversion: %x" % hexversion)
 
