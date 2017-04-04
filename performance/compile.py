@@ -26,6 +26,8 @@ GIT = True
 DEFAULT_BRANCH = 'master' if GIT else 'default'
 LOG_FORMAT = '%(asctime)-15s: %(message)s'
 
+EXIT_ALREADY_EXIST = 10
+
 
 def parse_date(text):
     def replace_timezone(regs):
@@ -535,17 +537,6 @@ class BenchmarkRevision(Application):
 
         self.uploaded = True
 
-    def sanity_checks(self):
-        if os.path.exists(self.filename):
-            self.logger.error("ERROR: %s file already exists!"
-                              % self.filename)
-            sys.exit(1)
-
-        if self.conf.upload and os.path.exists(self.upload_filename):
-            self.logger.error("ERROR: cannot upload, %s file already exists!"
-                              % self.upload_filename)
-            sys.exit(1)
-
     def perf_system_tune(self):
         pythonpath = os.environ.get('PYTHONPATH')
         args = ['-m', 'perf', 'system', 'tune']
@@ -560,12 +551,30 @@ class BenchmarkRevision(Application):
         else:
             self.run('sudo', sys.executable, *args)
 
-    def main(self):
-        self.start = time.monotonic()
-
+    def prepare(self):
         self.logger.error("Compile and benchmarks Python rev %s (branch %s)"
                           % (self.revision, self.branch))
         self.logger.error('')
+
+        if os.path.exists(self.filename):
+            filename = self.filename
+        elif self.conf.upload and os.path.exists(self.upload_filename):
+            filename = self.upload_filename
+        else:
+            filename = False
+        if filename:
+            # Benchmark already uploaded
+            self.logger.error("JSON file %s already exists: do nothing"
+                              % filename)
+
+            # Remove the log file
+            if self.conf.log:
+                self.logger.error("Remove log file %s" % self.conf.log)
+                del self.logger.handlers[:]
+                os.unlink(self.conf.log)
+
+            sys.exit(EXIT_ALREADY_EXIST)
+
         if self.conf.log:
             self.logger.error("Write logs into %s" % self.conf.log)
 
@@ -577,9 +586,14 @@ class BenchmarkRevision(Application):
             self.logger.error("Disable upload in debug mode")
             self.conf.upload = False
 
-        self.sanity_checks()
         if self.conf.system_tune:
             self.perf_system_tune()
+
+    def main(self):
+        self.start = time.monotonic()
+
+        self.prepare()
+
 
         self.python = Python(self, self.conf)
         self.compile_install()
@@ -745,10 +759,6 @@ class BenchmarkAll(Application):
 
         bench = BenchmarkRevision(self.conf, revision, branch,
                                   setup_log=False)
-        if os.path.exists(bench.upload_filename):
-            # Benchmark already uploaded
-            self.skipped.append(bench.upload_filename)
-            return
 
         if self.conf.system_tune:
             bench.perf_system_tune()
@@ -762,18 +772,22 @@ class BenchmarkAll(Application):
 
         try:
             bench.main()
-        except SystemExit:
+        except SystemExit as exc:
             bench.failed = True
+            exitcode = exc.code
 
-        if bench.uploaded:
+        dt = time.monotonic() - self.start
+
+        if exitcode == EXIT_ALREADY_EXIST:
+            # Benchmark already uploaded
+            self.skipped.append(bench.upload_filename)
+        elif bench.uploaded:
             self.uploaded.append(bench.upload_filename)
+            self.timings.append(dt)
         elif bench.failed:
             self.failed.append(bench.filename)
         else:
             self.outputs.append(bench.filename)
-
-        dt = time.monotonic() - self.start
-        self.timings.append(dt)
 
     def report(self):
         for filename in self.skipped:
