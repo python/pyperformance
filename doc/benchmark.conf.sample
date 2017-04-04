@@ -58,6 +58,9 @@ benchmarks =
 affinity =
 
 # Upload generated JSON file?
+#
+# Upload is disabled on patched Python, in debug mode or if install is
+# disabled.
 upload = False
 
 

@@ -618,6 +618,10 @@ class BenchmarkRevision(Application):
             self.logger.error("Disable upload in debug mode")
             self.conf.upload = False
 
+        if not self.conf.install and self.conf.upload:
+            self.logger.error("Disable upload if Python is not installed")
+            self.conf.upload = False
+
         if self.conf.system_tune:
             self.perf_system_tune()
 
