@@ -7,8 +7,8 @@ This page lists benchmarks which became faster in CPython.
 April, 2016 -> May, 2016
 =========================
 
-Bisection on unpickle_list found the optimization: `PyMem_Malloc() now uses the
-fast pymalloc allocator <http://bugs.python.org/issue26249>`_, `commit f5c4b990
+Optimization: `PyMem_Malloc() now uses the fast pymalloc allocator
+<http://bugs.python.org/issue26249>`_, `commit f5c4b990
 <https://github.com/python/cpython/commit/f5c4b99034fae12ac2b9498dd12b5b3f352b90c8>`_.
 
 +----------------+---------------------------+-------------------------------+
@@ -16,6 +16,12 @@ fast pymalloc allocator <http://bugs.python.org/issue26249>`_, `commit f5c4b990
 +================+===========================+===============================+
 | unpickle_list  | 10.4 us                   | 7.87 us: 1.32x faster (-24%)  |
 +----------------+---------------------------+-------------------------------+
+
+2016-04-01 .. 2016-05-01:
+
++----------------+---------------------------+-------------------------------+
+| Benchmark      | 2016-04-01 (dcfebb32e277) | 2016-05-01 (f1e2671fdf88)     |
++================+===========================+===============================+
 | nqueens        | 255 ms                    | 207 ms: 1.23x faster (-19%)   |
 +----------------+---------------------------+-------------------------------+
 | raytrace       | 1.31 sec                  | 1.09 sec: 1.19x faster (-16%) |
