@@ -222,6 +222,11 @@ class Application(object):
 
         return stdout
 
+    def safe_rmdir(self, directory):
+        if os.path.exists(directory):
+            self.logger.error("Remove directory %s" % directory)
+            shutil.rmtree(directory)
+
     def safe_makedirs(self, directory):
         try:
             os.makedirs(directory)
@@ -252,9 +257,7 @@ class Python(Task):
     def compile(self):
         build_dir = self.conf.build_dir
 
-        if os.path.exists(build_dir):
-            self.logger.error("Remove directory %s" % build_dir)
-            shutil.rmtree(build_dir)
+        self.app.safe_rmdir(build_dir)
         self.app.safe_makedirs(build_dir)
 
         config_args = []
@@ -283,9 +286,7 @@ class Python(Task):
 
         if self.conf.install:
             prefix = self.conf.prefix
-            if os.path.exists(prefix):
-                self.logger.error("Remove directory %s" % prefix)
-                shutil.rmtree(prefix)
+            self.app.safe_rmdir(prefix)
             self.app.safe_makedirs(prefix)
 
             self.run('make', 'install')
@@ -335,7 +336,7 @@ class Python(Task):
             self.download(GET_PIP_URL, filename)
 
         if force_old_pip:
-            self.run(self.program, '-u', REQ_OLD_PIP)
+            self.run(self.program, '-u', filename, REQ_OLD_PIP)
         else:
             # Install pip
             self.run(self.program, '-u', filename)
@@ -443,6 +444,11 @@ class BenchmarkRevision(Application):
 
     def compile_install(self):
         self.repository.checkout(self.revision)
+
+        # First: remove everything
+        self.safe_rmdir(self.conf.build_dir)
+        self.safe_rmdir(self.conf.prefix)
+        self.safe_rmdir(self.conf.venv)
 
         self.python.patch(self.patch)
         self.python.compile_install()
