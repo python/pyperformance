@@ -1,3 +1,4 @@
+import argparse
 import configparser
 import datetime
 import errno
@@ -351,9 +352,15 @@ class Python(Task):
 
 class BenchmarkRevision(Application):
     def __init__(self, conf, revision, branch=None, patch=None,
-                 setup_log=False, filename=None, commit_date=None):
+                 setup_log=False, filename=None, commit_date=None,
+                 options=None):
         super().__init__()
         self.conf = conf
+        if options is not None:
+            if options.no_update:
+                self.conf.update = False
+            if options.no_tune:
+                self.conf.system_tune = False
         self.patch = patch
         self.failed = False
         self.uploaded = False
@@ -847,7 +854,8 @@ class BenchmarkAll(Application):
 def cmd_compile(options):
     conf = parse_config(options.config_file, "compile")
     bench = BenchmarkRevision(conf, options.revision, options.branch,
-                              patch=options.patch)
+                              patch=options.patch,
+                              options=options)
     bench.main()
 
 
@@ -862,7 +870,8 @@ def cmd_upload(options):
     commit_date = parse_date(metadata['commit_date'])
 
     bench = BenchmarkRevision(conf, revision, branch,
-                              filename=filename, commit_date=commit_date)
+                              filename=filename, commit_date=commit_date,
+                              options=options)
     bench.upload()
 
 

@@ -192,8 +192,16 @@ Usage::
 
     pyperformance compile CONFIG_FILE REVISION [BRANCH]
         [--patch=PATCH_FILE]
+        [-U/--no-update]
+        [-T/--no-tune]
 
 Compile Python, install Python and run benchmarks on the installed Python.
+
+Options:
+
+* ``--no-update``: Don't update the Git repository.
+* ``--no-tune``: Don't run ``perf system tune`` to tune the system for
+  benchmarks.
 
 If the branch is not set:
 
