@@ -1,4 +1,3 @@
-import argparse
 import configparser
 import datetime
 import errno
@@ -126,12 +125,22 @@ class Repository(Task):
 
 
 class Application(object):
-    def __init__(self):
+    def __init__(self, conf):
+        self.conf = conf
         logging.basicConfig(format=LOG_FORMAT)
         self.logger = logging.getLogger()
+        self.log_filename = None
 
-    def setup_log(self):
-        log = self.conf.log
+    def setup_log(self, prefix):
+        prefix = re.sub('[^A-Za-z0-9_-]+', '_', prefix)
+        prefix = re.sub('_+', '_', prefix)
+
+        date = datetime.datetime.now()
+        date = date.strftime('%Y-%m-%d_%H-%M-%S.log')
+        filename = '%s-%s' % (prefix, date)
+        self.log_filename = os.path.join(self.conf.directory, filename)
+
+        log = self.log_filename
         if os.path.exists(log):
             self.logger.error("ERROR: Log file %s already exists" % log)
             sys.exit(1)
@@ -359,10 +368,9 @@ class Python(Task):
 
 class BenchmarkRevision(Application):
     def __init__(self, conf, revision, branch=None, patch=None,
-                 setup_log=False, filename=None, commit_date=None,
+                 setup_log=True, filename=None, commit_date=None,
                  options=None):
-        super().__init__()
-        self.conf = conf
+        super().__init__(conf)
         if options is not None:
             if options.no_update:
                 self.conf.update = False
@@ -372,8 +380,12 @@ class BenchmarkRevision(Application):
         self.exitcode = 0
         self.uploaded = False
 
-        if setup_log and self.conf.log:
-            self.setup_log()
+        if setup_log:
+            if branch:
+                prefix = 'compile-%s-%s' % (branch, revision)
+            else:
+                prefix = 'compile-%s' % revision
+            self.setup_log(prefix)
 
         if filename is None:
             self.repository = Repository(self, conf.repo_dir)
@@ -582,15 +594,15 @@ class BenchmarkRevision(Application):
                               % filename)
 
             # Remove the log file
-            if self.conf.log:
-                self.logger.error("Remove log file %s" % self.conf.log)
+            if self.log_filename:
+                self.logger.error("Remove log file %s" % self.log_filename)
                 del self.logger.handlers[:]
-                os.unlink(self.conf.log)
+                os.unlink(self.log_filename)
 
             sys.exit(EXIT_ALREADY_EXIST)
 
-        if self.conf.log:
-            self.logger.error("Write logs into %s" % self.conf.log)
+        if self.log_filename:
+            self.logger.error("Write logs into %s" % self.log_filename)
 
         if self.patch and self.conf.upload:
             self.logger.error("Disable upload on patched Python")
@@ -714,10 +726,6 @@ def parse_config(filename, command):
         conf.prefix = os.path.join(conf.directory, 'prefix')
         conf.venv = os.path.join(conf.directory, 'venv')
 
-        date = datetime.datetime.now()
-        conf.log = os.path.join(conf.directory,
-                                date.strftime('bench-%Y-%m-%d_%H-%M-%S.log'))
-
         check_upload = conf.upload
     else:
         check_upload = True
@@ -768,12 +776,12 @@ def parse_config(filename, command):
 
 class BenchmarkAll(Application):
     def __init__(self, config_filename):
-        super().__init__()
+        config_filename = os.path.abspath(config_filename)
+        conf = parse_config(config_filename, "compile_all")
+        super().__init__(conf)
         self.config_filename = config_filename
-        self.conf = parse_config(config_filename, "compile_all")
         self.safe_makedirs(self.conf.directory)
-        if self.conf.log:
-            self.setup_log()
+        self.setup_log('compile_all')
         self.outputs = []
         self.skipped = []
         self.uploaded = []
@@ -860,6 +868,12 @@ class BenchmarkAll(Application):
     def main(self):
         self.safe_makedirs(self.conf.directory)
 
+        self.logger.error("Compile and benchmark all")
+        if self.log_filename:
+            self.logger.error("Write logs into %s" % self.log_filename)
+        self.logger.error("Revisions: %r" % (self.conf.revisions,))
+        self.logger.error("Branches: %r" % (self.conf.branches,))
+
         if not self.conf.revisions and not self.conf.branches:
             self.logger.error("ERROR: no branches nor revisions "
                               "configured for compile_all")
@@ -900,7 +914,8 @@ def cmd_upload(options):
 
     bench = BenchmarkRevision(conf, revision, branch,
                               filename=filename, commit_date=commit_date,
-                              options=options)
+                              options=options,
+                              setup_log=False)
     bench.upload()
 
 
