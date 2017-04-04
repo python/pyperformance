@@ -369,14 +369,8 @@ class Python(Task):
 
 class BenchmarkRevision(Application):
     def __init__(self, conf, revision, branch=None, patch=None,
-                 setup_log=True, filename=None, commit_date=None,
-                 options=None):
+                 setup_log=True, filename=None, commit_date=None):
         super().__init__(conf)
-        if options is not None:
-            if options.no_update:
-                self.conf.update = False
-            if options.no_tune:
-                self.conf.system_tune = False
         self.patch = patch
         self.exitcode = 0
         self.uploaded = False
@@ -907,9 +901,13 @@ class BenchmarkAll(Application):
 
 def cmd_compile(options):
     conf = parse_config(options.config_file, "compile")
+    if options is not None:
+        if options.no_update:
+            conf.update = False
+        if options.no_tune:
+            conf.system_tune = False
     bench = BenchmarkRevision(conf, options.revision, options.branch,
-                              patch=options.patch,
-                              options=options)
+                              patch=options.patch)
     bench.main()
 
 
@@ -925,7 +923,6 @@ def cmd_upload(options):
 
     bench = BenchmarkRevision(conf, revision, branch,
                               filename=filename, commit_date=commit_date,
-                              options=options,
                               setup_log=False)
     bench.upload()
 
