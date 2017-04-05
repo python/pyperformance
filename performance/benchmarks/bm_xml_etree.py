@@ -292,6 +292,9 @@ if __name__ == "__main__":
 
     # Run the benchmark
     for bench in benchmarks:
-        name = 'xml_etree_%s' % bench
+        if accelerator:
+            name = 'xml_etree_%s' % bench
+        else:
+            name = 'xml_etree_pure_python_%s' % bench
         bench_func = globals()['bench_%s' % bench]
         runner.bench_time_func(name, bench_etree, etree_module, bench_func)

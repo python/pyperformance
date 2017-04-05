@@ -11,6 +11,8 @@ Version 0.5.4
 * Add ``pyperformance compile_all`` command to benchmark multiple branches and
   revisions of Python
 * setup.py: add dependencies to ``perf`` and ``six`` modules.
+* bm_xml_etree now uses "_pure_python" in benchmark names if the accelerator is
+  explicitly disabled.
 
 Version 0.5.3 (2017-03-27)
 --------------------------
