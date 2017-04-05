@@ -88,6 +88,7 @@ def copy_perf_options(cmd, options):
 def run_perf_script(python, options, name, extra_args=[]):
     bm_path = Relative("bm_%s.py" % name)
     cmd = list(python)
+    cmd.append('-u')
     cmd.append(bm_path)
     cmd.extend(extra_args)
     copy_perf_options(cmd, options)
