@@ -277,8 +277,12 @@ xml_etree_generate
 | xml_etree_generate | 282 ms                    | 267 ms: 1.06x faster (-5%) | 256 ms: 1.10x faster (-9%) | 237 ms: 1.19x faster (-16%) | 212 ms: 1.33x faster (-25%) |
 +--------------------+---------------------------+----------------------------+----------------------------+-----------------------------+-----------------------------+
 
-xml_etre_iterparse
-==================
+xml_etree_iterparse
+===================
+
+Optimization: `Issue #25638: Optimized ElementTree.iterparse(); it is now 2x
+faster <http://bugs.python.org/issue25638>`_, `commit 9ec5e25f2
+<https://github.com/python/cpython/commit/9ec5e25f26a490510bb5da5c26a276cd30a263a0>`_.
 
 +---------------------+---------------------------+-----------------------------+
 | Benchmark           | 2015-10-01 (30b7138fe12b) | 2016-01-01 (899b72cee21c)   |
