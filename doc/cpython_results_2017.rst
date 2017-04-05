@@ -86,6 +86,10 @@ crypto_pyaes
 html5lib
 ========
 
+Optimization: `Issue #16991: Add a C implementation of collections.OrderedDict
+<http://bugs.python.org/issue16991>`_, `commit 96c6af9b
+<https://github.com/python/cpython/commit/96c6af9b207c188c52ac53ce87bb7f2dea3f328b>`_.
+
 +-----------+---------------------------+-----------------------------+
 | Benchmark | 2015-04-01 (4fd929b43121) | 2015-07-01 (d7982beca93c)   |
 +===========+===========================+=============================+
@@ -118,6 +122,9 @@ pickle
 
 pickle, 2015-07-01 .. 2015-10-01:
 
+.. XXX 2015-09 => 2015-10, unable to reproduce on smithers
+   XXX unable to reproduce on speed-python (no LTO, no PGO)
+
 +-----------+---------------------------+------------------------------+
 | Benchmark | 2015-07-01 (d7982beca93c) | 2015-10-01 (30b7138fe12b)    |
 +===========+===========================+==============================+
@@ -125,6 +132,13 @@ pickle, 2015-07-01 .. 2015-10-01:
 +-----------+---------------------------+------------------------------+
 
 pickle, 2016-08-02 .. 2016-09-08:
+
+.. XXX unable to reproduce on speed-python (no LTO, no PGO)
+   133138a284be1985ebd9ec9014f1306b9a425 .. 10427f44852b6e872034061421a8890902b8f
+   diff: -6%
+
+.. commit 711120d8fd0445b33655101d72b0f576646bff9f faster import?
+   http://bugs.python.org/issue22557
 
 +-----------+---------------------------+------------------------------+
 | Benchmark | 2016-08-02 (133138a284be) | 2016-09-08 (10427f44852b)    |
@@ -156,6 +170,10 @@ pidigits
 ========
 
 .. XXX unable to reproduce on smithers (without LTO nor PGO)
+   799b05b0527d6a8c24b453d683e38a37f7 .. 0d30940dd256da65c91c3bb2d1e135f90eb8c
+
+.. XXX unable to reproduce on speed-python (no LTO, no PGO)
+   799b05b0527d6a8c24b453d683e38a37f7 .. 0d30940dd256da65c91c3bb2d1e135f90eb8c
 
 +-----------+---------------------------+-----------------------------+
 | Benchmark | 2015-07-01 (d7982beca93c) | 2015-10-01 (30b7138fe12b)   |
