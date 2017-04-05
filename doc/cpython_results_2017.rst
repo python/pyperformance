@@ -124,11 +124,13 @@ pickle, 2015-07-01 .. 2015-10-01:
 
 .. XXX 2015-09 => 2015-10, unable to reproduce on smithers
    XXX unable to reproduce on speed-python (no LTO, no PGO)
+   XXX
+   XXX commit 7188a3efe07b9effdb760f3a96783f250214f0be related to PGO?
 
 +-----------+---------------------------+------------------------------+
-| Benchmark | 2015-07-01 (d7982beca93c) | 2015-10-01 (30b7138fe12b)    |
+| Benchmark | 2015-09-01 (799b05b0527d) | 2015-10-01 (0d30940dd256)    |
 +===========+===========================+==============================+
-| pickle    | 32.9 us                   | 26.6 us: 1.23x faster (-19%) |
+| pickle    | 32.1 us                   | 26.7 us: 1.20x faster (-17%) |
 +-----------+---------------------------+------------------------------+
 
 pickle, 2016-08-02 .. 2016-09-08:
@@ -169,16 +171,14 @@ unpickle:
 pidigits
 ========
 
-.. XXX unable to reproduce on smithers (without LTO nor PGO)
-   799b05b0527d6a8c24b453d683e38a37f7 .. 0d30940dd256da65c91c3bb2d1e135f90eb8c
-
-.. XXX unable to reproduce on speed-python (no LTO, no PGO)
-   799b05b0527d6a8c24b453d683e38a37f7 .. 0d30940dd256da65c91c3bb2d1e135f90eb8c
+Optimization: `Issue #24915: Add Clang support to PGO builds and use the test
+suite for profile data <http://bugs.python.org/issue24915>`_, `commit 7188a3ef
+<https://github.com/python/cpython/commit/7188a3efe07b9effdb760f3a96783f250214f0be>`_.
 
 +-----------+---------------------------+-----------------------------+
-| Benchmark | 2015-07-01 (d7982beca93c) | 2015-10-01 (30b7138fe12b)   |
+| Benchmark | 2015-09-01 (799b05b0527d) | 2015-10-01 (0d30940dd256)   |
 +===========+===========================+=============================+
-| pidigits  | 332 ms                    | 288 ms: 1.15x faster (-13%) |
+| pidigits  | 332 ms                    | 285 ms: 1.16x faster (-14%) |
 +-----------+---------------------------+-----------------------------+
 
 python_startup
