@@ -8,7 +8,6 @@ TODO
 
 * bm_python_startup: add again python metadata, to get back the Python version
   in benchmark suite metadata. Same for bm_hg_startup.
-* Skip bm_django_template on Python 3 older than 3.4
 * Remove compare command or reimplement it using perf compare_to
 * Add a --log option to create a log file. Use the logging module
   and replace print() with logger.error().
@@ -17,6 +16,28 @@ TODO
   or INSERT+SELECT?
 * Run pep8 on Travis
 * html5lib: 1 warmup, 3 runs: run 2 is always 10% slower!?
+
+
+Bugs on old CPython version
+===========================
+
+* Python 3.5.0beta2: SyntaxError in parse() of chameleon/astutil.py,
+  on parsing "def func(target):". Failed commits:
+
+  * CPython 8a8f453c5a6d
+
+* Skip bm_django_template on Python 3 older than 3.4:
+  Python 3.3.6 final: django_template: django/utils/module_loading.py:
+  "from importlib.util import find_spec as importlib_find"
+  ImportError: cannot import name find_spec
+  CPython 75e3630c6071
+
+* sympy uses deprecated inspect.getargspec(), function removed from 3.6a0 then
+  reintroduced. TODO: fix sympy upstream?
+  sympy: sympy/core/function.py
+  "inspect.getargspec(cls.eval)"
+  module 'inspect' has no attribute 'getargspec'
+  CPython 0d30940dd256
 
 
 numpy benchmarks?
