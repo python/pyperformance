@@ -10,6 +10,8 @@ Optimizations
 2016-12-14: speedup method calls
 --------------------------------
 
+.. XXX need to be validated on speed-python with PGO
+
 Optimization: `Speedup method calls 1.2x
 <https://bugs.python.org/issue26110>`_, `commit f2392133
 <https://github.com/python/cpython/commit/f2392133eba777f05947a8996c507690b95379c3>`_.
@@ -27,6 +29,8 @@ Optimization: `Speedup method calls 1.2x
 2016-04-22: pymalloc allocator, unpickle_list
 ---------------------------------------------
 
+.. XXX need to be validated on speed-python with PGO
+
 Optimization: `PyMem_Malloc() now uses the fast pymalloc allocator
 <http://bugs.python.org/issue26249>`_, `commit f5c4b990
 <https://github.com/python/cpython/commit/f5c4b99034fae12ac2b9498dd12b5b3f352b90c8>`_.
@@ -39,6 +43,8 @@ Optimization: `PyMem_Malloc() now uses the fast pymalloc allocator
 
 2015-12-07: Optimize ElementTree.iterparse(), xml_etree_iterparse
 -----------------------------------------------------------------
+
+.. XXX need to be validated on speed-python with PGO
 
 Optimization: `Issue #25638: Optimized ElementTree.iterparse(); it is now 2x
 faster <http://bugs.python.org/issue25638>`_, `commit 9ec5e25f2
@@ -53,6 +59,8 @@ faster <http://bugs.python.org/issue25638>`_, `commit 9ec5e25f2
 2015-09-19: PGO uses test suite, pidigits
 -----------------------------------------
 
+.. XXX need to be validated on speed-python with PGO
+
 Optimization: `Issue #24915: Add Clang support to PGO builds and use the test
 suite for profile data <http://bugs.python.org/issue24915>`_, `commit 7188a3ef
 <https://github.com/python/cpython/commit/7188a3efe07b9effdb760f3a96783f250214f0be>`_.
@@ -66,6 +74,8 @@ suite for profile data <http://bugs.python.org/issue24915>`_, `commit 7188a3ef
 2015-05-30: C implementation of collections.OrderedDict, html5lib
 -----------------------------------------------------------------
 
+.. XXX need to be validated on speed-python with PGO
+
 Optimization: `Issue #16991: Add a C implementation of collections.OrderedDict
 <http://bugs.python.org/issue16991>`_, `commit 96c6af9b
 <https://github.com/python/cpython/commit/96c6af9b207c188c52ac53ce87bb7f2dea3f328b>`_.
@@ -78,6 +88,8 @@ Optimization: `Issue #16991: Add a C implementation of collections.OrderedDict
 
 2015-05-23: C implementation of functools.lru_cache(), sympy
 ------------------------------------------------------------
+
+.. XXX need to be validated on speed-python with PGO
 
 Optimization: `Issue #14373: Added C implementation of functools.lru_cache()
 <http://bugs.python.org/issue14373>`_, `commit 1c858c35
@@ -164,14 +176,28 @@ Timeline 2016-04-01 .. 2017-01-01:
 crypto_pyaes
 ------------
 
-.. XXX failed to any significant diff on smithers
+.. XXX failed to get any significant diff on smithers
    between dcfebb32e277a68b9c6582e6a0484e6d (2016-04-01) and f1e2671fdf88fce8a367ee63aba4a (2016-05-01)
    (diff: -1%)
 
+.. XXX related to PyMem_Malloc()?
+
+.. XXX failed to reproduce on speed-python (no LTO, no PGO)
+   old_commit = dcfebb32e277a68b9c6582e6a0484e6d
+   new_commit = f1e2671fdf88fce8a367ee63aba4a
+
++--------------+---------------------+----------------------------+
+| Benchmark    | 2016-04-01 (master) | 2016-05-01 (master)        |
++==============+=====================+============================+
+| crypto_pyaes | 226 ms              | 205 ms: 1.10x faster (-9%) |
++--------------+---------------------+----------------------------+
+
+2016-03-01 .. 2016-06-01:
+
 +--------------+---------------------------+-----------------------------+
-| Benchmark    | 2016-01-01 (899b72cee21c) | 2016-10-01 (78a111c7d867)   |
+| Benchmark    | 2016-03-01 (13d09afff127) | 2016-06-01 (d80ab7d94578)   |
 +==============+===========================+=============================+
-| crypto_pyaes | 240 ms                    | 199 ms: 1.20x faster (-17%) |
+| crypto_pyaes | 231 ms                    | 199 ms: 1.16x faster (-14%) |
 +--------------+---------------------------+-----------------------------+
 
 json_loads
@@ -189,6 +215,10 @@ Progress on 21 months, 2015-01-01 .. 2016-10-01:
 logging_silent
 --------------
 
+.. (1) 2016-01 .. 2016-02 -- not reproduced on speed-python
+   (2) 2016-04 .. 2016-05
+   (3) 2017-01 .. 2017-02 -- not reproduced on speed-python
+
 +----------------+---------------------------+-----------------------------+
 | Benchmark      | 2016-01-01 (899b72cee21c) | 2016-07-01 (355048970b2a)   |
 +================+===========================+=============================+
@@ -204,6 +234,14 @@ pickle, 2015-07-01 .. 2015-10-01:
    XXX unable to reproduce on speed-python (no LTO, no PGO)
    XXX
    XXX commit 7188a3efe07b9effdb760f3a96783f250214f0be related to PGO?
+   XXX
+   XXX 799b05b0527d6a8c24b453d683e38a37f774d61b on speed-python
+   XXX   gcc -03: 27.4 us
+   XXX   PGO boot 1: 32.1 us +- 0.3 us
+   XXX   PGO boot 2: 32.3 us +- 0.4 us
+   XXX
+   XXX 2015-09-19: PGO uses test suite, pidigits
+   XXX 7188a3efe07b9effdb760f3a96783f250214f0be
 
 +-----------+---------------------------+------------------------------+
 | Benchmark | 2015-09-01 (799b05b0527d) | 2015-10-01 (0d30940dd256)    |
