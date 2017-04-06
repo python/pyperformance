@@ -16,6 +16,7 @@ TODO
   or INSERT+SELECT?
 * Run pep8 on Travis
 * html5lib: 1 warmup, 3 runs: run 2 is always 10% slower!?
+* compile: add metadata on compiler option, especially LTO and PGO flags
 
 
 Bugs on old CPython version
