@@ -10,7 +10,7 @@ Optimizations
 2016-12-14: speedup method calls
 --------------------------------
 
-.. XXX need to be validated on speed-python with PGO
+.. XXX results of the commit must validated on speed-python.
 
 Optimization: `Speedup method calls 1.2x
 <https://bugs.python.org/issue26110>`_, `commit f2392133
@@ -76,16 +76,16 @@ Changes of at least 5%:
 2015-12-07: Optimize ElementTree.iterparse(), xml_etree_iterparse
 -----------------------------------------------------------------
 
-.. XXX need to be validated on speed-python with PGO
+.. XXX results of the commit must validated on speed-python.
 
 Optimization: `Issue #25638: Optimized ElementTree.iterparse(); it is now 2x
 faster <http://bugs.python.org/issue25638>`_, `commit 9ec5e25f2
 <https://github.com/python/cpython/commit/9ec5e25f26a490510bb5da5c26a276cd30a263a0>`_.
 
 +---------------------+---------------------------+-----------------------------+
-| Benchmark           | 2015-10-01 (30b7138fe12b) | 2016-01-01 (899b72cee21c)   |
+| Benchmark           | 2015-12-01 (df144092a340) | 2016-01-01 (71db90356390)   |
 +=====================+===========================+=============================+
-| xml_etree_iterparse | 438 ms                    | 209 ms: 2.10x faster (-52%) |
+| xml_etree_iterparse | 423 ms                    | 206 ms: 2.05x faster (-51%) |
 +---------------------+---------------------------+-----------------------------+
 
 2015-09-19: PGO uses test suite, pidigits
@@ -138,17 +138,17 @@ Changes of at least 5%, sadly two benchmarks also became slower:
 2015-05-30: C implementation of collections.OrderedDict, html5lib
 -----------------------------------------------------------------
 
-.. XXX need to be validated on speed-python with PGO
+.. XXX results of the commit must validated on speed-python.
 
 Optimization: `Issue #16991: Add a C implementation of collections.OrderedDict
 <http://bugs.python.org/issue16991>`_, `commit 96c6af9b
 <https://github.com/python/cpython/commit/96c6af9b207c188c52ac53ce87bb7f2dea3f328b>`_.
 
-+-----------+---------------------------+-----------------------------+
-| Benchmark | 2015-04-01 (4fd929b43121) | 2015-07-01 (d7982beca93c)   |
-+===========+===========================+=============================+
-| html5lib  | 293 ms                    | 246 ms: 1.19x faster (-16%) |
-+-----------+---------------------------+-----------------------------+
++-----------------+---------------------------+-----------------------------+
+| Benchmark       | 2015-05-02 (3b4d30a27bd6) | 2015-06-01 (41874c570cf3)   |
++=================+===========================+=============================+
+| html5lib        | 285 ms                    | 233 ms: 1.23x faster (-19%) |
++-----------------+---------------------------+-----------------------------+
 
 2015-05-23: C implementation of functools.lru_cache(), sympy
 ------------------------------------------------------------
