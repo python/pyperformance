@@ -32,7 +32,7 @@ pydns==2.3.6; python_version < '3.0'
 MarkupSafe==1.0
 
 # html5lib 0.999999999 dependencies
-webencodings==0.5
+webencodings==0.5.1
 
 # sympy 1.0 dependency
 mpmath==0.19
@@ -57,18 +57,18 @@ perf==1.2
 # two performance results of two different major versions is not reliable.
 
 Chameleon==3.1                            # bm_chameleon
-Django==1.10.6                            # bm_django_template
+Django==1.11                              # bm_django_template
 Genshi==0.7                               # bm_genshi
 Mako==1.0.6                               # bm_mako
-SQLAlchemy==1.1.6                         # bm_sqlalchemy_declarative
+SQLAlchemy==1.1.9                         # bm_sqlalchemy_declarative
 dulwich==0.17.3                           # dulwich_log
-mercurial==4.1.1; python_version < '3.0'  # bm_hg_startup
+mercurial==4.1.2; python_version < '3.0'  # bm_hg_startup
 html5lib==0.999999999                     # bm_html5lib
 pathlib2==2.2.1; python_version < '3.4'   # bm_pathlib
 pyaes==1.6.0                              # bm_crypto_pyaes
 spambayes==1.1b2; python_version < '3.0'  # bm_spambayes
 sympy==1.0                                # bm_sympy
-tornado==4.4.2                            # bm_tornado_http
+tornado==4.4.3                            # bm_tornado_http
 
 
 # Optional dependencies
@@ -76,7 +76,7 @@ tornado==4.4.2                            # bm_tornado_http
 #
 # The list of optional dependencies is hardcoded in performance/venv.py
 
-psutil==5.2.1
+psutil==5.2.2
 
 
 # performance

@@ -15,7 +15,13 @@ Version 0.5.4
   explicitly disabled.
 * Upgrade requirements:
 
+  - Django: 1.10.6 -> 1.11
+  - SQLAlchemy: 1.1.6 -> 1.1.9
+  - mercurial: 4.1.1 -> 4.1.2
   - perf: 1.1 => 1.2
+  - psutil: 5.2.1 -> 5.2.2
+  - tornado: 4.4.2 -> 4.4.3
+  - webencodings: 0.5 -> 0.5.1
 
 Version 0.5.3 (2017-03-27)
 --------------------------
