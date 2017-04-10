@@ -12,7 +12,7 @@
 #
 #  - git pull --rebase
 #  - Remove untracked files/dirs: git clean -fdx
-#  - maybe update version in setup.py and performance/__init__.py
+#  - maybe update version in setup.py, performance/__init__.py and doc/conf.py
 #  - set release date in changelog (README.rst)
 #  - git commit -a -m "prepare release x.y"
 #  - run tests: tox
@@ -31,11 +31,11 @@
 #
 # After the release:
 #
-#  - set version to n+1
+#  - set version to n+1: setup.py, performance/__init__.py and doc/conf.py
 #  - git commit -a -m "post-release"
 #  - git push
 
-VERSION = '0.5.4'
+VERSION = '0.5.5'
 
 DESCRIPTION = 'Python benchmark suite'
 CLASSIFIERS = [
