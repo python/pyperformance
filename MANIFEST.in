@@ -8,3 +8,6 @@ include requirements.txt
 include runtests.py
 include pyperformance
 include tox.ini
+
+include doc/*.rst doc/images/*.png doc/images/*.jpg
+include doc/conf.py doc/Makefile doc/make.bat
