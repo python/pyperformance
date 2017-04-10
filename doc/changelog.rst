@@ -23,6 +23,8 @@ Version 0.5.4
   - tornado: 4.4.2 -> 4.4.3
   - webencodings: 0.5 -> 0.5.1
 
+* perf 1.2 now calibrates the number of warmups on PyPy.
+
 Version 0.5.3 (2017-03-27)
 --------------------------
 

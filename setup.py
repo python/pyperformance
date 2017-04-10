@@ -22,10 +22,9 @@
 #
 # Release a new version:
 #
-#  - Remove untracked files/dirs: git clean -fdx
 #  - git tag VERSION
 #  - git push --tags
-#  - rm -rf dist/
+#  - Remove untracked files/dirs: git clean -fdx
 #  - python3 setup.py sdist bdist_wheel
 #  - python2 setup.py bdist_wheel
 #  - twine upload dist/*
