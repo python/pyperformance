@@ -377,7 +377,7 @@ class VirtualEnvironment(object):
 
         # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 7.1.2,
         # the last version working on Python 3.5a0:
-        # https://github.com/pypa/pip/issues/4408
+        # https://sourceforge.net/p/pyparsing/bugs/100/
         self._force_old_pip = (0x30500a0 <= hexversion < 0x30500f0)
 
     def install_pip(self):

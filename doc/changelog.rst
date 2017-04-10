@@ -4,12 +4,17 @@ Changelog
 Version 0.5.4
 -------------
 
-* Add ``pyperformance compile`` command to compile, install and benchmark
-  Python
-* Add ``pyperformance upload`` command to upload a JSON file to a Codespeed
-  instance
-* Add ``pyperformance compile_all`` command to benchmark multiple branches and
-  revisions of Python
+* Create a new documentation at: http://pyperformance.readthedocs.io/
+* Add "CPython results, 2017" to the doc: significant performance changes,
+  significant optimizations, timeline, etc.
+* The ``show`` command doesn't need to create a virtual env anymore.
+* Add new commands:
+
+  - ``pyperformance compile``: compile, install and benchmark
+  - ``pyperformance compile_all``: benchmark multiple branches and
+    revisions of Python
+  - ``pyperformance upload``: upload a JSON file to a Codespeed
+
 * setup.py: add dependencies to ``perf`` and ``six`` modules.
 * bm_xml_etree now uses "_pure_python" in benchmark names if the accelerator is
   explicitly disabled.
@@ -24,6 +29,8 @@ Version 0.5.4
   - webencodings: 0.5 -> 0.5.1
 
 * perf 1.2 now calibrates the number of warmups on PyPy.
+* On Python 3.5a0: force pip 7.1.2 and setuptools 18.5:
+  https://sourceforge.net/p/pyparsing/bugs/100/
 
 Version 0.5.3 (2017-03-27)
 --------------------------
