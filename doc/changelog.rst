@@ -13,6 +13,9 @@ Version 0.5.4
 * setup.py: add dependencies to ``perf`` and ``six`` modules.
 * bm_xml_etree now uses "_pure_python" in benchmark names if the accelerator is
   explicitly disabled.
+* Upgrade requirements:
+
+  - perf: 1.1 => 1.2
 
 Version 0.5.3 (2017-03-27)
 --------------------------
