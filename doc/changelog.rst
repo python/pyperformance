@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Version 0.5.5
+-------------
+
+* On the 2.x branch on CPython, ``compile`` now pass ``--enable-unicode=ucs4``
+  to the ``configure`` script on all platforms, except on Windows which uses
+  UTF-16 because of its 16-bit wchar_t.
+
 Version 0.5.4
 -------------
 

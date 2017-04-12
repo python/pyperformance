@@ -18,6 +18,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 import performance
+from performance.utils import MS_WINDOWS
 from performance.venv import (GET_PIP_URL, REQ_OLD_PIP, PERFORMANCE_ROOT,
                               download, is_build_dir)
 
@@ -239,6 +240,7 @@ class Python(Task):
     def __init__(self, app, conf):
         super().__init__(app, conf.build_dir)
         self.app = app
+        self.branch = app.branch
         self.conf = conf
         self.logger = app.logger
         self.program = None
@@ -261,12 +263,16 @@ class Python(Task):
         self.app.safe_makedirs(build_dir)
 
         config_args = []
+        if self.branch.startswith("2.") and not MS_WINDOWS:
+            # On Python 2, use UCS-4 for Unicode on all platforms, except
+            # on Windows which uses UTF-16 because of its 16-bit wchar_t
+            config_args.append('--enable-unicode=ucs4')
+        if self.conf.prefix:
+            config_args.extend(('--prefix', self.conf.prefix))
         if self.conf.debug:
             config_args.append('--with-pydebug')
         elif self.conf.lto:
             config_args.append('--with-lto')
-        if self.conf.prefix:
-            config_args.extend(('--prefix', self.conf.prefix))
         if self.conf.debug:
             config_args.append('CFLAGS=-O0')
         configure = os.path.join(self.conf.repo_dir, 'configure')
