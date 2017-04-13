@@ -8,8 +8,8 @@ Version 0.5.5
   to the ``configure`` script on all platforms, except on Windows which uses
   UTF-16 because of its 16-bit wchar_t.
 
-Version 0.5.4
--------------
+Version 0.5.4 (2017-04-10)
+--------------------------
 
 * Create a new documentation at: http://pyperformance.readthedocs.io/
 * Add "CPython results, 2017" to the doc: significant performance changes,
