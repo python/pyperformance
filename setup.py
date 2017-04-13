@@ -64,15 +64,12 @@ def main():
         'performance.benchmarks',
         'performance.benchmarks.data',
         'performance.benchmarks.data.2to3',
-        'performance.benchmarks.pybench',
-        'performance.benchmarks.pybench.package',
         'performance.tests',
         'performance.tests.data',
     ]
 
     data = {
         'performance': ['requirements.txt'],
-        'performance.benchmarks.pybench': ['LICENSE', 'README'],
         'performance.tests': ['data/*.json'],
     }
 

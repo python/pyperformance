@@ -96,27 +96,6 @@ def python2_only(func):
     return func
 
 
-def BM_PyBench(python, options):
-    if options.track_memory:
-        raise BenchmarkException("pybench does not report memory usage")
-
-    PYBENCH_PATH = Relative("pybench", "pybench.py")
-
-    cmd = list(python)
-    cmd.extend((PYBENCH_PATH, '--with-gc', '--with-syscheck'))
-    copy_perf_options(cmd, options)
-
-    with temporary_file() as tmp:
-        cmd.extend(('--output', tmp))
-
-        try:
-            run_command(cmd, hide_stderr=False)
-        except subprocess.CalledProcessError as exc:
-            return BenchmarkException(exc)
-
-        return perf.BenchmarkSuite.load(tmp)
-
-
 def BM_2to3(python, options):
     return run_perf_script(python, options, "2to3")
 
