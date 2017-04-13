@@ -15,15 +15,16 @@ Available benchmark groups:
 * ``2n3``: Benchmarks compatible with both Python 2 and Python 3
 * ``all``: Group including all benchmarks
 * ``apps``: "High-level" applicative benchmarks (2to3, Chameleon, Tornado HTTP)
-* ``calls``: Microbenchmarks on function and method calls
 * ``default``: Group of benchmarks run by default by the ``run`` command
-* ``etree``: XML ElementTree
 * ``math``: Float and integers
 * ``regex``: Collection of regular expression benchmarks
 * ``serialize``: Benchmarks on ``pickle`` and ``json`` modules
 * ``startup``: Collection of microbenchmarks focused on Python interpreter
   start-up time.
 * ``template``: Templating libraries
+
+Use the ``python3 -m performance list_groups`` command to list groups and their
+benchmarks.
 
 There is also a disabled ``threading`` group: collection of microbenchmarks for
 Python's threading support. These benchmarks come in pairs: an iterative
