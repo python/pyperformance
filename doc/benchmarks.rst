@@ -229,55 +229,11 @@ using ``html5lib``.  The file is the HTML 5 specification, but truncated to
 parse the file in less than 1 second (around 250 ms).
 
 On CPython, after 3 warmups, the benchmarks enters a cycle of 5 values:
-every 5th value is 10% slower. Example::
+every 5th value is 10% slower. Plot of 1 run of 50 values (the warmup is not
+rendered):
 
-    $ python3 -m perf dump html5lib_run1_w0_n50.json
-    Run 1: 0 warmups, 50 values, 1 loop
-    - value 1: 251 ms
-    - value 2: 239 ms
-    - value 3: 239 ms
-    - value 4: 253 ms
-    - value 5: 238 ms
-    - value 6: 241 ms
-    - value 7: 238 ms
-    - value 8: 263 ms (+8%)
-    - value 9: 239 ms
-    - value 10: 240 ms
-    - value 11: 239 ms
-    - value 12: 239 ms
-    - value 13: 270 ms (+11%)
-    - value 14: 237 ms
-    - value 15: 238 ms
-    - value 16: 238 ms
-    - value 17: 240 ms
-    - value 18: 264 ms (+8%)
-    ...
-
-    $ python3 -m perf hist html5lib_run1_w0_n50.json
-    235 ms:  3 ##########
-    236 ms: 12 #########################################
-    238 ms: 18 #############################################################
-    239 ms:  4 ##############
-    241 ms:  1 ###
-    243 ms:  0 |
-    244 ms:  0 |
-    246 ms:  0 |
-    247 ms:  0 |
-    249 ms:  0 |
-    250 ms:  1 ###
-    252 ms:  1 ###
-    253 ms:  0 |
-    255 ms:  0 |
-    257 ms:  0 |
-    258 ms:  1 ###
-    260 ms:  1 ###
-    261 ms:  3 ##########
-    263 ms:  2 #######
-    264 ms:  2 #######
-    266 ms:  0 |
-    267 ms:  0 |
-    269 ms:  1 ###
-
+.. image:: images/html5lib.png
+   :alt: html5lib values
 
 See the `html5lib project <https://html5lib.readthedocs.io/>`_.
 
@@ -705,7 +661,7 @@ Benchmark on the ``sympy`` module:
 
 On CPython, some ``sympy_sum`` values are 5%-10% slower::
 
-    $ python3 -m perf dump sympy_sum_l1_w1_n50.json
+    $ python3 -m perf dump sympy_sum.json
     Run 1: 1 warmup, 50 values, 1 loop
     - warmup 1: 404 ms (+63%)
     - value 1: 244 ms
@@ -726,47 +682,10 @@ On CPython, some ``sympy_sum`` values are 5%-10% slower::
     - value 16: 245 ms
     ...
 
-    $ python3 -m perf hist sympy_sum_l1_w1_n50.json
-    244 ms: 32 #####################################################
-    246 ms:  4 #######
-    248 ms:  0 |
-    251 ms:  0 |
-    253 ms:  5 ########
-    255 ms:  6 ##########
-    258 ms:  2 ###
-    260 ms:  0 |
-    263 ms:  0 |
-    265 ms:  0 |
-    267 ms:  0 |
-    270 ms:  0 |
-    272 ms:  0 |
-    274 ms:  0 |
-    277 ms:  0 |
-    279 ms:  1 ##
+Plot of 1 run of 50 values (the warmup is not rendered):
 
-    haypo@selma$ python3 -m perf stats sympy_sum_l1_w1_n50.json
-    ...
-    Number of warmup per run: 1
-    Number of value per run: 50
-    Loop iterations per value: 1
-    Total number of values: 50
-
-    Minimum:         244 ms
-    Median +- MAD:   245 ms +- 1 ms
-    Mean +- std dev: 249 ms +- 7 ms
-    Maximum:         279 ms
-
-      0th percentile: 244 ms (-2% of the mean) -- minimum
-      5th percentile: 244 ms (-2% of the mean)
-     25th percentile: 245 ms (-2% of the mean) -- Q1
-     50th percentile: 245 ms (-1% of the mean) -- median
-     75th percentile: 255 ms (+3% of the mean) -- Q3
-     95th percentile: 258 ms (+4% of the mean)
-    100th percentile: 279 ms (+12% of the mean) -- maximum
-
-    Number of outlier (out of 229 ms..270 ms): 1
-
-
+.. image:: images/sympy_sum.png
+   :alt: sympy_sum values
 
 See the `sympy project <http://www.sympy.org/>`_.
 

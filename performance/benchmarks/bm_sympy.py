@@ -55,6 +55,9 @@ if __name__ == "__main__":
     runner.argparser.add_argument("benchmark", nargs='?',
                                   choices=BENCHMARKS)
 
+    import gc
+    gc.disable()
+
     args = runner.parse_args()
     if args.benchmark:
         benchmarks = (args.benchmark,)
