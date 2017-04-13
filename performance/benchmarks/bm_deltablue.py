@@ -15,9 +15,9 @@ collections, a couple magic methods, ``OrderedCollection`` being a list & things
 altering those collections changed to the builtin methods) but largely retains
 the layout & logic from the original. (Ugh.)
 
-.. _`V8's source code`: (http://code.google.com/p/v8/source/browse/branches/bleeding_edge/benchmarks/deltablue.js)
-
+.. _`V8's source code`: (https://github.com/v8/v8/blob/master/benchmarks/deltablue.js)
 """
+
 from __future__ import print_function
 
 import perf

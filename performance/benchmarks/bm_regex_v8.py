@@ -1,4 +1,3 @@
-
 # Copyright 2009 the V8 project authors. All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -38,7 +37,7 @@
 
 
 # Ported to Python for Unladen Swallow. The original JS version can be found at
-# http://code.google.com/p/v8/source/browse/trunk/benchmarks/regexp.js, r1243.
+# https://github.com/v8/v8/blob/master/benchmarks/regexp.js, r1243.
 
 # Python imports
 import re
