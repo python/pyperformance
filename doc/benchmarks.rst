@@ -253,6 +253,32 @@ every 5th value is 10% slower. Example::
     - value 18: 264 ms (+8%)
     ...
 
+    $ python3 -m perf hist html5lib_run1_w0_n50.json
+    235 ms:  3 ##########
+    236 ms: 12 #########################################
+    238 ms: 18 #############################################################
+    239 ms:  4 ##############
+    241 ms:  1 ###
+    243 ms:  0 |
+    244 ms:  0 |
+    246 ms:  0 |
+    247 ms:  0 |
+    249 ms:  0 |
+    250 ms:  1 ###
+    252 ms:  1 ###
+    253 ms:  0 |
+    255 ms:  0 |
+    257 ms:  0 |
+    258 ms:  1 ###
+    260 ms:  1 ###
+    261 ms:  3 ##########
+    263 ms:  2 #######
+    264 ms:  2 #######
+    266 ms:  0 |
+    267 ms:  0 |
+    269 ms:  1 ###
+
+
 See the `html5lib project <https://html5lib.readthedocs.io/>`_.
 
 
@@ -676,6 +702,72 @@ Benchmark on the ``sympy`` module:
 * ``sympy_integrate``: Benchmark ``sympy.integrate()``
 * ``sympy_str``: Benchmark ``str(sympy.expand())``
 * ``sympy_sum``: Benchmark ``sympy.summation()``
+
+On CPython, after 1 warmup, ``sympy_sum`` enters a cycle of 3 values where
+the 3rd value if 5%-10% slower::
+
+    $ python3 -m perf dump sympy_sum_l1_w1_n50.json
+    Run 1: 1 warmup, 50 values, 1 loop
+    - warmup 1: 404 ms (+63%)
+    - value 1: 244 ms
+    - value 2: 245 ms
+    - value 3: 258 ms
+    - value 4: 245 ms
+    - value 5: 245 ms
+    - value 6: 279 ms (+12%)
+    - value 7: 246 ms
+    - value 8: 244 ms
+    - value 9: 245 ms
+    - value 10: 255 ms
+    - value 11: 245 ms
+    - value 12: 245 ms
+    - value 13: 256 ms
+    - value 14: 248 ms
+    - value 15: 245 ms
+    - value 16: 245 ms
+    ...
+
+    $ python3 -m perf hist sympy_sum_l1_w1_n50.json
+    244 ms: 32 #####################################################
+    246 ms:  4 #######
+    248 ms:  0 |
+    251 ms:  0 |
+    253 ms:  5 ########
+    255 ms:  6 ##########
+    258 ms:  2 ###
+    260 ms:  0 |
+    263 ms:  0 |
+    265 ms:  0 |
+    267 ms:  0 |
+    270 ms:  0 |
+    272 ms:  0 |
+    274 ms:  0 |
+    277 ms:  0 |
+    279 ms:  1 ##
+
+    haypo@selma$ python3 -m perf stats sympy_sum_l1_w1_n50.json
+    ...
+    Number of warmup per run: 1
+    Number of value per run: 50
+    Loop iterations per value: 1
+    Total number of values: 50
+
+    Minimum:         244 ms
+    Median +- MAD:   245 ms +- 1 ms
+    Mean +- std dev: 249 ms +- 7 ms
+    Maximum:         279 ms
+
+      0th percentile: 244 ms (-2% of the mean) -- minimum
+      5th percentile: 244 ms (-2% of the mean)
+     25th percentile: 245 ms (-2% of the mean) -- Q1
+     50th percentile: 245 ms (-1% of the mean) -- median
+     75th percentile: 255 ms (+3% of the mean) -- Q3
+     95th percentile: 258 ms (+4% of the mean)
+    100th percentile: 279 ms (+12% of the mean) -- maximum
+
+    Number of outlier (out of 229 ms..270 ms): 1
+
+
 
 See the `sympy project <http://www.sympy.org/>`_.
 
