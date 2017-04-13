@@ -1,3 +1,6 @@
+"""
+Go board game
+"""
 import math
 import random
 
