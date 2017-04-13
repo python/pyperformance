@@ -1,13 +1,17 @@
+"""
+SQLite benchmark.
+
+The goal of the benchmark is to test CFFI performance and going back and forth
+between SQLite and Python a lot. Therefore the queries themselves are really
+simple.
+"""
+
 import sqlite3
 import math
 
 import perf
 from six.moves import xrange
 
-
-# the goal of the benchmark is to test CFFI performance and going back and
-# forth between SQLite and Python a lot. Therefore the queries themselves are
-# really simple
 
 class AvgLength(object):
 
