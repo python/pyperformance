@@ -3,7 +3,7 @@ Meteor Puzzle board:
 http://benchmarksgame.alioth.debian.org/u32/meteor-description.html#meteor
 
 The Computer Language Benchmarks Game
-http://shootout.alioth.debian.org/
+http://benchmarksgame.alioth.debian.org/
 
 contributed by Daniel Nanz, 2008-08-21
 """

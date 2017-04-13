@@ -1,15 +1,18 @@
-"""N-body benchmark from the Computer Language Benchmarks Game.
+"""
+N-body benchmark from the Computer Language Benchmarks Game.
 
 This is intended to support Unladen Swallow's perf.py. Accordingly, it has been
 modified from the Shootout version:
 - Accept standard Unladen Swallow benchmark options.
 - Run report_energy()/advance() in a loop.
 - Reimplement itertools.combinations() to work with older Python versions.
-"""
 
-# Pulled from http://shootout.alioth.debian.org/u64q/benchmark.php?test=nbody&lang=python&id=4
-# Contributed by Kevin Carson.
-# Modified by Tupteq, Fredrik Johansson, and Daniel Nanz.
+Pulled from:
+http://benchmarksgame.alioth.debian.org/u64q/program.php?test=nbody&lang=python3&id=1
+
+Contributed by Kevin Carson.
+Modified by Tupteq, Fredrik Johansson, and Daniel Nanz.
+"""
 
 import perf
 from six.moves import xrange

@@ -4,7 +4,8 @@ Calculating some of the digits of π.
 
 This benchmark stresses big integer arithmetic.
 
-Adapted from code on http://shootout.alioth.debian.org/
+Adapted from code on:
+http://benchmarksgame.alioth.debian.org/
 """
 
 import itertools
