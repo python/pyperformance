@@ -228,6 +228,31 @@ Parse the ``performance/benchmarks/data/w3_tr_html5.html`` HTML file (132 KB)
 using ``html5lib``.  The file is the HTML 5 specification, but truncated to
 parse the file in less than 1 second (around 250 ms).
 
+On CPython, after 3 warmups, the benchmarks enters a cycle of 5 values:
+every 5th value is 10% slower. Example::
+
+    $ python3 -m perf dump html5lib_run1_w0_n50.json
+    Run 1: 0 warmups, 50 values, 1 loop
+    - value 1: 251 ms
+    - value 2: 239 ms
+    - value 3: 239 ms
+    - value 4: 253 ms
+    - value 5: 238 ms
+    - value 6: 241 ms
+    - value 7: 238 ms
+    - value 8: 263 ms (+8%)
+    - value 9: 239 ms
+    - value 10: 240 ms
+    - value 11: 239 ms
+    - value 12: 239 ms
+    - value 13: 270 ms (+11%)
+    - value 14: 237 ms
+    - value 15: 238 ms
+    - value 16: 238 ms
+    - value 17: 240 ms
+    - value 18: 264 ms (+8%)
+    ...
+
 See the `html5lib project <https://html5lib.readthedocs.io/>`_.
 
 
