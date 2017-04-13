@@ -1,3 +1,6 @@
+"""
+Artificial, floating point-heavy benchmark originally used by Factor.
+"""
 from six.moves import xrange
 import perf
 
@@ -8,6 +11,7 @@ POINTS = 100000
 
 
 class Point(object):
+    __slots__ = ('x', 'y', 'z')
 
     def __init__(self, i):
         self.x = x = sin(i)

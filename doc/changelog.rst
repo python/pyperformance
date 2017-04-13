@@ -7,6 +7,7 @@ Version 0.5.5
 * On the 2.x branch on CPython, ``compile`` now pass ``--enable-unicode=ucs4``
   to the ``configure`` script on all platforms, except on Windows which uses
   UTF-16 because of its 16-bit wchar_t.
+* The ``float`` benchmark now uses ``__slots__`` on the ``Point`` class.
 
 Version 0.5.4 (2017-04-10)
 --------------------------
