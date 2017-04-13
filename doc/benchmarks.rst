@@ -703,25 +703,24 @@ Benchmark on the ``sympy`` module:
 * ``sympy_str``: Benchmark ``str(sympy.expand())``
 * ``sympy_sum``: Benchmark ``sympy.summation()``
 
-On CPython, after 1 warmup, ``sympy_sum`` enters a cycle of 3 values where
-the 3rd value if 5%-10% slower::
+On CPython, some ``sympy_sum`` values are 5%-10% slower::
 
     $ python3 -m perf dump sympy_sum_l1_w1_n50.json
     Run 1: 1 warmup, 50 values, 1 loop
     - warmup 1: 404 ms (+63%)
     - value 1: 244 ms
     - value 2: 245 ms
-    - value 3: 258 ms
+    - value 3: 258 ms <----
     - value 4: 245 ms
     - value 5: 245 ms
-    - value 6: 279 ms (+12%)
+    - value 6: 279 ms (+12%) <----
     - value 7: 246 ms
     - value 8: 244 ms
     - value 9: 245 ms
-    - value 10: 255 ms
+    - value 10: 255 ms <----
     - value 11: 245 ms
     - value 12: 245 ms
-    - value 13: 256 ms
+    - value 13: 256 ms <----
     - value 14: 248 ms
     - value 15: 245 ms
     - value 16: 245 ms
