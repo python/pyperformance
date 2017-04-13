@@ -1,8 +1,9 @@
-# The Computer Language Benchmarks Game
-# http://shootout.alioth.debian.org/
-#
-# contributed by Sokolov Yura
-# modified by Tupteq
+"""
+The Computer Language Benchmarks Game
+http://benchmarksgame.alioth.debian.org/
+
+Contributed by Sokolov Yura, modified by Tupteq.
+"""
 
 import perf
 from six.moves import xrange
@@ -54,8 +55,5 @@ def fannkuch(n):
 
 if __name__ == "__main__":
     runner = perf.Runner()
-    runner.metadata['description'] = ("Test the performance of "
-                                      "the Float benchmark")
-
     arg = DEFAULT_ARG
     runner.bench_func('fannkuch', fannkuch, arg)
