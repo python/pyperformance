@@ -49,21 +49,6 @@ depending on the Python version.
    them, and more generally to not modify them.
 
 
-call_method, call_method_slots, call_method_unknown, call_simple
-----------------------------------------------------------------
-
-Microbenchmarks on Python method and function calls:
-
-* ``call_method``: positional arguments-only method calls.
-* ``call_method_slots``: method calls on classes that use ``__slots__``.
-* ``call_method_unknown``: method calls where the receiver cannot be predicted.
-* ``call_simple``: positional arguments-only function calls.
-
-Since these microbenchmark are very short (less than 1 microsecond), there are
-impacted a lot by system noise, CPU caches, hash collisions of Python
-dictionaries, etc.
-
-
 chameleon
 ---------
 

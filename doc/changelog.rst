@@ -8,8 +8,9 @@ Version 0.5.5
   to the ``configure`` script on all platforms, except on Windows which uses
   UTF-16 because of its 16-bit wchar_t.
 * The ``float`` benchmark now uses ``__slots__`` on the ``Point`` class.
-* Remove the ``pybench`` benchmark: it has been moved to
-  the `pymicrobench <https://github.com/haypo/pymicrobench>`_ project
+* Remove the ``pybench`` microbenchmark suite and the ``call_*``
+  microbenchmarks: they have been moved to the `pymicrobench
+  <https://github.com/haypo/pymicrobench>`_ project
 
 Version 0.5.4 (2017-04-10)
 --------------------------

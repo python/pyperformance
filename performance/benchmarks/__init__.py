@@ -15,10 +15,6 @@ from performance.utils import temporary_file
 # specified.
 DEFAULT_GROUP = [
     '2to3',
-    'call_method',
-    'call_method_slots',
-    'call_method_unknown',
-    'call_simple',
     'chameleon',
     'chaos',
     'crypto_pyaes',
@@ -84,8 +80,6 @@ BENCH_GROUPS = {
                   "json_dumps", "json_loads"],
     "apps": ["2to3", "chameleon", "html5lib",
              "spambayes", "tornado_http"],
-    "calls": ["call_simple", "call_method", "call_method_slots",
-              "call_method_unknown"],
     "math": ["float", "nbody", "pidigits"],
     "template": ["django_template", "mako"],
 }
@@ -241,22 +235,6 @@ def BM_regex_dna(python, options):
 
 def BM_unpack_sequence(python, options):
     return run_perf_script(python, options, "unpack_sequence")
-
-
-def BM_call_simple(python, options):
-    return run_perf_script(python, options, "call_simple")
-
-
-def BM_call_method(python, options):
-    return run_perf_script(python, options, "call_method")
-
-
-def BM_call_method_unknown(python, options):
-    return run_perf_script(python, options, "call_method_unknown")
-
-
-def BM_call_method_slots(python, options):
-    return run_perf_script(python, options, "call_method_slots")
 
 
 def BM_nbody(python, options):
