@@ -297,6 +297,9 @@ The performance benchmark suite has multiple goals:
 * Showcase of Python performance which ideally would be representative
   of performances of applications running on production
 
+Don't disable GC nor ASLR
+-------------------------
+
 The perf module and performance benchmarks are designed to produce
 reproductible results, but not at the price of running benchmarks in a special
 mode which would not be used to run applications in production. For these
@@ -306,6 +309,9 @@ Benchmarks don't call ``gc.collect()`` neither since CPython implements it with
 `stop-the-world
 <https://en.wikipedia.org/wiki/Tracing_garbage_collection#Stop-the-world_vs._incremental_vs._concurrent>`_
 and so applications don't call it to not kill performances.
+
+Include outliers and spikes
+---------------------------
 
 Moreover, while the perf documentation explains how to reduce the random noise
 of the system and other applications, some benchmarks use the system and so can
@@ -317,6 +323,20 @@ of using median and the median absolute deviation for example which to ignore
 outliers. It is deliberate choice since applications running in production are
 impacted by such temporary slowdown caused by various things like a garbage
 collection or a JIT compilation.
+
+Warmups and steady state
+------------------------
+
+A borderline issue are the benchmarks "warmups". The first values of each
+worker process are always slower: 10% slower in the best case, it can be 1000%
+slower or more on PyPy. Right now (2017-04-14), performance ignore first values
+considered as warmup until a benchmark reachs its "steady state". The "steady
+state" can include temporary spikes every 5 values (ex: caused by the garbage
+collector), and it can still imply further JIT compiler optimizations but with
+a "low" impact on the average performance.
+
+To be clear "warmup" and "steady state" are a work-in-progress and a very
+complex topic, especially on PyPy and its JIT compiler.
 
 
 Notes
