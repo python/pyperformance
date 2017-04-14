@@ -235,7 +235,7 @@ Upload results from a JSON file to a Codespeed website.
 How to get stable benchmarks
 ============================
 
-See also perf documentation: `How to get reproductible benchmark results
+See perf documentation: `How to get reproductible benchmark results
 <http://perf.readthedocs.io/en/latest/run_benchmark.html#how-to-get-reproductible-benchmark-results>`_.
 
 Advices helping to get make stable benchmarks:
@@ -268,6 +268,16 @@ Notes:
   driver doesn't support NOHZ_FULL
   <https://bugzilla.redhat.com/show_bug.cgi?id=1378529>`_.
 * ASLR must *not* be disabled manually! (it's enabled by default on Linux)
+
+
+performance virtual environment
+===============================
+
+To run benchmarks, performance first creates a virtual environment. It installs
+requirements with fixed versions to get a reproductible environment. The system
+Python has unknown module installed with unknown versions, and can have
+``.pth`` files run at Python startup which can modify Python behaviour or at
+least slow down Python startup.
 
 
 Notes
