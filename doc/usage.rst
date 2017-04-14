@@ -280,6 +280,41 @@ Python has unknown module installed with unknown versions, and can have
 least slow down Python startup.
 
 
+What is the goal of performance
+===============================
+
+A benchmark is always written for a specific purpose. Depending how the
+benchmark is written and how the benchmark is run, the result can be different
+and so have a different meaning.
+
+The performance benchmark suite has multiple goals:
+
+* Help to detect performance regression in a Python implementation
+* Validate that an optimization change makes Python faster and don't
+  performance regressions, or only minor regressions
+* Compare two implementations of Python, not only CPython 2 vs Python 3,
+  but also CPython vs PyPy
+* Showcase of Python performance which ideally would be representative
+  of performances of applications running on production
+
+The perf module and performance benchmarks are designed to produce
+reproductible results, but not at the price of running benchmarks in a special
+mode which would not be used to run applications in production. For these
+reasons, the Python garbage collector, Python randomized hash function and
+system ASLR (Address Space Layout Randomization) are **not disabled**.
+
+Moreover, while the perf documentation explains how to reduce the random noise
+of the system and other applications, some benchmarks use the system and so can
+get different timing depending on the system workload, depending on I/O
+performances, etc. Outliers and temporary spikes in results are **not
+automatically removed**: values are summarized by computing the average
+(arithmetic mean) and standard deviation which "contains" these spikes, instead
+of using median and the median absolute deviation for example which to ignore
+outliers. It is deliberate choice since applications running in production are
+impacted by such temporary slowdown caused by various things like a garbage
+collection or a JIT compilation.
+
+
 Notes
 =====
 
