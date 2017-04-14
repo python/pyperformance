@@ -302,6 +302,10 @@ reproductible results, but not at the price of running benchmarks in a special
 mode which would not be used to run applications in production. For these
 reasons, the Python garbage collector, Python randomized hash function and
 system ASLR (Address Space Layout Randomization) are **not disabled**.
+Benchmarks don't call ``gc.collect()`` neither since CPython implements it with
+`stop-the-world
+<https://en.wikipedia.org/wiki/Tracing_garbage_collection#Stop-the-world_vs._incremental_vs._concurrent>`_
+and so applications don't call it to not kill performances.
 
 Moreover, while the perf documentation explains how to reduce the random noise
 of the system and other applications, some benchmarks use the system and so can
