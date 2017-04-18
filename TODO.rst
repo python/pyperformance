@@ -1,6 +1,7 @@
 TODO
 ====
 
+* Remove logging_silent
 * Remove genshi module? Last release in January 2014!
 * Remove spambayes? Last release (1.1b1) at 2011-02-25. Don't support Python 3.
 * upload:
