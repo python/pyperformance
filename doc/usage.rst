@@ -184,6 +184,7 @@ Configuration file sample with comments, ``doc/benchmark.conf.sample``:
    :language: ini
 
 
+.. _cmd-compile:
 
 compile
 -------
@@ -203,11 +204,20 @@ Options:
 * ``--no-tune``: Don't run ``perf system tune`` to tune the system for
   benchmarks.
 
-If the branch is not set:
+If the ``branch`` argument is not specified:
 
 * If ``REVISION`` is a branch name: use it as a the branch, and get the
   latest revision of this branch
 * Otherwise, use ``master`` branch by default
+
+Notes:
+
+* --enable-optimizations doesn't enable LTO because of compiler bugs:
+  http://bugs.python.org/issue28032
+  (see also: http://bugs.python.org/issue28605)
+* PGO is broken on Ubuntu 14.04 LTS with GCC 4.8.4-2ubuntu1~14.04:
+  ``Modules/socketmodule.c:7743:1: internal compiler error: in edge_badness,
+  at ipa-inline.c:895``
 
 
 compile_all
@@ -235,39 +245,13 @@ Upload results from a JSON file to a Codespeed website.
 How to get stable benchmarks
 ============================
 
-See perf documentation: `How to get reproductible benchmark results
-<http://perf.readthedocs.io/en/latest/run_benchmark.html#how-to-get-reproductible-benchmark-results>`_.
-
-Advices helping to get make stable benchmarks:
-
 * Run ``python3 -m perf system tune`` command
-* See also advices in the perf documentation: `Stable and reliable benchmarks
-  <http://perf.readthedocs.io/en/latest/perf.html#stable-and-reliable-benchmarks>`_
 * Compile Python using LTO (Link Time Optimization) and PGO (profile guided
-  optimizations)::
-
-    ./configure --with-lto
-    make profile-opt
-
-  You should get the ``-flto`` option on GCC for example.
-
-* Use the ``--rigorous`` option of the ``run`` command
-
-Notes:
-
-* Development versions of Python 2.7, 3.6 and 3.7 have a --enable-optimizations
-  configure option
-* --enable-optimizations doesn't enable LTO because of compiler bugs:
-  http://bugs.python.org/issue28032
-  (see also: http://bugs.python.org/issue28605)
-* PGO is broken on Ubuntu 14.04 LTS with GCC 4.8.4-2ubuntu1~14.04:
-  ``Modules/socketmodule.c:7743:1: internal compiler error: in edge_badness,
-  at ipa-inline.c:895``
-* If the ``nohz_full`` kernel option is used, the CPU frequency must be fixed,
-  otherwise the CPU frequency will be instable. See `Bug 1378529: intel_pstate
-  driver doesn't support NOHZ_FULL
-  <https://bugzilla.redhat.com/show_bug.cgi?id=1378529>`_.
-* ASLR must *not* be disabled manually! (it's enabled by default on Linux)
+  optimizations): use the :ref:`performance compile <cmd-compile>` command with
+  uses LTO and PGO by default
+* See advices of the perf documentation:
+  `How to get reproductible benchmark results
+  <http://perf.readthedocs.io/en/latest/run_benchmark.html#how-to-get-reproductible-benchmark-results>`_.
 
 
 performance virtual environment
