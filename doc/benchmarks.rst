@@ -34,6 +34,17 @@ version (iterative_foo), and a multithreaded version (threaded_foo).
 Available Benchmarks
 ====================
 
+In performance 0.5.5, the following microbenchmarks have been removed because
+they are too short, not representative of real applications and are too
+unstable.
+
+- ``call_method_slots``
+- ``call_method_unknown``
+- ``call_method``
+- ``call_simple``
+- ``logging_silent``
+- ``pybench``
+
 2to3
 ----
 
@@ -242,8 +253,6 @@ Benchmarks on the ``logging`` module:
 
 * ``logging_format``: Benchmark ``logger.warn(fmt, str)``
 * ``logging_simple``: Benchmark ``logger.warn(msg)``
-* ``logging_silent``: Benchmark ``logger.warn(msg)`` when the message is
-  ignored
 
 Script command line option::
 

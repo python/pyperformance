@@ -21,36 +21,7 @@ def truncate_stream(stream):
     stream.truncate()
 
 
-def bench_silent(loops, logger, stream, check):
-    truncate_stream(stream)
-
-    # micro-optimization: use fast local variables
-    m = MESSAGE
-    range_it = xrange(loops)
-    t0 = perf.perf_counter()
-
-    for _ in range_it:
-        # repeat 10 times
-        logger.debug(m)
-        logger.debug(m)
-        logger.debug(m)
-        logger.debug(m)
-        logger.debug(m)
-        logger.debug(m)
-        logger.debug(m)
-        logger.debug(m)
-        logger.debug(m)
-        logger.debug(m)
-
-    dt = perf.perf_counter() - t0
-
-    if check and len(stream.getvalue()) != 0:
-        raise ValueError("stream is expected to be empty")
-
-    return dt
-
-
-def bench_simple_output(loops, logger, stream, check):
+def bench_simple_output(loops, logger, stream):
     truncate_stream(stream)
 
     # micro-optimization: use fast local variables
@@ -73,15 +44,14 @@ def bench_simple_output(loops, logger, stream, check):
 
     dt = perf.perf_counter() - t0
 
-    if check:
-        lines = stream.getvalue().splitlines()
-        if len(lines) != loops * 10:
-            raise ValueError("wrong number of lines")
+    lines = stream.getvalue().splitlines()
+    if len(lines) != loops * 10:
+        raise ValueError("wrong number of lines")
 
     return dt
 
 
-def bench_formatted_output(loops, logger, stream, check):
+def bench_formatted_output(loops, logger, stream):
     truncate_stream(stream)
 
     # micro-optimization: use fast local variables
@@ -105,10 +75,9 @@ def bench_formatted_output(loops, logger, stream, check):
 
     dt = perf.perf_counter() - t0
 
-    if check:
-        lines = stream.getvalue().splitlines()
-        if len(lines) != loops * 10:
-            raise ValueError("wrong number of lines")
+    lines = stream.getvalue().splitlines()
+    if len(lines) != loops * 10:
+        raise ValueError("wrong number of lines")
 
     return dt
 
@@ -119,7 +88,6 @@ def add_cmdline_args(cmd, args):
 
 
 BENCHMARKS = {
-    "silent": bench_silent,
     "simple": bench_simple_output,
     "format": bench_formatted_output,
 }
@@ -155,7 +123,6 @@ if __name__ == "__main__":
         name = 'logging_%s' % bench
         bench_func = BENCHMARKS[bench]
 
-        # Only check loggers in worker processes
         runner.bench_time_func(name, bench_func,
-                               logger, stream, runner.args.worker,
+                               logger, stream,
                                inner_loops=10)
