@@ -536,6 +536,12 @@ Data files from ``performance/benchmarks/data`` directory:
 
 See the `SpamBayes project <http://spambayes.sourceforge.net/>`_.
 
+Status at 2017-04-29 from Skip Montanaro: While the last commit was pushed in
+2011 (`svn r3273 <https://sourceforge.net/p/spambayes/code/3273/>`_), the
+project is not dead: it is still actively used on Windows via the installer but
+also runs on mail.python.org for Python mailing lists. Sadly, it doesn't
+support Python 3.
+
 
 spectral_norm
 -------------
