@@ -21,6 +21,14 @@ Version 0.5.5
   - ``logging_silent``: values are faster than 1 ns on PyPy with 2^27 loops!
     (and around 0.7 us on CPython)
 
+* Update requirements
+
+  - Django: 1.11 => 1.11.1
+  - SQLAlchemy: 1.1.9 => 1.1.10
+  - certifi: 2017.1.23 => 2017.4.17
+  - perf: 1.2 => 1.3
+  - mercurial: 4.1.2 => 4.2
+  - tornado: 4.4.3 => 4.5.1
 
 Version 0.5.4 (2017-04-10)
 --------------------------
