@@ -26,8 +26,8 @@ Optimization: `Speedup method calls 1.2x
 | call_method_unknown | 16.0 ms                   | 14.3 ms: 1.12x faster (-11%) |
 +---------------------+---------------------------+------------------------------+
 
-2016-04-22: pymalloc allocator, unpickle_list
----------------------------------------------
+2016-04-22: pymalloc allocator
+------------------------------
 
 Optimization: `PyMem_Malloc() now uses the fast pymalloc allocator
 <http://bugs.python.org/issue26249>`_, `commit f5c4b990
