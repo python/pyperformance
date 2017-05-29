@@ -13,7 +13,7 @@
 #  - git pull --rebase
 #  - Remove untracked files/dirs: git clean -fdx
 #  - maybe update version in setup.py, performance/__init__.py and doc/conf.py
-#  - set release date in changelog (README.rst)
+#  - set release date in doc/changelog.rst
 #  - git commit -a -m "prepare release x.y"
 #  - run tests: tox
 #  - git push

@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Version 0.5.5
--------------
+Version 0.5.5 (2017-05-29)
+--------------------------
 
 * On the 2.x branch on CPython, ``compile`` now pass ``--enable-unicode=ucs4``
   to the ``configure`` script on all platforms, except on Windows which uses
