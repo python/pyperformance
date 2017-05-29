@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 0.5.6
+-------------
+
+* Add again the ``logging_silent`` microbenchmark suite.
+
 Version 0.5.5 (2017-05-29)
 --------------------------
 
