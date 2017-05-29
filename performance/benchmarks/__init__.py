@@ -1,14 +1,8 @@
 from __future__ import division, with_statement, print_function, absolute_import
 
 import logging
-import subprocess
 
-import perf
-
-from performance.run import (run_perf_script, copy_perf_options,
-                             BenchmarkException, run_command,
-                             Relative)
-from performance.utils import temporary_file
+from performance.run import run_perf_script
 
 
 # Benchmark groups. The "default" group is what's run if no -b option is
