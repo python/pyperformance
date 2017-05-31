@@ -42,7 +42,6 @@ unstable.
 - ``call_method_unknown``
 - ``call_method``
 - ``call_simple``
-- ``logging_silent``
 - ``pybench``
 
 2to3
@@ -253,6 +252,8 @@ Benchmarks on the ``logging`` module:
 
 * ``logging_format``: Benchmark ``logger.warn(fmt, str)``
 * ``logging_simple``: Benchmark ``logger.warn(msg)``
+* ``logging_silent``: Benchmark ``logger.debug(msg)`` when the log is
+  ignored
 
 Script command line option::
 
