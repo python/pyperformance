@@ -5,6 +5,7 @@ Version 0.5.6
 -------------
 
 * Add again the ``logging_silent`` microbenchmark suite.
+* compile command: update the Git repository before getting the revision
 
 Version 0.5.5 (2017-05-29)
 --------------------------

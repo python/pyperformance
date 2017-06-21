@@ -405,6 +405,9 @@ class BenchmarkRevision(Application):
                                             os.path.basename(self.filename))
 
     def init_revision(self, revision, branch=None):
+        if self.conf.update:
+            self.repository.fetch()
+
         if branch:
             is_branch, rev_name, full_revision = self.repository.parse_revision(branch)
             if not is_branch:
@@ -627,9 +630,6 @@ class BenchmarkRevision(Application):
 
     def compile_bench(self):
         self.python = Python(self, self.conf)
-
-        if self.conf.update:
-            self.repository.fetch()
 
         try:
             self.compile_install()
