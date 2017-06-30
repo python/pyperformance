@@ -4,6 +4,9 @@ Changelog
 Version 0.5.6
 -------------
 
+* Change ``warn`` to ``warning`` in `bm_logging.py` .In Python 3, Logger.warn()
+  calls warnings.warn(), so is slower than Logger.warning() and
+  warnings.warn() is called to log a deprecation warning.
 * Add again the ``logging_silent`` microbenchmark suite.
 * compile command: update the Git repository before getting the revision
 
