@@ -71,16 +71,16 @@ def bench_simple_output(loops, logger, stream):
 
     for _ in range_it:
         # repeat 10 times
-        logger.warn(m)
-        logger.warn(m)
-        logger.warn(m)
-        logger.warn(m)
-        logger.warn(m)
-        logger.warn(m)
-        logger.warn(m)
-        logger.warn(m)
-        logger.warn(m)
-        logger.warn(m)
+        logger.warning(m)
+        logger.warning(m)
+        logger.warning(m)
+        logger.warning(m)
+        logger.warning(m)
+        logger.warning(m)
+        logger.warning(m)
+        logger.warning(m)
+        logger.warning(m)
+        logger.warning(m)
 
     dt = perf.perf_counter() - t0
 
@@ -102,16 +102,16 @@ def bench_formatted_output(loops, logger, stream):
 
     for _ in range_it:
         # repeat 10 times
-        logger.warn(fmt, msg)
-        logger.warn(fmt, msg)
-        logger.warn(fmt, msg)
-        logger.warn(fmt, msg)
-        logger.warn(fmt, msg)
-        logger.warn(fmt, msg)
-        logger.warn(fmt, msg)
-        logger.warn(fmt, msg)
-        logger.warn(fmt, msg)
-        logger.warn(fmt, msg)
+        logger.warning(fmt, msg)
+        logger.warning(fmt, msg)
+        logger.warning(fmt, msg)
+        logger.warning(fmt, msg)
+        logger.warning(fmt, msg)
+        logger.warning(fmt, msg)
+        logger.warning(fmt, msg)
+        logger.warning(fmt, msg)
+        logger.warning(fmt, msg)
+        logger.warning(fmt, msg)
 
     dt = perf.perf_counter() - t0
 
