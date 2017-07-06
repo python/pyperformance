@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Version 0.6.0
--------------
+Version 0.6.0 (2017-07-06)
+--------------------------
 
 * Change ``warn`` to ``warning`` in `bm_logging.py`. In Python 3, Logger.warn()
   calls warnings.warn() to log a deprecation warning, so is slower than
