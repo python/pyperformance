@@ -12,6 +12,10 @@ Version 0.5.6
 * Update requirements
 
   - perf: 1.3 => 1.4 (fix parse_cpu_list(): strip also NUL characters)
+  - Django: 1.11.1 => 1.11.3
+  - mercurial: 4.2 => 4.2.2
+  - pathlib2: 2.2.1 => 2.3.0
+  - SQLAlchemy: 1.1.10 => 1.1.11
 
 Version 0.5.5 (2017-05-29)
 --------------------------

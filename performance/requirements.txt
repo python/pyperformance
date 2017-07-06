@@ -57,14 +57,14 @@ perf==1.4
 # two performance results of two different major versions is not reliable.
 
 Chameleon==3.1                            # bm_chameleon
-Django==1.11.1                            # bm_django_template
+Django==1.11.3                            # bm_django_template
 Genshi==0.7                               # bm_genshi
 Mako==1.0.6                               # bm_mako
-SQLAlchemy==1.1.10                        # bm_sqlalchemy_declarative
+SQLAlchemy==1.1.11                        # bm_sqlalchemy_declarative
 dulwich==0.17.3                           # dulwich_log
-mercurial==4.2; python_version < '3.0'    # bm_hg_startup
+mercurial==4.2.2; python_version < '3.0'  # bm_hg_startup
 html5lib==0.999999999                     # bm_html5lib
-pathlib2==2.2.1; python_version < '3.4'   # bm_pathlib
+pathlib2==2.3.0; python_version < '3.4'   # bm_pathlib
 pyaes==1.6.0                              # bm_crypto_pyaes
 spambayes==1.1b2; python_version < '3.0'  # bm_spambayes
 sympy==1.0                                # bm_sympy
