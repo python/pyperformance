@@ -4,7 +4,8 @@ Changelog
 Version 0.6.1
 --------------------------
 
-* Fix inherit-environ: propagate to recursive invocations of ``performance``.
+* Fix inherit-environ: propagate to recursive invocations of ``performance``
+  in compile and compile_all commands.
 
 Version 0.6.0 (2017-07-06)
 --------------------------
