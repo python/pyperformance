@@ -126,8 +126,9 @@ class Repository(Task):
 
 
 class Application(object):
-    def __init__(self, conf):
+    def __init__(self, conf, options):
         self.conf = conf
+        self.options = options
         logging.basicConfig(format=LOG_FORMAT)
         self.logger = logging.getLogger()
         self.log_filename = None
@@ -375,8 +376,9 @@ class Python(Task):
 
 class BenchmarkRevision(Application):
     def __init__(self, conf, revision, branch=None, patch=None,
-                 setup_log=True, filename=None, commit_date=None):
-        super().__init__(conf)
+                 setup_log=True, filename=None, commit_date=None,
+                 options=None):
+        super().__init__(conf, options)
         self.patch = patch
         self.exitcode = 0
         self.uploaded = False
@@ -462,6 +464,8 @@ class BenchmarkRevision(Application):
                'venv', 'recreate']
         if self.conf.venv:
             cmd.extend(('--venv', self.conf.venv))
+        if self.options.inherit_environ:
+            cmd.append('--inherit-environ=%s' % ','.join(self.options.inherit_environ))
         exitcode = self.run_nocheck(*cmd)
         if exitcode:
             sys.exit(EXIT_VENV_ERROR)
@@ -473,6 +477,8 @@ class BenchmarkRevision(Application):
                'run',
                '--verbose',
                '--output', self.filename]
+        if self.options.inherit_environ:
+            cmd.append('--inherit-environ=%s' % ','.join(self.options.inherit_environ))
         if self.conf.benchmarks:
             cmd.extend(('--benchmarks', self.conf.benchmarks))
         if self.conf.affinity:
@@ -785,10 +791,10 @@ def parse_config(filename, command):
 
 
 class BenchmarkAll(Application):
-    def __init__(self, config_filename):
+    def __init__(self, config_filename, options):
         config_filename = os.path.abspath(config_filename)
         conf = parse_config(config_filename, "compile_all")
-        super().__init__(conf)
+        super().__init__(conf, options)
         self.config_filename = config_filename
         self.safe_makedirs(self.conf.directory)
         self.setup_log('compile_all')
@@ -911,7 +917,7 @@ def cmd_compile(options):
         if options.no_tune:
             conf.system_tune = False
     bench = BenchmarkRevision(conf, options.revision, options.branch,
-                              patch=options.patch)
+                              patch=options.patch, options=options)
     bench.main()
 
 
@@ -927,10 +933,10 @@ def cmd_upload(options):
 
     bench = BenchmarkRevision(conf, revision, branch,
                               filename=filename, commit_date=commit_date,
-                              setup_log=False)
+                              setup_log=False, options=options)
     bench.upload()
 
 
 def cmd_compile_all(options):
-    bench = BenchmarkAll(options.config_file)
+    bench = BenchmarkAll(options.config_file, options=options)
     bench.main()
