@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 0.6.1 (2017-10-13)
+--------------------------
+
+* Fix inherit-environ: propagate to recursive invocations of ``performance``.
+
 Version 0.6.0 (2017-07-06)
 --------------------------
 
