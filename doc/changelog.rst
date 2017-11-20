@@ -31,7 +31,7 @@ Version 0.5.5 (2017-05-29)
   UTF-16 because of its 16-bit wchar_t.
 * The ``float`` benchmark now uses ``__slots__`` on the ``Point`` class.
 * Remove the following microbenchmarks. They have been moved to the
-  `pymicrobench <https://github.com/haypo/pymicrobench>`_ project because
+  `pymicrobench <https://github.com/vstinner/pymicrobench>`_ project because
   they are too short, not representative of real applications and are too
   unstable.
 
