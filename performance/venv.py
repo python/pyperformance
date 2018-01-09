@@ -253,7 +253,7 @@ class VirtualEnvironment(object):
 
         try:
             proc.wait()
-        except:
+        except:   # noqa
             proc.kill()
             proc.wait()
             raise
@@ -539,7 +539,7 @@ class VirtualEnvironment(object):
         try:
             self._create_venv()
             self._install_req()
-        except:
+        except:   # noqa
             print()
             safe_rmtree(venv_path)
             raise

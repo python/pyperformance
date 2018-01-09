@@ -47,7 +47,7 @@ def run_command(command, hide_stderr=True):
                             **kw)
     try:
         stderr = proc.communicate()[1]
-    except:
+    except:   # noqa
         if proc.stderr:
             proc.stderr.close()
         try:

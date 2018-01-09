@@ -13,7 +13,7 @@ def run_cmd(cmd):
     proc = subprocess.Popen(cmd)
     try:
         proc.wait()
-    except:
+    except:   # noqa
         proc.kill()
         proc.wait()
         raise

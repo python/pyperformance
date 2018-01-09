@@ -202,9 +202,8 @@ class HuffmanTable(object):
         for x in self.table:
             try:
                 d[x.bits].append(x)
-            except:
+            except:   # noqa
                 d[x.bits] = [x]
-        pass
 
     def min_max_bits(self):
         self.min_bits, self.max_bits = 16, -1
