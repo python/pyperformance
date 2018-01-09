@@ -22,7 +22,7 @@ wheel
 # tornado 4.4.1 dependencies
 backports-abc==0.5
 singledispatch==3.4.0.3
-certifi==2017.4.17
+certifi==2017.11.5
 
 # spambayes 1.1b2 dependencies
 lockfile==0.12.2; python_version < '3.0'
@@ -35,18 +35,18 @@ MarkupSafe==1.0
 webencodings==0.5.1
 
 # sympy 1.0 dependency
-mpmath==0.19
+mpmath==1.0.0
 
 # perf dependencies (docutils is needed by statistics)
 statistics==1.0.3.5; python_version < '3.4'
-docutils==0.13.1
+docutils==0.14
 
 
 # performance dependencies
 # ------------------------
 
-six==1.10.0
-perf==1.4
+six==1.11.0
+perf==1.5
 
 
 # Benchmarks dependencies
@@ -56,19 +56,19 @@ perf==1.4
 # should be increased to respect semantic versionning. Comparison between
 # two performance results of two different major versions is not reliable.
 
-Chameleon==3.1                            # bm_chameleon
-Django==1.11.3                            # bm_django_template
+Chameleon==3.2                            # bm_chameleon
+Django==1.11.9                            # bm_django_template
 Genshi==0.7                               # bm_genshi
-Mako==1.0.6                               # bm_mako
-SQLAlchemy==1.1.11                        # bm_sqlalchemy_declarative
-dulwich==0.17.3                           # dulwich_log
-mercurial==4.2.2; python_version < '3.0'  # bm_hg_startup
-html5lib==0.999999999                     # bm_html5lib
+Mako==1.0.7                               # bm_mako
+SQLAlchemy==1.2.0                         # bm_sqlalchemy_declarative
+dulwich==0.18.6                           # dulwich_log
+mercurial==4.4.2; python_version < '3.0'  # bm_hg_startup
+html5lib==1.0.1                           # bm_html5lib
 pathlib2==2.3.0; python_version < '3.4'   # bm_pathlib
-pyaes==1.6.0                              # bm_crypto_pyaes
+pyaes==1.6.1                              # bm_crypto_pyaes
 spambayes==1.1b2; python_version < '3.0'  # bm_spambayes
-sympy==1.0                                # bm_sympy
-tornado==4.5.1                            # bm_tornado_http
+sympy==1.1.1                              # bm_sympy
+tornado==4.5.3                            # bm_tornado_http
 
 
 # Optional dependencies
@@ -76,7 +76,7 @@ tornado==4.5.1                            # bm_tornado_http
 #
 # The list of optional dependencies is hardcoded in performance/venv.py
 
-psutil==5.2.2
+psutil==5.4.3
 
 
 # performance

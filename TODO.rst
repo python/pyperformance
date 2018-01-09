@@ -1,6 +1,8 @@
 TODO
 ====
 
+* Update Django to 2.0
+* cffi dependency: is it used by Mercurial on PyPy or not? For which version?
 * Remove genshi module? Last release in January 2014!
 * upload:
 

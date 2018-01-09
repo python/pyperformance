@@ -5,7 +5,26 @@ Version 0.6.1
 -------------
 
 * Fix inherit-environ: propagate to recursive invocations of ``performance``
-  in compile and compile_all commands.
+  in ``compile`` and ``compile_all`` commands.
+* Fix the ``--track-memory`` option thanks to the update to perf 1.5.
+* Update requirements
+
+  - certifi: 2017.4.17 => 2017.11.5
+  - Chameleon: 3.1 => 3.2
+  - Django: 1.11.3 => 1.11.9
+  - docutils: 0.13.1 => 0.14
+  - dulwich: 0.17.3 => 0.18.6
+  - html5lib: 0.999999999 => 1.0.1
+  - Mako: 1.0.6 => 1.0.7
+  - mercurial: 4.2.2 => 4.4.2
+  - mpmath: 0.19 => 1.0.0
+  - perf: 1.4 => 1.5 (fix ``--track-memory`` option)
+  - psutil: 5.2.2 => 5.4.3
+  - pyaes: 1.6.0 => 1.6.1
+  - six: 1.10.0 => 1.11.0
+  - SQLAlchemy: 1.1.11 => 1.2.0
+  - sympy: 1.0 => 1.1.1
+  - tornado: 4.5.1 => 4.5.3
 
 Version 0.6.0 (2017-07-06)
 --------------------------
