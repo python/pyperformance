@@ -18,7 +18,7 @@ Version 0.6.1
   - Mako: 1.0.6 => 1.0.7
   - mercurial: 4.2.2 => 4.4.2
   - mpmath: 0.19 => 1.0.0
-  - perf: 1.4 => 1.5 (fix ``--track-memory`` option)
+  - perf: 1.4 => 1.5.1 (fix ``--track-memory`` option)
   - psutil: 5.2.2 => 5.4.3
   - pyaes: 1.6.0 => 1.6.1
   - six: 1.10.0 => 1.11.0
