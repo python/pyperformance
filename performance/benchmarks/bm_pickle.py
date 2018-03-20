@@ -17,12 +17,14 @@ from __future__ import division
 import datetime
 import random
 import sys
+import platform
 
 import perf
 import six
 from six.moves import xrange
 if six.PY3:
     long = int
+IS_PYPY = platform.python_implementation() == 'PyPy'
 
 __author__ = "collinwinter@google.com (Collin Winter)"
 
@@ -272,7 +274,7 @@ if __name__ == "__main__":
     if options.pure_python:
         name += "_pure_python"
 
-    if not options.pure_python:
+    if not (options.pure_python or IS_PYPY):
         # C accelerators are enabled by default on 3.x
         if six.PY2:
             import cPickle as pickle
