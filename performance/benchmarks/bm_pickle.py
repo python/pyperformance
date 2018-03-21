@@ -17,14 +17,13 @@ from __future__ import division
 import datetime
 import random
 import sys
-import platform
 
 import perf
 import six
 from six.moves import xrange
 if six.PY3:
     long = int
-IS_PYPY = platform.python_implementation() == 'PyPy'
+IS_PYPY = perf.python_implementation() == 'pypy'
 
 __author__ = "collinwinter@google.com (Collin Winter)"
 
