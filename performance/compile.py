@@ -298,6 +298,9 @@ class Python(Task):
 
             self.run('make', 'install')
 
+            if sys.platform in ('darwin'):
+                program_ext = ''
+
             self.program = os.path.join(prefix, "bin", "python" + program_ext)
             if not os.path.exists(self.program):
                 self.program = os.path.join(prefix, "bin", "python3" + program_ext)
