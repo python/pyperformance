@@ -105,15 +105,12 @@ def is_build_dir():
 
 
 class Requirements(object):
-    def __init__(self, filename, pip, installer, indirect_req, optional):
+    def __init__(self, filename, pip, installer, optional):
         # pip requirement
         self.pip = []
 
         # pre-requirements (setuptools, pip)
         self.installer = []
-
-        # indirect requirements
-        self.indirect_req = []
 
         # requirements
         self.req = []
@@ -142,8 +139,6 @@ class Requirements(object):
                     self.installer.append(line)
                 elif req in optional:
                     self.optional.append(line)
-                elif req in indirect_req:
-                    self.indirect_req.append(line)
                 else:
                     self.req.append(line)
 
@@ -478,7 +473,6 @@ class VirtualEnvironment(object):
                                     # FIXME: don't hardcode requirements
                                     ['pip', 'setuptools'],
                                     ['wheel'],
-                                    ['cffi'],
                                     ['psutil', 'dulwich'])
 
         # Upgrade pip
@@ -492,11 +486,6 @@ class VirtualEnvironment(object):
         # Upgrade installer dependencies (setuptools, ...)
         cmd = pip_program + ['install', '-U']
         cmd.extend(requirements.installer)
-        self.run_cmd(cmd)
-
-        # install indirect requirements
-        cmd = pip_program + ['install']
-        cmd.extend(requirements.indirect_req)
         self.run_cmd(cmd)
 
         # install requirements
