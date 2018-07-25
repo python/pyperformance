@@ -202,7 +202,7 @@ def _main():
         cmd_show(options)
         sys.exit()
 
-    if not options.inside_venv:
+    if options.inside_venv:
         exec_in_virtualenv(options)
 
     from performance.cli_run import cmd_run, cmd_list, cmd_list_groups
