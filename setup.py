@@ -35,7 +35,10 @@
 #  - git commit -a -m "post-release"
 #  - git push
 
-VERSION = '0.6.2'
+# Import just to get the version
+import performance
+
+VERSION = performance.__version__
 
 DESCRIPTION = 'Python benchmark suite'
 CLASSIFIERS = [
