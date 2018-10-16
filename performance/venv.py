@@ -489,9 +489,10 @@ class VirtualEnvironment(object):
         self.run_cmd(cmd)
 
         # install requirements
-        cmd = pip_program + ['install']
-        cmd.extend(requirements.req)
-        self.run_cmd(cmd)
+        if requirements.req:
+            cmd = pip_program + ['install']
+            cmd.extend(requirements.req)
+            self.run_cmd(cmd)
 
         # install optional requirements
         for req in requirements.optional:
