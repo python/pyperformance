@@ -81,7 +81,7 @@ class Strength(object):
 
 # This is a terrible pattern IMO, but true to the original JS implementation.
 Strength.REQUIRED = Strength(0, "required")
-Strength.STONG_PREFERRED = Strength(1, "strongPreferred")
+Strength.STRONG_PREFERRED = Strength(1, "strongPreferred")
 Strength.PREFERRED = Strength(2, "preferred")
 Strength.STRONG_DEFAULT = Strength(3, "strongDefault")
 Strength.NORMAL = Strength(4, "normal")
