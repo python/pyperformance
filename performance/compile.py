@@ -298,7 +298,7 @@ class Python(Task):
 
             self.run('make', 'install')
 
-            if sys.platform in ('darwin'):
+            if sys.platform == 'darwin':
                 program_ext = ''
 
             self.program = os.path.join(prefix, "bin", "python" + program_ext)
