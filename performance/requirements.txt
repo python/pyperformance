@@ -22,7 +22,7 @@ wheel
 # tornado 4.4.1 dependencies
 backports-abc==0.5
 singledispatch==3.4.0.3
-certifi==2017.11.5
+certifi==2018.10.15
 
 # spambayes 1.1b2 dependencies
 lockfile==0.12.2; python_version < '3.0'
@@ -56,21 +56,21 @@ perf==1.5.1
 # should be increased to respect semantic versionning. Comparison between
 # two performance results of two different major versions is not reliable.
 
-Chameleon==3.2                            # bm_chameleon
+Chameleon==3.4                            # bm_chameleon
 # Django is currently stuck at Django 1.11 to support Python 2.7 and Python 3:
 # https://mail.python.org/pipermail/speed/2018-January/000619.html
-Django==1.11.9                            # bm_django_template
-Genshi==0.7                               # bm_genshi
+Django==1.11.16                           # bm_django_template
+Genshi==0.7.1                             # bm_genshi
 Mako==1.0.7                               # bm_mako
-SQLAlchemy==1.2.0                         # bm_sqlalchemy_declarative
-dulwich==0.18.6                           # dulwich_log
-mercurial==4.4.2; python_version < '3.0'  # bm_hg_startup
+SQLAlchemy==1.2.12                        # bm_sqlalchemy_declarative
+dulwich==0.19.6                           # dulwich_log
+mercurial==4.7.2; python_version < '3.0'  # bm_hg_startup
 html5lib==1.0.1                           # bm_html5lib
-pathlib2==2.3.0; python_version < '3.4'   # bm_pathlib
+pathlib2==2.3.2; python_version < '3.4'   # bm_pathlib
 pyaes==1.6.1                              # bm_crypto_pyaes
 spambayes==1.1b2; python_version < '3.0'  # bm_spambayes
-sympy==1.1.1                              # bm_sympy
-tornado==4.5.3                            # bm_tornado_http
+sympy==1.3                                # bm_sympy
+tornado==5.1.1                            # bm_tornado_http
 
 
 # Optional dependencies
@@ -78,7 +78,7 @@ tornado==4.5.3                            # bm_tornado_http
 #
 # The list of optional dependencies is hardcoded in performance/venv.py
 
-psutil==5.4.3
+psutil==5.4.7
 
 
 # performance

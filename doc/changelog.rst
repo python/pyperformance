@@ -1,6 +1,26 @@
 Changelog
 =========
 
+Version 0.7.0 (2018-10-16)
+--------------------------
+
+* Update requirements:
+
+  * certifi: 2017.11.5 => 2018.10.15
+  * Chameleon: 3.2 => 3.4
+  * Django: 1.11.9 => 1.11.16
+  * dulwich: 0.18.6 => 0.19.6
+  * Genshi: 0.7 => 0.7.1
+  * mercurial: 4.4.2 => 4.7.2
+  * pathlib2: 2.3.0 => 2.3.2
+  * psutil: 5.4.3 => 5.4.7
+  * SQLAlchemy: 1.2.0 => 1.2.12
+  * sympy: 1.1.1 => 1.3
+  * tornado: 4.5.3 => 5.1.1
+
+* Remove indirect dependencies. Indirect dependencies were used to install
+  cffi, but Mercurial 4.0 doesn't depend on cffi anymore.
+
 Version 0.6.1 (2018-01-11)
 --------------------------
 
