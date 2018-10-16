@@ -16,7 +16,6 @@ Version 0.7.0 (2018-10-16)
   * psutil: 5.4.3 => 5.4.7
   * SQLAlchemy: 1.2.0 => 1.2.12
   * sympy: 1.1.1 => 1.3
-  * tornado: 4.5.3 => 5.1.1
 
 * Remove indirect dependencies. Indirect dependencies were used to install
   cffi, but Mercurial 4.0 doesn't depend on cffi anymore.
