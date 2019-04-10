@@ -274,6 +274,8 @@ class Python(Task):
             config_args.append('--with-pydebug')
         elif self.conf.lto:
             config_args.append('--with-lto')
+        if self.conf.pkg_only:
+            config_args.extend(self.get_package_only_flags())
         if self.conf.debug:
             config_args.append('CFLAGS=-O0')
         configure = os.path.join(self.conf.repo_dir, 'configure')
@@ -298,6 +300,9 @@ class Python(Task):
 
             self.run('make', 'install')
 
+            if sys.platform == 'darwin':
+                program_ext = ''
+
             self.program = os.path.join(prefix, "bin", "python" + program_ext)
             if not os.path.exists(self.program):
                 self.program = os.path.join(prefix, "bin", "python3" + program_ext)
@@ -316,6 +321,37 @@ class Python(Task):
         stdout = self.get_output(self.program, '-c', code)
         self.hexversion = int(stdout)
         self.logger.error("Python hexversion: %x" % self.hexversion)
+
+    def get_package_only_flags(self):
+        arguments = []
+        extra_paths = []
+
+        for pkg in self.conf.pkg_only:
+            prefix = self.get_package_prefix(pkg)
+            if pkg == 'openssl':
+                arguments.append('--with-openssl=' + prefix)
+            else:
+                extra_paths.append(prefix)
+
+        if extra_paths:
+            # Flags are one CLI arg each and do not need quotes.
+            ps = ['-I%s/include' % p for p in extra_paths]
+            arguments.append('CFLAGS=%s' % ' '.join(ps))
+            ps = ['-L%s/lib' % p for p in extra_paths]
+            arguments.append('LDFLAGS=%s' % ' '.join(ps))
+        return arguments
+
+    def get_package_prefix(self, name):
+        if sys.platform == 'darwin':
+            cmd = ['brew', '--prefix', name]
+        else:
+            self.logger.error("ERROR: package-only libraries"
+                              " are not supported on %s" % sys.platform)
+            sys.exit(1)
+
+        stdout = self.get_output(*cmd)
+        self.logger.error("Package prefix for %s is '%s'" % (name, stdout))
+        return stdout
 
     def download(self, url, filename):
         self.logger.error("Download %s into %s" % (url, filename))
@@ -730,6 +766,7 @@ def parse_config(filename, command):
         conf.lto = getboolean('compile', 'lto', True)
         conf.pgo = getboolean('compile', 'pgo', True)
         conf.install = getboolean('compile', 'install', True)
+        conf.pkg_only = getstr('compile', 'pkg_only', '').split()
 
         # [run_benchmark]
         conf.system_tune = getboolean('run_benchmark', 'system_tune', True)
