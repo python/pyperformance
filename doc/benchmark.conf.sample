@@ -44,7 +44,11 @@ pgo = True
 # to configure. As an exception, the prefix for openssl, if that
 # library is present here, is passed via the --with-openssl
 # option. Currently, this only works with Homebrew on macOS.
-pkg_only = openssl zlib
+# If running on macOS with Homebrew, you probably want to use:
+#     pkg_only = openssl readline sqlite3 xz zlib
+# The version of zlib shipping with macOS probably works as well,
+# as long as Apple's SDK headers are installed.
+pkg_only =
 
 # Install Python? If false, run Python from the build directory
 #
