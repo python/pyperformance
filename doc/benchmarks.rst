@@ -26,11 +26,6 @@ Available benchmark groups:
 Use the ``python3 -m performance list_groups`` command to list groups and their
 benchmarks.
 
-There is also a disabled ``threading`` group: collection of microbenchmarks for
-Python's threading support. These benchmarks come in pairs: an iterative
-version (iterative_foo), and a multithreaded version (threaded_foo).
-
-
 Available Benchmarks
 ====================
 
