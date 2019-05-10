@@ -86,9 +86,9 @@ def process(etree, xml_root=None):
     for child in root.iterfind('.//subchild'):
         SubElement(target, child.tag, attr=child.text).text = "found"
 
-    if (len(target) < len(root) or
-            not all(el.text == 'found'
-                    for el in target.iterfind('subchild'))):
+    if (len(target) < len(root)
+            or not all(el.text == 'found'
+                       for el in target.iterfind('subchild'))):
         raise RuntimeError("transform #2 failed")
 
     # moving subtrees around

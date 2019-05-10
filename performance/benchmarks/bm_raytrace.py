@@ -347,10 +347,9 @@ class CheckerboardSurface(SimpleSurface):
     def baseColourAt(self, p):
         v = p - Point.ZERO
         v.scale(1.0 / self.checkSize)
-        if (int(abs(v.x) + 0.5) +
-            int(abs(v.y) + 0.5) +
-            int(abs(v.z) + 0.5)) \
-           % 2:
+        if ((int(abs(v.x) + 0.5)
+             + int(abs(v.y) + 0.5)
+             + int(abs(v.z) + 0.5)) % 2):
             return self.otherColour
         else:
             return self.baseColour

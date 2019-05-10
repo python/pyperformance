@@ -19,7 +19,7 @@ DEFAULT_GROUP = [
     'fannkuch',
     'float',
     # Issue #46: Genshi doesn't support Python 3.8 yet
-    #'genshi',
+    # 'genshi',
     'go',
     'hexiom',
     'hg_startup',

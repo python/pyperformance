@@ -24,7 +24,7 @@ def filter_opts(cmd):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description=("Compares the performance of baseline_python with" +
+        description=("Compares the performance of baseline_python with"
                      " changed_python and prints a report."))
 
     subparsers = parser.add_subparsers(dest='action')
@@ -35,7 +35,7 @@ def parse_args():
         'run', help='Run benchmarks on the running python')
     cmds.append(cmd)
     cmd.add_argument("-r", "--rigorous", action="store_true",
-                     help=("Spend longer running tests to get more" +
+                     help=("Spend longer running tests to get more"
                            " accurate results"))
     cmd.add_argument("-f", "--fast", action="store_true",
                      help="Get rough answers quickly")

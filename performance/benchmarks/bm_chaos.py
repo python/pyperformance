@@ -31,9 +31,9 @@ class GVector(object):
         return math.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
 
     def dist(self, other):
-        return math.sqrt((self.x - other.x) ** 2 +
-                         (self.y - other.y) ** 2 +
-                         (self.z - other.z) ** 2)
+        return math.sqrt((self.x - other.x) ** 2
+                         + (self.y - other.y) ** 2
+                         + (self.z - other.z) ** 2)
 
     def __add__(self, other):
         if not isinstance(other, GVector):
