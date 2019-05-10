@@ -5,7 +5,7 @@ cache: pip
 python:
     - 2.7
     - 3.7
-    - pypy-5.3.1
+    - pypy
 install:
     - pip install -U 'setuptools>=18.5' 'pip>=6.0'
     # Need to install performance, performance/tests/test_compare.py imports it
