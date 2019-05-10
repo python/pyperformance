@@ -9,8 +9,7 @@ from performance.run import run_perf_script
 # specified.
 DEFAULT_GROUP = [
     '2to3',
-    # Issue #47: Chameleon doesn't support Python 3.8 yet
-    # 'chameleon',
+    'chameleon',
     'chaos',
     'crypto_pyaes',
     'deltablue',
@@ -18,8 +17,7 @@ DEFAULT_GROUP = [
     'dulwich_log',
     'fannkuch',
     'float',
-    # Issue #46: Genshi doesn't support Python 3.8 yet
-    # 'genshi',
+    'genshi',
     'go',
     'hexiom',
     'hg_startup',

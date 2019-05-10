@@ -1,6 +1,36 @@
 Changelog
 =========
 
+Version 0.8.0 (2019-05-10)
+--------------------------
+
+* compile command: Add "pkg_only" option to benchmark.conf.
+  Add support for native libraries that are installed but not on path.
+  Patch by Robert Grimm.
+* Update Travis configuration: use trusty image, use pip cache.
+  Patch by Inada Naoki.
+* Upgrade tornado to 5.1.1.
+  Patch by Inada Naoki.
+* Fix compile command on Mac OS: no program extension. Patch by Anthony Shaw.
+* Update requirements:
+
+  * Chameleon: 3.4 => 3.6.1
+  * Django: 1.11.16 => 1.11.20
+  * Genshi: 0.7.1 => 0.7.2
+  * Mako: 1.0.7 => 1.0.9
+  * MarkupSafe: 1.0 => 1.1.1
+  * SQLAlchemy: 1.2.12 => 1.3.3
+  * certifi: 2018.10.15 => 2019.3.9
+  * dulwich: 0.19.6 => 0.19.11
+  * mercurial: 4.7.2 => 5.0
+  * mpmath: 1.0.0 => 1.1.0
+  * pathlib2: 2.3.2 => 2.3.3
+  * perf: 1.5.1 => 1.6.0
+  * psutil: 5.4.7 => 5.6.2
+  * six: 1.11.0 => 1.12.0
+  * sympy: 1.3 => 1.4
+  * tornado: 4.5.3 => 5.1.1
+
 Version 0.7.0 (2018-10-16)
 --------------------------
 
