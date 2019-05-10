@@ -22,20 +22,20 @@ wheel
 # tornado 4.4.1 dependencies
 backports-abc==0.5
 singledispatch==3.4.0.3
-certifi==2018.10.15
+certifi==2019.3.9
 
 # spambayes 1.1b2 dependencies
 lockfile==0.12.2; python_version < '3.0'
 pydns==2.3.6; python_version < '3.0'
 
 # Mako 1.0.4 dependencies
-MarkupSafe==1.0
+MarkupSafe==1.1.1
 
 # html5lib 0.999999999 dependencies
 webencodings==0.5.1
 
 # sympy 1.0 dependency
-mpmath==1.0.0
+mpmath==1.1.0
 
 # perf dependencies (docutils is needed by statistics)
 statistics==1.0.3.5; python_version < '3.4'
@@ -45,8 +45,8 @@ docutils==0.14
 # performance dependencies
 # ------------------------
 
-six==1.11.0
-perf==1.5.1
+six==1.12.0
+perf==1.6.0
 
 
 # Benchmarks dependencies
@@ -56,20 +56,21 @@ perf==1.5.1
 # should be increased to respect semantic versionning. Comparison between
 # two performance results of two different major versions is not reliable.
 
-Chameleon==3.4                            # bm_chameleon
+Chameleon==3.6.1                          # bm_chameleon
 # Django is currently stuck at Django 1.11 to support Python 2.7 and Python 3:
 # https://mail.python.org/pipermail/speed/2018-January/000619.html
-Django==1.11.16                           # bm_django_template
-Genshi==0.7.1                             # bm_genshi
-Mako==1.0.7                               # bm_mako
-SQLAlchemy==1.2.12                        # bm_sqlalchemy_declarative
-dulwich==0.19.6                           # dulwich_log
-mercurial==4.7.2; python_version < '3.0'  # bm_hg_startup
+Django==1.11.20                           # bm_django_template
+Genshi==0.7.2                             # bm_genshi
+Mako==1.0.9                               # bm_mako
+SQLAlchemy==1.3.3                         # bm_sqlalchemy_declarative
+dulwich==0.19.11                          # dulwich_log
+mercurial==5.0; python_version < '3.0'    # bm_hg_startup
 html5lib==1.0.1                           # bm_html5lib
-pathlib2==2.3.2; python_version < '3.4'   # bm_pathlib
+pathlib2==2.3.3; python_version < '3.4'   # bm_pathlib
 pyaes==1.6.1                              # bm_crypto_pyaes
 spambayes==1.1b2; python_version < '3.0'  # bm_spambayes
-sympy==1.3                                # bm_sympy
+sympy==1.4                                # bm_sympy
+# Tornado 6.0 dropped Python 2.7 compatibility
 tornado==5.1.1                            # bm_tornado_http
 
 
@@ -78,7 +79,7 @@ tornado==5.1.1                            # bm_tornado_http
 #
 # The list of optional dependencies is hardcoded in performance/venv.py
 
-psutil==5.4.7
+psutil==5.6.2
 
 
 # performance

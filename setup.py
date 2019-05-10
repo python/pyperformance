@@ -2,6 +2,7 @@
 
 # Update dependencies:
 #
+#  - git clean -fdx  # remove all untracked files!
 #  - python2 -m performance venv create
 #  - venv/cpython2<tab>/bin/python -m pip list --outdated
 #  - update performance/requirements.txt
