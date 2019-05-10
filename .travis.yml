@@ -1,6 +1,5 @@
 language: python
 dist: xenial
-sudo: false
 cache: pip
 python:
     - 2.7
