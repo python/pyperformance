@@ -17,7 +17,8 @@ DEFAULT_GROUP = [
     'dulwich_log',
     'fannkuch',
     'float',
-    'genshi',
+    # Issue #54:  genshi benchmark fails on Python 3.8.0a4+
+    # 'genshi',
     'go',
     'hexiom',
     'hg_startup',
@@ -52,7 +53,8 @@ DEFAULT_GROUP = [
     'sqlite_synth',
     'sympy',
     'telco',
-    'tornado_http',
+    # Issue #55: tornado benchmark fails on Python 3.8.0a4+
+    # 'tornado_http',
     'unpack_sequence',
     'unpickle',
     'unpickle_list',
