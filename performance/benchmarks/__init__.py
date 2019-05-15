@@ -53,8 +53,7 @@ DEFAULT_GROUP = [
     'sqlite_synth',
     'sympy',
     'telco',
-    # Issue #55: tornado benchmark fails on Python 3.8.0a4+
-    # 'tornado_http',
+    'tornado_http',
     'unpack_sequence',
     'unpickle',
     'unpickle_list',
