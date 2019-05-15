@@ -53,11 +53,11 @@ def make_http_server(request_handler):
     assert len(sockets) == 1
     server.add_sockets(sockets)
     sock = sockets[0]
-    return sock
+    return server, sock
 
 
 def bench_tornado(loops):
-    sock = make_http_server(make_application())
+    server, sock = make_http_server(make_application())
     host, port = sock.getsockname()
     url = "http://%s:%s/" % (host, port)
     namespace = {}
@@ -80,7 +80,7 @@ def bench_tornado(loops):
         client.close()
 
     IOLoop.current().run_sync(run_client)
-    sock.close()
+    server.stop()
 
     return namespace['dt']
 
