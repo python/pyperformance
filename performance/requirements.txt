@@ -37,7 +37,7 @@ webencodings==0.5.1
 # sympy 1.0 dependency
 mpmath==1.1.0
 
-# perf dependencies (docutils is needed by statistics)
+# pyperf dependencies (docutils is needed by statistics)
 statistics==1.0.3.5; python_version < '3.4'
 docutils==0.14
 
@@ -46,7 +46,7 @@ docutils==0.14
 # ------------------------
 
 six==1.12.0
-perf==1.6.0
+pyperf==1.6.1
 
 
 # Benchmarks dependencies

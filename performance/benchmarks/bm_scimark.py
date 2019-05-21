@@ -1,7 +1,7 @@
 from array import array
 import math
 
-import perf
+import pyperf
 from six.moves import xrange
 
 
@@ -153,18 +153,18 @@ def SOR_execute(omega, G, cycles, Array):
 
 def bench_SOR(loops, n, cycles, Array):
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         G = Array(n, n)
         SOR_execute(1.25, G, cycles, Array)
 
-    return perf.perf_counter() - t0
+    return pyperf.perf_counter() - t0
 
 
 def SparseCompRow_matmult(M, y, val, row, col, x, num_iterations):
     range_it = xrange(num_iterations)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         for r in xrange(M):
@@ -173,7 +173,7 @@ def SparseCompRow_matmult(M, y, val, row, col, x, num_iterations):
                 sa += x[col[i]] * val[i]
             y[r] = sa
 
-    return perf.perf_counter() - t0
+    return pyperf.perf_counter() - t0
 
 
 def bench_SparseMatMult(cycles, N, nz):
@@ -212,12 +212,12 @@ def MonteCarlo(Num_samples):
 
 def bench_MonteCarlo(loops, Num_samples):
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         MonteCarlo(Num_samples)
 
-    return perf.perf_counter() - t0
+    return pyperf.perf_counter() - t0
 
 
 def LU_factor(A, pivot):
@@ -261,12 +261,12 @@ def bench_LU(cycles, N):
     lu = ArrayList(N, N)
     pivot = array('i', [0]) * N
     range_it = xrange(cycles)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         LU(lu, A, pivot)
 
-    return perf.perf_counter() - t0
+    return pyperf.perf_counter() - t0
 
 
 def int_log2(n):
@@ -373,7 +373,7 @@ def bench_FFT(loops, N, cycles):
     twoN = 2 * N
     init_vec = Random(7).RandomVector(twoN)
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         x = copy_vector(init_vec)
@@ -381,7 +381,7 @@ def bench_FFT(loops, N, cycles):
             FFT_transform(twoN, x)
             FFT_inverse(twoN, x)
 
-    return perf.perf_counter() - t0
+    return pyperf.perf_counter() - t0
 
 
 def add_cmdline_args(cmd, args):
@@ -400,7 +400,7 @@ BENCHMARKS = {
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.argparser.add_argument("benchmark", nargs='?',
                                   choices=sorted(BENCHMARKS))
 

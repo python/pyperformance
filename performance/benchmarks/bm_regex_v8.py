@@ -43,7 +43,7 @@
 import re
 
 # Third party imports
-import perf
+import pyperf
 import six
 from six.moves import xrange
 
@@ -1768,7 +1768,7 @@ def block11():
 
 
 def bench_regex_v8(loops):
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
     for loops in range(loops):
         block0()
         block1()
@@ -1782,11 +1782,11 @@ def bench_regex_v8(loops):
         block9()
         block10()
         block11()
-    return perf.perf_counter() - t0
+    return pyperf.perf_counter() - t0
 
 
 if __name__ == '__main__':
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = ("Test the performance of regexps "
                                       "using V8's benchmarks")
     runner.bench_time_func('regex_v8', bench_regex_v8)

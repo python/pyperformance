@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Version 0.8.1
+-------------
+
+* Upgrade pyperf from version 1.6.0 to 1.6.1. The project has been renamed from
+  "perf" to "pyperf". Update imports.
+
 Version 0.8.0 (2019-05-10)
 --------------------------
 

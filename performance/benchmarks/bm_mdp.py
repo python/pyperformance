@@ -2,7 +2,7 @@ import collections
 from collections import defaultdict
 from fractions import Fraction
 
-import perf
+import pyperf
 from six.moves import xrange
 
 
@@ -250,10 +250,10 @@ def bench_mdp(loops):
     max_diff = 1e-6
     range_it = xrange(loops)
 
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
     for _ in range_it:
         result = Battle().evaluate(0.192)
-    dt = perf.perf_counter() - t0
+    dt = pyperf.perf_counter() - t0
 
     if abs(result - expected) > max_diff:
         raise Exception("invalid result: got %s, expected %s "
@@ -263,6 +263,6 @@ def bench_mdp(loops):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = "MDP benchmark"
     runner.bench_time_func('mdp', bench_mdp)

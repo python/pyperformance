@@ -9,7 +9,7 @@ data as a HTTP response's body.
 import socket
 
 from six.moves import xrange
-import perf
+import pyperf
 
 from tornado.httpclient import AsyncHTTPClient
 from tornado.httpserver import HTTPServer
@@ -66,7 +66,7 @@ def bench_tornado(loops):
     def run_client():
         client = AsyncHTTPClient()
         range_it = xrange(loops)
-        t0 = perf.perf_counter()
+        t0 = pyperf.perf_counter()
 
         for _ in range_it:
             futures = [client.fetch(url) for j in xrange(CONCURRENCY)]
@@ -76,7 +76,7 @@ def bench_tornado(loops):
                 buf.seek(0, 2)
                 assert buf.tell() == len(CHUNK) * NCHUNKS
 
-        namespace['dt'] = perf.perf_counter() - t0
+        namespace['dt'] = pyperf.perf_counter() - t0
         client.close()
 
     IOLoop.current().run_sync(run_client)
@@ -87,10 +87,10 @@ def bench_tornado(loops):
 
 if __name__ == "__main__":
     kw = {}
-    if perf.python_has_jit():
+    if pyperf.python_has_jit():
         # PyPy needs to compute more warmup values to warmup its JIT
         kw['warmups'] = 30
-    runner = perf.Runner(**kw)
+    runner = pyperf.Runner(**kw)
     runner.metadata['description'] = ("Test the performance of HTTP requests "
                                       "with Tornado.")
     runner.bench_time_func('tornado_http', bench_tornado)

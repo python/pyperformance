@@ -1,4 +1,4 @@
-import perf
+import pyperf
 from six.moves import xrange
 
 from sqlalchemy import Column, ForeignKey, Integer, String, Table, MetaData
@@ -56,7 +56,7 @@ def bench_sqlalchemy(loops, npeople):
         cur.execute()
 
         # Run the benchmark once
-        t0 = perf.perf_counter()
+        t0 = pyperf.perf_counter()
 
         for i in xrange(npeople):
             # Insert a Person in the person table
@@ -72,7 +72,7 @@ def bench_sqlalchemy(loops, npeople):
             cur = Person.select()
             cur.execute()
 
-        total_dt += (perf.perf_counter() - t0)
+        total_dt += (pyperf.perf_counter() - t0)
 
     return total_dt
 
@@ -82,7 +82,7 @@ def add_cmdline_args(cmd, args):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = ("SQLAlchemy Imperative benchmark "
                                       "using SQLite")
     runner.argparser.add_argument("--rows", type=int, default=100,

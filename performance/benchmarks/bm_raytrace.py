@@ -11,7 +11,7 @@ From http://www.lshift.net/blog/2008/10/29/toy-raytracer-in-python
 import array
 import math
 
-import perf
+import pyperf
 from six.moves import xrange
 
 
@@ -357,7 +357,7 @@ class CheckerboardSurface(SimpleSurface):
 
 def bench_raytrace(loops, width, height, filename):
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for i in range_it:
         canvas = Canvas(width, height)
@@ -374,7 +374,7 @@ def bench_raytrace(loops, width, height, filename):
                     CheckerboardSurface())
         s.render(canvas)
 
-    dt = perf.perf_counter() - t0
+    dt = pyperf.perf_counter() - t0
 
     if filename:
         canvas.write_ppm(filename)
@@ -389,7 +389,7 @@ def add_cmdline_args(cmd, args):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     cmd = runner.argparser
     cmd.add_argument("--width",
                      type=int, default=DEFAULT_WIDTH,

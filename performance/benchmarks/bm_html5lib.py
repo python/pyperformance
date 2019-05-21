@@ -9,7 +9,7 @@ import io
 import os.path
 
 import html5lib
-import perf
+import pyperf
 import six
 
 
@@ -22,7 +22,7 @@ def bench_html5lib(html_file):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = (
         "Test the performance of the html5lib parser.")
     runner.metadata['html5lib_version'] = html5lib.__version__

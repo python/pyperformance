@@ -3,11 +3,11 @@ The Python Benchmark Suite
 ##########################
 
 .. image:: https://img.shields.io/pypi/v/performance.svg
-   :alt: Latest release on the Python Cheeseshop (PyPI)
+   :alt: Latest performance release on the Python Cheeseshop (PyPI)
    :target: https://pypi.python.org/pypi/performance
 
 .. image:: https://travis-ci.org/python/performance.svg?branch=master
-   :alt: Build status of perf on Travis CI
+   :alt: Build status of performance on Travis CI
    :target: https://travis-ci.org/python/performance
 
 The ``performance`` project is intended to be an authoritative source of

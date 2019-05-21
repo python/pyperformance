@@ -8,7 +8,7 @@ from __future__ import division, print_function
 import math
 import random
 
-import perf
+import pyperf
 import six
 from six.moves import xrange
 
@@ -297,7 +297,7 @@ def add_cmdline_args(cmd, args):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "Create chaosgame-like fractals"
     cmd = runner.argparser
     cmd.add_argument("--thickness",

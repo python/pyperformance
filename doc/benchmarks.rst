@@ -204,7 +204,7 @@ hg_startup
 Get Mercurial's help screen.
 
 Measure the performance of the ``python path/to/hg help`` command using
-``perf.Runner.bench_command()``, where ``python`` is ``sys.executable`` and
+``pyperf.Runner.bench_command()``, where ``python`` is ``sys.executable`` and
 ``path/to/hg`` is the Mercurial program installed in a virtual environmnent.
 
 The ``bench_command()`` redirects stdout and stderr into ``/dev/null``.
@@ -323,7 +323,7 @@ python_startup, python_startup_nosite
   the ``site`` module, run ``python -S -c pass`` where ``python`` is
   ``sys.executable``
 
-Run the benchmark with ``perf.Runner.bench_command()``.
+Run the benchmark with ``pyperf.Runner.bench_command()``.
 
 
 nqueens
@@ -586,7 +586,7 @@ Benchmark on the ``sympy`` module:
 
 On CPython, some ``sympy_sum`` values are 5%-10% slower::
 
-    $ python3 -m perf dump sympy_sum.json
+    $ python3 -m pyperf dump sympy_sum.json
     Run 1: 1 warmup, 50 values, 1 loop
     - warmup 1: 404 ms (+63%)
     - value 1: 244 ms

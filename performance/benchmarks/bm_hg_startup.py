@@ -1,7 +1,7 @@
 import sys
 import subprocess
 
-import perf
+import pyperf
 from performance.venv import get_venv_program
 
 
@@ -25,7 +25,7 @@ def get_hg_version(hg_bin):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(values=25)
+    runner = pyperf.Runner(values=25)
 
     runner.metadata['description'] = "Performance of the Python startup"
     args = runner.parse_args()

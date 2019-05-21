@@ -10,7 +10,7 @@ TODO
 
 * bm_python_startup: add again python metadata, to get back the Python version
   in benchmark suite metadata. Same for bm_hg_startup.
-* Remove compare command or reimplement it using perf compare_to
+* Remove compare command or reimplement it using pyperf compare_to
 * Add a --log option to create a log file. Use the logging module
   and replace print() with logger.error().
 * Write a test to ensure that benchmarks listed in groups exist
@@ -47,7 +47,7 @@ numpy benchmarks?
 
 * https://morepypy.blogspot.fr/2016/11/vectorization-extended-powerpc-and-s390x.html
 * https://bitbucket.org/plan_rich/numpy-benchmark
-  fork of https://bitbucket.org/mikefc/numpy-benchmark/src to use perf
+  fork of https://bitbucket.org/mikefc/numpy-benchmark/src to use pyperf
 
 
 Port PyPy benchmarks

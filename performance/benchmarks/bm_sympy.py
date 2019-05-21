@@ -1,4 +1,4 @@
-import perf
+import pyperf
 from six.moves import xrange
 
 from sympy import expand, symbols, integrate, tan, summation
@@ -27,7 +27,7 @@ def bench_str():
 
 
 def bench_sympy(loops, func):
-    timer = perf.perf_counter
+    timer = pyperf.perf_counter
     dt = 0
 
     for _ in xrange(loops):
@@ -50,7 +50,7 @@ def add_cmdline_args(cmd, args):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "SymPy benchmark"
     runner.argparser.add_argument("benchmark", nargs='?',
                                   choices=BENCHMARKS)

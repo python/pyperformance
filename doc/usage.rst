@@ -11,7 +11,7 @@ Command to install performance::
 
 The command installs a new ``pyperformance`` program.
 
-If needed, ``perf`` and ``six`` dependencies are installed automatically.
+If needed, ``pyperf`` and ``six`` dependencies are installed automatically.
 
 performance works on Python 2.7, 3.4 and newer.
 
@@ -46,20 +46,20 @@ Note: ``python3 -m performance ...`` syntax works as well (ex: ``python3 -m
 performance run -o py3.json``), but requires to install performance on each
 tested Python version.
 
-JSON files are produced by the perf module and so can be analyzed using perf
+JSON files are produced by the pyperf module and so can be analyzed using pyperf
 commands::
 
-    python3 -m perf show py2.json
-    python3 -m perf check py2.json
-    python3 -m perf metadata py2.json
-    python3 -m perf stats py2.json
-    python3 -m perf hist py2.json
-    python3 -m perf dump py2.json
+    python3 -m pyperf show py2.json
+    python3 -m pyperf check py2.json
+    python3 -m pyperf metadata py2.json
+    python3 -m pyperf stats py2.json
+    python3 -m pyperf hist py2.json
+    python3 -m pyperf dump py2.json
     (...)
 
-It's also possible to use perf to compare results of two JSON files::
+It's also possible to use pyperf to compare results of two JSON files::
 
-    python3 -m perf compare_to py2.json py3.json --table
+    python3 -m pyperf compare_to py2.json py3.json --table
 
 pyperformance actions::
 
@@ -201,7 +201,7 @@ Compile Python, install Python and run benchmarks on the installed Python.
 Options:
 
 * ``--no-update``: Don't update the Git repository.
-* ``--no-tune``: Don't run ``perf system tune`` to tune the system for
+* ``--no-tune``: Don't run ``pyperf system tune`` to tune the system for
   benchmarks.
 
 If the ``branch`` argument is not specified:
@@ -245,13 +245,13 @@ Upload results from a JSON file to a Codespeed website.
 How to get stable benchmarks
 ============================
 
-* Run ``python3 -m perf system tune`` command
+* Run ``python3 -m pyperf system tune`` command
 * Compile Python using LTO (Link Time Optimization) and PGO (profile guided
   optimizations): use the :ref:`performance compile <cmd-compile>` command with
   uses LTO and PGO by default
-* See advices of the perf documentation:
+* See advices of the pyperf documentation:
   `How to get reproductible benchmark results
-  <http://perf.readthedocs.io/en/latest/run_benchmark.html#how-to-get-reproductible-benchmark-results>`_.
+  <http://pyperf.readthedocs.io/en/latest/run_benchmark.html#how-to-get-reproductible-benchmark-results>`_.
 
 
 performance virtual environment
@@ -284,7 +284,7 @@ The performance benchmark suite has multiple goals:
 Don't disable GC nor ASLR
 -------------------------
 
-The perf module and performance benchmarks are designed to produce
+The pyperf module and performance benchmarks are designed to produce
 reproductible results, but not at the price of running benchmarks in a special
 mode which would not be used to run applications in production. For these
 reasons, the Python garbage collector, Python randomized hash function and
@@ -297,7 +297,7 @@ and so applications don't call it to not kill performances.
 Include outliers and spikes
 ---------------------------
 
-Moreover, while the perf documentation explains how to reduce the random noise
+Moreover, while the pyperf documentation explains how to reduce the random noise
 of the system and other applications, some benchmarks use the system and so can
 get different timing depending on the system workload, depending on I/O
 performances, etc. Outliers and temporary spikes in results are **not

@@ -10,7 +10,7 @@ the re module's caching to force it to recompile every regex we give it.
 import re
 
 # Local imports
-import perf
+import pyperf
 from six.moves import xrange
 
 
@@ -51,7 +51,7 @@ def capture_regexes():
 
 def bench_regex_compile(loops, regexes):
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         for regex, flags in regexes:
@@ -59,11 +59,11 @@ def bench_regex_compile(loops, regexes):
             # ignore result (compiled regex)
             re.compile(regex, flags)
 
-    return perf.perf_counter() - t0
+    return pyperf.perf_counter() - t0
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = "Test regex compilation performance"
 
     regexes = capture_regexes()

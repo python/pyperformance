@@ -1,12 +1,12 @@
 """Microbenchmark for Python's sequence unpacking."""
 
-import perf
+import pyperf
 from six.moves import xrange
 
 
 def do_unpacking(loops, to_unpack):
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         # 400 unpackings
@@ -411,7 +411,7 @@ def do_unpacking(loops, to_unpack):
         a, b, c, d, e, f, g, h, i, j = to_unpack
         a, b, c, d, e, f, g, h, i, j = to_unpack
 
-    return perf.perf_counter() - t0
+    return pyperf.perf_counter() - t0
 
 
 def bench_tuple_unpacking(loops):
@@ -440,7 +440,7 @@ if __name__ == "__main__":
     benchmarks = {"tuple": bench_tuple_unpacking,
                   "list": bench_list_unpacking}
 
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = ("Microbenchmark for "
                                       "Python's sequence unpacking.")
 

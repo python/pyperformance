@@ -2,7 +2,7 @@
 Artificial, floating point-heavy benchmark originally used by Factor.
 """
 from six.moves import xrange
-import perf
+import pyperf
 
 from math import sin, cos, sqrt
 
@@ -54,7 +54,7 @@ def benchmark(n):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = "Float benchmark"
 
     points = POINTS

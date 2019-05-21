@@ -4,7 +4,7 @@ import logging
 import os.path
 import sys
 
-import perf
+import pyperf
 
 import performance
 from performance.benchmarks import (filter_benchmarks, get_benchmarks,
@@ -48,7 +48,7 @@ def cmd_run(parser, options):
     if options.output:
         suite.dump(options.output)
     if options.append:
-        perf.add_runs(options.append, suite)
+        pyperf.add_runs(options.append, suite)
     display_benchmark_suite(suite)
 
     if errors:

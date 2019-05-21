@@ -5,7 +5,7 @@ This will have Django generate a 150x150-cell HTML table.
 """
 
 from six.moves import xrange
-import perf
+import pyperf
 
 import django.conf
 from django.template import Context, Template
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     }])
     django.setup()
 
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     cmd = runner.argparser
     cmd.add_argument("--table-size",
                      type=int, default=DEFAULT_SIZE,

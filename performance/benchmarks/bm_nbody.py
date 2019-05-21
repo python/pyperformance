@@ -1,7 +1,7 @@
 """
 N-body benchmark from the Computer Language Benchmarks Game.
 
-This is intended to support Unladen Swallow's perf.py. Accordingly, it has been
+This is intended to support Unladen Swallow's pyperf.py. Accordingly, it has been
 modified from the Shootout version:
 - Accept standard Unladen Swallow benchmark options.
 - Run report_energy()/advance() in a loop.
@@ -14,7 +14,7 @@ Contributed by Kevin Carson.
 Modified by Tupteq, Fredrik Johansson, and Daniel Nanz.
 """
 
-import perf
+import pyperf
 from six.moves import xrange
 
 __contact__ = "collinwinter@google.com (Collin Winter)"
@@ -126,14 +126,14 @@ def bench_nbody(loops, reference, iterations):
     offset_momentum(BODIES[reference])
 
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         report_energy()
         advance(0.01, iterations)
         report_energy()
 
-    return perf.perf_counter() - t0
+    return pyperf.perf_counter() - t0
 
 
 def add_cmdline_args(cmd, args):
@@ -141,7 +141,7 @@ def add_cmdline_args(cmd, args):
 
 
 if __name__ == '__main__':
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "n-body benchmark"
     runner.argparser.add_argument("--iterations",
                                   type=int, default=DEFAULT_ITERATIONS,

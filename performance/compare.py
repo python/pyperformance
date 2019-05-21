@@ -5,7 +5,7 @@ import os.path
 import math
 import sys
 
-import perf
+import pyperf
 import six
 import statistics
 
@@ -298,7 +298,7 @@ def display_benchmark_suite(suite):
 
 
 def cmd_show(options):
-    suite = perf.BenchmarkSuite.load(options.filename)
+    suite = pyperf.BenchmarkSuite.load(options.filename)
     display_benchmark_suite(suite)
 
 
@@ -317,8 +317,8 @@ def compare_results(options):
     base_label, changed_label = get_labels(options.baseline_filename,
                                            options.changed_filename)
 
-    base_suite = perf.BenchmarkSuite.load(options.baseline_filename)
-    changed_suite = perf.BenchmarkSuite.load(options.changed_filename)
+    base_suite = pyperf.BenchmarkSuite.load(options.baseline_filename)
+    changed_suite = pyperf.BenchmarkSuite.load(options.changed_filename)
 
     results = []
     common = set(base_suite.get_benchmark_names()) & set(

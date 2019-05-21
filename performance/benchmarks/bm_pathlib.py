@@ -11,7 +11,7 @@ import shutil
 import sys
 import tempfile
 
-import perf
+import pyperf
 from six.moves import xrange
 
 if sys.version_info >= (3, 4):
@@ -54,7 +54,7 @@ def bench_pathlib(loops, tmp_path):
     assert len(path_objects) == NUM_FILES, len(path_objects)
 
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         # Do something simple with each path.
@@ -67,11 +67,11 @@ def bench_pathlib(loops, tmp_path):
         for p in base_path.glob("*.py"):
             p.stat()
 
-    return perf.perf_counter() - t0
+    return pyperf.perf_counter() - t0
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = ("Test the performance of "
                                       "pathlib operations.")
 

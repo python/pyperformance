@@ -5,7 +5,7 @@ import json
 import logging
 import math
 import os.path
-import perf
+import pyperf
 import re
 import shlex
 import shutil
@@ -539,7 +539,7 @@ class BenchmarkRevision(Application):
         if self.patch:
             metadata['patch_file'] = self.patch
 
-        suite = perf.BenchmarkSuite.load(self.filename)
+        suite = pyperf.BenchmarkSuite.load(self.filename)
         for bench in suite:
             bench.update_metadata(metadata)
         suite.dump(self.filename, replace=True)
@@ -584,7 +584,7 @@ class BenchmarkRevision(Application):
 
         self.safe_makedirs(self.conf.uploaded_json_dir)
 
-        suite = perf.BenchmarkSuite.load(self.filename)
+        suite = pyperf.BenchmarkSuite.load(self.filename)
         data = [self.encode_benchmark(bench)
                 for bench in suite]
         data = dict(json=json.dumps(data))
@@ -616,7 +616,7 @@ class BenchmarkRevision(Application):
 
     def perf_system_tune(self):
         pythonpath = os.environ.get('PYTHONPATH')
-        args = ['-m', 'perf', 'system', 'tune']
+        args = ['-m', 'pyperf', 'system', 'tune']
         if self.conf.affinity:
             args.extend(('--affinity', self.conf.affinity))
         if pythonpath:
@@ -962,7 +962,7 @@ def cmd_upload(options):
     conf = parse_config(options.config_file, "upload")
 
     filename = options.json_file
-    bench = perf.BenchmarkSuite.load(filename)
+    bench = pyperf.BenchmarkSuite.load(filename)
     metadata = bench.get_metadata()
     revision = metadata['commit_id']
     branch = metadata['commit_branch']

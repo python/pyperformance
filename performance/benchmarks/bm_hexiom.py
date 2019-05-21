@@ -10,7 +10,7 @@ Source: https://github.com/slowfrog/hexiom : hexiom2.py, level36.txt
 
 from __future__ import division, print_function
 
-import perf
+import pyperf
 from six.moves import xrange, StringIO
 from six import u as u_lit, text_type
 
@@ -632,7 +632,7 @@ def main(loops, level):
     expected = solution.rstrip()
 
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         stream = StringIO()
@@ -640,7 +640,7 @@ def main(loops, level):
         output = stream.getvalue()
         stream = None
 
-    dt = perf.perf_counter() - t0
+    dt = pyperf.perf_counter() - t0
 
     output = '\n'.join(line.rstrip() for line in output.splitlines())
     if output != expected:
@@ -656,10 +656,10 @@ def add_cmdline_args(cmd, args):
 
 if __name__ == "__main__":
     kw = {'add_cmdline_args': add_cmdline_args}
-    if perf.python_has_jit():
+    if pyperf.python_has_jit():
         # PyPy needs to compute more warmup values to warmup its JIT
         kw['warmups'] = 15
-    runner = perf.Runner(**kw)
+    runner = pyperf.Runner(**kw)
     levels = sorted(LEVELS)
     runner.argparser.add_argument("--level", type=int,
                                   choices=levels,

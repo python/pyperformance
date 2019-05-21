@@ -107,7 +107,7 @@ def parse_args():
     cmd.add_argument('-U', '--no-update', action="store_true",
                      help="Don't update the Git repository")
     cmd.add_argument('-T', '--no-tune', action="store_true",
-                     help="Don't run 'perf system tune' "
+                     help="Don't run 'pyperf system tune' "
                           "to tune the system for benchmarks")
     cmds.append(cmd)
 

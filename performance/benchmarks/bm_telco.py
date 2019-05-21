@@ -21,7 +21,7 @@ import io
 import os
 from struct import unpack
 
-import perf
+import pyperf
 import six
 from six.moves import xrange
 
@@ -44,7 +44,7 @@ def bench_telco(loops, filename):
     infil = io.BytesIO(data)
     outfil = six.StringIO()
 
-    start = perf.perf_counter()
+    start = pyperf.perf_counter()
     for _ in range(loops):
         infil.seek(0)
 
@@ -81,11 +81,11 @@ def bench_telco(loops, filename):
         outfil.seek(0)
         outfil.truncate()
 
-    return perf.perf_counter() - start
+    return pyperf.perf_counter() - start
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = "Telco decimal benchmark"
 
     filename = rel_path("data", "telco-bench.b")

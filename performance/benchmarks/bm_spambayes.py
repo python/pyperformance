@@ -6,7 +6,7 @@ Run a canned mailbox through a SpamBayes ham/spam classifier.
 
 import os.path
 
-import perf
+import pyperf
 
 from spambayes import hammie, mboxutils
 
@@ -21,7 +21,7 @@ def bench_spambayes(ham_classifier, messages):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = "Run the SpamBayes benchmark."
 
     data_dir = os.path.join(os.path.dirname(__file__), "data")

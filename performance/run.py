@@ -10,7 +10,7 @@ try:
 except ImportError:
     multiprocessing = None
 
-import perf
+import pyperf
 
 import performance
 from performance.utils import temporary_file
@@ -96,7 +96,7 @@ def run_perf_script(python, options, name, extra_args=[]):
     with temporary_file() as tmp:
         cmd.extend(('--output', tmp))
         run_command(cmd, hide_stderr=not options.verbose)
-        return perf.BenchmarkSuite.load(tmp)
+        return pyperf.BenchmarkSuite.load(tmp)
 
 
 def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
@@ -112,7 +112,7 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
         sys.stdout.flush()
 
         def add_bench(dest_suite, obj):
-            if isinstance(obj, perf.BenchmarkSuite):
+            if isinstance(obj, pyperf.BenchmarkSuite):
                 benchmarks = obj
             else:
                 benchmarks = (obj,)
@@ -124,7 +124,7 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
                 if dest_suite is not None:
                     dest_suite.add_benchmark(bench)
                 else:
-                    dest_suite = perf.BenchmarkSuite([bench])
+                    dest_suite = pyperf.BenchmarkSuite([bench])
 
             return dest_suite
 

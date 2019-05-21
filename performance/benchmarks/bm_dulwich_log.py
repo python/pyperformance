@@ -4,7 +4,7 @@ Iterate on commits of the asyncio Git repository using the Dulwich module.
 
 import os
 
-import perf
+import pyperf
 
 import dulwich.repo
 
@@ -16,7 +16,7 @@ def iter_all_commits(repo):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = ("Dulwich benchmark: "
                                       "iterate on all Git commits")
 

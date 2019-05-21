@@ -13,7 +13,7 @@ from __future__ import division, print_function, absolute_import
 from bisect import bisect
 
 from six.moves import xrange
-import perf
+import pyperf
 
 
 SOLVE_ARG = 60
@@ -194,7 +194,7 @@ def solve(n, i_min, free, curr_board, pieces_left, solutions, fps, se_nh,
 
 def bench_meteor_contest(loops, board, pieces, solve_arg, fps, se_nh):
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         free = frozenset(xrange(len(board)))
@@ -204,7 +204,7 @@ def bench_meteor_contest(loops, board, pieces, solve_arg, fps, se_nh):
         solve(solve_arg, 0, free, curr_board, pieces_left,
               solutions, fps, se_nh)
 
-    dt = perf.perf_counter() - t0
+    dt = pyperf.perf_counter() - t0
 
     if solutions != SOLUTIONS:
         raise ValueError("unexpected solutions")
@@ -213,7 +213,7 @@ def bench_meteor_contest(loops, board, pieces, solve_arg, fps, se_nh):
 
 
 def main():
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = "Solver for Meteor Puzzle board"
 
     board, cti, pieces = get_puzzle(WIDTH, HEIGHT)

@@ -11,7 +11,7 @@ based on a Java version:
 
 from __future__ import print_function
 
-import perf
+import pyperf
 from six.moves import xrange
 
 
@@ -419,7 +419,7 @@ class Richards(object):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = "The Richards benchmark"
 
     richard = Richards()

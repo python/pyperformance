@@ -14,7 +14,7 @@ import random
 import sys
 
 # Local imports
-import perf
+import pyperf
 import six
 if six.PY3:
     long = int
@@ -100,7 +100,7 @@ def bench_json_loads(objs):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = "Benchmark json.loads()"
 
     json_dict = json.dumps(DICT)

@@ -68,7 +68,7 @@ def run_tests(venv):
               '-o', json)
 
     # Display slowest benchmarks
-    run_cmd((venv_python, '-m', 'perf', 'slowest', json))
+    run_cmd((venv_python, '-m', 'pyperf', 'slowest', json))
 
     run_bench(python, script, 'venv', 'remove')
 

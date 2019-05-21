@@ -3,7 +3,7 @@ Benchmark Python startup.
 """
 import sys
 
-import perf
+import pyperf
 
 
 def add_cmdline_args(cmd, args):
@@ -14,7 +14,7 @@ def add_cmdline_args(cmd, args):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(values=10, add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(values=10, add_cmdline_args=add_cmdline_args)
     runner.argparser.add_argument("--no-site", action="store_true")
     runner.argparser.add_argument("--exit", action="store_true")
 

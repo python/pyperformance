@@ -4,7 +4,7 @@ Go board game
 import math
 import random
 
-import perf
+import pyperf
 
 
 SIZE = 9
@@ -453,9 +453,9 @@ def versus_cpu():
 
 if __name__ == "__main__":
     kw = {}
-    if perf.python_has_jit():
+    if pyperf.python_has_jit():
         # PyPy needs to compute more warmup values to warmup its JIT
         kw['warmups'] = 50
-    runner = perf.Runner(**kw)
+    runner = pyperf.Runner(**kw)
     runner.metadata['description'] = "Test the performance of the Go benchmark"
     runner.bench_func('go', versus_cpu)

@@ -2,7 +2,7 @@
 Render a template using Genshi module.
 """
 
-import perf
+import pyperf
 from six.moves import xrange
 
 from genshi.template import MarkupTemplate, NewTextTemplate
@@ -30,13 +30,13 @@ def bench_genshi(loops, tmpl_cls, tmpl_str):
     table = [dict(a=1, b=2, c=3, d=4, e=5, f=6, g=7, h=8, i=9, j=10)
              for _ in range(1000)]
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         stream = tmpl.generate(table=table)
         stream.render()
 
-    return perf.perf_counter() - t0
+    return pyperf.perf_counter() - t0
 
 
 def add_cmdline_args(cmd, args):
@@ -51,7 +51,7 @@ BENCHMARKS = {
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "Render a template using Genshi module"
     runner.argparser.add_argument("benchmark", nargs='?',
                                   choices=sorted(BENCHMARKS))

@@ -11,7 +11,7 @@ http://benchmarksgame.alioth.debian.org/
 import itertools
 
 from six.moves import map as imap
-import perf
+import pyperf
 
 
 DEFAULT_DIGITS = 2000
@@ -58,7 +58,7 @@ def add_cmdline_args(cmd, args):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
 
     cmd = runner.argparser
     cmd.add_argument("--digits", type=int, default=DEFAULT_DIGITS,

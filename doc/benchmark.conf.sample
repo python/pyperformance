@@ -61,13 +61,13 @@ install = True
 
 
 [run_benchmark]
-# Run "sudo python3 -m perf system tune" before running benchmarks?
+# Run "sudo python3 -m pyperf system tune" before running benchmarks?
 system_tune = True
 
 # --benchmarks option for 'performance run'
 benchmarks =
 
-# --affinity option for 'perf system tune' and 'performance run'
+# --affinity option for 'pyperf system tune' and 'performance run'
 affinity =
 
 # Upload generated JSON file?

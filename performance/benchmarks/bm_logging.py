@@ -20,7 +20,7 @@ import logging
 # Third party imports
 import six
 from six.moves import xrange
-import perf
+import pyperf
 
 # A simple format for parametered logging
 FORMAT = 'important: %s'
@@ -38,7 +38,7 @@ def bench_silent(loops, logger, stream):
     # micro-optimization: use fast local variables
     m = MESSAGE
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         # repeat 10 times
@@ -53,7 +53,7 @@ def bench_silent(loops, logger, stream):
         logger.debug(m)
         logger.debug(m)
 
-    dt = perf.perf_counter() - t0
+    dt = pyperf.perf_counter() - t0
 
     if len(stream.getvalue()) != 0:
         raise ValueError("stream is expected to be empty")
@@ -67,7 +67,7 @@ def bench_simple_output(loops, logger, stream):
     # micro-optimization: use fast local variables
     m = MESSAGE
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         # repeat 10 times
@@ -82,7 +82,7 @@ def bench_simple_output(loops, logger, stream):
         logger.warning(m)
         logger.warning(m)
 
-    dt = perf.perf_counter() - t0
+    dt = pyperf.perf_counter() - t0
 
     lines = stream.getvalue().splitlines()
     if len(lines) != loops * 10:
@@ -98,7 +98,7 @@ def bench_formatted_output(loops, logger, stream):
     fmt = FORMAT
     msg = MESSAGE
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         # repeat 10 times
@@ -113,7 +113,7 @@ def bench_formatted_output(loops, logger, stream):
         logger.warning(fmt, msg)
         logger.warning(fmt, msg)
 
-    dt = perf.perf_counter() - t0
+    dt = pyperf.perf_counter() - t0
 
     lines = stream.getvalue().splitlines()
     if len(lines) != loops * 10:
@@ -135,7 +135,7 @@ BENCHMARKS = {
 
 
 if __name__ == "__main__":
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "Test the performance of logging."
 
     parser = runner.argparser

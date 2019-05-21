@@ -1,7 +1,7 @@
 
 """Benchmark script for testing the performance of ElementTree.
 
-This is intended to support Unladen Swallow's perf.py.
+This is intended to support Unladen Swallow's pyperf.py.
 
 This will have ElementTree, cElementTree and lxml (if available)
 parse a generated XML file, search it, create new XML trees from
@@ -14,7 +14,7 @@ import sys
 import tempfile
 from collections import defaultdict
 
-import perf
+import pyperf
 import six
 from six.moves import xrange
 
@@ -186,12 +186,12 @@ def bench_etree(iterations, etree, bench_func):
     try:
         etree.ElementTree(xml_root).write(file_path)
 
-        t0 = perf.perf_counter()
+        t0 = pyperf.perf_counter()
 
         for _ in xrange(iterations):
             bench_func(etree, file_path, xml_data, xml_root)
 
-        dt = perf.perf_counter() - t0
+        dt = pyperf.perf_counter() - t0
     finally:
         try:
             os.close(tf)
@@ -224,7 +224,7 @@ if __name__ == "__main__":
     else:
         default_etmodule = "xml.etree.cElementTree"
 
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = ("Test the performance of "
                                       "ElementTree XML processing.")
 

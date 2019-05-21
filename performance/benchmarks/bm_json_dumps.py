@@ -1,7 +1,7 @@
 import json
 import sys
 
-import perf
+import pyperf
 import six
 from six.moves import xrange
 
@@ -30,7 +30,7 @@ def add_cmdline_args(cmd, args):
 
 
 def main():
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.argparser.add_argument("--cases",
                                   help="Comma separated list of cases. Available cases: %s. By default, run all cases."
                                        % ', '.join(CASES))

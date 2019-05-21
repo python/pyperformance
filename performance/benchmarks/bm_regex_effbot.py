@@ -4,7 +4,7 @@
 These are some of the original benchmarks used to tune Python's regex engine
 in 2000 written by Fredrik Lundh. Retreived from
 http://mail.python.org/pipermail/python-dev/2000-August/007797.html and
-integrated into Unladen Swallow's perf.py in 2009 by David Laing.
+integrated into Unladen Swallow's pyperf.py in 2009 by David Laing.
 
 These benchmarks are of interest since they helped to guide the original
 optimization of the sre engine, and we shouldn't necessarily ignore them just
@@ -15,7 +15,7 @@ because they're "old".
 import re
 
 # Local imports
-import perf
+import pyperf
 from six.moves import xrange
 
 USE_BYTES_IN_PY3K = False
@@ -133,7 +133,7 @@ def bench_regex_effbot(loops):
 
     range_it = xrange(loops)
     search = re.search
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         # Runs all of the benchmarks for a given value of n.
@@ -150,7 +150,7 @@ def bench_regex_effbot(loops):
             search(regex, string)
             search(regex, string)
 
-    return perf.perf_counter() - t0
+    return pyperf.perf_counter() - t0
 
 
 # cached data, generated at the first call
@@ -163,7 +163,7 @@ def add_cmdline_args(cmd, args):
 
 
 if __name__ == '__main__':
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = ("Test the performance of regexps "
                                       "using Fredik Lundh's benchmarks.")
     runner.argparser.add_argument("-B", "--force_bytes", action="store_true",

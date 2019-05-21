@@ -18,7 +18,7 @@ Modified by Christopher Sean Forgeron
 import bisect
 import re
 
-import perf
+import pyperf
 from six.moves import xrange
 
 
@@ -187,12 +187,12 @@ def run_benchmarks(seq):
 
 def bench_regex_dna(loops, seq, expected_res):
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for i in range_it:
         res = run_benchmarks(seq)
 
-    dt = perf.perf_counter() - t0
+    dt = pyperf.perf_counter() - t0
     if (expected_res is not None) and (res != expected_res):
         raise Exception("run_benchmarks() error")
 
@@ -205,7 +205,7 @@ def add_cmdline_args(cmd, args):
 
 
 if __name__ == '__main__':
-    runner = perf.Runner(add_cmdline_args=add_cmdline_args)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = ("Test the performance of regexps "
                                       "using benchmarks from "
                                       "The Computer Language Benchmarks Game.")

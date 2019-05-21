@@ -19,7 +19,7 @@ but ideally the problem would be found...
 import hashlib
 import os
 
-import perf
+import pyperf
 import six
 from six.moves import xrange
 
@@ -636,7 +636,7 @@ def gzip_main(field):
 def bench_pyflake(loops, filename):
     input_fp = open(filename, 'rb')
     range_it = xrange(loops)
-    t0 = perf.perf_counter()
+    t0 = pyperf.perf_counter()
 
     for _ in range_it:
         input_fp.seek(0)
@@ -651,7 +651,7 @@ def bench_pyflake(loops, filename):
             raise Exception("Unknown file magic %x, not a gzip/bzip2 file"
                             % hex(magic))
 
-    dt = perf.perf_counter() - t0
+    dt = pyperf.perf_counter() - t0
     input_fp.close()
 
     if hashlib.md5(out).hexdigest() != "afa004a630fe072901b1d9628b960974":
@@ -661,7 +661,7 @@ def bench_pyflake(loops, filename):
 
 
 if __name__ == '__main__':
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     runner.metadata['description'] = "Pyflate benchmark"
 
     filename = os.path.join(os.path.dirname(__file__),

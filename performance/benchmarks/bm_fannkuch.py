@@ -5,7 +5,7 @@ http://benchmarksgame.alioth.debian.org/
 Contributed by Sokolov Yura, modified by Tupteq.
 """
 
-import perf
+import pyperf
 from six.moves import xrange
 
 
@@ -54,6 +54,6 @@ def fannkuch(n):
 
 
 if __name__ == "__main__":
-    runner = perf.Runner()
+    runner = pyperf.Runner()
     arg = DEFAULT_ARG
     runner.bench_func('fannkuch', fannkuch, arg)
