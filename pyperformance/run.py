@@ -12,9 +12,9 @@ except ImportError:
 
 import pyperf
 
-import performance
-from performance.utils import temporary_file
-from performance.venv import PERFORMANCE_ROOT
+import pyperformance
+from pyperformance.utils import temporary_file
+from pyperformance.venv import PERFORMANCE_ROOT
 
 
 class BenchmarkException(Exception):
@@ -117,7 +117,7 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
             else:
                 benchmarks = (obj,)
 
-            version = performance.__version__
+            version = pyperformance.__version__
             for bench in benchmarks:
                 bench.update_metadata({'performance_version': version})
 

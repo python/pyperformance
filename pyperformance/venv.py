@@ -12,9 +12,9 @@ try:
 except ImportError:
     from pipes import quote as shell_quote   # Python 2
 
-import performance
+import pyperformance
 
-# Avoid six dependency to easy installation of performance itself
+# Avoid six dependency to easy installation of pyperformance itself
 try:
     import urllib2 as urllib_request   # Python 3
 except ImportError:
@@ -99,7 +99,7 @@ PERFORMANCE_ROOT = os.path.realpath(os.path.dirname(__file__))
 
 def is_build_dir():
     root_dir = os.path.join(PERFORMANCE_ROOT, '..')
-    if not os.path.exists(os.path.join(root_dir, 'performance')):
+    if not os.path.exists(os.path.join(root_dir, 'pyperformance')):
         return False
     return os.path.exists(os.path.join(root_dir, 'setup.py'))
 
@@ -312,7 +312,8 @@ class VirtualEnvironment(object):
         """)
 
         requirements = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
-        cmd = (self.python, '-c', script, performance.__version__, requirements)
+        cmd = (self.python, '-c', script,
+               pyperformance.__version__, requirements)
         proc = subprocess.Popen(cmd,
                                 stdout=subprocess.PIPE,
                                 universal_newlines=True)
@@ -501,13 +502,13 @@ class VirtualEnvironment(object):
                 print("WARNING: failed to install %s" % req)
                 print()
 
-        # install performance inside the virtual environment
+        # install pyperformance inside the virtual environment
         if is_build_dir():
             root_dir = os.path.dirname(PERFORMANCE_ROOT)
             cmd = pip_program + ['install', '-e', root_dir]
         else:
-            version = performance.__version__
-            cmd = pip_program + ['install', 'performance==%s' % version]
+            version = pyperformance.__version__
+            cmd = pip_program + ['install', 'pyperformance==%s' % version]
         self.run_cmd(cmd)
 
         # Display the pip version
@@ -540,7 +541,7 @@ def exec_in_virtualenv(options):
     venv.create()
     venv_python = venv.get_python_program()
 
-    args = [venv_python, "-m", "performance"] + \
+    args = [venv_python, "-m", "pyperformance"] + \
         sys.argv[1:] + ["--inside-venv"]
     # os.execv() is buggy on windows, which is why we use run_cmd/subprocess
     # on windows.
@@ -595,7 +596,7 @@ def cmd_venv(options):
         if not created:
             print()
             print("Command to create it:")
-            cmd = "%s -m performance venv create" % options.python
+            cmd = "%s -m pyperformance venv create" % options.python
             if options.venv:
                 cmd += " --venv=%s" % options.venv
             print(cmd)

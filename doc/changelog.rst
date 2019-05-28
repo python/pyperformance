@@ -4,6 +4,7 @@ Changelog
 Version 0.8.1
 -------------
 
+* Project renamed from "performance" to "pyperformance"
 * Upgrade pyperf from version 1.6.0 to 1.6.1. The project has been renamed from
   "perf" to "pyperf". Update imports.
 * Issue #54: Update Genshi to 0.7.3. It is now compatible with Python 3.8.

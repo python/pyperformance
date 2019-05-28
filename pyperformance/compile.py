@@ -17,10 +17,10 @@ from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
-import performance
-from performance.utils import MS_WINDOWS
-from performance.venv import (GET_PIP_URL, REQ_OLD_PIP, PERFORMANCE_ROOT,
-                              download, is_build_dir)
+import pyperformance
+from pyperformance.utils import MS_WINDOWS
+from pyperformance.venv import (GET_PIP_URL, REQ_OLD_PIP, PERFORMANCE_ROOT,
+                                download, is_build_dir)
 
 
 GIT = True
@@ -397,8 +397,8 @@ class Python(Task):
             root_dir = os.path.dirname(PERFORMANCE_ROOT)
             cmd.extend(('-e', root_dir))
         else:
-            version = performance.__version__
-            cmd.append('performance==%s' % version)
+            version = pyperformance.__version__
+            cmd.append('pyperformance==%s' % version)
 
         self.run(*cmd)
 
@@ -496,7 +496,7 @@ class BenchmarkRevision(Application):
 
     def create_venv(self):
         # Create venv
-        cmd = [self.python.program, '-u', '-m', 'performance',
+        cmd = [self.python.program, '-u', '-m', 'pyperformance',
                'venv', 'recreate']
         if self.conf.venv:
             cmd.extend(('--venv', self.conf.venv))
@@ -509,7 +509,7 @@ class BenchmarkRevision(Application):
     def run_benchmark(self):
         self.safe_makedirs(os.path.dirname(self.filename))
         cmd = [self.python.program, '-u',
-               '-m', 'performance',
+               '-m', 'pyperformance',
                'run',
                '--verbose',
                '--output', self.filename]
@@ -848,7 +848,7 @@ class BenchmarkAll(Application):
         else:
             key = revision
 
-        cmd = [sys.executable, '-m', 'performance', 'compile',
+        cmd = [sys.executable, '-m', 'pyperformance', 'compile',
                self.config_filename, revision, branch]
         if not self.conf.update:
             cmd.append('--no-update')

@@ -1,4 +1,3 @@
-
 """Test the performance of the Django template system.
 
 This will have Django generate a 150x150-cell HTML table.

@@ -6,7 +6,7 @@ import sys
 import textwrap
 import unittest
 
-from performance import tests
+from pyperformance import tests
 
 
 DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), 'data'))
@@ -31,7 +31,7 @@ class CompareTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cmd = [sys.executable, '-m', 'performance', 'venv', 'create']
+        cmd = [sys.executable, '-m', 'pyperformance', 'venv', 'create']
         run_cmd(cmd)
 
     def compare(self, *args, **kw):
@@ -45,7 +45,7 @@ class CompareTests(unittest.TestCase):
             file1 = 'py2.json'
             file2 = kw.get('file2', 'py3.json')
 
-        cmd = [sys.executable, '-m', 'performance', 'compare',
+        cmd = [sys.executable, '-m', 'pyperformance', 'compare',
                os.path.join(DATA_DIR, file1),
                os.path.join(DATA_DIR, file2)]
         cmd.extend(args)

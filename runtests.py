@@ -43,15 +43,15 @@ def run_tests(venv):
 
     run_bench(python, script, 'venv', 'create')
 
-    egg_info = "performance.egg-info"
+    egg_info = "pyperformance.egg-info"
     print("Remove directory %s" % egg_info)
     shutil.rmtree(egg_info)
 
     run_bench(python, script, 'venv')
 
     for filename in (
-        os.path.join('performance', 'tests', 'data', 'py2.json'),
-        os.path.join('performance', 'tests', 'data', 'mem1.json'),
+        os.path.join('pyperformance', 'tests', 'data', 'py2.json'),
+        os.path.join('pyperformance', 'tests', 'data', 'mem1.json'),
     ):
         run_cmd((python, script, 'show', filename))
 
@@ -76,7 +76,7 @@ def run_tests(venv):
 def main():
     # Unit tests
     cmd = [sys.executable,
-           os.path.join('performance', 'tests', 'test_compare.py')]
+           os.path.join('pyperformance', 'tests', 'test_compare.py')]
     run_cmd(cmd)
 
     # Functional tests

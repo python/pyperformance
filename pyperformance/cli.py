@@ -4,7 +4,7 @@ import argparse
 import os.path
 import sys
 
-from performance.venv import exec_in_virtualenv, which, cmd_venv
+from pyperformance.venv import exec_in_virtualenv, which, cmd_venv
 
 
 def comma_separated(values):
@@ -186,31 +186,31 @@ def _main():
         cmd_venv(options)
         sys.exit()
     elif options.action == 'compile':
-        from performance.compile import cmd_compile
+        from pyperformance.compile import cmd_compile
         cmd_compile(options)
         sys.exit()
     elif options.action == 'compile_all':
-        from performance.compile import cmd_compile_all
+        from pyperformance.compile import cmd_compile_all
         cmd_compile_all(options)
         sys.exit()
     elif options.action == 'upload':
-        from performance.compile import cmd_upload
+        from pyperformance.compile import cmd_upload
         cmd_upload(options)
         sys.exit()
     elif options.action == 'show':
-        from performance.compare import cmd_show
+        from pyperformance.compare import cmd_show
         cmd_show(options)
         sys.exit()
 
     if not options.inside_venv:
         exec_in_virtualenv(options)
 
-    from performance.cli_run import cmd_run, cmd_list, cmd_list_groups
+    from pyperformance.cli_run import cmd_run, cmd_list, cmd_list_groups
 
     if options.action == 'run':
         cmd_run(parser, options)
     elif options.action == 'compare':
-        from performance.compare import cmd_compare
+        from pyperformance.compare import cmd_compare
         cmd_compare(options)
     elif options.action == 'list':
         cmd_list(options)

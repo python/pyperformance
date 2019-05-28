@@ -2,7 +2,7 @@ import sys
 import subprocess
 
 import pyperf
-from performance.venv import get_venv_program
+from pyperformance.venv import get_venv_program
 
 
 def get_hg_version(hg_bin):

@@ -10,7 +10,7 @@
 # Created by setup.py sdist
 build/
 dist/
-performance.egg-info/
+pyperformance.egg-info/
 
 # Created by the pyperformance script
 venv/

@@ -2,22 +2,22 @@
 The Python Benchmark Suite
 ##########################
 
-.. image:: https://img.shields.io/pypi/v/performance.svg
-   :alt: Latest performance release on the Python Cheeseshop (PyPI)
-   :target: https://pypi.python.org/pypi/performance
+.. image:: https://img.shields.io/pypi/v/pyperformance.svg
+   :alt: Latest pyperformance release on the Python Cheeseshop (PyPI)
+   :target: https://pypi.python.org/pypi/pyperformance
 
-.. image:: https://travis-ci.org/python/performance.svg?branch=master
-   :alt: Build status of performance on Travis CI
-   :target: https://travis-ci.org/python/performance
+.. image:: https://travis-ci.org/python/pyperformance.svg?branch=master
+   :alt: Build status of pyperformance on Travis CI
+   :target: https://travis-ci.org/python/pyperformance
 
-The ``performance`` project is intended to be an authoritative source of
+The ``pyperformance`` project is intended to be an authoritative source of
 benchmarks for all Python implementations. The focus is on real-world
 benchmarks, rather than synthetic benchmarks, using whole applications when
 possible.
 
-* `performance documentation <http://pyperformance.readthedocs.io/>`_
-* `performance GitHub project <https://github.com/python/performance>`_
+* `pyperformance documentation <http://pyperformance.readthedocs.io/>`_
+* `pyperformance GitHub project <https://github.com/python/pyperformance>`_
   (source code, issues)
-* `Download performance on PyPI <https://pypi.python.org/pypi/performance>`_
+* `Download pyperformance on PyPI <https://pypi.python.org/pypi/pyperformance>`_
 
-performance is distributed under the MIT license.
+pyperformance is distributed under the MIT license.

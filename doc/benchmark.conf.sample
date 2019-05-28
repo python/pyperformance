@@ -28,7 +28,7 @@ git_remote = remotes/origin
 # Create files into bench_dir:
 # - bench_dir/bench-xxx.log
 # - bench_dir/prefix/: where Python is installed
-# - bench_dir/venv/: Virtual environment used by performance
+# - bench_dir/venv/: Virtual environment used by pyperformance
 bench_dir = ~/bench_tmpdir
 
 # Link Time Optimization (LTO)?
@@ -64,10 +64,10 @@ install = True
 # Run "sudo python3 -m pyperf system tune" before running benchmarks?
 system_tune = True
 
-# --benchmarks option for 'performance run'
+# --benchmarks option for 'pyperformance run'
 benchmarks =
 
-# --affinity option for 'pyperf system tune' and 'performance run'
+# --affinity option for 'pyperf system tune' and 'pyperformance run'
 affinity =
 
 # Upload generated JSON file?

@@ -55,7 +55,7 @@ Port PyPy benchmarks
 
 Repository: https://bitbucket.org/pypy/benchmarks/
 
-Different from performance?
+Different from pyperformance?
 
 * json_bench
 
@@ -95,13 +95,13 @@ Deliberate choice to not add it:
 
 Done:
 
-* ai (called bm_nqueens in performance)
+* ai (called bm_nqueens in pyperformance)
 * bm_chameleon
 * bm_mako
 * chaos
 * crypto_pyaes
 * deltablue
-* django (called django_template in performance)
+* django (called django_template in pyperformance)
 * dulwich_log
 * fannkuch
 * float
@@ -112,11 +112,11 @@ Done:
 * html5lib
 * mdp
 * meteor-contest
-* nbody_modified (called nbody in performance)
+* nbody_modified (called nbody in pyperformance)
 * nqueens
 * pidigits
-* pyflate-fast (called pyflate in performance)
-* raytrace-simple (called raytrace in performance)
+* pyflate-fast (called pyflate in pyperformance)
+* raytrace-simple (called raytrace in pyperformance)
 * richards
 * scimark_fft
 * scimark_lu
@@ -140,7 +140,7 @@ pyston benchmarks
 
 Add benchmarks from the Pyston benchmark suite:
 https://github.com/dropbox/pyston-perf
-and convince Pyston to use performance :-)
+and convince Pyston to use pyperformance :-)
 
 TODO:
 
@@ -150,7 +150,7 @@ TODO:
 - django_template3_10x
 - django_template3
 - django_template
-- fasta (it's different than performance "regex_dna")
+- fasta (it's different than pyperformance "regex_dna")
 - interp2
 - pyxl_bench_10x
 - pyxl_bench2_10x
@@ -172,4 +172,4 @@ Done:
 - richards
 - sqlalchemy_imperative, sqlalchemy_imperative2, sqlalchemy_imperative2_10x:
   use --rows cmdline option to control the number of SQL rows
-- sre_compile_ubench: performance has a much more complete benchmark on regex
+- sre_compile_ubench: pyperformance has a much more complete benchmark on regex

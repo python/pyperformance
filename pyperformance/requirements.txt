@@ -1,7 +1,7 @@
 # Installer requirements
 # ----------------------
 #
-# The list of installer requirements is hardcoded in performance/venv.py
+# The list of installer requirements is hardcoded in pyperformance/venv.py
 #
 # Note: installer requirements are also used in .travis.yml
 
@@ -42,8 +42,8 @@ statistics==1.0.3.5; python_version < '3.4'
 docutils==0.14
 
 
-# performance dependencies
-# ------------------------
+# pyperformance dependencies
+# --------------------------
 
 six==1.12.0
 pyperf==1.6.1
@@ -52,9 +52,9 @@ pyperf==1.6.1
 # Benchmarks dependencies
 # -----------------------
 #
-# When one of these dependencies is upgraded, the performance major version
+# When one of these dependencies is upgraded, the pyperformance major version
 # should be increased to respect semantic versionning. Comparison between
-# two performance results of two different major versions is not reliable.
+# two pyperformance results of two different major versions is not reliable.
 
 Chameleon==3.6.1                          # bm_chameleon
 # Django is currently stuck at Django 1.11 to support Python 2.7 and Python 3:
@@ -77,13 +77,13 @@ tornado==5.1.1                            # bm_tornado_http
 # Optional dependencies
 # ---------------------
 #
-# The list of optional dependencies is hardcoded in performance/venv.py
+# The list of optional dependencies is hardcoded in pyperformance/venv.py
 
 psutil==5.6.2
 
 
-# performance
-# -----------
+# pyperformance
+# -------------
 #
-# The performance module is installed inside the virtual environment
-# by performance/venv.py
+# The pyperformance module is installed inside the virtual environment
+# by pyperformance/venv.py

@@ -5,15 +5,15 @@ Usage
 Installation
 ============
 
-Command to install performance::
+Command to install pyperformance::
 
-    python3 -m pip install performance
+    python3 -m pip install pyperformance
 
 The command installs a new ``pyperformance`` program.
 
 If needed, ``pyperf`` and ``six`` dependencies are installed automatically.
 
-performance works on Python 2.7, 3.4 and newer.
+pyperformance works on Python 2.7, 3.4 and newer.
 
 On Python 2, the ``virtualenv`` program (or the Python module) is required
 to create virtual environments. On Python 3, the ``venv`` module of the
@@ -27,7 +27,7 @@ extension. Commands on Fedora to install dependencies:
 * Python 3: ``sudo dnf install python3-devel``
 * PyPy: ``sudo dnf install pypy-devel``
 
-In some cases, performance fails to create a virtual environment. In this case,
+In some cases, pyperformance fails to create a virtual environment. In this case,
 upgrading virtualenv on the system can fix the issue. Example::
 
     sudo python2 -m pip install -U virtualenv
@@ -42,8 +42,8 @@ Commands to compare Python 2 and Python 3 performances::
     pyperformance run --python=python3 -o py3.json
     pyperformance compare py2.json py3.json
 
-Note: ``python3 -m performance ...`` syntax works as well (ex: ``python3 -m
-performance run -o py3.json``), but requires to install performance on each
+Note: ``python3 -m pyperformance ...`` syntax works as well (ex: ``python3 -m
+pyperformance run -o py3.json``), but requires to install pyperformance on each
 tested Python version.
 
 JSON files are produced by the pyperf module and so can be analyzed using pyperf
@@ -141,7 +141,7 @@ Options of the ``list`` command::
                         except the negative arguments. Otherwise we run only
                         the positive arguments.
 
-Use ``python3 -m performance list -b all`` to list all benchmarks.
+Use ``python3 -m pyperformance list -b all`` to list all benchmarks.
 
 
 venv
@@ -247,31 +247,31 @@ How to get stable benchmarks
 
 * Run ``python3 -m pyperf system tune`` command
 * Compile Python using LTO (Link Time Optimization) and PGO (profile guided
-  optimizations): use the :ref:`performance compile <cmd-compile>` command with
+  optimizations): use the :ref:`pyperformance compile <cmd-compile>` command with
   uses LTO and PGO by default
 * See advices of the pyperf documentation:
   `How to get reproductible benchmark results
   <http://pyperf.readthedocs.io/en/latest/run_benchmark.html#how-to-get-reproductible-benchmark-results>`_.
 
 
-performance virtual environment
-===============================
+pyperformance virtual environment
+=================================
 
-To run benchmarks, performance first creates a virtual environment. It installs
+To run benchmarks, pyperformance first creates a virtual environment. It installs
 requirements with fixed versions to get a reproductible environment. The system
 Python has unknown module installed with unknown versions, and can have
 ``.pth`` files run at Python startup which can modify Python behaviour or at
 least slow down Python startup.
 
 
-What is the goal of performance
-===============================
+What is the goal of pyperformance
+=================================
 
 A benchmark is always written for a specific purpose. Depending how the
 benchmark is written and how the benchmark is run, the result can be different
 and so have a different meaning.
 
-The performance benchmark suite has multiple goals:
+The pyperformance benchmark suite has multiple goals:
 
 * Help to detect performance regression in a Python implementation
 * Validate that an optimization change makes Python faster and don't
@@ -284,7 +284,7 @@ The performance benchmark suite has multiple goals:
 Don't disable GC nor ASLR
 -------------------------
 
-The pyperf module and performance benchmarks are designed to produce
+The pyperf module and pyperformance benchmarks are designed to produce
 reproductible results, but not at the price of running benchmarks in a special
 mode which would not be used to run applications in production. For these
 reasons, the Python garbage collector, Python randomized hash function and
@@ -313,11 +313,11 @@ Warmups and steady state
 
 A borderline issue are the benchmarks "warmups". The first values of each
 worker process are always slower: 10% slower in the best case, it can be 1000%
-slower or more on PyPy. Right now (2017-04-14), performance ignore first values
+slower or more on PyPy. Right now (2017-04-14), pyperformance ignore first values
 considered as warmup until a benchmark reachs its "steady state". The "steady
 state" can include temporary spikes every 5 values (ex: caused by the garbage
 collector), and it can still imply further JIT compiler optimizations but with
-a "low" impact on the average performance.
+a "low" impact on the average pyperformance.
 
 To be clear "warmup" and "steady state" are a work-in-progress and a very
 complex topic, especially on PyPy and its JIT compiler.

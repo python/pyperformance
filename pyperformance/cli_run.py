@@ -6,11 +6,11 @@ import sys
 
 import pyperf
 
-import performance
-from performance.benchmarks import (filter_benchmarks, get_benchmarks,
-                                    select_benchmarks)
-from performance.compare import display_benchmark_suite
-from performance.run import run_benchmarks
+import pyperformance
+from pyperformance.benchmarks import (filter_benchmarks, get_benchmarks,
+                                      select_benchmarks)
+from pyperformance.compare import display_benchmark_suite
+from pyperformance.run import run_benchmarks
 
 
 def filter_benchmarks_python(benchmarks, bench_funcs):
@@ -27,7 +27,7 @@ def get_benchmarks_to_run(options):
 def cmd_run(parser, options):
     logging.basicConfig(level=logging.INFO)
 
-    print("Python benchmark suite %s" % performance.__version__)
+    print("Python benchmark suite %s" % pyperformance.__version__)
     print()
 
     if options.output and os.path.exists(options.output):

@@ -2,7 +2,7 @@ from __future__ import division, with_statement, print_function, absolute_import
 
 import logging
 
-from performance.run import run_perf_script
+from pyperformance.run import run_perf_script
 
 
 # Benchmark groups. The "default" group is what's run if no -b option is
@@ -62,7 +62,7 @@ DEFAULT_GROUP = [
 
 BENCH_GROUPS = {
     # get_benchmarks() creates an "all" group which includes every benchmark
-    # performance knows about.
+    # pyperformance knows about.
     "default": DEFAULT_GROUP,
     "startup": ["normal_startup", "startup_nosite",
                 "hg_startup"],

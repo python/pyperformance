@@ -3,9 +3,9 @@
 # Update dependencies:
 #
 #  - git clean -fdx  # remove all untracked files!
-#  - python2 -m performance venv create
+#  - python2 -m pyperformance venv create
 #  - venv/cpython2*/bin/python -m pip list --outdated
-#  - update performance/requirements.txt
+#  - update pyperformance/requirements.txt
 #  - (see also pip-tools and pipdeptree tools)
 #  - (pip install pip-review; pip-review --local --interactive)
 #
@@ -13,13 +13,13 @@
 #
 #  - git pull --rebase
 #  - Remove untracked files/dirs: git clean -fdx
-#  - maybe update version in performance/__init__.py and doc/conf.py
+#  - maybe update version in pyperformance/__init__.py and doc/conf.py
 #  - set release date in doc/changelog.rst
 #  - git commit -a -m "prepare release x.y"
 #  - run tests: tox
 #  - git push
 #  - check Travis CI status:
-#    https://travis-ci.org/python/performance
+#    https://travis-ci.org/python/pyperformance
 #
 # Release a new version:
 #
@@ -32,14 +32,14 @@
 #
 # After the release:
 #
-#  - set version to n+1: performance/__init__.py and doc/conf.py
+#  - set version to n+1: pyperformance/__init__.py and doc/conf.py
 #  - git commit -a -m "post-release"
 #  - git push
 
 # Import just to get the version
-import performance
+import pyperformance
 
-VERSION = performance.__version__
+VERSION = pyperformance.__version__
 
 DESCRIPTION = 'Python benchmark suite'
 CLASSIFIERS = [
@@ -64,24 +64,24 @@ def main():
         long_description = fp.read().strip()
 
     packages = [
-        'performance',
-        'performance.benchmarks',
-        'performance.benchmarks.data',
-        'performance.benchmarks.data.2to3',
-        'performance.tests',
-        'performance.tests.data',
+        'pyperformance',
+        'pyperformance.benchmarks',
+        'pyperformance.benchmarks.data',
+        'pyperformance.benchmarks.data.2to3',
+        'pyperformance.tests',
+        'pyperformance.tests.data',
     ]
 
     data = {
-        'performance': ['requirements.txt'],
-        'performance.tests': ['data/*.json'],
+        'pyperformance': ['requirements.txt'],
+        'pyperformance.tests': ['data/*.json'],
     }
 
-    # Search for all files in performance/benchmarks/data/
-    data_dir = os.path.join('performance', 'benchmarks', 'data')
+    # Search for all files in pyperformance/benchmarks/data/
+    data_dir = os.path.join('pyperformance', 'benchmarks', 'data')
     benchmarks_data = []
     for root, dirnames, filenames in os.walk(data_dir):
-        # Strip performance/benchmarks/ prefix
+        # Strip pyperformance/benchmarks/ prefix
         root = os.path.normpath(root)
         root = root.split(os.path.sep)
         root = os.path.sep.join(root[2:])
@@ -89,10 +89,10 @@ def main():
         for filename in filenames:
             filename = os.path.join(root, filename)
             benchmarks_data.append(filename)
-    data['performance.benchmarks'] = benchmarks_data
+    data['pyperformance.benchmarks'] = benchmarks_data
 
     options = {
-        'name': 'performance',
+        'name': 'pyperformance',
         'version': VERSION,
         'author': 'Collin Winter and Jeffrey Yasskin',
         'license': 'MIT license',
@@ -103,7 +103,7 @@ def main():
         'packages': packages,
         'package_data': data,
         'entry_points': {
-            'console_scripts': ['pyperformance=performance.cli:main']
+            'console_scripts': ['pyperformance=pyperformance.cli:main']
         },
         'install_requires': ["pyperf", "six"],
     }
