@@ -4,6 +4,7 @@ cache: pip
 python:
     - 2.7
     - 3.7
+    - nightly
     - pypy
 install:
     - pip install -U 'setuptools>=18.5' 'pip>=6.0'
