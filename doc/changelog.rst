@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Version 0.8.1
--------------
+Version 0.9.0 (2019-05-29)
+--------------------------
 
 * Project renamed from "performance" to "pyperformance"
 * Upgrade pyperf from version 1.6.0 to 1.6.1. The project has been renamed from
