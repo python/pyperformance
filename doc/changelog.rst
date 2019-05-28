@@ -7,6 +7,10 @@ Version 0.8.1
 * Upgrade pyperf from version 1.6.0 to 1.6.1. The project has been renamed from
   "perf" to "pyperf". Update imports.
 * Issue #54: Update Genshi to 0.7.3. It is now compatible with Python 3.8.
+* Update requirements:
+
+  * Mako: 1.0.9= > 1.0.10
+  * SQLAlchemy: 1.3.3 => 1.3.4
 
 Version 0.8.0 (2019-05-10)
 --------------------------
