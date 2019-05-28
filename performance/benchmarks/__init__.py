@@ -17,8 +17,7 @@ DEFAULT_GROUP = [
     'dulwich_log',
     'fannkuch',
     'float',
-    # Issue #54:  genshi benchmark fails on Python 3.8.0a4+
-    # 'genshi',
+    'genshi',
     'go',
     'hexiom',
     'hg_startup',

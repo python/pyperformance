@@ -6,7 +6,7 @@ Version 0.8.1
 
 * Upgrade pyperf from version 1.6.0 to 1.6.1. The project has been renamed from
   "perf" to "pyperf". Update imports.
-* Issue #54: Disable genshi benchmark: it currently fails on Python 3.8.0a4.
+* Issue #54: Update Genshi to 0.7.3. It is now compatible with Python 3.8.
 
 Version 0.8.0 (2019-05-10)
 --------------------------
