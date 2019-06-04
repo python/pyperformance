@@ -64,31 +64,24 @@ class GVector(object):
         return "GVector(%f, %f, %f)" % (self.x, self.y, self.z)
 
 
-def GetKnots(points, degree):
-    knots = [0] * degree + range(1, len(points) - degree)
-    knots += [len(points) - degree] * degree
-    return knots
-
-
 class Spline(object):
     """Class for representing B-Splines and NURBS of arbitrary degree"""
 
-    def __init__(self, points, degree=3, knots=None):
-        """Creates a Spline. points is a list of GVector, degree is the
-degree of the Spline."""
-        if knots is None:
-            self.knots = GetKnots(points, degree)
-        else:
-            if len(points) > len(knots) - degree + 1:
-                raise ValueError("too many control points")
-            elif len(points) < len(knots) - degree + 1:
-                raise ValueError("not enough control points")
-            last = knots[0]
-            for cur in knots[1:]:
-                if cur < last:
-                    raise ValueError("knots not strictly increasing")
-                last = cur
-            self.knots = knots
+    def __init__(self, points, degree, knots):
+        """Creates a Spline.
+
+        points is a list of GVector, degree is the degree of the Spline.
+        """
+        if len(points) > len(knots) - degree + 1:
+            raise ValueError("too many control points")
+        elif len(points) < len(knots) - degree + 1:
+            raise ValueError("not enough control points")
+        last = knots[0]
+        for cur in knots[1:]:
+            if cur < last:
+                raise ValueError("knots not strictly increasing")
+            last = cur
+        self.knots = knots
         self.points = points
         self.degree = degree
 
