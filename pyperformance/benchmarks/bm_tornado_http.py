@@ -6,6 +6,7 @@ A trivial "application" is generated which generates a number of chunks of
 data as a HTTP response's body.
 """
 
+import sys
 import socket
 
 from six.moves import xrange
@@ -86,6 +87,16 @@ def bench_tornado(loops):
 
 
 if __name__ == "__main__":
+    # 3.8 changed the default event loop to ProactorEventLoop which doesn't
+    # implement everything required by tornado and breaks this benchmark.
+    # Restore the old WindowsSelectorEventLoop default for now.
+    # https://bugs.python.org/issue37373
+    # https://github.com/python/pyperformance/issues/61
+    # https://github.com/tornadoweb/tornado/pull/2686
+    if sys.platform == 'win32' and sys.version_info[:2] == (3, 8):
+        import asyncio
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
     kw = {}
     if pyperf.python_has_jit():
         # PyPy needs to compute more warmup values to warmup its JIT
