@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Version 0.9.1
--------------
+Version 0.9.1 (2019-07-29)
+--------------------------
 
 * Enable hg_startup on Python 3
 * Fix compatibility with Python 3.8 beta 2
