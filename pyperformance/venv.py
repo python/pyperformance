@@ -198,6 +198,11 @@ def create_environ(inherit_environ):
     for name in copy_env:
         if name in os.environ:
             env[name] = os.environ[name]
+
+    # Needed to install Mercurial on Python 3 for hg_startup:
+    # https://www.mercurial-scm.org/wiki/Python3
+    env['HGPYTHON3'] = '1'
+
     return env
 
 
