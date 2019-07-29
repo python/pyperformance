@@ -1,6 +1,23 @@
 Changelog
 =========
 
+Version 0.9.1
+-------------
+
+* Enable hg_startup on Python 3
+* Fix compatibility with Python 3.8 beta 2
+* Update requirements:
+
+  * certifi: 2019.3.9 => 2019.6.16
+  * Chameleon: 3.6.1 => 3.6.2
+  * Django: 1.11.20 => 1.11.22
+  * docutils: 0.14 => 0.15.1.post1
+  * Mako: 1.0.10 => 1.0.14
+  * mercurial: 5.0 => 5.0.2
+  * pathlib2: 2.3.3 => 2.3.4
+  * psutil: 5.6.2 => 5.6.3
+  * SQLAlchemy: 1.3.4 => 1.3.6
+
 Version 0.9.0 (2019-05-29)
 --------------------------
 
