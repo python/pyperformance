@@ -88,7 +88,6 @@ def BM_2to3(python, options):
     return run_perf_script(python, options, "2to3")
 
 
-@python2_only
 def BM_hg_startup(python, options):
     return run_perf_script(python, options, "hg_startup")
 
@@ -272,7 +271,6 @@ def BM_dulwich_log(python, options):
     return run_perf_script(python, options, "dulwich_log")
 
 
-@python2_only
 def BM_pyflate(python, options):
     return run_perf_script(python, options, "pyflate")
 

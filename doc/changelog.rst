@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 0.9.2
+-------------
+
+* Enable hg_startup and pyflate benchmarks on Python 3.
+
 Version 0.9.1 (2019-07-29)
 --------------------------
 
