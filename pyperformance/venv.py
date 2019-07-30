@@ -202,6 +202,7 @@ def create_environ(inherit_environ):
     # Needed to install Mercurial on Python 3 for hg_startup:
     # https://www.mercurial-scm.org/wiki/Python3
     env['HGPYTHON3'] = '1'
+    env['HGALLOWPYTHON3'] = '1'
 
     return env
 
