@@ -530,9 +530,18 @@ class VirtualEnvironment(object):
 
         venv_path = self.get_path()
 
+        self.run_cmd_nocheck(['env'])
+        self.run_cmd_nocheck([self.python, '-c', 'import sys, pprint; pprint.pprint(sys.path)'])
+        self.run_cmd_nocheck([self.python, '-m', 'site'])
+
         print("Creating the virtual environment %s" % venv_path)
         try:
             self._create_venv()
+
+            venv_python = self.get_python_program()
+            self.run_cmd_nocheck([venv_python, '-c', 'import sys, pprint; pprint.pprint(sys.path)'])
+            self.run_cmd_nocheck([venv_python, '-m', 'site'])
+
             self._install_req()
         except:   # noqa
             print()
