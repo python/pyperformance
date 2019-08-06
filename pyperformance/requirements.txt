@@ -59,7 +59,7 @@ pyperf==1.6.1
 Chameleon==3.6.2                          # bm_chameleon
 # Django is currently stuck at Django 1.11 to support Python 2.7 and Python 3:
 # https://mail.python.org/pipermail/speed/2018-January/000619.html
-Django==1.11.22                           # bm_django_template
+Django==1.11.23                           # bm_django_template
 Genshi==0.7.3                             # bm_genshi
 Mako==1.0.14                              # bm_mako
 SQLAlchemy==1.3.6                         # bm_sqlalchemy_declarative
