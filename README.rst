@@ -10,6 +10,10 @@ The Python Benchmark Suite
    :alt: Build status of pyperformance on Travis CI
    :target: https://travis-ci.org/python/pyperformance
 
+.. image:: https://ci.appveyor.com/api/projects/status/6sd9k88cwit27tgl/branch/master?svg=true
+   :alt: Build status of pyperformance on AppVeyor
+   :target: https://ci.appveyor.com/project/lazka/pyperformance-rdqv8
+
 The ``pyperformance`` project is intended to be an authoritative source of
 benchmarks for all Python implementations. The focus is on real-world
 benchmarks, rather than synthetic benchmarks, using whole applications when
