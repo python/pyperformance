@@ -5,6 +5,15 @@ Version 0.9.2
 -------------
 
 * Enable pyflate benchmarks on Python 3.
+* Update requirements:
+
+  * certifi: 2019.6.16 => 2019.9.11
+  * Django: 1.11.22 => 1.11.24
+  * docutils: 0.15.1 => 0.15.2
+  * dulwich: 0.19.11 => 0.19.13
+  * Mako: 1.0.14 => 1.1.0
+  * mercurial: 5.0.2 => 5.1.1
+  * SQLAlchemy: 1.3.6 => 1.3.8
 
 Version 0.9.1 (2019-07-29)
 --------------------------
