@@ -21,7 +21,10 @@ DEFAULT_GROUP = [
     'go',
     'hexiom',
     'hg_startup',
-    'html5lib',
+    # html5lib is not compatible with Python 3.9. It has been fixed, but there
+    # is no release yet.
+    # https://github.com/html5lib/html5lib-python/issues/419
+    # 'html5lib',
     'json_dumps',
     'json_loads',
     'logging',

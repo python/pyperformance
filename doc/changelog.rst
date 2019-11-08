@@ -4,6 +4,7 @@ Changelog
 Version 0.9.2
 -------------
 
+* Disable html5lib since it's no longer compatible with Python 3.9.
 * Enable pyflate benchmarks on Python 3.
 * Update requirements:
 

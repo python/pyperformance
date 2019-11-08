@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# FIXME:
+#
+# - REENABLE HTML5LIB BENCHMARK.
+#
 # Update dependencies:
 #
 #  - git clean -fdx  # remove all untracked files!
