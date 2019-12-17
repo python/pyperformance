@@ -14,7 +14,7 @@ import pyperf
 
 from tornado.httpclient import AsyncHTTPClient
 from tornado.httpserver import HTTPServer
-from tornado.gen import coroutine, Task
+from tornado.gen import coroutine
 from tornado.ioloop import IOLoop
 from tornado.netutil import bind_sockets
 from tornado.web import RequestHandler, Application
@@ -35,7 +35,7 @@ class MainHandler(RequestHandler):
     def get(self):
         for i in range(NCHUNKS):
             self.write(CHUNK)
-            yield Task(self.flush)
+            yield self.flush()
 
     def compute_etag(self):
         # Overriden to avoid stressing hashlib in this benchmark
