@@ -7,7 +7,7 @@
 # Update dependencies:
 #
 #  - git clean -fdx  # remove all untracked files!
-#  - python2 -m pyperformance venv create
+#  - python3 -m pyperformance venv create
 #  - venv/cpython*/bin/python -m pip list --outdated
 #  - update pyperformance/requirements.txt
 #  - (see also pip-tools and pipdeptree tools)
@@ -31,7 +31,6 @@
 #  - git push --tags
 #  - Remove untracked files/dirs: git clean -fdx
 #  - python3 setup.py sdist bdist_wheel
-#  - python2 setup.py bdist_wheel
 #  - twine upload dist/*
 #
 # After the release:
@@ -47,7 +46,7 @@ VERSION = pyperformance.__version__
 
 DESCRIPTION = 'Python benchmark suite'
 CLASSIFIERS = [
-    'Development Status :: 4 - Beta',
+    'Development Status :: 5 - Production/Stable',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: MIT License',
     'Natural Language :: English',
