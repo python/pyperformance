@@ -8,7 +8,7 @@
 #
 #  - git clean -fdx  # remove all untracked files!
 #  - python2 -m pyperformance venv create
-#  - venv/cpython2*/bin/python -m pip list --outdated
+#  - venv/cpython*/bin/python -m pip list --outdated
 #  - update pyperformance/requirements.txt
 #  - (see also pip-tools and pipdeptree tools)
 #  - (pip install pip-review; pip-review --local --interactive)

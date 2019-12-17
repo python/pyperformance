@@ -4,17 +4,22 @@ Changelog
 Version 1.0.0
 -------------
 
+* Drop Python 2.7 support: old Django and Tornado versions are
+  not compatible with incoming Python 3.9.
 * Disable html5lib since it's no longer compatible with Python 3.9.
 * Enable pyflate benchmarks on Python 3.
 * Update requirements:
 
-  * certifi: 2019.6.16 => 2019.9.11
-  * Django: 1.11.22 => 1.11.24
+  * certifi: 2019.6.16 => 2019.11.28
+  * Django: 1.11.22 => 3.0
   * docutils: 0.15.1 => 0.15.2
-  * dulwich: 0.19.11 => 0.19.13
+  * dulwich: 0.19.11 => 0.19.14
   * Mako: 1.0.14 => 1.1.0
   * mercurial: 5.0.2 => 5.1.1
-  * SQLAlchemy: 1.3.6 => 1.3.8
+  * SQLAlchemy: 1.3.6 => 1.3.12
+  * psutil: 5.6. => 5.6.7
+  * six: 1.12. =>  1.13.0
+  * sympy: 1.4 => 1.5
 
 Version 0.9.1 (2019-07-29)
 --------------------------
