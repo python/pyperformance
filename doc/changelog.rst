@@ -1,7 +1,7 @@
 Changelog
 =========
 
-Version 0.9.2
+Version 1.0.0
 -------------
 
 * Disable html5lib since it's no longer compatible with Python 3.9.
