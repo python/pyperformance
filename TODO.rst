@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Update Django to 2.0
 * Remove genshi module? Last release in January 2014!
 * upload:
 
@@ -123,7 +122,6 @@ Done:
 * scimark_montecarlo
 * scimark_sor
 * scimark_sparsematmult
-* spambayes
 * spectral-norm
 * sqlalchemy_declarative
 * sqlalchemy_imperative

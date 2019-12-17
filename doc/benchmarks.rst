@@ -517,25 +517,6 @@ scimark
   <https://en.wikipedia.org/wiki/Fast_Fourier_transform>`_ benchmark
 
 
-spambayes
----------
-
-Run a canned mailbox through a SpamBayes ham/spam classifier.
-
-Data files from ``pyperformance/benchmarks/data`` directory:
-
-* ``spambayes_mailbox``: Mailbox file which contains 64 emails
-* ``spambayes_hammie.pkl``: Ham data (serialized by pickle)
-
-See the `SpamBayes project <http://spambayes.sourceforge.net/>`_.
-
-Status at 2017-04-29 from Skip Montanaro: While the last commit was pushed in
-2011 (`svn r3273 <https://sourceforge.net/p/spambayes/code/3273/>`_), the
-project is not dead: it is still actively used on Windows via the installer but
-also runs on mail.python.org for Python mailing lists. Sadly, it doesn't
-support Python 3.
-
-
 spectral_norm
 -------------
 

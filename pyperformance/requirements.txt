@@ -24,10 +24,6 @@ backports-abc==0.5
 singledispatch==3.4.0.3
 certifi==2019.11.28
 
-# spambayes 1.1b2 dependencies
-lockfile==0.12.2; python_version < '3.0'
-pydns==2.3.6; python_version < '3.0'
-
 # Mako 1.0.4 dependencies
 MarkupSafe==1.1.1
 
@@ -66,7 +62,6 @@ mercurial==5.1.1; python_version < '3.0'  # bm_hg_startup
 html5lib==1.0.1                           # bm_html5lib
 pathlib2==2.3.4; python_version < '3.4'   # bm_pathlib
 pyaes==1.6.1                              # bm_crypto_pyaes
-spambayes==1.1b2; python_version < '3.0'  # bm_spambayes
 sympy==1.5                                # bm_sympy
 tornado==6.0.3                            # bm_tornado_http
 

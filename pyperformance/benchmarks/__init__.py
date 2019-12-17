@@ -48,7 +48,6 @@ DEFAULT_GROUP = [
     'regex_v8',
     'richards',
     'scimark',
-    'spambayes',
     'spectral_norm',
     'sqlalchemy_declarative',
     'sqlalchemy_imperative',
@@ -75,8 +74,7 @@ BENCH_GROUPS = {
                   "pickle", "unpickle",
                   "xml_etree",
                   "json_dumps", "json_loads"],
-    "apps": ["2to3", "chameleon", "html5lib",
-             "spambayes", "tornado_http"],
+    "apps": ["2to3", "chameleon", "html5lib", "tornado_http"],
     "math": ["float", "nbody", "pidigits"],
     "template": ["django_template", "mako"],
 }
@@ -236,11 +234,6 @@ def BM_unpack_sequence(python, options):
 
 def BM_nbody(python, options):
     return run_perf_script(python, options, "nbody")
-
-
-@python2_only
-def BM_spambayes(python, options):
-    return run_perf_script(python, options, "spambayes")
 
 
 def BM_html5lib(python, options):

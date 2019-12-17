@@ -4,6 +4,7 @@ Changelog
 Version 1.0.0
 -------------
 
+* Remove ``spambayes`` benchmark: it is not compatible with Python 3.
 * Remove ``2n3``:benchmark group.
 * Drop Python 2.7 support: old Django and Tornado versions are
   not compatible with incoming Python 3.9.
