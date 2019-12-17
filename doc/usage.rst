@@ -13,7 +13,8 @@ The command installs a new ``pyperformance`` program.
 
 If needed, ``pyperf`` and ``six`` dependencies are installed automatically.
 
-pyperformance works on Python 3.5 and newer.
+pyperformance works on Python 3.6 and newer, but it may work on Python 3.4 and
+3.5.
 
 At runtime, Python development files (header files) may be needed to install
 some dependencies like ``dulwich_log`` or ``psutil``, to build their C
