@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Version 1.0.0
--------------
+Version 1.0.0 (2019-12-17)
+--------------------------
 
 * Enable pyflate benchmarks on Python 3.
 * Remove ``spambayes`` benchmark: it is not compatible with Python 3.
