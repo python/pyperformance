@@ -12,7 +12,6 @@ to list groups and their benchmarks.
 
 Available benchmark groups:
 
-* ``2n3``: Benchmarks compatible with both Python 2 and Python 3
 * ``all``: Group including all benchmarks
 * ``apps``: "High-level" applicative benchmarks (2to3, Chameleon, Tornado HTTP)
 * ``default``: Group of benchmarks run by default by the ``run`` command

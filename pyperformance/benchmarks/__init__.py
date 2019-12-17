@@ -308,12 +308,6 @@ def get_benchmarks():
 
     bench_groups = BENCH_GROUPS.copy()
 
-    # Calculate set of 2-and-3 compatible benchmarks.
-    group2n3 = bench_groups["2n3"] = []
-    for bm, func in bench_funcs.items():
-        if not getattr(func, '_python2_only', False):
-            group2n3.append(bm)
-
     # create the 'all' group
     bench_groups["all"] = sorted(bench_funcs)
 
