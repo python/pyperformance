@@ -13,34 +13,24 @@ The command installs a new ``pyperformance`` program.
 
 If needed, ``pyperf`` and ``six`` dependencies are installed automatically.
 
-pyperformance works on Python 2.7, 3.4 and newer.
-
-On Python 2, the ``virtualenv`` program (or the Python module) is required
-to create virtual environments. On Python 3, the ``venv`` module of the
-standard library is used.
+pyperformance works on Python 3.5 and newer.
 
 At runtime, Python development files (header files) may be needed to install
 some dependencies like ``dulwich_log`` or ``psutil``, to build their C
 extension. Commands on Fedora to install dependencies:
 
-* Python 2: ``sudo dnf install python-devel``
 * Python 3: ``sudo dnf install python3-devel``
 * PyPy: ``sudo dnf install pypy-devel``
-
-In some cases, pyperformance fails to create a virtual environment. In this case,
-upgrading virtualenv on the system can fix the issue. Example::
-
-    sudo python2 -m pip install -U virtualenv
 
 
 Run benchmarks
 ==============
 
-Commands to compare Python 2 and Python 3 performances::
+Commands to compare Python 3.6 and Python 3.7 performances::
 
-    pyperformance run --python=python2 -o py2.json
-    pyperformance run --python=python3 -o py3.json
-    pyperformance compare py2.json py3.json
+    pyperformance run --python=python3.6 -o py36.json
+    pyperformance run --python=python3.7 -o py37.json
+    pyperformance compare py36.json py37.json
 
 Note: ``python3 -m pyperformance ...`` syntax works as well (ex: ``python3 -m
 pyperformance run -o py3.json``), but requires to install pyperformance on each
@@ -276,8 +266,7 @@ The pyperformance benchmark suite has multiple goals:
 * Help to detect performance regression in a Python implementation
 * Validate that an optimization change makes Python faster and don't
   performance regressions, or only minor regressions
-* Compare two implementations of Python, not only CPython 2 vs Python 3,
-  but also CPython vs PyPy
+* Compare two implementations of Python, for example CPython and PyPy
 * Showcase of Python performance which ideally would be representative
   of performances of applications running on production
 

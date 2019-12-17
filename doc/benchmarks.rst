@@ -336,15 +336,13 @@ See `Eight queens puzzle <https://en.wikipedia.org/wiki/Eight_queens_puzzle>`_.
 pathlib
 -------
 
-Test the performance of operations of the ``pathlib`` module.
+Test the performance of operations of the ``pathlib`` module of the standard
+library.
 
 This benchmark stresses the creation of small objects, globbing, and system
 calls.
 
-On Python 3, use ``pathlib`` of the standard library. On Python 2, use
-the third-party ``pathlib2`` module.
-
-See the `Python 3 pathlib module
+See the `documentation of the pathlib module
 <https://docs.python.org/dev/library/pathlib.html>`_.
 
 
