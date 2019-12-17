@@ -4,22 +4,24 @@ Changelog
 Version 1.0.0
 -------------
 
+* Enable pyflate benchmarks on Python 3.
 * Remove ``spambayes`` benchmark: it is not compatible with Python 3.
 * Remove ``2n3``:benchmark group.
 * Drop Python 2.7 support: old Django and Tornado versions are
   not compatible with incoming Python 3.9.
-* Disable html5lib since it's no longer compatible with Python 3.9.
-* Enable pyflate benchmarks on Python 3.
+* Disable html5lib benchmark temporarily, since it's no longer compatible
+  with Python 3.9.
 * Update requirements:
 
-  * certifi: 2019.6.16 => 2019.11.28
   * Django: 1.11.22 => 3.0
+  * Mako: 1.0.14 => 1.1.0
+  * SQLAlchemy: 1.3.6 => 1.3.12
+  * certifi: 2019.6.16 => 2019.11.28
   * docutils: 0.15.1 => 0.15.2
   * dulwich: 0.19.11 => 0.19.14
-  * Mako: 1.0.14 => 1.1.0
   * mercurial: 5.0.2 => 5.1.1
-  * SQLAlchemy: 1.3.6 => 1.3.12
   * psutil: 5.6. => 5.6.7
+  * pyperf: 1.6.1 => 1.7.0
   * six: 1.12. =>  1.13.0
   * sympy: 1.4 => 1.5
 

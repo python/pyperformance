@@ -42,7 +42,7 @@ docutils==0.15.2
 # --------------------------
 
 six==1.13.0
-pyperf==1.6.1
+pyperf==1.7.0
 
 
 # Benchmarks dependencies
