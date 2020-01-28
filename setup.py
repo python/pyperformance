@@ -3,7 +3,6 @@
 # FIXME:
 #
 # - REENABLE HTML5LIB BENCHMARK.
-# - ENABLE hg_startup on Python 3
 #
 # Update dependencies:
 #
