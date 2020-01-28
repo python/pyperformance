@@ -54,7 +54,7 @@ Genshi==0.7.3                             # bm_genshi
 Mako==1.1.1                               # bm_mako
 SQLAlchemy==1.3.13                        # bm_sqlalchemy_declarative
 dulwich==0.19.15                          # dulwich_log
-mercurial==5.1.1; python_version < '3.0'  # bm_hg_startup
+mercurial==5.2.2                          # bm_hg_startup
 html5lib==1.0.1                           # bm_html5lib
 pyaes==1.6.1                              # bm_crypto_pyaes
 sympy==1.5.1                              # bm_sympy

@@ -16,6 +16,11 @@ If needed, ``pyperf`` and ``six`` dependencies are installed automatically.
 pyperformance works on Python 3.6 and newer, but it may work on Python 3.4 and
 3.5.
 
+Mercurial might need Python developement headers to build its C extensions. For
+example, on Fedora, use::
+
+    sudo dnf install pypy3-devel
+
 At runtime, Python development files (header files) may be needed to install
 some dependencies like ``dulwich_log`` or ``psutil``, to build their C
 extension. Commands on Fedora to install dependencies:

@@ -80,16 +80,10 @@ BENCH_GROUPS = {
 }
 
 
-def python2_only(func):
-    func._python2_only = True
-    return func
-
-
 def BM_2to3(python, options):
     return run_perf_script(python, options, "2to3")
 
 
-@python2_only
 def BM_hg_startup(python, options):
     return run_perf_script(python, options, "hg_startup")
 
