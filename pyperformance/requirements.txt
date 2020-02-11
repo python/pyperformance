@@ -49,7 +49,7 @@ pyperf==1.7.0
 # two pyperformance results of two different major versions is not reliable.
 
 Chameleon==3.6.2                          # bm_chameleon
-Django==3.0.2                             # bm_django_template
+Django==3.0.3                             # bm_django_template
 Genshi==0.7.3                             # bm_genshi
 Mako==1.1.1                               # bm_mako
 SQLAlchemy==1.3.13                        # bm_sqlalchemy_declarative
