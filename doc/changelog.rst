@@ -8,13 +8,15 @@ Version 1.0.1
   with Python 3.
 * Update dependencies:
 
-  * Django: 3.0 => 3.0.2
+  * Django: 3.0 => 3.0.3
   * Mako: 1.1.0 = > 1.1.1
   * SQLAlchemy: 1.3.12 => 1.3.13
   * dulwich: 0.19.14 => 0.19.15
-  * mercurial: 5.1.1 => 5.2.2
+  * mercurial: 5.1.1 => 5.3
   * six : 1.13.0 => 1.14.0
   * sympy: 1.5 => 1.5.1
+
+* pip-tools (pip-compile) is now used to update dependencies
 
 Version 1.0.0 (2019-12-17)
 --------------------------

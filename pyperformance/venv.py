@@ -105,12 +105,24 @@ def is_build_dir():
 
 
 class Requirements(object):
-    def __init__(self, filename, pip, installer, optional):
-        # pip requirement
-        self.pip = []
+    def __init__(self, filename, optional):
+        # if pip or setuptools is updated:
+        # .travis.yml should be updated as well
 
-        # pre-requirements (setuptools, pip)
-        self.installer = []
+        # pip requirements
+        self.pip = [
+            # pip 6 is the first version supporting environment markers
+            'pip>=6.0',
+        ]
+
+        # installer requirements
+        self.installer = [
+            # html5lib requires setuptools 18.5 or newer
+            'setuptools>=18.5',
+            # install wheel so pip can cache binary wheel packages locally,
+            # and install prebuilt wheel packages from PyPI
+            'wheel',
+        ]
 
         # requirements
         self.req = []
@@ -133,11 +145,7 @@ class Requirements(object):
                 req = req.partition('==')[0]
                 req = req.partition('>=')[0]
 
-                if req in pip:
-                    self.pip.append(line)
-                elif req in installer:
-                    self.installer.append(line)
-                elif req in optional:
+                if req in optional:
                     self.optional.append(line)
                 else:
                     self.req.append(line)
@@ -473,8 +481,6 @@ class VirtualEnvironment(object):
         filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
         requirements = Requirements(filename,
                                     # FIXME: don't hardcode requirements
-                                    ['pip', 'setuptools'],
-                                    ['wheel'],
                                     ['psutil', 'dulwich'])
 
         # Upgrade pip

@@ -6,7 +6,7 @@ python:
     - nightly
     - pypy3
 install:
-    - pip install -U 'setuptools>=18.5' 'pip>=6.0'
+    - pip install -U 'setuptools>=18.5' 'pip>=6.0' 'wheel'
     # Need to install pyperformance,
     # pyperformance/tests/test_compare.py imports it
     - pip install -e .

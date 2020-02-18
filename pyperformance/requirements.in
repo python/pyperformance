@@ -1,0 +1,33 @@
+# pyperformance dependencies
+# --------------------------
+
+six==1.14.0
+pyperf==1.7.0
+
+
+# Benchmarks dependencies
+# -----------------------
+#
+# When one of these dependencies is upgraded, the pyperformance major version
+# should be increased to respect semantic versionning. Comparison between
+# two pyperformance results of two different major versions is not reliable.
+
+Chameleon                          # bm_chameleon
+Django                             # bm_django_template
+Genshi                             # bm_genshi
+Mako                               # bm_mako
+SQLAlchemy                         # bm_sqlalchemy_declarative
+mercurial                          # bm_hg_startup
+html5lib                           # bm_html5lib
+pyaes                              # bm_crypto_pyaes
+sympy                              # bm_sympy
+tornado                            # bm_tornado_http
+
+
+# Optional dependencies
+# ---------------------
+#
+# The list of optional dependencies is hardcoded in pyperformance/venv.py
+
+psutil
+dulwich                            # bm_dulwich_log

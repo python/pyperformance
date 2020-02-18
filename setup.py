@@ -6,12 +6,9 @@
 #
 # Update dependencies:
 #
+#  - python3 -m pip install --user --upgrade pip-tools
 #  - git clean -fdx  # remove all untracked files!
-#  - python3 -m pyperformance venv create
-#  - venv/cpython*/bin/python -m pip list --outdated
-#  - update pyperformance/requirements.txt
-#  - (see also pip-tools and pipdeptree tools)
-#  - (pip install pip-review; pip-review --local --interactive)
+#  - cd pyperformance; pip-compile requirements.in
 #
 # Prepare a release:
 #
@@ -20,7 +17,7 @@
 #  - maybe update version in pyperformance/__init__.py and doc/conf.py
 #  - set release date in doc/changelog.rst
 #  - git commit -a -m "prepare release x.y"
-#  - run tests: tox
+#  - run tests: tox --parallel 0
 #  - git push
 #  - check Travis CI status:
 #    https://travis-ci.org/python/pyperformance
