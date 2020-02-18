@@ -20,11 +20,16 @@ DEFAULT_GROUP = [
     'genshi',
     'go',
     'hexiom',
-    'hg_startup',
+
+    # FIXME: this benchmark fails with:
+    # Unable to get the program 'hg' from the virtual environment
+    # 'hg_startup',
+
     # html5lib is not compatible with Python 3.9. It has been fixed, but there
     # is no release yet.
     # https://github.com/html5lib/html5lib-python/issues/419
     # 'html5lib',
+
     'json_dumps',
     'json_loads',
     'logging',
@@ -84,8 +89,8 @@ def BM_2to3(python, options):
     return run_perf_script(python, options, "2to3")
 
 
-def BM_hg_startup(python, options):
-    return run_perf_script(python, options, "hg_startup")
+# def BM_hg_startup(python, options):
+#     return run_perf_script(python, options, "hg_startup")
 
 
 def BM_Chameleon(python, options):
@@ -230,8 +235,8 @@ def BM_nbody(python, options):
     return run_perf_script(python, options, "nbody")
 
 
-#def BM_html5lib(python, options):
-#    return run_perf_script(python, options, "html5lib")
+# def BM_html5lib(python, options):
+#     return run_perf_script(python, options, "html5lib")
 
 
 def BM_richards(python, options):

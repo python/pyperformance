@@ -4,8 +4,6 @@ Changelog
 Version 1.0.1
 -------------
 
-* Reenable hg_startup benchmark: mercurial 5.2 is now officially compatible
-  with Python 3.
 * Update dependencies:
 
   * Django: 3.0 => 3.0.3
