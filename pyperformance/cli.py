@@ -1,8 +1,9 @@
 import argparse
 import os.path
+import shutil
 import sys
 
-from pyperformance.venv import exec_in_virtualenv, which, cmd_venv
+from pyperformance.venv import exec_in_virtualenv, cmd_venv
 
 
 def comma_separated(values):
@@ -167,7 +168,7 @@ def parse_args():
         # Replace "~" with the user home directory
         options.python = os.path.expanduser(options.python)
         # Try to the absolute path to the binary
-        abs_python = which(options.python)
+        abs_python = shutil.which(options.python)
         if not abs_python:
             print("ERROR: Unable to locate the Python executable: %r" %
                   options.python)
