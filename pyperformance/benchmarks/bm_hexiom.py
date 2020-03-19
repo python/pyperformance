@@ -9,10 +9,9 @@ Source: https://github.com/slowfrog/hexiom : hexiom2.py, level36.txt
 """
 
 from __future__ import division, print_function
+import io
 
 import pyperf
-from six.moves import xrange, StringIO
-from six import u as u_lit, text_type
 
 # 2016-07-07: CPython 3.6 takes ~25 ms to solve the board level 25
 DEFAULT_LEVEL = 25
@@ -49,11 +48,11 @@ class Done(object):
     def __init__(self, count, empty=False):
         self.count = count
         self.cells = None if empty else [
-            [0, 1, 2, 3, 4, 5, 6, EMPTY] for i in xrange(count)]
+            [0, 1, 2, 3, 4, 5, 6, EMPTY] for i in range(count)]
 
     def clone(self):
         ret = Done(self.count, True)
-        ret.cells = [self.cells[i][:] for i in xrange(self.count)]
+        ret.cells = [self.cells[i][:] for i in range(self.count)]
         return ret
 
     def __getitem__(self, i):
@@ -73,26 +72,26 @@ class Done(object):
             return False
 
     def remove_all(self, v):
-        for i in xrange(self.count):
+        for i in range(self.count):
             self.remove(i, v)
 
     def remove_unfixed(self, v):
         changed = False
-        for i in xrange(self.count):
+        for i in range(self.count):
             if not self.already_done(i):
                 if self.remove(i, v):
                     changed = True
         return changed
 
     def filter_tiles(self, tiles):
-        for v in xrange(8):
+        for v in range(8):
             if tiles[v] == 0:
                 self.remove_all(v)
 
     def next_cell_min_choice(self):
         minlen = 10
         mini = -1
-        for i in xrange(self.count):
+        for i in range(self.count):
             if 1 < len(self.cells[i]) < minlen:
                 minlen = len(self.cells[i])
                 mini = i
@@ -101,7 +100,7 @@ class Done(object):
     def next_cell_max_choice(self):
         maxlen = 1
         maxi = -1
-        for i in xrange(self.count):
+        for i in range(self.count):
             if maxlen < len(self.cells[i]):
                 maxlen = len(self.cells[i])
                 maxi = i
@@ -110,7 +109,7 @@ class Done(object):
     def next_cell_highest_value(self):
         maxval = -1
         maxi = -1
-        for i in xrange(self.count):
+        for i in range(self.count):
             if (not self.already_done(i)):
                 maxvali = max(k for k in self.cells[i] if k != EMPTY)
                 if maxval < maxvali:
@@ -119,7 +118,7 @@ class Done(object):
         return maxi
 
     def next_cell_first(self):
-        for i in xrange(self.count):
+        for i in range(self.count):
             if (not self.already_done(i)):
                 return i
         return -1
@@ -127,7 +126,7 @@ class Done(object):
     def next_cell_max_neighbors(self, pos):
         maxn = -1
         maxi = -1
-        for i in xrange(self.count):
+        for i in range(self.count):
             if not self.already_done(i):
                 cells_around = pos.hex.get_by_id(i).links
                 n = sum(1 if (self.already_done(nid) and (self[nid][0] != EMPTY)) else 0
@@ -140,7 +139,7 @@ class Done(object):
     def next_cell_min_neighbors(self, pos):
         minn = 7
         mini = -1
-        for i in xrange(self.count):
+        for i in range(self.count):
             if not self.already_done(i):
                 cells_around = pos.hex.get_by_id(i).links
                 n = sum(1 if (self.already_done(nid) and (self[nid][0] != EMPTY)) else 0
@@ -187,15 +186,15 @@ class Hex(object):
         self.nodes_by_id = self.count * [None]
         self.nodes_by_pos = {}
         id = 0
-        for y in xrange(size):
-            for x in xrange(size + y):
+        for y in range(size):
+            for x in range(size + y):
                 pos = (x, y)
                 node = Node(pos, id, [])
                 self.nodes_by_pos[pos] = node
                 self.nodes_by_id[node.id] = node
                 id += 1
-        for y in xrange(1, size):
-            for x in xrange(y, size * 2 - 1):
+        for y in range(1, size):
+            for x in range(y, size * 2 - 1):
                 ry = size + y - 1
                 pos = (x, ry)
                 node = Node(pos, id, [])
@@ -257,7 +256,7 @@ def constraint_pass(pos, last_move=None):
                 else:
                     vmax += 1
 
-            for num in xrange(7):
+            for num in range(7):
                 if (num < vmin) or (num > vmax):
                     if done.remove(i, num):
                         changed = True
@@ -267,7 +266,7 @@ def constraint_pass(pos, last_move=None):
         if len(cell) == 1:
             left[cell[0]] -= 1
 
-    for v in xrange(8):
+    for v in range(8):
         # If there is none, remove the possibility from all tiles
         if (pos.tiles[v] > 0) and (left[v] == 0):
             if done.remove_unfixed(v):
@@ -277,7 +276,7 @@ def constraint_pass(pos, last_move=None):
             # If the number of possible cells for a value is exactly the number of available tiles
             # put a tile in each cell
             if pos.tiles[v] == possible:
-                for i in xrange(done.count):
+                for i in range(done.count):
                     cell = done.cells[i]
                     if (not done.already_done(i)) and (v in cell):
                         done.set_done(i, v)
@@ -347,31 +346,29 @@ def print_pos(pos, output):
     hex = pos.hex
     done = pos.done
     size = hex.size
-    for y in xrange(size):
-        print(u_lit(" ") * (size - y - 1), end=u_lit(""), file=output)
-        for x in xrange(size + y):
+    for y in range(size):
+        print(" " * (size - y - 1), end="", file=output)
+        for x in range(size + y):
             pos2 = (x, y)
             id = hex.get_by_pos(pos2).id
             if done.already_done(id):
-                c = text_type(done[id][0]) if done[id][
-                    0] != EMPTY else u_lit(".")
+                c = str(done[id][0]) if done[id][0] != EMPTY else "."
             else:
-                c = u_lit("?")
-            print(u_lit("%s ") % c, end=u_lit(""), file=output)
-        print(end=u_lit("\n"), file=output)
-    for y in xrange(1, size):
-        print(u_lit(" ") * y, end=u_lit(""), file=output)
-        for x in xrange(y, size * 2 - 1):
+                c = "?"
+            print("%s " % c, end="", file=output)
+        print(end="\n", file=output)
+    for y in range(1, size):
+        print(" " * y, end="", file=output)
+        for x in range(y, size * 2 - 1):
             ry = size + y - 1
             pos2 = (x, ry)
             id = hex.get_by_pos(pos2).id
             if done.already_done(id):
-                c = text_type(done[id][0]) if done[id][
-                    0] != EMPTY else u_lit(".")
+                c = str(done[id][0]) if done[id][0] != EMPTY else "."
             else:
-                c = u_lit("?")
-            print(u_lit("%s ") % c, end=u_lit(""), file=output)
-        print(end=u_lit("\n"), file=output)
+                c = "?"
+            print("%s " % c, end="", file=output)
+        print(end="\n", file=output)
 
 
 OPEN = 0
@@ -385,7 +382,7 @@ def solved(pos, output, verbose=False):
     done = pos.done
     exact = True
     all_done = True
-    for i in xrange(hex.count):
+    for i in range(hex.count):
         if len(done[i]) == 0:
             return IMPOSSIBLE
         elif done.already_done(i):
@@ -454,7 +451,7 @@ def check_valid(pos):
     tiles = pos.tiles
     # fill missing entries in tiles
     tot = 0
-    for i in xrange(8):
+    for i in range(8):
         if tiles[i] > 0:
             tot += tiles[i]
         else:
@@ -479,10 +476,10 @@ def read_file(file):
     linei = 1
     tiles = 8 * [0]
     done = Done(hex.count)
-    for y in xrange(size):
+    for y in range(size):
         line = lines[linei][size - y - 1:]
         p = 0
-        for x in xrange(size + y):
+        for x in range(size + y):
             tile = line[p:p + 2]
             p += 2
             if tile[1] == ".":
@@ -497,11 +494,11 @@ def read_file(file):
                 done.set_done(hex.get_by_pos((x, y)).id, inctile)
 
         linei += 1
-    for y in xrange(1, size):
+    for y in range(1, size):
         ry = size - 1 + y
         line = lines[linei][y:]
         p = 0
-        for x in xrange(y, size * 2 - 1):
+        for x in range(y, size * 2 - 1):
             tile = line[p:p + 2]
             p += 2
             if tile[1] == ".":
@@ -626,16 +623,16 @@ def main(loops, level):
     board, solution = LEVELS[level]
     order = DESCENDING
     strategy = Done.FIRST_STRATEGY
-    stream = StringIO()
+    stream = io.StringIO()
 
     board = board.strip()
     expected = solution.rstrip()
 
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
-        stream = StringIO()
+        stream = io.StringIO()
         solve_file(board, strategy, order, stream)
         output = stream.getvalue()
         stream = None

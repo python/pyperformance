@@ -16,13 +16,12 @@ import re
 
 # Local imports
 import pyperf
-from six.moves import xrange
 
-USE_BYTES_IN_PY3K = False
+USE_BYTES = False
 
 
 def re_compile(s):
-    if USE_BYTES_IN_PY3K:
+    if USE_BYTES:
         return re.compile(s.encode('latin1'))
     else:
         return re.compile(s)
@@ -66,7 +65,7 @@ def gen_string_table(n):
     strings = []
 
     def append(s):
-        if USE_BYTES_IN_PY3K:
+        if USE_BYTES:
             strings.append(s.encode('latin1'))
         else:
             strings.append(s)
@@ -119,7 +118,7 @@ def init_benchmarks(n_values=None):
 
     data = []
     for n in n_values:
-        for id in xrange(len(regexs)):
+        for id in range(len(regexs)):
             regex = regexs[id]
             string = string_tables[n][id]
             data.append((regex, string))
@@ -131,7 +130,7 @@ def bench_regex_effbot(loops):
         bench_regex_effbot.data = init_benchmarks()
     data = bench_regex_effbot.data
 
-    range_it = xrange(loops)
+    range_it = range(loops)
     search = re.search
     t0 = pyperf.perf_counter()
 
@@ -167,11 +166,10 @@ if __name__ == '__main__':
     runner.metadata['description'] = ("Test the performance of regexps "
                                       "using Fredik Lundh's benchmarks.")
     runner.argparser.add_argument("-B", "--force_bytes", action="store_true",
-                                  help="Force testing bytes regexps "
-                                       "under 3.x.")
+                                  help="test bytes regexps")
     options = runner.parse_args()
     if options.force_bytes:
-        USE_BYTES_IN_PY3K = True
+        USE_BYTES = True
 
     runner.bench_time_func('regex_effbot', bench_regex_effbot,
                            inner_loops=10)

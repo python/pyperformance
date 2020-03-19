@@ -19,7 +19,6 @@ import bisect
 import re
 
 import pyperf
-from six.moves import xrange
 
 
 DEFAULT_INIT_LEN = 100000
@@ -186,7 +185,7 @@ def run_benchmarks(seq):
 
 
 def bench_regex_dna(loops, seq, expected_res):
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for i in range_it:

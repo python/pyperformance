@@ -3,7 +3,6 @@
 This will have Django generate a 150x150-cell HTML table.
 """
 
-from six.moves import xrange
 import pyperf
 
 import django.conf
@@ -21,7 +20,7 @@ def bench_django_template(runner, size):
 {% endfor %}
 </table>
     """)
-    table = [xrange(size) for _ in xrange(size)]
+    table = [range(size) for _ in range(size)]
     context = Context({"table": table})
 
     runner.bench_func('django_template', template.render, context)

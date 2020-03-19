@@ -414,7 +414,7 @@ class UCTNode:
 
 # def user_move(board):
 #     while True:
-#         text = six.moves.input('?').strip()
+#         text = input('?').strip()
 #         if text == 'p':
 #             return PASS
 #         if text == 'q':

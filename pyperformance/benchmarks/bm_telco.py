@@ -22,8 +22,6 @@ import os
 from struct import unpack
 
 import pyperf
-import six
-from six.moves import xrange
 
 
 def rel_path(*path):
@@ -42,7 +40,7 @@ def bench_telco(loops, filename):
         data = infil.read()
 
     infil = io.BytesIO(data)
-    outfil = six.StringIO()
+    outfil = io.StringIO()
 
     start = pyperf.perf_counter()
     for _ in range(loops):
@@ -52,7 +50,7 @@ def bench_telco(loops, filename):
         sumB = Decimal("0")   # sum of basic tax
         sumD = Decimal("0")   # sum of 'distance' tax
 
-        for i in xrange(5000):
+        for i in range(5000):
             datum = infil.read(8)
             if datum == '':
                 break

@@ -10,7 +10,6 @@ import sqlite3
 import math
 
 import pyperf
-from six.moves import xrange
 
 
 class AvgLength(object):
@@ -33,7 +32,7 @@ def bench_sqlite(loops):
 
     conn = sqlite3.connect(":memory:")
     conn.execute('create table cos (x, y, z);')
-    for i in xrange(loops):
+    for i in range(loops):
         cos_i = math.cos(i)
         conn.execute('insert into cos values (?, ?, ?)',
                      [i, cos_i, str(i)])

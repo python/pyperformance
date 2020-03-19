@@ -3,7 +3,6 @@ from collections import defaultdict
 from fractions import Fraction
 
 import pyperf
-from six.moves import xrange
 
 
 def topoSort(roots, getParents):
@@ -248,7 +247,7 @@ class Battle(object):
 def bench_mdp(loops):
     expected = 0.89873589887
     max_diff = 1e-6
-    range_it = xrange(loops)
+    range_it = range(loops)
 
     t0 = pyperf.perf_counter()
     for _ in range_it:

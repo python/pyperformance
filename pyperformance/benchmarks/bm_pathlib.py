@@ -7,19 +7,11 @@ calls.
 
 # Python imports
 import os
+import pathlib
 import shutil
-import sys
 import tempfile
 
 import pyperf
-from six.moves import xrange
-
-if sys.version_info >= (3, 4):
-    import pathlib
-else:
-    # pathlib2 is the pathlib backport for Python < 3.4
-    import pathlib2 as pathlib
-    import pkg_resources
 
 
 NUM_FILES = 2000
@@ -53,7 +45,7 @@ def bench_pathlib(loops, tmp_path):
         p.stat()
     assert len(path_objects) == NUM_FILES, len(path_objects)
 
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
@@ -77,9 +69,6 @@ if __name__ == "__main__":
 
     modname = pathlib.__name__
     runner.metadata['pathlib_module'] = modname
-    if modname == 'pathlib2':
-        version = pkg_resources.get_distribution(modname).version
-        runner.metadata['pathlib2_version'] = version
 
     tmp_path = setup(NUM_FILES)
     try:

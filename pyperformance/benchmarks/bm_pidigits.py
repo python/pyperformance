@@ -10,7 +10,6 @@ http://benchmarksgame.alioth.debian.org/
 
 import itertools
 
-from six.moves import map as imap
 import pyperf
 
 
@@ -20,7 +19,7 @@ islice = itertools.islice
 
 
 def gen_x():
-    return imap(lambda k: (k, 4 * k + 2, 0, 2 * k + 1), icount(1))
+    return map(lambda k: (k, 4 * k + 2, 0, 2 * k + 1), icount(1))
 
 
 def compose(a, b):

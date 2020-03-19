@@ -1,6 +1,5 @@
 import functools
 
-import six
 import pyperf
 
 from chameleon import PageTemplate
@@ -12,11 +11,11 @@ xmlns:tal="http://xml.zope.org/namespaces/tal">
 <tr tal:repeat="row python: options['table']">
 <td tal:repeat="c python: row.values()">
 <span tal:define="d python: c + 1"
-tal:attributes="class python: 'column-' + %s(d)"
+tal:attributes="class python: 'column-' + str(d)"
 tal:content="python: d" />
 </td>
 </tr>
-</table>""" % six.text_type.__name__
+</table>"""
 
 
 def main():

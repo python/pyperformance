@@ -2,7 +2,6 @@ from array import array
 import math
 
 import pyperf
-from six.moves import xrange
 
 
 class Array2D(object):
@@ -28,14 +27,14 @@ class Array2D(object):
         self.data[self._idx(x, y)] = val
 
     def setup(self, data):
-        for y in xrange(self.height):
-            for x in xrange(self.width):
+        for y in range(self.height):
+            for x in range(self.width):
                 self[x, y] = data[y][x]
         return self
 
     def indexes(self):
-        for y in xrange(self.height):
-            for x in xrange(self.width):
+        for y in range(self.height):
+            for x in range(self.width):
                 yield x, y
 
     def copy_data_from(self, other):
@@ -68,7 +67,7 @@ class Random(object):
         j0 = jseed % self.m2
         j1 = jseed / self.m2
         self.m = array('d', [0]) * 17
-        for iloop in xrange(17):
+        for iloop in range(17):
             jseed = j0 * k0
             j1 = (jseed / self.m2 + j0 * k1 + j1 * k0) % (self.m2 / 2)
             j0 = jseed % self.m2
@@ -106,7 +105,7 @@ class Random(object):
         return a
 
     def RandomVector(self, n):
-        return array('d', [self.nextDouble() for i in xrange(n)])
+        return array('d', [self.nextDouble() for i in range(n)])
 
 
 def copy_vector(vec):
@@ -121,7 +120,7 @@ class ArrayList(Array2D):
     def __init__(self, w, h, data=None):
         self.width = w
         self.height = h
-        self.data = [array('d', [0]) * w for y in xrange(h)]
+        self.data = [array('d', [0]) * w for y in range(h)]
         if data is not None:
             self.setup(data)
 
@@ -143,16 +142,16 @@ class ArrayList(Array2D):
 
 
 def SOR_execute(omega, G, cycles, Array):
-    for p in xrange(cycles):
-        for y in xrange(1, G.height - 1):
-            for x in xrange(1, G.width - 1):
+    for p in range(cycles):
+        for y in range(1, G.height - 1):
+            for x in range(1, G.width - 1):
                 G[x, y] = (omega * 0.25 * (G[x, y - 1] + G[x, y + 1] + G[x - 1, y]
                                            + G[x + 1, y])
                            + (1.0 - omega) * G[x, y])
 
 
 def bench_SOR(loops, n, cycles, Array):
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
@@ -163,13 +162,13 @@ def bench_SOR(loops, n, cycles, Array):
 
 
 def SparseCompRow_matmult(M, y, val, row, col, x, num_iterations):
-    range_it = xrange(num_iterations)
+    range_it = range(num_iterations)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
-        for r in xrange(M):
+        for r in range(M):
             sa = 0.0
-            for i in xrange(row[r], row[r + 1]):
+            for i in range(row[r], row[r + 1]):
                 sa += x[col[i]] * val[i]
             y[r] = sa
 
@@ -187,13 +186,13 @@ def bench_SparseMatMult(cycles, N, nz):
     row = array('i', [0]) * (N + 1)
 
     row[0] = 0
-    for r in xrange(N):
+    for r in range(N):
         rowr = row[r]
         step = r // nr
         row[r + 1] = rowr + nr
         if step < 1:
             step = 1
-        for i in xrange(nr):
+        for i in range(nr):
             col[rowr + i] = i * step
 
     return SparseCompRow_matmult(N, y, val, row, col, x, cycles)
@@ -202,7 +201,7 @@ def bench_SparseMatMult(cycles, N, nz):
 def MonteCarlo(Num_samples):
     rnd = Random(113)
     under_curve = 0
-    for count in xrange(Num_samples):
+    for count in range(Num_samples):
         x = rnd.nextDouble()
         y = rnd.nextDouble()
         if x * x + y * y <= 1.0:
@@ -211,7 +210,7 @@ def MonteCarlo(Num_samples):
 
 
 def bench_MonteCarlo(loops, Num_samples):
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
@@ -223,10 +222,10 @@ def bench_MonteCarlo(loops, Num_samples):
 def LU_factor(A, pivot):
     M, N = A.height, A.width
     minMN = min(M, N)
-    for j in xrange(minMN):
+    for j in range(minMN):
         jp = j
         t = abs(A[j][j])
-        for i in xrange(j + 1, M):
+        for i in range(j + 1, M):
             ab = abs(A[i][j])
             if ab > t:
                 jp = i
@@ -241,12 +240,12 @@ def LU_factor(A, pivot):
 
         if j < M - 1:
             recp = 1.0 / A[j][j]
-            for k in xrange(j + 1, M):
+            for k in range(j + 1, M):
                 A[k][j] *= recp
 
         if j < minMN - 1:
-            for ii in xrange(j + 1, M):
-                for jj in xrange(j + 1, N):
+            for ii in range(j + 1, M):
+                for jj in range(j + 1, N):
                     A[ii][jj] -= A[ii][j] * A[j][jj]
 
 
@@ -260,7 +259,7 @@ def bench_LU(cycles, N):
     A = rnd.RandomMatrix(ArrayList(N, N))
     lu = ArrayList(N, N)
     pivot = array('i', [0]) * N
-    range_it = xrange(cycles)
+    range_it = range(cycles)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
@@ -315,7 +314,7 @@ def FFT_transform_internal(N, data, direction):
             data[j + 1] = data[i + 1] - wd_imag
             data[i] += wd_real
             data[i + 1] += wd_imag
-        for a in xrange(1, dual):
+        for a in range(1, dual):
             tmp_real = w_real - s * w_imag - s2 * w_real
             tmp_imag = w_imag + s * w_real - s2 * w_imag
             w_real = tmp_real
@@ -365,19 +364,19 @@ def FFT_inverse(N, data):
     norm = 0.0
     FFT_transform_internal(N, data, +1)
     norm = 1 / float(n)
-    for i in xrange(N):
+    for i in range(N):
         data[i] *= norm
 
 
 def bench_FFT(loops, N, cycles):
     twoN = 2 * N
     init_vec = Random(7).RandomVector(twoN)
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
         x = copy_vector(init_vec)
-        for i in xrange(cycles):
+        for i in range(cycles):
             FFT_transform(twoN, x)
             FFT_inverse(twoN, x)
 

@@ -7,18 +7,10 @@ import shutil
 import subprocess
 import sys
 import textwrap
-try:
-    from shlex import quote as shell_quote
-except ImportError:
-    from pipes import quote as shell_quote   # Python 2
+import urllib.request
+from shlex import quote as shell_quote
 
 import pyperformance
-
-# Avoid six dependency to easy installation of pyperformance itself
-try:
-    import urllib2 as urllib_request   # Python 3
-except ImportError:
-    import urllib.request as urllib_request
 
 
 GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
@@ -211,7 +203,7 @@ def create_environ(inherit_environ):
 
 
 def download(url, filename):
-    response = urllib_request.urlopen(url)
+    response = urllib.request.urlopen(url)
     with response:
         content = response.read()
 

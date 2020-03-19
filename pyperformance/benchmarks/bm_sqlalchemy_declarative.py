@@ -1,5 +1,4 @@
 import pyperf
-from six.moves import xrange
 
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -59,7 +58,7 @@ session = DBSession()
 def bench_sqlalchemy(loops, npeople):
     total_dt = 0.0
 
-    for loops in xrange(loops):
+    for loops in range(loops):
         # drop rows created by the previous benchmark
         session.query(Person).delete(synchronize_session=False)
         session.query(Address).delete(synchronize_session=False)
@@ -67,7 +66,7 @@ def bench_sqlalchemy(loops, npeople):
         # Run the benchmark once
         t0 = pyperf.perf_counter()
 
-        for i in xrange(npeople):
+        for i in range(npeople):
             # Insert a Person in the person table
             new_person = Person(name="name %i" % i)
             session.add(new_person)
@@ -79,7 +78,7 @@ def bench_sqlalchemy(loops, npeople):
             session.commit()
 
         # do 100 queries per insert
-        for i in xrange(npeople):
+        for i in range(npeople):
             session.query(Person).all()
 
         total_dt += (pyperf.perf_counter() - t0)

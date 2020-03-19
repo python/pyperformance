@@ -12,7 +12,6 @@ based on a Java version:
 from __future__ import print_function
 
 import pyperf
-from six.moves import xrange
 
 
 # Task IDs
@@ -353,7 +352,7 @@ class WorkTask(Task):
         pkt.ident = dest
         pkt.datum = 0
 
-        for i in BUFSIZE_RANGE:  # xrange(BUFSIZE)
+        for i in BUFSIZE_RANGE:  # range(BUFSIZE)
             w.count += 1
             if w.count > 26:
                 w.count = 1
@@ -379,7 +378,7 @@ def schedule():
 class Richards(object):
 
     def run(self, iterations):
-        for i in xrange(iterations):
+        for i in range(iterations):
             taskWorkArea.holdCount = 0
             taskWorkArea.qpktCount = 0
 

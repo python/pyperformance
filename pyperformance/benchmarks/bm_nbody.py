@@ -15,7 +15,6 @@ Modified by Tupteq, Fredrik Johansson, and Daniel Nanz.
 """
 
 import pyperf
-from six.moves import xrange
 
 __contact__ = "collinwinter@google.com (Collin Winter)"
 DEFAULT_ITERATIONS = 20000
@@ -25,7 +24,7 @@ DEFAULT_REFERENCE = 'sun'
 def combinations(l):
     """Pure-Python implementation of itertools.combinations(l, 2)."""
     result = []
-    for x in xrange(len(l) - 1):
+    for x in range(len(l) - 1):
         ls = l[x + 1:]
         for y in ls:
             result.append((l[x], y))
@@ -77,7 +76,7 @@ PAIRS = combinations(SYSTEM)
 
 
 def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
-    for i in xrange(n):
+    for i in range(n):
         for (([x1, y1, z1], v1, m1),
              ([x2, y2, z2], v2, m2)) in pairs:
             dx = x1 - x2
@@ -125,7 +124,7 @@ def bench_nbody(loops, reference, iterations):
     # Set up global state
     offset_momentum(BODIES[reference])
 
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:

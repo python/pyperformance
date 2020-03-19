@@ -3,7 +3,6 @@ Render a template using Genshi module.
 """
 
 import pyperf
-from six.moves import xrange
 
 from genshi.template import MarkupTemplate, NewTextTemplate
 
@@ -29,7 +28,7 @@ def bench_genshi(loops, tmpl_cls, tmpl_str):
     tmpl = tmpl_cls(tmpl_str)
     table = [dict(a=1, b=2, c=3, d=4, e=5, f=6, g=7, h=8, i=9, j=10)
              for _ in range(1000)]
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:

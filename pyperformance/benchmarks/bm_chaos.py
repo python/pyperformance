@@ -9,8 +9,6 @@ import math
 import random
 
 import pyperf
-import six
-from six.moves import xrange
 
 
 DEFAULT_THICKNESS = 0.25
@@ -136,11 +134,7 @@ def write_ppm(im, filename):
     w = len(im)
     h = len(im[0])
 
-    if six.PY3:
-        fp = open(filename, "w", encoding="latin1", newline='')
-    else:
-        fp = open(filename, "wb")
-    with fp:
+    with open(filename, "w", encoding="latin1", newline='') as fp:
         fp.write(magic)
         fp.write('%i %i\n%i\n' % (w, h, maxval))
         for j in range(h):
@@ -227,7 +221,7 @@ class Chaosgame(object):
         im = [[1] * h for i in range(w)]
         point = GVector((self.maxx + self.minx) / 2,
                         (self.maxy + self.miny) / 2, 0)
-        for _ in xrange(iterations):
+        for _ in range(iterations):
             point = self.transform_point(point)
             x = (point.x - self.minx) / self.width * w
             y = (point.y - self.miny) / self.height * h

@@ -1,7 +1,6 @@
 # pyperformance dependencies
 # --------------------------
 
-six==1.14.0
 pyperf==1.7.0
 
 

@@ -6,7 +6,6 @@ import math
 import sys
 
 import pyperf
-import six
 import statistics
 
 
@@ -402,11 +401,7 @@ def format_csv(value):
 
 
 def write_csv(results, filename):
-    if six.PY3:
-        fp = open(filename, "w", newline='', encoding='ascii')
-    else:
-        fp = open(filename, "wb")
-    with fp:
+    with open(filename, "w", newline='', encoding='ascii') as fp:
         writer = csv.writer(fp)
         writer.writerow(['Benchmark', 'Base', 'Changed'])
         for result in results:

@@ -4,6 +4,7 @@ Changelog
 Version 1.0.1
 -------------
 
+* Drop usage of the six module since Python 2 is no longer supported.
 * Update dependencies:
 
   * Django: 3.0 => 3.0.3

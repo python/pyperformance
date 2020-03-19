@@ -12,7 +12,6 @@ import array
 import math
 
 import pyperf
-from six.moves import xrange
 
 
 DEFAULT_WIDTH = 100
@@ -193,7 +192,7 @@ class Canvas(object):
 
     def __init__(self, width, height):
         self.bytes = array.array('B', [0] * (width * height * 3))
-        for i in xrange(width * height):
+        for i in range(width * height):
             self.bytes[i * 3 + 2] = 255
         self.width = width
         self.height = height
@@ -256,8 +255,8 @@ class Scene(object):
         vpRight = eye.vector.cross(Vector.UP).normalized()
         vpUp = vpRight.cross(eye.vector).normalized()
 
-        for y in xrange(canvas.height):
-            for x in xrange(canvas.width):
+        for y in range(canvas.height):
+            for x in range(canvas.width):
                 xcomp = vpRight.scale(x * pixelWidth - halfWidth)
                 ycomp = vpUp.scale(y * pixelHeight - halfHeight)
                 ray = Ray(eye.point, eye.vector + xcomp + ycomp)
@@ -356,7 +355,7 @@ class CheckerboardSurface(SimpleSurface):
 
 
 def bench_raytrace(loops, width, height, filename):
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for i in range_it:
@@ -367,7 +366,7 @@ def bench_raytrace(loops, width, height, filename):
         s.lookAt(Point(0, 3, 0))
         s.addObject(Sphere(Point(1, 3, -10), 2),
                     SimpleSurface(baseColour=(1, 1, 0)))
-        for y in xrange(6):
+        for y in range(6):
             s.addObject(Sphere(Point(-3 - y * 0.4, 2.3, -5), 0.4),
                         SimpleSurface(baseColour=(y / 6.0, 1 - y / 6.0, 0.5)))
         s.addObject(Halfspace(Point(0, 0, 0), Vector.UP),

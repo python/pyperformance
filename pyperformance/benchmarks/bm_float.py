@@ -1,7 +1,6 @@
 """
 Artificial, floating point-heavy benchmark originally used by Factor.
 """
-from six.moves import xrange
 import pyperf
 
 from math import sin, cos, sqrt
@@ -46,7 +45,7 @@ def maximize(points):
 
 def benchmark(n):
     points = [None] * n
-    for i in xrange(n):
+    for i in range(n):
         points[i] = Point(i)
     for p in points:
         p.normalize()

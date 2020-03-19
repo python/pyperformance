@@ -18,8 +18,6 @@ import io
 import logging
 
 # Third party imports
-import six
-from six.moves import xrange
 import pyperf
 
 # A simple format for parametered logging
@@ -37,7 +35,7 @@ def bench_silent(loops, logger, stream):
 
     # micro-optimization: use fast local variables
     m = MESSAGE
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
@@ -66,7 +64,7 @@ def bench_simple_output(loops, logger, stream):
 
     # micro-optimization: use fast local variables
     m = MESSAGE
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
@@ -97,7 +95,7 @@ def bench_formatted_output(loops, logger, stream):
     # micro-optimization: use fast local variables
     fmt = FORMAT
     msg = MESSAGE
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
@@ -144,10 +142,7 @@ if __name__ == "__main__":
     options = runner.parse_args()
 
     # NOTE: StringIO performance will impact the results...
-    if six.PY3:
-        stream = io.StringIO()
-    else:
-        stream = io.BytesIO()
+    stream = io.StringIO()
 
     handler = logging.StreamHandler(stream=stream)
     logger = logging.getLogger("benchlogger")

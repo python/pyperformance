@@ -11,7 +11,6 @@ import functools
 import sys
 
 import pyperf
-from six.moves import xrange
 
 # Mako imports (w/o markupsafe)
 sys.modules['markupsafe'] = None
@@ -67,7 +66,7 @@ PAGE_TEMPLATE = """
         </tr>
     % endfor
 </table>
-% for nr in xrange(img_count):
+% for nr in range(img_count):
     ${parent.img('/foo/bar/baz.png', 'no image :o')}
 % endfor
 ${next.body()}
@@ -121,14 +120,14 @@ def bench_mako(runner, table_size, nparagraph, img_count):
 
     template = Template(CONTENT_TEMPLATE, lookup=lookup)
 
-    table = [xrange(table_size) for i in xrange(table_size)]
-    paragraphs = xrange(nparagraph)
+    table = [range(table_size) for i in range(table_size)]
+    paragraphs = range(nparagraph)
     title = 'Hello world!'
 
     func = functools.partial(template.render,
                              table=table, paragraphs=paragraphs,
                              lorem=LOREM_IPSUM, title=title,
-                             img_count=img_count, xrange=xrange)
+                             img_count=img_count, range=range)
     runner.bench_func('mako', func)
 
 

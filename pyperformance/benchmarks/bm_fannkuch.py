@@ -6,20 +6,19 @@ Contributed by Sokolov Yura, modified by Tupteq.
 """
 
 import pyperf
-from six.moves import xrange
 
 
 DEFAULT_ARG = 9
 
 
 def fannkuch(n):
-    count = list(xrange(1, n + 1))
+    count = list(range(1, n + 1))
     max_flips = 0
     m = n - 1
     r = n
     check = 0
-    perm1 = list(xrange(n))
-    perm = list(xrange(n))
+    perm1 = list(range(n))
+    perm = list(range(n))
     perm1_ins = perm1.insert
     perm1_pop = perm1.pop
 

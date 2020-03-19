@@ -15,8 +15,6 @@ import tempfile
 from collections import defaultdict
 
 import pyperf
-import six
-from six.moves import xrange
 
 
 __author__ = "stefan_ml@behnel.de (Stefan Behnel)"
@@ -29,15 +27,15 @@ def build_xml_tree(etree):
     root = etree.Element('root')
 
     # create a couple of repetitive broad subtrees
-    for c in xrange(50):
+    for c in range(50):
         child = SubElement(root, 'child-%d' % c,
                                  tag_type="child")
-        for i in xrange(100):
+        for i in range(100):
             SubElement(child, 'subchild').text = 'LEAF-%d-%d' % (c, i)
 
     # create a deep subtree
     deep = SubElement(root, 'deepchildren', tag_type="deepchild")
-    for i in xrange(50):
+    for i in range(50):
         deep = SubElement(deep, 'deepchild')
     SubElement(deep, 'deepleaf', tag_type="leaf").text = "LEAF"
 
@@ -188,7 +186,7 @@ def bench_etree(iterations, etree, bench_func):
 
         t0 = pyperf.perf_counter()
 
-        for _ in xrange(iterations):
+        for _ in range(iterations):
             bench_func(etree, file_path, xml_data, xml_root)
 
         dt = pyperf.perf_counter() - t0
@@ -217,12 +215,9 @@ def add_cmdline_args(cmd, args):
 
 
 if __name__ == "__main__":
-    if six.PY3:
-        # On Python 3, xml.etree.cElementTree is a deprecated alias
-        # to xml.etree.ElementTree
-        default_etmodule = "xml.etree.ElementTree"
-    else:
-        default_etmodule = "xml.etree.cElementTree"
+    # On Python 3, xml.etree.cElementTree is a deprecated alias
+    # to xml.etree.ElementTree
+    default_etmodule = "xml.etree.ElementTree"
 
     runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = ("Test the performance of "
@@ -245,7 +240,7 @@ if __name__ == "__main__":
             options.etree_module = FALLBACK_ETMODULE
         else:
             options.etree_module = default_etmodule
-    if options.no_accelerator and sys.version_info >= (3, 3):
+    if options.no_accelerator:
         # prevent C accelerator from being used in 3.3
         sys.modules['_elementtree'] = None
         import xml.etree.ElementTree as et
@@ -271,10 +266,8 @@ if __name__ == "__main__":
     # xml.etree.ElementTree._Element_Py was added to Python 3.4
     if hasattr(etree_module, '_Element_Py'):
         accelerator = (etree_module.Element is not etree_module._Element_Py)
-    elif six.PY2:
-        accelerator = module.endswith('cElementTree')
     else:
-        if options.no_accelerator and sys.version_info >= (3, 3):
+        if options.no_accelerator:
             accelerator = False
         else:
             # Python 3.0-3.2 always use the accelerator

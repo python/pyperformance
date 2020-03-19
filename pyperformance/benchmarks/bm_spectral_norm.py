@@ -13,7 +13,7 @@ Concurrency by Jason Stitt
 """
 
 import pyperf
-from six.moves import xrange, zip as izip
+
 
 DEFAULT_N = 130
 
@@ -23,7 +23,7 @@ def eval_A(i, j):
 
 
 def eval_times_u(func, u):
-    return [func((i, u)) for i in xrange(len(list(u)))]
+    return [func((i, u)) for i in range(len(list(u)))]
 
 
 def eval_AtA_times_u(u):
@@ -47,19 +47,19 @@ def part_At_times_u(i_u):
 
 
 def bench_spectral_norm(loops):
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
         u = [1] * DEFAULT_N
 
-        for dummy in xrange(10):
+        for dummy in range(10):
             v = eval_AtA_times_u(u)
             u = eval_AtA_times_u(v)
 
         vBv = vv = 0
 
-        for ue, ve in izip(u, v):
+        for ue, ve in zip(u, v):
             vBv += ue * ve
             vv += ve * ve
 

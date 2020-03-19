@@ -11,7 +11,6 @@ import re
 
 # Local imports
 import pyperf
-from six.moves import xrange
 
 
 def capture_regexes():
@@ -50,7 +49,7 @@ def capture_regexes():
 
 
 def bench_regex_compile(loops, regexes):
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:

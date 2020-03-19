@@ -6,7 +6,6 @@ Benchmark AES in CTR mode using the pyaes module.
 """
 
 import pyperf
-from six.moves import xrange
 
 import pyaes
 
@@ -18,7 +17,7 @@ KEY = b'\xa1\xf6%\x8c\x87}_\xcd\x89dHE8\xbf\xc9,'
 
 
 def bench_pyaes(loops):
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for loops in range_it:

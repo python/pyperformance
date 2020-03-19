@@ -1,5 +1,4 @@
 import pyperf
-from six.moves import xrange
 
 from sympy import expand, symbols, integrate, tan, summation
 from sympy.core.cache import clear_cache
@@ -30,7 +29,7 @@ def bench_sympy(loops, func):
     timer = pyperf.perf_counter
     dt = 0
 
-    for _ in xrange(loops):
+    for _ in range(loops):
         # Don't benchmark clear_cache(), exclude it of the benchmark
         clear_cache()
 

@@ -9,7 +9,6 @@ data as a HTTP response's body.
 import sys
 import socket
 
-from six.moves import xrange
 import pyperf
 
 from tornado.httpclient import AsyncHTTPClient
@@ -66,11 +65,11 @@ def bench_tornado(loops):
     @coroutine
     def run_client():
         client = AsyncHTTPClient()
-        range_it = xrange(loops)
+        range_it = range(loops)
         t0 = pyperf.perf_counter()
 
         for _ in range_it:
-            futures = [client.fetch(url) for j in xrange(CONCURRENCY)]
+            futures = [client.fetch(url) for j in range(CONCURRENCY)]
             for fut in futures:
                 resp = yield fut
                 buf = resp.buffer

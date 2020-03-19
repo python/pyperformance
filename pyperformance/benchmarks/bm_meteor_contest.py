@@ -12,7 +12,6 @@ from __future__ import division, print_function, absolute_import
 
 from bisect import bisect
 
-from six.moves import xrange
 import pyperf
 
 
@@ -98,7 +97,7 @@ def flip(ido, fd={E: E, NE: SE, NW: SW, W: W, SW: NW, SE: NE}):
 
 def permute(ido, r_ido, rotate=rotate, flip=flip):
     ps = [ido]
-    for r in xrange(DIR_NO - 1):
+    for r in range(DIR_NO - 1):
         ps.append(rotate(ps[-1]))
         if ido == r_ido:                 # C2-symmetry
             ps = ps[0:DIR_NO // 2]
@@ -116,7 +115,7 @@ def convert(ido):
 
 
 def get_footprints(board, cti, pieces):
-    fps = [[[] for p in xrange(len(pieces))] for ci in xrange(len(board))]
+    fps = [[[] for p in range(len(pieces))] for ci in range(len(board))]
     for c in board:
         for pi, p in enumerate(pieces):
             for pp in p:
@@ -137,9 +136,9 @@ def get_senh(board, cti):
 
 def get_puzzle(width, height):
     board = [E * x + S * y + (y % 2)
-             for y in xrange(height)
-             for x in xrange(width)]
-    cti = dict((board[i], i) for i in xrange(len(board)))
+             for y in range(height)
+             for x in range(width)]
+    cti = dict((board[i], i) for i in range(len(board)))
 
     # Incremental direction offsets
     idos = [[E, E, E, SE],
@@ -193,11 +192,11 @@ def solve(n, i_min, free, curr_board, pieces_left, solutions, fps, se_nh,
 
 
 def bench_meteor_contest(loops, board, pieces, solve_arg, fps, se_nh):
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
-        free = frozenset(xrange(len(board)))
+        free = frozenset(range(len(board)))
         curr_board = [-1] * len(board)
         pieces_left = list(range(len(pieces)))
         solutions = []

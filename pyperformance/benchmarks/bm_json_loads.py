@@ -15,9 +15,6 @@ import sys
 
 # Local imports
 import pyperf
-import six
-if six.PY3:
-    long = int
 
 
 DICT = {
@@ -65,7 +62,7 @@ def mutate_dict(orig_dict, random_source):
     new_dict = dict(orig_dict)
     for key, value in new_dict.items():
         rand_val = random_source.random() * sys.maxsize
-        if isinstance(key, six.integer_types + (bytes, six.text_type)):
+        if isinstance(key, (int, bytes, str)):
             new_dict[key] = type(key)(rand_val)
     return new_dict
 

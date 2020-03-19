@@ -18,10 +18,12 @@ but ideally the problem would be found...
 
 import hashlib
 import os
+import struct
 
 import pyperf
-import six
-from six.moves import xrange
+
+
+int2byte = struct.Struct(">B").pack
 
 
 class BitfieldBase(object):
@@ -289,16 +291,13 @@ def move_to_front(l, c):
 
 def bwt_transform(L):
     # Semi-inefficient way to get the character counts
-    if six.PY3:
-        F = bytes(sorted(L))
-    else:
-        F = b''.join(sorted(L))
+    F = bytes(sorted(L))
     base = []
     for i in range(256):
-        base.append(F.find(six.int2byte(i)))
+        base.append(F.find(int2byte(i)))
 
     pointers = [-1] * len(L)
-    for i, symbol in enumerate(six.iterbytes(L)):
+    for i, symbol in enumerate(L):
         pointers[base[symbol]] = i
         base[symbol] += 1
     return pointers
@@ -327,14 +326,11 @@ def bwt_reverse(L, end):
         # out where the off-by-one-ism is yet---that actually produced
         # the cyclic loop.
 
-        for i in xrange(len(L)):
+        for i in range(len(L)):
             end = T[end]
             out.append(L[end])
 
-    if six.PY3:
-        return bytes(out)
-    else:
-        return b"".join(out)
+    return bytes(out)
 
 
 def compute_used(b):
@@ -410,7 +406,7 @@ def decode_huffman_block(b, out):
     symbols_in_use = sum(used) + 2  # remember RUN[AB] RLE symbols
     tables = compute_tables(b, huffman_groups, symbols_in_use)
 
-    favourites = [six.int2byte(i) for i, x in enumerate(used) if x]
+    favourites = [int2byte(i) for i, x in enumerate(used) if x]
 
     selector_pointer = 0
     decoded = 0
@@ -525,7 +521,7 @@ def gzip_main(field):
             if length & b.readbits(16):
                 raise Exception("stored block lengths do not match each other")
             for i in range(length):
-                out.append(six.int2byte(b.readbits(8)))
+                out.append(int2byte(b.readbits(8)))
 
         elif blocktype == 1 or blocktype == 2:  # Huffman
             main_literals, main_distances = None, None
@@ -593,7 +589,7 @@ def gzip_main(field):
                 r = main_literals.find_next_symbol(b)
                 if 0 <= r <= 255:
                     literal_count += 1
-                    out.append(six.int2byte(r))
+                    out.append(int2byte(r))
                 elif r == 256:
                     if literal_count > 0:
                         literal_count = 0
@@ -635,7 +631,7 @@ def gzip_main(field):
 
 def bench_pyflake(loops, filename):
     input_fp = open(filename, 'rb')
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:

@@ -1,11 +1,10 @@
 """Microbenchmark for Python's sequence unpacking."""
 
 import pyperf
-from six.moves import xrange
 
 
 def do_unpacking(loops, to_unpack):
-    range_it = xrange(loops)
+    range_it = range(loops)
     t0 = pyperf.perf_counter()
 
     for _ in range_it:
