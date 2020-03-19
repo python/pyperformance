@@ -6,8 +6,6 @@ thousand times. The methodology below was chosen for was chosen to be similar
 to real-world scenarios which operate on single objects at a time.
 """
 
-from __future__ import division
-
 # Python imports
 import json
 import random

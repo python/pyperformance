@@ -18,8 +18,6 @@ the layout & logic from the original. (Ugh.)
 .. _`V8's source code`: (https://github.com/v8/v8/blob/master/benchmarks/deltablue.js)
 """
 
-from __future__ import print_function
-
 import pyperf
 
 

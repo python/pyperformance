@@ -3,8 +3,6 @@
 Copyright (C) 2005 Carl Friedrich Bolz
 """
 
-from __future__ import division, print_function
-
 import math
 import random
 

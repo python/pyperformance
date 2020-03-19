@@ -12,8 +12,6 @@ this isn't equivalent to dumping the dict 10000 times: pickle uses a
 highly-efficient encoding for the n-1 following copies.
 """
 
-from __future__ import division
-
 import datetime
 import random
 import sys

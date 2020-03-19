@@ -9,8 +9,6 @@ based on a Java version:
  Outer loop added by Alex Jacoby
 """
 
-from __future__ import print_function
-
 import pyperf
 
 

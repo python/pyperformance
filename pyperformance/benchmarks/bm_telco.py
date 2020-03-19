@@ -15,7 +15,6 @@ The total price, t, is converted to a string, s.
 
 """
 
-from __future__ import print_function
 from decimal import ROUND_HALF_EVEN, ROUND_DOWN, Decimal, getcontext, Context
 import io
 import os

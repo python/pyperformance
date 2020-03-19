@@ -3,8 +3,6 @@
 The input data is the spec document for HTML 5, written in HTML 5.
 The spec was pulled from http://svn.whatwg.org/webapps/index.
 """
-from __future__ import with_statement
-
 import io
 import os.path
 

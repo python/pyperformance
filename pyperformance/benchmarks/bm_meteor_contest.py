@@ -8,8 +8,6 @@ http://benchmarksgame.alioth.debian.org/
 contributed by Daniel Nanz, 2008-08-21
 """
 
-from __future__ import division, print_function, absolute_import
-
 from bisect import bisect
 
 import pyperf

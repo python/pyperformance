@@ -1,5 +1,3 @@
-from __future__ import division, with_statement, print_function, absolute_import
-
 import errno
 import os
 import platform

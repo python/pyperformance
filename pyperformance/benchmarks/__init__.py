@@ -1,5 +1,3 @@
-from __future__ import division, with_statement, print_function, absolute_import
-
 import logging
 
 from pyperformance.run import run_perf_script

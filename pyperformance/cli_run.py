@@ -1,5 +1,3 @@
-from __future__ import division, with_statement, print_function, absolute_import
-
 import logging
 import os.path
 import sys

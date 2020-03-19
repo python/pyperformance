@@ -8,7 +8,6 @@ Source: https://github.com/slowfrog/hexiom : hexiom2.py, level36.txt
 (Main function tweaked by Armin Rigo.)
 """
 
-from __future__ import division, print_function
 import io
 
 import pyperf
