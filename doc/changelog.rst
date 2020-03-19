@@ -7,14 +7,17 @@ Version 1.0.1
 * Drop usage of the six module since Python 2 is no longer supported.
 * Update dependencies:
 
-  * Django: 3.0 => 3.0.3
-  * Mako: 1.1.0 = > 1.1.1
-  * SQLAlchemy: 1.3.12 => 1.3.13
+  * django: 3.0 => 3.0.4
   * dulwich: 0.19.14 => 0.19.15
-  * mercurial: 5.1.1 => 5.3
-  * six : 1.13.0 => 1.14.0
+  * mako: 1.1.0 = > 1.1.2
+  * mercurial: 5.1.1 => 5.3.1
+  * psutil: 5.6.7 => 5.7.0
+  * pyperf: 1.7.0 => 2.0.0
+  * sqlalchemy: 1.3.12 => 1.3.15
   * sympy: 1.5 => 1.5.1
+  * tornado: 6.0.3 => 6.0.4
 
+* Remove six and html5lib requirements.
 * pip-tools (pip-compile) is now used to update dependencies
 
 Version 1.0.0 (2019-12-17)

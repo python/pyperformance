@@ -9,7 +9,7 @@
 #
 #  - python3 -m pip install --user --upgrade pip-tools
 #  - git clean -fdx  # remove all untracked files!
-#  - cd pyperformance; pip-compile requirements.in
+#  - (cd pyperformance; pip-compile --upgrade requirements.in)
 #
 # Prepare a release:
 #

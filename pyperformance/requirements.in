@@ -1,7 +1,7 @@
 # pyperformance dependencies
 # --------------------------
 
-pyperf==1.7.0
+pyperf
 
 
 # Benchmarks dependencies
@@ -17,7 +17,8 @@ Genshi                             # bm_genshi
 Mako                               # bm_mako
 SQLAlchemy                         # bm_sqlalchemy_declarative
 mercurial                          # bm_hg_startup
-html5lib                           # bm_html5lib
+# FIXME: reenable bm_html5lib benchmark
+# html5lib                           # bm_html5lib
 pyaes                              # bm_crypto_pyaes
 sympy                              # bm_sympy
 tornado                            # bm_tornado_http
