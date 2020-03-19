@@ -9,7 +9,7 @@ def get_hg_version(hg_bin):
     # Fast-path: use directly the Python module
     try:
         from mercurial.__version__ import version
-        if sys.version_info >= (3,) and isinstance(version, bytes):
+        if isinstance(version, bytes):
             return version.decode('utf8')
         else:
             return version

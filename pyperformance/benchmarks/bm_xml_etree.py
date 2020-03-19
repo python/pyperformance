@@ -230,7 +230,7 @@ if __name__ == "__main__":
                              "Default is '%s'" % default_etmodule)
     parser.add_argument("--no-accelerator", action="store_true", default=False,
                         help="Disable the '_elementree' accelerator module "
-                             "for ElementTree in Python 3.3+.")
+                             "for ElementTree.")
     parser.add_argument("benchmark", nargs='?', choices=BENCHMARKS)
 
     options = runner.parse_args()
@@ -270,7 +270,6 @@ if __name__ == "__main__":
         if options.no_accelerator:
             accelerator = False
         else:
-            # Python 3.0-3.2 always use the accelerator
             accelerator = True
     if accelerator:
         module += ' (with C accelerator)'

@@ -5,20 +5,14 @@ import sys
 import pyperf
 
 import pyperformance
-from pyperformance.benchmarks import (filter_benchmarks, get_benchmarks,
-                                      select_benchmarks)
+from pyperformance.benchmarks import get_benchmarks, select_benchmarks
 from pyperformance.compare import display_benchmark_suite
 from pyperformance.run import run_benchmarks
-
-
-def filter_benchmarks_python(benchmarks, bench_funcs):
-    return filter_benchmarks(benchmarks, bench_funcs, sys.version_info)
 
 
 def get_benchmarks_to_run(options):
     bench_funcs, bench_groups = get_benchmarks()
     should_run = select_benchmarks(options.benchmarks, bench_groups)
-    should_run = filter_benchmarks_python(should_run, bench_funcs)
     return (bench_funcs, bench_groups, should_run)
 
 
@@ -71,7 +65,7 @@ def cmd_list_groups(options):
     bench_funcs, bench_groups = get_benchmarks()
 
     funcs = set(bench_groups['all'])
-    all_funcs = filter_benchmarks_python(set(funcs), bench_funcs)
+    all_funcs = set(funcs)
 
     for group, funcs in sorted(bench_groups.items()):
         funcs = set(funcs) & all_funcs

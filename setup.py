@@ -18,7 +18,7 @@
 #  - maybe update version in pyperformance/__init__.py and doc/conf.py
 #  - set release date in doc/changelog.rst
 #  - git commit -a -m "prepare release x.y"
-#  - run tests: tox --parallel 0
+#  - run tests: tox --parallel auto
 #  - git push
 #  - check Travis CI status:
 #    https://travis-ci.org/python/pyperformance

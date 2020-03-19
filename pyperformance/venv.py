@@ -1,6 +1,5 @@
 import errno
 import os
-import platform
 import shutil
 import subprocess
 import sys
@@ -81,12 +80,7 @@ def safe_rmtree(path):
 
 
 def python_implementation():
-    if hasattr(sys, 'implementation'):
-        # PEP 421, Python 3.3
-        name = sys.implementation.name
-    else:
-        name = platform.python_implementation()
-    return name.lower()
+    return sys.implementation.name.lower()
 
 
 def get_venv_program(program):
@@ -213,7 +207,6 @@ class VirtualEnvironment(object):
 
         script = textwrap.dedent("""
             import hashlib
-            import platform
             import sys
 
             performance_version = sys.argv[1]
@@ -221,14 +214,9 @@ class VirtualEnvironment(object):
 
             data = performance_version + sys.executable + sys.version
 
-            pyver= sys.version_info
+            pyver = sys.version_info
 
-            if hasattr(sys, 'implementation'):
-                # PEP 421, Python 3.3
-                implementation = sys.implementation.name
-            else:
-                implementation = platform.python_implementation()
-            implementation = implementation.lower()
+            implementation = sys.implementation.name.lower()
 
             if not isinstance(data, bytes):
                 data = data.encode('utf-8')

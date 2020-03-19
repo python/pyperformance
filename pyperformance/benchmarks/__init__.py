@@ -304,27 +304,6 @@ def get_benchmarks():
     return (bench_funcs, bench_groups)
 
 
-def filter_benchmarks(benchmarks, bench_funcs, base_ver):
-    """Filters out benchmarks not supported by both Pythons.
-
-    Args:
-        benchmarks: a set() of benchmark names
-        bench_funcs: dict mapping benchmark names to functions
-        python: the interpereter commands (as lists)
-
-    Returns:
-        The filtered set of benchmark names
-    """
-    for bm in list(benchmarks):
-        func = bench_funcs[bm]
-        if getattr(func, '_python2_only', False) and (3, 0) <= base_ver:
-            benchmarks.discard(bm)
-            logging.info("Skipping Python2-only benchmark %s; "
-                         "not compatible with Python %s" % (bm, base_ver))
-            continue
-    return benchmarks
-
-
 def expand_benchmark_name(bm_name, bench_groups):
     """Recursively expand name benchmark names.
 
