@@ -43,7 +43,10 @@ def run_tests(venv):
 
     egg_info = "pyperformance.egg-info"
     print("Remove directory %s" % egg_info)
-    shutil.rmtree(egg_info)
+    try:
+        shutil.rmtree(egg_info)
+    except FileNotFoundError:
+        pass
 
     run_bench(python, script, 'venv')
 
