@@ -1,10 +1,11 @@
 Changelog
 =========
 
-Version 1.0.1
--------------
+Version 1.0.1 (2020-03-26)
+--------------------------
 
 * Drop usage of the six module since Python 2 is no longer supported.
+  Remove Python 2 specific code.
 * Update dependencies:
 
   * django: 3.0 => 3.0.4
@@ -17,7 +18,7 @@ Version 1.0.1
   * sympy: 1.5 => 1.5.1
   * tornado: 6.0.3 => 6.0.4
 
-* Remove six and html5lib requirements.
+* Remove six, html5lib and mercurial requirements.
 * pip-tools (pip-compile) is now used to update dependencies
 
 Version 1.0.0 (2019-12-17)
