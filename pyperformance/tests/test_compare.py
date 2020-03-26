@@ -28,6 +28,7 @@ def run_cmd(cmd):
 
 
 class CompareTests(unittest.TestCase):
+    maxDiff = 80 * 100
 
     @classmethod
     def setUpClass(cls):
@@ -42,8 +43,8 @@ class CompareTests(unittest.TestCase):
             file1 = 'mem1.json'
             file2 = 'mem2.json'
         else:
-            file1 = 'py2.json'
-            file2 = kw.get('file2', 'py3.json')
+            file1 = 'py36.json'
+            file2 = kw.get('file2', 'py38.json')
 
         cmd = [sys.executable, '-m', 'pyperformance', 'compare',
                os.path.join(DATA_DIR, file1),
@@ -59,40 +60,56 @@ class CompareTests(unittest.TestCase):
     def test_compare(self):
         stdout = self.compare()
         self.assertEqual(stdout, textwrap.dedent('''
-            py2.json
-            ========
+            py36.json
+            =========
 
-            Performance version: 0.2
+            Performance version: 1.0.1
+            Python version: 3.6.10 (64-bit)
+            Report on Linux-5.5.9-200.fc31.x86_64-x86_64-with-fedora-31-Thirty_One
+            Number of logical CPUs: 8
+            Start date: 2020-03-26 15:50:39.816020
+            End date: 2020-03-26 15:50:56.406559
 
-            py3.json
-            ========
+            py38.json
+            =========
 
-            Performance version: 0.2
+            Performance version: 1.0.1
+            Python version: 3.8.2 (64-bit)
+            Report on Linux-5.5.9-200.fc31.x86_64-x86_64-with-glibc2.2.5
+            Number of logical CPUs: 8
+            Start date: 2020-03-26 15:54:12.331569
+            End date: 2020-03-26 15:54:23.900355
 
-            ### call_simple ###
-            Mean +- std dev: 12.2 ms +- 2.1 ms -> 14.0 ms +- 1.3 ms: 1.15x slower
-            Significant (t=-3.38)
+            ### telco ###
+            Mean +- std dev: 10.7 ms +- 0.5 ms -> 7.2 ms +- 0.3 ms: 1.49x faster
+            Significant (t=44.97)
         ''').lstrip())
 
     def test_compare_wrong_version(self):
         stdout = self.compare(file2='py3_performance03.json', exitcode=1)
         self.assertEqual(stdout, textwrap.dedent('''
-            py2.json
-            ========
+            py36.json
+            =========
 
-            Performance version: 0.2
+            Performance version: 1.0.1
+            Python version: 3.6.10 (64-bit)
+            Report on Linux-5.5.9-200.fc31.x86_64-x86_64-with-fedora-31-Thirty_One
+            Number of logical CPUs: 8
+            Start date: 2020-03-26 15:50:39.816020
+            End date: 2020-03-26 15:50:56.406559
 
             py3_performance03.json
             ======================
 
             Performance version: 0.3
 
-            ### call_simple ###
-            Mean +- std dev: 12.2 ms +- 2.1 ms -> 14.0 ms +- 1.3 ms: 1.15x slower
-            Significant (t=-3.38)
 
-            ERROR: Performance versions are different: 0.2 != 0.3
-        ''').lstrip())
+            Skipped 1 benchmarks only in py36.json: telco
+
+            Skipped 1 benchmarks only in py3_performance03.json: call_simple
+
+            ERROR: Performance versions are different: 1.0.1 != 0.3
+            ''').lstrip())
 
     def test_compare_single_value(self):
         stdout = self.compare(dataset='mem')
@@ -120,26 +137,36 @@ class CompareTests(unittest.TestCase):
 
             self.assertEqual(csv,
                              "Benchmark,Base,Changed\n"
-                             "call_simple,0.01218,0.01405\n")
+                             "telco,0.01073,0.00722\n")
 
     def test_compare_table(self):
         stdout = self.compare("-O", "table")
         self.assertEqual(stdout, textwrap.dedent('''
-            py2.json
-            ========
+            py36.json
+            =========
 
-            Performance version: 0.2
+            Performance version: 1.0.1
+            Python version: 3.6.10 (64-bit)
+            Report on Linux-5.5.9-200.fc31.x86_64-x86_64-with-fedora-31-Thirty_One
+            Number of logical CPUs: 8
+            Start date: 2020-03-26 15:50:39.816020
+            End date: 2020-03-26 15:50:56.406559
 
-            py3.json
-            ========
+            py38.json
+            =========
 
-            Performance version: 0.2
+            Performance version: 1.0.1
+            Python version: 3.8.2 (64-bit)
+            Report on Linux-5.5.9-200.fc31.x86_64-x86_64-with-glibc2.2.5
+            Number of logical CPUs: 8
+            Start date: 2020-03-26 15:54:12.331569
+            End date: 2020-03-26 15:54:23.900355
 
-            +-------------+----------+----------+--------------+-----------------------+
-            | Benchmark   | py2.json | py3.json | Change       | Significance          |
-            +=============+==========+==========+==============+=======================+
-            | call_simple | 12.2 ms  | 14.0 ms  | 1.15x slower | Significant (t=-3.38) |
-            +-------------+----------+----------+--------------+-----------------------+
+            +-----------+-----------+-----------+--------------+-----------------------+
+            | Benchmark | py36.json | py38.json | Change       | Significance          |
+            +===========+===========+===========+==============+=======================+
+            | telco     | 10.7 ms   | 7.22 ms   | 1.49x faster | Significant (t=44.97) |
+            +-----------+-----------+-----------+--------------+-----------------------+
         ''').lstrip())
 
     def test_compare_table_single_value(self):
