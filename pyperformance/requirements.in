@@ -16,7 +16,8 @@ Django                             # bm_django_template
 Genshi                             # bm_genshi
 Mako                               # bm_mako
 SQLAlchemy                         # bm_sqlalchemy_declarative
-mercurial                          # bm_hg_startup
+# FIXME: reenable hg_startup
+# mercurial                          # bm_hg_startup
 # FIXME: reenable bm_html5lib benchmark
 # html5lib                           # bm_html5lib
 pyaes                              # bm_crypto_pyaes

@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements.in
 #
-asgiref==3.2.5            # via django
+asgiref==3.2.7            # via django
 certifi==2019.11.28       # via dulwich
 chameleon==3.6.2          # via -r requirements.in
 django==3.0.4             # via -r requirements.in
@@ -12,7 +12,6 @@ dulwich==0.19.15          # via -r requirements.in
 genshi==0.7.3             # via -r requirements.in
 mako==1.1.2               # via -r requirements.in
 markupsafe==1.1.1         # via mako
-mercurial==5.3.1          # via -r requirements.in
 mpmath==1.1.0             # via sympy
 psutil==5.7.0             # via -r requirements.in
 pyaes==1.6.1              # via -r requirements.in
