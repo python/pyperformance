@@ -166,23 +166,24 @@ def parse_args():
         parser.print_help()
         sys.exit(1)
 
-    if options.python is not None:
-        # Replace "~" with the user home directory
-        options.python = os.path.expanduser(options.python)
-        # Try to the absolute path to the binary
-        abs_python = shutil.which(options.python)
-        if not abs_python:
-            print("ERROR: Unable to locate the Python executable: %r" %
-                  options.python)
-            sys.exit(1)
-        options.python = os.path.realpath(abs_python)
-    else:
-        # It would seems like it's possible to put sys.executable as the
-        # default when calling add_argument, but for some reason it returns
-        # another value in some cases: When the python binary is a symbolic
-        # link, the sys.executable in add_argument returns the realpath, while
-        # here it returns the relative path (before following the link).
-        options.python = sys.executable
+    if hasattr(options, 'python'):
+        if options.python is not None:
+            # Replace "~" with the user home directory
+            options.python = os.path.expanduser(options.python)
+            # Try to the absolute path to the binary
+            abs_python = shutil.which(options.python)
+            if not abs_python:
+                print("ERROR: Unable to locate the Python executable: %r" %
+                      options.python)
+                sys.exit(1)
+            options.python = os.path.realpath(abs_python)
+        else:
+            # It would seems like it's possible to put sys.executable as the
+            # default when calling add_argument, but for some reason it returns
+            # another value in some cases: When the python binary is a symbolic
+            # link, the sys.executable in add_argument returns the realpath, while
+            # here it returns the relative path (before following the link).
+            options.python = sys.executable
 
     return (parser, options)
 

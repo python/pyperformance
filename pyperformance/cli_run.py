@@ -26,7 +26,9 @@ def cmd_run(parser, options):
         print("ERROR: the output file %s already exists!" % options.output)
         sys.exit(1)
 
-    executable = options.python
+    executable = sys.executable
+    if hasattr(options, 'python'):
+        executable = options.python
     if not os.path.isabs(executable):
         print("ERROR: \"%s\" is not an absolute path" % executable)
         sys.exit(1)
