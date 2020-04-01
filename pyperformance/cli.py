@@ -167,13 +167,13 @@ def parse_args():
     if hasattr(options, 'python'):
         # Replace "~" with the user home directory
         options.python = os.path.expanduser(options.python)
-        # Try to the absolute path to the binary
-        abs_python = shutil.which(options.python)
+        # Try to get the absolute path to the binary
+        abs_python = os.path.abspath(options.python)
         if not abs_python:
             print("ERROR: Unable to locate the Python executable: %r" %
                   options.python)
             sys.exit(1)
-        options.python = os.path.realpath(abs_python)
+        options.python = abs_python
 
     return (parser, options)
 

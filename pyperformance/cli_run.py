@@ -26,11 +26,15 @@ def cmd_run(parser, options):
         print("ERROR: the output file %s already exists!" % options.output)
         sys.exit(1)
 
-    if not os.path.isabs(sys.executable):
-        print("ERROR: sys.executable is not an absolute path")
+    if hasattr(options, 'python'):
+        executable = options.python
+    else:
+        executable = sys.executable
+    if not os.path.isabs(executable):
+        print("ERROR: \"%s\" is not an absolute path" % executable)
         sys.exit(1)
     bench_funcs, bench_groups, should_run = get_benchmarks_to_run(options)
-    cmd_prefix = [sys.executable]
+    cmd_prefix = [executable]
     suite, errors = run_benchmarks(bench_funcs, should_run, cmd_prefix, options)
 
     if not suite:
