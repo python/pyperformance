@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 1.0.2
+-------------
+
+* Update requirements.
+
 Version 1.0.1 (2020-03-26)
 --------------------------
 
