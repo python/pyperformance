@@ -1,6 +1,5 @@
 import argparse
 import os.path
-import shutil
 import sys
 
 from pyperformance.venv import exec_in_virtualenv, cmd_venv
