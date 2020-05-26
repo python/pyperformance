@@ -24,4 +24,8 @@ possible.
   (source code, issues)
 * `Download pyperformance on PyPI <https://pypi.python.org/pypi/pyperformance>`_
 
+pyperformance is not tuned for PyPy yet: use the `PyPy benchmarks project
+<https://foss.heptapod.net/pypy/benchmarks>`_ instead to measure PyPy
+performances.
+
 pyperformance is distributed under the MIT license.
