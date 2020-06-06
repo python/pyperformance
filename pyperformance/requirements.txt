@@ -7,7 +7,7 @@
 asgiref==3.2.7            # via django
 certifi==2020.4.5.1       # via dulwich
 chameleon==3.7.1          # via -r requirements.in
-django==3.0.6             # via -r requirements.in
+django==3.0.7             # via -r requirements.in
 dulwich==0.19.16          # via -r requirements.in
 genshi==0.7.3             # via -r requirements.in
 mako==1.1.2               # via -r requirements.in
