@@ -2,7 +2,6 @@
 
 # FIXME:
 #
-# - REENABLE HTML5LIB BENCHMARK.
 # - REENABLE HG_STARTUP BENCHMARK.
 #
 # Update dependencies:

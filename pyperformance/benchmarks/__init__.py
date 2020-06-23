@@ -23,11 +23,7 @@ DEFAULT_GROUP = [
     # Unable to get the program 'hg' from the virtual environment
     # 'hg_startup',
 
-    # html5lib is not compatible with Python 3.9. It has been fixed, but there
-    # is no release yet.
-    # https://github.com/html5lib/html5lib-python/issues/419
-    # 'html5lib',
-
+    'html5lib',
     'json_dumps',
     'json_loads',
     'logging',
