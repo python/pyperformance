@@ -6,9 +6,9 @@ The Python Benchmark Suite
    :alt: Latest pyperformance release on the Python Cheeseshop (PyPI)
    :target: https://pypi.python.org/pypi/pyperformance
 
-.. image:: https://travis-ci.org/python/pyperformance.svg?branch=master
+.. image:: https://travis-ci.com/python/pyperformance.svg?branch=master
    :alt: Build status of pyperformance on Travis CI
-   :target: https://travis-ci.org/python/pyperformance
+   :target: https://travis-ci.com/github/python/pyperformance
 
 The ``pyperformance`` project is intended to be an authoritative source of
 benchmarks for all Python implementations. The focus is on real-world

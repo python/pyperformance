@@ -20,7 +20,7 @@
 #  - run tests: tox --parallel auto
 #  - git push
 #  - check Travis CI status:
-#    https://travis-ci.org/python/pyperformance
+#    https://travis-ci.com/github/python/pyperformance
 #  - check AppVeyor status:
 #    https://ci.appveyor.com/project/lazka/pyperformance-rdqv8
 #
