@@ -54,6 +54,17 @@ depending on the Python version.
    them, and more generally to not modify them.
 
 
+azure_cli
+---------
+
+Exercise the `Azure CLI <https://github.com/Azure/azure-cli>`_ in a very
+rough approximation of a regular usage workload.  (At the moment we run
+a small subset of the azure-cli test suite.)
+
+Note that ``azure_cli_tests`` and ``azure_cli_verify`` are similar, but
+take a lot longer to run (on the order of 10-20 minutes).
+
+
 chameleon
 ---------
 

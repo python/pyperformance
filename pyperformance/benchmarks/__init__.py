@@ -7,6 +7,8 @@ from pyperformance.run import run_perf_script
 # specified.
 DEFAULT_GROUP = [
     '2to3',
+    'azure_cli',
+    # Note that we leave azure_cli_* out.  (They're really slow.)
     'chameleon',
     'chaos',
     'crypto_pyaes',
@@ -73,7 +75,7 @@ BENCH_GROUPS = {
                   "pickle", "unpickle",
                   "xml_etree",
                   "json_dumps", "json_loads"],
-    "apps": ["2to3", "chameleon", "html5lib", "tornado_http"],
+    "apps": ["2to3", "chameleon", "html5lib", "tornado_http", "azure_cli"],
     "math": ["float", "nbody", "pidigits"],
     "template": ["django_template", "mako"],
 }
@@ -81,6 +83,20 @@ BENCH_GROUPS = {
 
 def BM_2to3(python, options):
     return run_perf_script(python, options, "2to3")
+
+
+def BM_azure_cli(python, options):
+    return run_perf_script(python, options, "azure_cli")
+
+
+def BM_azure_cli_tests(python, options):
+    return run_perf_script(python, options, "azure_cli",
+                           extra_args=["--kind", "tests"])
+
+
+def BM_azure_cli_verify(python, options):
+    return run_perf_script(python, options, "azure_cli",
+                           extra_args=["--kind", "verify"])
 
 
 # def BM_hg_startup(python, options):
@@ -126,7 +142,6 @@ def BM_unpickle(python, options):
 
 def BM_pickle_list(python, options):
     return pickle_benchmark(python, options, "pickle_list")
-
 
 def BM_pickle_dict(python, options):
     return pickle_benchmark(python, options, "pickle_dict")
