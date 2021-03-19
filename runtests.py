@@ -54,7 +54,7 @@ def run_tests(venv):
         os.path.join('pyperformance', 'tests', 'data', 'py36.json'),
         os.path.join('pyperformance', 'tests', 'data', 'mem1.json'),
     ):
-        run_cmd((python, script, 'show', filename))
+        run_cmd((venv_python, script, 'show', filename))
 
     run_bench(python, script, 'list')
     run_bench(python, script, 'list_groups')
