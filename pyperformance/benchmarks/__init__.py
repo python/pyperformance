@@ -86,17 +86,26 @@ def BM_2to3(python, options):
 
 
 def BM_azure_cli(python, options):
-    return run_perf_script(python, options, "azure_cli")
+    return run_perf_script(python, options, "azure_cli",
+                           extra_args=[
+                               "--install",
+                            ])
 
 
 def BM_azure_cli_tests(python, options):
     return run_perf_script(python, options, "azure_cli",
-                           extra_args=["--kind", "tests"])
+                           extra_args=[
+                               "--install",
+                               "--kind", "tests",
+                           ])
 
 
 def BM_azure_cli_verify(python, options):
     return run_perf_script(python, options, "azure_cli",
-                           extra_args=["--kind", "verify"])
+                           extra_args=[
+                               "--install",
+                               "--kind", "verify",
+                           ])
 
 
 # def BM_hg_startup(python, options):

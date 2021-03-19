@@ -103,11 +103,6 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
     run_count = str(len(to_run))
     errors = []
 
-    # XXX Do this in a more generic way.
-    if any(name.startswith("azure_cli") for name in to_run):
-        from .benchmarks import bm_azure_cli
-        bm_azure_cli.install()
-
     for index, name in enumerate(to_run):
         func = bench_funcs[name]
         print("[%s/%s] %s..." %

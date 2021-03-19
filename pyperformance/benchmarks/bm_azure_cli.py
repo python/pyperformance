@@ -85,7 +85,32 @@ def _run(argv, **kwargs):
 ###################
 # azure-cli helpers
 
-def install():
+AZDEV_MARKER = os.path.join(AZURE_CLI_REPO, ".AZDEV_READY")
+# This global allows us to only check the install once per proc.
+INSTALL_ENSURED = False
+
+
+def install(force=False):
+    global INSTALL_ENSURED
+
+    if not force:
+        if INSTALL_ENSURED:
+            print("already checked")
+            return
+        if os.path.exists(AZDEV_MARKER):
+            print("marker exists")
+            INSTALL_ENSURED = True
+            return
+
+    _install()
+
+    INSTALL_ENSURED = True
+    # Touch the file.
+    with open(AZDEV_MARKER, "a"):
+        pass
+
+
+def _install():
     print("installing for the azure_cli benchmark...")
     if os.path.exists(AZURE_CLI_REPO):
         print("local repo already exists (skipping)")
@@ -94,10 +119,10 @@ def install():
 
     print("...setting up...")
     # XXX Do not run this again if already done.
-    #_run(
-    #    ["azdev", "setup", "--cli", AZURE_CLI_REPO],
-    #    env=_resolve_virtual_env(),
-    #)
+    _run(
+        ["azdev", "setup", "--cli", AZURE_CLI_REPO],
+        env=_resolve_virtual_env(),
+    )
 
     print("...done")
 
@@ -198,6 +223,8 @@ def get_runner():
         # Preserve --kind.
         kind = getattr(args, 'kind', 'sample')
         cmd.extend(["--kind", kind])
+        # Note that we do not preserve --install.  We don't need
+        # the worker to duplicate the work.
         if args.fast:
             cmd.append('--fast')
 
@@ -208,11 +235,14 @@ def get_runner():
         },
     )
 
-    runner.argparser.add_argument(
-        "--kind",
-        choices=["sample", "tests", "verify"],
-        default="sample",
-    )
+    runner.argparser.add_argument("--kind",
+                                  choices=["sample", "tests", "verify"],
+                                  default="sample")
+    runner.argparser.add_argument("--install", action="store_const", const="<ensure>")
+    runner.argparser.add_argument("--force-install", dest="install",
+                                  action="store_const", const="<force>")
+    runner.argparser.add_argument("--no-install", dest="install",
+                                  action="store_const", const=None)
 
     return runner
 
@@ -220,6 +250,13 @@ def get_runner():
 if __name__ == '__main__':
     runner = get_runner()
     args = runner.parse_args()
+
+    if args.install == "<ensure>":
+        install(force=False)
+    elif args.install == "<force>":
+        install(force=True)
+    elif args.install:
+        raise NotImplementedError(args.install)
 
     if args.kind == "sample":
         # fast(er)
