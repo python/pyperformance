@@ -1,5 +1,6 @@
 import logging
 
+from pyperformance.cli import fast_requested
 from pyperformance.run import run_perf_script
 
 
@@ -78,7 +79,21 @@ BENCH_GROUPS = {
     "apps": ["2to3", "chameleon", "html5lib", "tornado_http", "azure_cli"],
     "math": ["float", "nbody", "pidigits"],
     "template": ["django_template", "mako"],
+    "slow": [],
 }
+
+
+def slow(func):
+    """A decorator to mark a benchmark as slow."""
+    if not func.__name__.startswith("BM_"):
+        raise NotImplementedError(func)
+    name = func.__name__[3:].lower()
+    BENCH_GROUPS["slow"].append(name)
+    return func
+
+
+def maybe_slow(func):
+    return func if fast_requested() else slow(func)
 
 
 def BM_2to3(python, options):
@@ -92,6 +107,7 @@ def BM_azure_cli(python, options):
                             ])
 
 
+@maybe_slow
 def BM_azure_cli_tests(python, options):
     return run_perf_script(python, options, "azure_cli",
                            extra_args=[
@@ -100,6 +116,7 @@ def BM_azure_cli_tests(python, options):
                            ])
 
 
+@maybe_slow
 def BM_azure_cli_verify(python, options):
     return run_perf_script(python, options, "azure_cli",
                            extra_args=[
@@ -320,6 +337,9 @@ def get_benchmarks():
 
     # create the 'all' group
     bench_groups["all"] = sorted(bench_funcs)
+    bench_groups["fast"] = [name
+                            for name in bench_groups["all"]
+                            if name not in bench_groups["slow"]]
 
     return (bench_funcs, bench_groups)
 

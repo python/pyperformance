@@ -177,6 +177,10 @@ def parse_args():
     return (parser, options)
 
 
+def fast_requested():
+    return '--fast' in sys.argv
+
+
 def _main():
     parser, options = parse_args()
 
