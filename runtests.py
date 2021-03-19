@@ -50,6 +50,10 @@ def run_tests(venv):
 
     run_bench(python, script, 'venv')
 
+    # Pre-install for the azure_cli benchmark.
+    azurecli = os.path.join('pyperformance', 'benchmarks', 'bm_azure_cli.py')
+    run_cmd([venv_python, azurecli, '--kind', 'install'])
+
     for filename in (
         os.path.join('pyperformance', 'tests', 'data', 'py36.json'),
         os.path.join('pyperformance', 'tests', 'data', 'mem1.json'),

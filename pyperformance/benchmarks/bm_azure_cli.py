@@ -97,11 +97,15 @@ def install(force=False):
             print("already checked")
             return
         if _already_installed():
-            print("already ready")
+            print("already installed")
             INSTALL_ENSURED = True
             return
 
+    print("=========================================")
+    print("installing for the azure_cli benchmark...")
     _install()
+    print("...done")
+    print("=========================================")
 
     INSTALL_ENSURED = True
 
@@ -116,7 +120,6 @@ def _already_installed():
 
 
 def _install():
-    print("installing for the azure_cli benchmark...")
     if os.path.exists(AZURE_CLI_REPO):
         print("local repo already exists (skipping)")
     else:
@@ -125,11 +128,9 @@ def _install():
     print("...setting up...")
     # XXX Do not run this again if already done.
     _run(
-        ["azdev", "setup", "--cli", AZURE_CLI_REPO],
+        [sys.executable, "-m", "azdev", "setup", "--cli", AZURE_CLI_REPO],
         env=_resolve_virtual_env(),
     )
-
-    print("...done")
 
 
 TESTS_FAST = [
@@ -241,9 +242,11 @@ def get_runner():
     )
 
     runner.argparser.add_argument("--kind",
-                                  choices=["sample", "tests", "verify"],
+                                  choices=["sample", "tests", "verify", "install"],
                                   default="sample")
-    runner.argparser.add_argument("--install", action="store_const", const="<ensure>")
+    runner.argparser.add_argument("--install",
+                                  action="store_const", const="<ensure>",
+                                  default="<ensure>")
     runner.argparser.add_argument("--force-install", dest="install",
                                   action="store_const", const="<force>")
     runner.argparser.add_argument("--no-install", dest="install",
@@ -252,7 +255,7 @@ def get_runner():
     return runner
 
 
-if __name__ == '__main__':
+def main():
     runner = get_runner()
     args = runner.parse_args()
 
@@ -274,5 +277,11 @@ if __name__ == '__main__':
         # slow
         #runner.values = 1
         run_verify(runner)
+    elif args.kind == "install":
+        return
     else:
         raise NotImplementedError(args.kind)
+
+
+if __name__ == '__main__':
+    main()
