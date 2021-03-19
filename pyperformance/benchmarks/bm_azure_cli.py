@@ -85,7 +85,6 @@ def _run(argv, **kwargs):
 ###################
 # azure-cli helpers
 
-AZDEV_MARKER = os.path.join(AZURE_CLI_REPO, ".AZDEV_READY")
 # This global allows us to only check the install once per proc.
 INSTALL_ENSURED = False
 
@@ -97,17 +96,23 @@ def install(force=False):
         if INSTALL_ENSURED:
             print("already checked")
             return
-        if os.path.exists(AZDEV_MARKER):
-            print("marker exists")
+        if _already_installed():
+            print("already ready")
             INSTALL_ENSURED = True
             return
 
     _install()
 
     INSTALL_ENSURED = True
-    # Touch the file.
-    with open(AZDEV_MARKER, "a"):
-        pass
+
+
+def _already_installed():
+    try:
+        import azure.cli
+    except ImportError:
+        return False
+    else:
+        return True
 
 
 def _install():
