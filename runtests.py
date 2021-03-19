@@ -65,7 +65,7 @@ def run_tests(venv):
     #
     # --debug-single-value: benchmark results don't matter, we only
     # check that running benchmarks don't fail.
-    run_bench(python, script, 'run', '-b', 'all', '--debug-single-value',
+    run_bench(python, script, 'run', '-b', 'fast', '--debug-single-value',
               '-o', json)
 
     # Display slowest benchmarks
