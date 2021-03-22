@@ -34,6 +34,8 @@ import shlex
 import subprocess
 import sys
 
+import pyperformance.venv
+
 
 AZURE_CLI_UPSTREAM = "https://github.com/Azure/azure-cli"
 AZURE_CLI_REPO = os.path.join(os.path.dirname(__file__), 'data', 'azure-cli')
@@ -56,19 +58,7 @@ def _run_bench_command_env(runner, name, command, env):
 
 def _resolve_virtual_env(pypath=None):
     # This is roughly equivalent to ensuring the env is activated.
-    if sys.prefix == sys.base_prefix:
-        raise NotImplementedError("not in a virtual environment")
-    env = {}
-
-    env["VIRTUAL_ENV"] = os.environ.get("VIRTUAL_ENV", sys.prefix)
-
-    bindir = os.path.dirname(sys.executable)
-    PATH = os.environ.get("PATH")
-    if not PATH:
-        PATH = bindir
-    elif bindir not in PATH.split(os.pathsep):
-        PATH = os.pathsep.join([bindir, PATH])
-    env["PATH"] = PATH
+    env = pyperformance.venv.resolve_env_vars()
 
     if pypath:
         if not isinstance(pypath, str):
@@ -129,6 +119,8 @@ def _install():
         _run(["git", "clone", AZURE_CLI_UPSTREAM, AZURE_CLI_REPO])
 
     print("...setting up...")
+    if not os.environ.get("VIRTUAL_ENV"):
+        raise Exception("the target venv is not activated")
     # XXX Do not run this again if already done.
     _run(
         [sys.executable, "-m", "azdev", "setup", "--cli", AZURE_CLI_REPO],
