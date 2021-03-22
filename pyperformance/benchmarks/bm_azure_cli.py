@@ -119,8 +119,6 @@ def _install():
         _run(["git", "clone", AZURE_CLI_UPSTREAM, AZURE_CLI_REPO])
 
     print("...setting up...")
-    if not os.environ.get("VIRTUAL_ENV"):
-        raise Exception("the target venv is not activated")
     # XXX Do not run this again if already done.
     _run(
         [sys.executable, "-m", "azdev", "setup", "--cli", AZURE_CLI_REPO],
