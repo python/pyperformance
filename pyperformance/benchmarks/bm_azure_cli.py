@@ -30,6 +30,7 @@ The test suite is an adequate proxy for regular usage of the CLI.
 import os
 import os.path
 import pyperf
+import shlex
 import subprocess
 import sys
 
@@ -78,6 +79,8 @@ def _resolve_virtual_env(pypath=None):
 
 
 def _run(argv, **kwargs):
+    cmd_str = ' '.join(map(shlex.quote, argv))
+    print("Execute: %s" % cmd_str)
     proc = subprocess.run(argv, **kwargs)
     proc.check_returncode()
 
