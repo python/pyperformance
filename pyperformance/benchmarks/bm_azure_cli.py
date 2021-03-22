@@ -81,6 +81,8 @@ def _resolve_virtual_env(pypath=None):
 def _run(argv, **kwargs):
     cmd_str = ' '.join(map(shlex.quote, argv))
     print("Execute: %s" % cmd_str)
+    sys.stdout.flush()
+    sys.stderr.flush()
     proc = subprocess.run(argv, **kwargs)
     proc.check_returncode()
 
