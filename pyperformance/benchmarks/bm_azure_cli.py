@@ -92,18 +92,16 @@ INSTALL_ENSURED = False
 def install(force=False):
     global INSTALL_ENSURED
 
-    if not force:
-        if INSTALL_ENSURED:
-            print("already checked")
-            return
-        if _already_installed():
-            print("already installed")
-            INSTALL_ENSURED = True
-            return
-
     print("=========================================")
     print("installing for the azure_cli benchmark...")
-    _install()
+    if force:
+        _install()
+    elif INSTALL_ENSURED:
+        print("already checked")
+    elif _already_installed():
+        print("already installed")
+    else:
+        _install()
     print("...done")
     print("=========================================")
 
