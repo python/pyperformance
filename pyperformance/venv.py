@@ -125,6 +125,25 @@ def create_environ(inherit_environ):
     return env
 
 
+def resolve_env_vars(executable=sys.executable, os_environ=os.environ):
+    bindir = os.path.dirname(executable)
+    prefix = os.path.dirname(bindir)
+    if prefix == sys.base_prefix:
+        raise NotImplementedError("not a virtual environment")
+    env = {}
+
+    env["VIRTUAL_ENV"] = os_environ.get("VIRTUAL_ENV") or prefix
+
+    PATH = os_environ.get("PATH")
+    if not PATH:
+        PATH = bindir
+    elif bindir not in PATH.split(os.pathsep):
+        PATH = os.pathsep.join([bindir, PATH])
+    env["PATH"] = PATH
+
+    return env
+
+
 def download(url, filename):
     response = urllib.request.urlopen(url)
     with response:
@@ -162,6 +181,9 @@ class VirtualEnvironment(object):
         sys.stderr.flush()
 
         env = create_environ(self.options.inherit_environ)
+        env.update(
+            resolve_env_vars(self.get_python_program(), env),
+        )
         try:
             proc = subprocess.Popen(cmd, env=env)
         except OSError as exc:
@@ -467,7 +489,9 @@ def exec_in_virtualenv(options):
         venv.run_cmd(args, verbose=False)
         sys.exit(0)
     else:
-        os.execv(args[0], args)
+        env = dict(os.environ)
+        env.update(resolve_env_vars(venv_python))
+        os.execve(args[0], args, env)
 
 
 def cmd_venv(options):

@@ -50,11 +50,15 @@ def run_tests(venv):
 
     run_bench(python, script, 'venv')
 
+    # Pre-install for the azure_cli benchmark.
+    azurecli = os.path.join('pyperformance', 'benchmarks', 'bm_azure_cli.py')
+    run_cmd([venv_python, azurecli, '--kind', 'install'])
+
     for filename in (
         os.path.join('pyperformance', 'tests', 'data', 'py36.json'),
         os.path.join('pyperformance', 'tests', 'data', 'mem1.json'),
     ):
-        run_cmd((python, script, 'show', filename))
+        run_cmd((venv_python, script, 'show', filename))
 
     run_bench(python, script, 'list')
     run_bench(python, script, 'list_groups')
@@ -65,7 +69,7 @@ def run_tests(venv):
     #
     # --debug-single-value: benchmark results don't matter, we only
     # check that running benchmarks don't fail.
-    run_bench(python, script, 'run', '-b', 'all', '--debug-single-value',
+    run_bench(python, script, 'run', '-b', 'fast', '--debug-single-value',
               '-o', json)
 
     # Display slowest benchmarks

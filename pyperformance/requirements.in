@@ -22,6 +22,7 @@ html5lib                           # bm_html5lib
 pyaes                              # bm_crypto_pyaes
 sympy                              # bm_sympy
 tornado                            # bm_tornado_http
+azdev                              # bm_azure_cli
 
 
 # Optional dependencies

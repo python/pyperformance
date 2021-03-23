@@ -97,11 +97,20 @@ def run_perf_script(python, options, name, extra_args=[]):
         return pyperf.BenchmarkSuite.load(tmp)
 
 
+def _prepare_benchmarks(names):
+    # XXX Do this in a more generic way.
+    if any(name.startswith("azure_cli") for name in names):
+        from .benchmarks import bm_azure_cli
+        bm_azure_cli.install()
+
+
 def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
     suite = None
     to_run = sorted(should_run)
     run_count = str(len(to_run))
     errors = []
+
+    _prepare_benchmarks(to_run)
 
     for index, name in enumerate(to_run):
         func = bench_funcs[name]
