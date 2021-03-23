@@ -119,10 +119,12 @@ def _install():
         _run(["git", "clone", AZURE_CLI_UPSTREAM, AZURE_CLI_REPO])
 
     print("...setting up...")
+    env = _resolve_virtual_env()
+    env['PYTHONHASHSEED'] = '0'
     # XXX Do not run this again if already done.
     _run(
         [sys.executable, "-m", "azdev", "setup", "--cli", AZURE_CLI_REPO],
-        env=_resolve_virtual_env(),
+        env=env,
     )
 
 
