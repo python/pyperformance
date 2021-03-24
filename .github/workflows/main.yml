@@ -1,26 +1,41 @@
 name: test
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
 
   test:
     runs-on: ${{ matrix.os }}
-    name: ${{ matrix.os }} - py${{ matrix.python-version }}
+    name: ${{ matrix.os }} - ${{ matrix.python }}
     strategy:
       matrix:
-        os: [windows-latest]
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        os: [windows-latest, ubuntu-latest]
+        python: [3.9]
+        include:
+          - os: ubuntu-latest
+            python: 3.6
+          - os: ubuntu-latest
+            python: 3.9
+          - os: ubuntu-latest
+            python: pypy3
+          - os: windows-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python ${{ matrix.python }}
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ matrix.python }}
     - name: Install
+      # pyperformance must be installed:
+      # pyperformance/tests/test_compare.py imports it
       run: |
-        pip install --upgrade pip setuptools
-        pip install -e .
+        python -m pip install --upgrade pip setuptools
+        python -m pip install -e .
+    - name: Display Python version
+      run: python -c "import sys; print(sys.version)"
     - name: Run Tests
-      run: |
-        python runtests.py
+      run: python runtests.py
