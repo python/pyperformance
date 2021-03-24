@@ -27,7 +27,7 @@ def is_build_dir():
 class Requirements(object):
     def __init__(self, filename, optional):
         # if pip or setuptools is updated:
-        # .travis.yml should be updated as well
+        # .github/workflows/main.yml should be updated as well
 
         # pip requirements
         self.pip = [

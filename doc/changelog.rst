@@ -6,6 +6,7 @@ Version 1.0.2
 
 * Reenable html5lib benchmark: html5lib 1.1 has been released.
 * Update requirements.
+* Replace Travis CI with GitHub Actions.
 
 Version 1.0.1 (2020-03-26)
 --------------------------

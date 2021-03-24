@@ -19,10 +19,8 @@
 #  - git commit -a -m "prepare release x.y"
 #  - run tests: tox --parallel auto
 #  - git push
-#  - check Travis CI status:
-#    https://travis-ci.com/github/python/pyperformance
-#  - check AppVeyor status:
-#    https://ci.appveyor.com/project/lazka/pyperformance-rdqv8
+#  - check the CI status:
+#    https://github.com/python/pyperformance/actions
 #
 # Release a new version:
 #
