@@ -4,24 +4,45 @@
 #
 #    pip-compile requirements.in
 #
-asgiref==3.2.10           # via django
-certifi==2020.6.20        # via dulwich
-chameleon==3.7.4          # via -r requirements.in
-django==3.0.7             # via -r requirements.in
-dulwich==0.20.5           # via -r requirements.in
-genshi==0.7.3             # via -r requirements.in
-html5lib==1.1             # via -r requirements.in
-mako==1.1.3               # via -r requirements.in
-markupsafe==1.1.1         # via mako
-mpmath==1.1.0             # via sympy
-psutil==5.7.0             # via -r requirements.in
-pyaes==1.6.1              # via -r requirements.in
-pyperf==2.2.0             # via -r requirements.in
-pytz==2020.1              # via django
-six==1.15.0               # via html5lib
-sqlalchemy==1.3.17        # via -r requirements.in
-sqlparse==0.3.1           # via django
-sympy==1.6                # via -r requirements.in
-tornado==6.0.4            # via -r requirements.in
-urllib3==1.25.9           # via dulwich
-webencodings==0.5.1       # via html5lib
+asgiref==3.2.10
+    # via django
+certifi==2020.6.20
+    # via dulwich
+chameleon==3.7.4
+    # via -r requirements.in
+django==3.1.6
+    # via -r requirements.in
+dulwich==0.20.5
+    # via -r requirements.in
+genshi==0.7.3
+    # via -r requirements.in
+html5lib==1.1
+    # via -r requirements.in
+mako==1.1.3
+    # via -r requirements.in
+markupsafe==1.1.1
+    # via mako
+mpmath==1.1.0
+    # via sympy
+psutil==5.7.0
+    # via -r requirements.in
+pyaes==1.6.1
+    # via -r requirements.in
+pyperf==2.2.0
+    # via -r requirements.in
+pytz==2020.1
+    # via django
+six==1.15.0
+    # via html5lib
+sqlalchemy==1.3.17
+    # via -r requirements.in
+sqlparse==0.3.1
+    # via django
+sympy==1.6
+    # via -r requirements.in
+tornado==6.0.4
+    # via -r requirements.in
+urllib3==1.25.9
+    # via dulwich
+webencodings==0.5.1
+    # via html5lib
