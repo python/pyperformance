@@ -16,7 +16,7 @@ markupsafe==1.1.1         # via mako
 mpmath==1.1.0             # via sympy
 psutil==5.7.0             # via -r requirements.in
 pyaes==1.6.1              # via -r requirements.in
-pyperf==2.0.0             # via -r requirements.in
+pyperf==2.2.0             # via -r requirements.in
 pytz==2020.1              # via django
 six==1.15.0               # via html5lib
 sqlalchemy==1.3.17        # via -r requirements.in
