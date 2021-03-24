@@ -6,7 +6,7 @@ The Python Benchmark Suite
    :alt: Latest pyperformance release on the Python Cheeseshop (PyPI)
    :target: https://pypi.python.org/pypi/pyperformance
 
-.. image:: https://github.com/python/pyperformance/actions/workflows/build.yml/badge.svg
+.. image:: https://github.com/python/pyperformance/actions/workflows/main.yml/badge.svg
    :alt: Build status of pyperformance on GitHub Actions
    :target: https://github.com/python/pyperformance/actions
 
