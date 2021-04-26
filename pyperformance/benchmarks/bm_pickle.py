@@ -236,8 +236,8 @@ BENCHMARKS = {
 }
 
 
-def is_module_accelerated(module):
-    return getattr(pickle.Pickler, '__module__', '<jython>') == 'pickle'
+def is_accelerated_module(module):
+    return getattr(pickle.Pickler, '__module__', '<jython>') != 'pickle'
 
 
 def add_cmdline_args(cmd, args):
@@ -269,12 +269,12 @@ if __name__ == "__main__":
     if not (options.pure_python or IS_PYPY):
         # C accelerators are enabled by default on 3.x
         import pickle
-        if is_module_accelerated(pickle):
+        if not is_accelerated_module(pickle):
             raise RuntimeError("Missing C accelerators for pickle")
     else:
         sys.modules['_pickle'] = None
         import pickle
-        if not is_module_accelerated(pickle):
+        if is_accelerated_module(pickle):
             raise RuntimeError("Unexpected C accelerators for pickle")
 
     if options.protocol is None:
