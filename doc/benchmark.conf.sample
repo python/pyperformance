@@ -94,3 +94,5 @@ branches = default 3.6 3.5 2.7
 [compile_all_revisions]
 # list of 'sha1=' (default branch: 'master') or 'sha1=branch'
 # used by the "pyperformance compile_all" command
+# e.g.:
+11159d2c9d6616497ef4cc62953a5c3cc8454afb =
