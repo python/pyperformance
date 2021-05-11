@@ -15,7 +15,11 @@ DEFAULT_GROUP = [
     'dulwich_log',
     'fannkuch',
     'float',
-    'genshi',
+
+    # FIXME: this benchmark fails with:
+    # TypeError: code() argument 15 must be bytes, not tuple
+    # 'genshi',
+
     'go',
     'hexiom',
 
@@ -269,8 +273,8 @@ def BM_sqlite_synth(python, options):
     return run_perf_script(python, options, "sqlite_synth")
 
 
-def BM_genshi(python, options):
-    return run_perf_script(python, options, "genshi")
+# def BM_genshi(python, options):
+#     return run_perf_script(python, options, "genshi")
 
 
 def BM_sqlalchemy_declarative(python, options):

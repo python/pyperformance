@@ -3,6 +3,7 @@
 # FIXME:
 #
 # - REENABLE HG_STARTUP BENCHMARK.
+# - REENABLE GENSHI BENCHMARK.
 #
 # Update dependencies:
 #
