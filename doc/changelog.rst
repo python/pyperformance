@@ -1,9 +1,11 @@
 Changelog
 =========
 
-Version 1.0.2
+Version 1.0.2 (2021-05-11)
 -------------
 
+* Disable the henshi benchmark temporarily since is no longer compatible
+  with Python 3.11.
 * Reenable html5lib benchmark: html5lib 1.1 has been released.
 * Update requirements.
 * Replace Travis CI with GitHub Actions.

@@ -13,7 +13,8 @@ pyperf
 
 Chameleon                          # bm_chameleon
 Django                             # bm_django_template
-Genshi                             # bm_genshi
+# FIXME: reenable genshi
+# Genshi                           # bm_genshi
 Mako                               # bm_mako
 SQLAlchemy                         # bm_sqlalchemy_declarative
 # FIXME: reenable hg_startup
