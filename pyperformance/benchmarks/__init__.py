@@ -33,6 +33,7 @@ DEFAULT_GROUP = [
     'logging',
     'mako',
     'meteor_contest',
+    'mypy_types',
     'nbody',
     'nqueens',
     'pathlib',
@@ -288,6 +289,9 @@ def BM_sqlalchemy_imperative(python, options):
 def BM_mdp(python, options):
     return run_perf_script(python, options, "mdp")
 
+
+def BM_mypy_types(python, options):
+    return run_perf_script(python, options, "mypy_types")
 
 # End benchmarks, begin main entry point support.
 
