@@ -42,7 +42,7 @@ sympy==1.8
     # via -r requirements.in
 tornado==6.1
     # via -r requirements.in
-urllib3==1.26.4
+urllib3==1.26.5
     # via dulwich
 webencodings==0.5.1
     # via html5lib
