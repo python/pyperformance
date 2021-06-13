@@ -28,5 +28,5 @@ if __name__ == '__main__':
                                       'type-check mypy/types.py')
     target_path = os.path.join(os.path.dirname(__file__), 'data',
                                'bm_mypy_target.py')
-    runner.bench_func('mypy_types', typecheck_targets, (target_path,))
+    runner.bench_func('mypy_types', typecheck_targets, [target_path])
 
