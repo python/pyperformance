@@ -72,7 +72,7 @@ CPYTHON_ONLY_GROUP = [
 ]
 
 if platform.python_implementation() == "CPython":
-    DEFAULT_GROUP.append(CPYTHON_ONLY_GROUP)
+    DEFAULT_GROUP.extend(CPYTHON_ONLY_GROUP)
 
 BENCH_GROUPS = {
     # get_benchmarks() creates an "all" group which includes every benchmark
