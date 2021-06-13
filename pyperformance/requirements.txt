@@ -10,7 +10,7 @@ certifi==2020.12.5
     # via dulwich
 chameleon==3.9.0
     # via -r requirements.in
-django==3.2.2
+django==3.2.4
     # via -r requirements.in
 dulwich==0.20.21
     # via -r requirements.in
@@ -50,7 +50,7 @@ typed-ast==1.4.3
     # via mypy
 typing-extensions==3.10.0.0
     # via mypy
-urllib3==1.26.4
+urllib3==1.26.5
     # via dulwich
 webencodings==0.5.1
     # via html5lib
