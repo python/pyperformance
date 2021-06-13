@@ -390,8 +390,12 @@ class VirtualEnvironment(object):
         filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
         requirements = Requirements(filename,
                                     # FIXME: don't hardcode requirements
-                                    ['psutil', 'dulwich', 'mypy', 'typed_ast'])
-
+                                    ['psutil',
+                                     'dulwich',
+                                     'mypy',
+                                     'typed-ast',
+                                     'mypy-extensions',
+                                     ])
         # Upgrade pip
         cmd = pip_program + ['install', '-U']
         if self._force_old_pip:
