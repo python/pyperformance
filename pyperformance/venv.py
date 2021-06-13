@@ -390,7 +390,7 @@ class VirtualEnvironment(object):
         filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
         requirements = Requirements(filename,
                                     # FIXME: don't hardcode requirements
-                                    ['psutil', 'dulwich'])
+                                    ['mypy'])
 
         # Upgrade pip
         cmd = pip_program + ['install', '-U']
