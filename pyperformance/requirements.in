@@ -23,8 +23,6 @@ html5lib                           # bm_html5lib
 pyaes                              # bm_crypto_pyaes
 sympy                              # bm_sympy
 tornado                            # bm_tornado_http
-# FIXME: currently hardcoded, reenable when pypy supports this
-# mypy                               # bm_mypy_types
 
 
 # Optional dependencies
@@ -34,3 +32,4 @@ tornado                            # bm_tornado_http
 
 psutil
 dulwich                            # bm_dulwich_log
+mypy                               # bm_mypy_types
