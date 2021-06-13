@@ -4,6 +4,8 @@
 # commit: 0fcc5299e6fefba7eefcacd4aceb112971d48c7b on 21 Oct 2020.
 # license: https://github.com/pyston/python-macrobenchmarks/blob/main/LICENSE
 # It has been updated and modified for pyperformance.
+# The benchmark runs mypy against its own types file multiple times.
+
 import os
 
 import pyperf
@@ -13,10 +15,11 @@ from mypy.main import main
 
 def typecheck_targets(targets):
     with open(os.devnull, 'w') as devnull:
-        try:
-            main(None, devnull, devnull, targets)
-        except SystemExit:
-            pass
+        for _ in range(10):
+            try:
+                main(None, devnull, devnull, targets)
+            except SystemExit:
+                pass
 
 
 if __name__ == '__main__':

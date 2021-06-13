@@ -1,4 +1,5 @@
 import logging
+import platform
 
 from pyperformance.run import run_perf_script
 
@@ -33,7 +34,6 @@ DEFAULT_GROUP = [
     'logging',
     'mako',
     'meteor_contest',
-    'mypy_types',
     'nbody',
     'nqueens',
     'pathlib',
@@ -65,6 +65,14 @@ DEFAULT_GROUP = [
     'unpickle_pure_python',
     'xml_etree',
 ]
+
+CPYTHON_ONLY_GROUP = [
+    # mypy is CPython only as of now. In the future it may not be.
+    'mypy_types',
+]
+
+if platform.python_implementation() == "CPython":
+    DEFAULT_GROUP.append(CPYTHON_ONLY_GROUP)
 
 BENCH_GROUPS = {
     # get_benchmarks() creates an "all" group which includes every benchmark
