@@ -71,7 +71,9 @@ CPYTHON_ONLY_GROUP = [
     'mypy_types',
 ]
 
-if platform.python_implementation() == "CPython":
+IS_CPYTHON = platform.python_implementation() == "CPython"
+
+if IS_CPYTHON:
     DEFAULT_GROUP.extend(CPYTHON_ONLY_GROUP)
 
 BENCH_GROUPS = {
@@ -297,9 +299,9 @@ def BM_sqlalchemy_imperative(python, options):
 def BM_mdp(python, options):
     return run_perf_script(python, options, "mdp")
 
-
-def BM_mypy_types(python, options):
-    return run_perf_script(python, options, "mypy_types")
+if IS_CPYTHON:
+    def BM_mypy_types(python, options):
+        return run_perf_script(python, options, "mypy_types")
 
 # End benchmarks, begin main entry point support.
 

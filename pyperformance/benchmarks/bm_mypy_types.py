@@ -15,11 +15,10 @@ from mypy.main import main
 
 def typecheck_targets(targets):
     with open(os.devnull, 'w') as devnull:
-        for _ in range(10):
-            try:
-                main(None, devnull, devnull, targets)
-            except SystemExit:
-                pass
+        try:
+            main(None, devnull, devnull, targets)
+        except SystemExit:
+            pass
 
 
 if __name__ == '__main__':
