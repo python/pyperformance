@@ -11,6 +11,7 @@ def comma_separated(values):
 
 
 def filter_opts(cmd):
+    cmd.add_argument("--manifest", help="benchmark manifest file to use")
     cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default="default",
                      help=("Comma-separated list of benchmarks to run.  Can"
                            " contain both positive and negative arguments:"
@@ -89,6 +90,7 @@ def parse_args():
     cmd = subparsers.add_parser(
         'list_groups', help='List benchmark groups of the running Python')
     cmds.append(cmd)
+    cmd.add_argument("--manifest", help="benchmark manifest file to use")
 
     # compile
     cmd = subparsers.add_parser(
