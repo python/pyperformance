@@ -23,7 +23,7 @@ class BenchmarkException(Exception):
 
 
 def Relative(*path):
-    return os.path.join(PERFORMANCE_ROOT, 'benchmarks', *path)
+    return os.path.join(PERFORMANCE_ROOT, '_benchmarks', *path)
 
 
 def run_command(command, hide_stderr=True):

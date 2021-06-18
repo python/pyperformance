@@ -5,7 +5,8 @@ import sys
 import pyperf
 
 import pyperformance
-from pyperformance.benchmarks import get_benchmarks, select_benchmarks
+# XXX Switch to pyperformance.benchmarks.
+from pyperformance._benchmarks import get_benchmarks, select_benchmarks
 from pyperformance.compare import display_benchmark_suite
 from pyperformance.run import run_benchmarks
 
@@ -13,7 +14,7 @@ from pyperformance.run import run_benchmarks
 def get_benchmarks_to_run(options):
     bench_funcs, bench_groups = get_benchmarks()
     should_run = select_benchmarks(options.benchmarks, bench_groups)
-    return (bench_funcs, bench_groups, should_run)
+    return (bench_funcs, should_run)
 
 
 def cmd_run(parser, options):
@@ -33,7 +34,7 @@ def cmd_run(parser, options):
     if not os.path.isabs(executable):
         print("ERROR: \"%s\" is not an absolute path" % executable)
         sys.exit(1)
-    bench_funcs, bench_groups, should_run = get_benchmarks_to_run(options)
+    bench_funcs, should_run = get_benchmarks_to_run(options)
     cmd_prefix = [executable]
     suite, errors = run_benchmarks(bench_funcs, should_run, cmd_prefix, options)
 
@@ -56,7 +57,7 @@ def cmd_run(parser, options):
 
 
 def cmd_list(options):
-    bench_funcs, bench_groups, all_funcs = get_benchmarks_to_run(options)
+    _, all_funcs = get_benchmarks_to_run(options)
 
     print("%r benchmarks:" % options.benchmarks)
     for func in sorted(all_funcs):
@@ -66,7 +67,7 @@ def cmd_list(options):
 
 
 def cmd_list_groups(options):
-    bench_funcs, bench_groups = get_benchmarks()
+    _, bench_groups = get_benchmarks()
 
     funcs = set(bench_groups['all'])
     all_funcs = set(funcs)

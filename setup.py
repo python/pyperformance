@@ -66,9 +66,9 @@ def main():
 
     packages = [
         'pyperformance',
-        'pyperformance.benchmarks',
-        'pyperformance.benchmarks.data',
-        'pyperformance.benchmarks.data.2to3',
+        'pyperformance._benchmarks',
+        'pyperformance._benchmarks.data',
+        'pyperformance._benchmarks.data.2to3',
         'pyperformance.tests',
         'pyperformance.tests.data',
     ]
@@ -79,7 +79,7 @@ def main():
     }
 
     # Search for all files in pyperformance/benchmarks/data/
-    data_dir = os.path.join('pyperformance', 'benchmarks', 'data')
+    data_dir = os.path.join('pyperformance', '_benchmarks', 'data')
     benchmarks_data = []
     for root, dirnames, filenames in os.walk(data_dir):
         # Strip pyperformance/benchmarks/ prefix
