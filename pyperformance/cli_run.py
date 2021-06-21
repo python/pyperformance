@@ -5,14 +5,41 @@ import sys
 import pyperf
 
 import pyperformance
+from pyperformance.benchmark import parse_benchmark
 from pyperformance.benchmarks import (
     load_manifest,
+    iter_benchmarks,
     get_benchmarks,
     get_benchmark_groups,
+    expand_benchmark_groups,
     select_benchmarks,
 )
 from pyperformance.compare import display_benchmark_suite
 from pyperformance.run import run_benchmarks
+
+
+def _select_benchmarks(raw, manifest):
+    groups = get_benchmark_groups(manifest)
+    def expand(parsed, op):
+        if isinstance(parsed, str):
+            parsed = parse_benchmark(parsed)
+        if parsed.name in groups and op == 'remove':
+            raise ValueError(f'negative groups not supported: -{parsed.name}')
+        yield from expand_benchmark_groups(parsed, groups)
+
+    known = set(b.spec for b in iter_benchmarks(manifest))
+    def check_known(parsed, raw):
+        if parsed not in known:
+            logging.warning(f"no benchmark named {parsed.name!r}")
+            return False
+        return True
+
+    return select_benchmarks(
+        raw,
+        manifest,
+        expand=expand,
+        known=check_known,
+    )
 
 
 def cmd_run(parser, options):
@@ -34,7 +61,7 @@ def cmd_run(parser, options):
         sys.exit(1)
 
     manifest = load_manifest(options.manifest)
-    should_run = select_benchmarks(options.benchmarks, manifest)
+    should_run = _select_benchmarks(options.benchmarks, manifest)
 
     cmd_prefix = [executable]
     suite, errors = run_benchmarks(should_run, cmd_prefix, options)
@@ -59,7 +86,7 @@ def cmd_run(parser, options):
 
 def cmd_list(options):
     manifest = load_manifest(options.manifest)
-    selected = select_benchmarks(options.benchmarks, manifest)
+    selected = _select_benchmarks(options.benchmarks, manifest)
 
     print("%r benchmarks:" % options.benchmarks)
     for bench in sorted(selected):
