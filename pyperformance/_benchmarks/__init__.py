@@ -1,8 +1,3 @@
-import logging
-
-from pyperformance.run import run_perf_script
-
-
 # Benchmark groups. The "default" group is what's run if no -b option is
 # specified.
 DEFAULT_GROUP = [
@@ -81,6 +76,24 @@ BENCH_GROUPS = {
     "math": ["float", "nbody", "pidigits"],
     "template": ["django_template", "mako"],
 }
+
+
+def Relative(*path):
+    return os.path.join(PERFORMANCE_ROOT, '_benchmarks', *path)
+
+
+def run_perf_script(python, options, name, extra_args=[]):
+    bm_path = Relative("bm_%s.py" % name)
+    cmd = list(python)
+    cmd.append('-u')
+    cmd.append(bm_path)
+    cmd.extend(extra_args)
+    copy_perf_options(cmd, options)
+
+    with temporary_file() as tmp:
+        cmd.extend(('--output', tmp))
+        run_command(cmd, hide_stderr=not options.verbose)
+        return pyperf.BenchmarkSuite.load(tmp)
 
 
 def BM_2to3(python, options):
@@ -290,6 +303,7 @@ def BM_mdp(python, options):
 
 
 # End benchmarks, begin main entry point support.
+
 
 def get_benchmarks():
     bench_funcs = dict((name[3:].lower(), func)

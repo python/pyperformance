@@ -22,10 +22,6 @@ class BenchmarkException(Exception):
 # Utility functions
 
 
-def Relative(*path):
-    return os.path.join(PERFORMANCE_ROOT, '_benchmarks', *path)
-
-
 def run_command(command, hide_stderr=True):
     if hide_stderr:
         kw = {'stderr': subprocess.PIPE}
@@ -81,20 +77,6 @@ def copy_perf_options(cmd, options):
         cmd.append('--track-memory')
     if options.inherit_environ:
         cmd.append('--inherit-environ=%s' % ','.join(options.inherit_environ))
-
-
-def run_perf_script(python, options, name, extra_args=[]):
-    bm_path = Relative("bm_%s.py" % name)
-    cmd = list(python)
-    cmd.append('-u')
-    cmd.append(bm_path)
-    cmd.extend(extra_args)
-    copy_perf_options(cmd, options)
-
-    with temporary_file() as tmp:
-        cmd.extend(('--output', tmp))
-        run_command(cmd, hide_stderr=not options.verbose)
-        return pyperf.BenchmarkSuite.load(tmp)
 
 
 def run_benchmarks(should_run, cmd_prefix, options):

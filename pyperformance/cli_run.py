@@ -86,7 +86,10 @@ def cmd_run(parser, options):
 
 def cmd_list(options):
     manifest = load_manifest(options.manifest)
-    selected = _select_benchmarks(options.benchmarks, manifest)
+    if 'all' in options.benchmarks.split(','):
+        selected = manifest.benchmarks
+    else:
+        selected = _select_benchmarks(options.benchmarks, manifest)
 
     print("%r benchmarks:" % options.benchmarks)
     for bench in sorted(selected):
@@ -98,15 +101,16 @@ def cmd_list(options):
 def cmd_list_groups(options):
     manifest = load_manifest(options.manifest)
     bench_groups = get_benchmark_groups(manifest)
-    all_benchmarks = set(b.name for b in get_benchmarks(manifest))
+    bench_groups['all'] = list(manifest.benchmarks)
+    all_benchmarks = set(manifest.benchmarks)
 
-    for group, names in sorted(bench_groups.items()):
-        known = set(names) & all_benchmarks
+    for group, specs in sorted(bench_groups.items()):
+        known = set(specs) & all_benchmarks
         if not known:
             # skip empty groups
             continue
 
-        print("%s (%s):" % (group, len(names)))
-        for name in sorted(names):
-            print("- %s" % name)
+        print("%s (%s):" % (group, len(specs)))
+        for spec in sorted(specs):
+            print("- %s" % spec.name)
         print()
