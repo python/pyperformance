@@ -97,14 +97,14 @@ def run_perf_script(python, options, name, extra_args=[]):
         return pyperf.BenchmarkSuite.load(tmp)
 
 
-def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
+def run_benchmarks(should_run, cmd_prefix, options):
     suite = None
     to_run = sorted(should_run)
     run_count = str(len(to_run))
     errors = []
 
-    for index, name in enumerate(to_run):
-        func = bench_funcs[name]
+    for index, bench in enumerate(to_run):
+        name = bench.name
         print("[%s/%s] %s..." %
               (str(index + 1).rjust(len(run_count)), run_count, name))
         sys.stdout.flush()
@@ -116,24 +116,24 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
                 benchmarks = (obj,)
 
             version = pyperformance.__version__
-            for bench in benchmarks:
-                bench.update_metadata({'performance_version': version})
+            for res in benchmarks:
+                res.update_metadata({'performance_version': version})
 
                 if dest_suite is not None:
-                    dest_suite.add_benchmark(bench)
+                    dest_suite.add_benchmark(res)
                 else:
-                    dest_suite = pyperf.BenchmarkSuite([bench])
+                    dest_suite = pyperf.BenchmarkSuite([res])
 
             return dest_suite
 
         try:
-            bench = func(cmd_prefix, options)
+            result = bench.run(cmd_prefix, options)
         except Exception as exc:
             print("ERROR: Benchmark %s failed: %s" % (name, exc))
             traceback.print_exc()
             errors.append(name)
         else:
-            suite = add_bench(suite, bench)
+            suite = add_bench(suite, result)
 
     print()
 

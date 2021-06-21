@@ -10,7 +10,6 @@ from pyperformance.benchmarks import (
     get_benchmarks,
     get_benchmark_groups,
     select_benchmarks,
-    _get_bench_funcs,
 )
 from pyperformance.compare import display_benchmark_suite
 from pyperformance.run import run_benchmarks
@@ -36,11 +35,9 @@ def cmd_run(parser, options):
 
     manifest = load_manifest(options.manifest)
     should_run = select_benchmarks(options.benchmarks, manifest)
-    bench_funcs = _get_bench_funcs(manifest)
 
     cmd_prefix = [executable]
-    # XXX We should be passing the manifest in rather than "bench_funcs".
-    suite, errors = run_benchmarks(bench_funcs, should_run, cmd_prefix, options)
+    suite, errors = run_benchmarks(should_run, cmd_prefix, options)
 
     if not suite:
         print("ERROR: No benchmark was run")
@@ -65,8 +62,8 @@ def cmd_list(options):
     selected = select_benchmarks(options.benchmarks, manifest)
 
     print("%r benchmarks:" % options.benchmarks)
-    for name in sorted(selected):
-        print("- %s" % name)
+    for bench in sorted(selected):
+        print("- %s" % bench.name)
     print()
     print("Total: %s benchmarks" % len(selected))
 
@@ -74,7 +71,7 @@ def cmd_list(options):
 def cmd_list_groups(options):
     manifest = load_manifest(options.manifest)
     bench_groups = get_benchmark_groups(manifest)
-    all_benchmarks = set(get_benchmarks(manifest))
+    all_benchmarks = set(b.name for b in get_benchmarks(manifest))
 
     for group, names in sorted(bench_groups.items()):
         known = set(names) & all_benchmarks

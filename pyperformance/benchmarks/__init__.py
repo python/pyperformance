@@ -1,4 +1,9 @@
+from collections import namedtuple
+
 from .. import _benchmarks
+
+
+Benchmark = namedtuple('Benchmark', 'name run')
 
 
 def load_manifest(filename):
@@ -6,10 +11,15 @@ def load_manifest(filename):
     return filename
 
 
-def get_benchmarks(manifest):
+def iter_benchmarks(manifest):
     # XXX Pull from the manifest.
-    _, groups = _benchmarks.get_benchmarks()
-    return groups['all']
+    funcs, _ = _benchmarks.get_benchmarks()
+    for name, func in funcs.items():
+        yield Benchmark(name, func)
+
+
+def get_benchmarks(manifest):
+    return list(iter_benchmarks(manifest))
 
 
 def get_benchmark_groups(manifest):
@@ -21,11 +31,6 @@ def get_benchmark_groups(manifest):
 
 def select_benchmarks(raw, manifest):
     # XXX Pull from the manifest.
-    _, groups = _benchmarks.get_benchmarks()
-    return _benchmarks.select_benchmarks(raw, groups)
-
-
-# XXX This should go away.
-def _get_bench_funcs(manifest):
-    funcs, _ = _benchmarks.get_benchmarks()
-    return funcs
+    funcs, groups = _benchmarks.get_benchmarks()
+    for name in _benchmarks.select_benchmarks(raw, groups):
+        yield Benchmark(name, funcs[name])
