@@ -2,8 +2,10 @@ import os.path
 
 from .. import __version__
 from .. import _benchmarks, benchmark as _benchmark
+from . import _manifest
+
+# an alias (but also used here)
 from ._parse import parse_benchmarks
-from . import manifest as _manifest
 
 
 DEFAULTS_DIR = os.path.join(
