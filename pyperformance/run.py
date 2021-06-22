@@ -60,6 +60,24 @@ def run_command(command, hide_stderr=True):
         raise RuntimeError("Benchmark died")
 
 
+def Relative(*path):
+    return os.path.join(PERFORMANCE_ROOT, '_benchmarks', *path)
+
+
+def run_perf_script(python, options, name, extra_args=[]):
+    bm_path = Relative("bm_%s.py" % name)
+    cmd = list(python)
+    cmd.append('-u')
+    cmd.append(bm_path)
+    cmd.extend(extra_args)
+    copy_perf_options(cmd, options)
+
+    with temporary_file() as tmp:
+        cmd.extend(('--output', tmp))
+        run_command(cmd, hide_stderr=not options.verbose)
+        return pyperf.BenchmarkSuite.load(tmp)
+
+
 def copy_perf_options(cmd, options):
     if options.debug_single_value:
         cmd.append('--debug-single-value')
