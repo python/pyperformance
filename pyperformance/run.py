@@ -11,7 +11,7 @@ except ImportError:
 import pyperf
 
 import pyperformance
-from pyperformance.utils import temporary_file
+from pyperformance._utils import temporary_file
 from pyperformance.venv import PERFORMANCE_ROOT
 
 

@@ -1,11 +1,7 @@
 import contextlib
 import errno
 import os
-import sys
 import tempfile
-
-
-MS_WINDOWS = (sys.platform == 'win32')
 
 
 @contextlib.contextmanager

@@ -18,7 +18,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 import pyperformance
-from pyperformance.utils import MS_WINDOWS
+from pyperformance._utils import MS_WINDOWS
 from pyperformance.venv import (GET_PIP_URL, REQ_OLD_PIP, PERFORMANCE_ROOT,
                                 download, is_build_dir)
 
