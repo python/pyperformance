@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from .. import benchmark as _benchmark
+from .. import benchmark as _benchmark, _utils
 
 
 BENCH_COLUMNS = ('name', 'version', 'origin', 'metafile')
@@ -26,7 +26,31 @@ def parse_manifest(text, *, resolve=None):
         elif section.startswith('group '):
             _, _, group = section.partition(' ')
             groups[group] = _parse_group(group, seclines, benchmarks)
+    _check_groups(groups)
+    # XXX Update tags for each benchmark with member groups.
     return BenchmarksManifest(benchmarks, groups)
+
+
+def expand_benchmark_groups(bench, groups):
+    if isinstance(bench, str):
+        spec, metafile = _benchmark.parse_benchmark(bench)
+        if metafile:
+            bench = _benchmark.Benchmark(spec, metafile)
+        else:
+            bench = spec
+    elif isinstance(bench, _benchmark.Benchmark):
+        spec = bench.spec
+    else:
+        spec = bench
+
+    if not groups:
+        yield bench
+    elif bench.name not in groups:
+        yield bench
+    else:
+        benchmarks = groups[bench.name]
+        for bench in benchmarks or ():
+            yield from expand_benchmark_groups(bench, groups)
 
 
 def _iter_sections(lines):
@@ -63,16 +87,18 @@ def _parse_benchmarks(lines, resolve):
     benchmarks = []
     for line in lines:
         try:
-            name, version, origin, metafile = line.split('\t')
+            name, version, origin, metafile = (None if l == '-' else l
+                                               for l in line.split('\t'))
         except ValueError:
             raise ValueError(f'bad benchmark line {line!r}')
-        if not version or version == '-':
-            version = None
-        if not origin or origin == '-':
-            origin = None
-        if not metafile or metafile == '-':
-            metafile = None
-        bench = _benchmark.BenchmarkSpec(name, version, origin, metafile)
+        spec = _benchmark.BenchmarkSpec(name or None,
+                                        version or None,
+                                        origin or None,
+                                        )
+        if metafile:
+            bench = _benchmark.Benchmark(spec, metafile)
+        else:
+            bench = spec
         if resolve is not None:
             bench = resolve(bench)
         benchmarks.append(bench)
@@ -80,49 +106,29 @@ def _parse_benchmarks(lines, resolve):
 
 
 def _parse_group(name, lines, benchmarks):
-    benchmarks = set(benchmarks)
     byname = {b.name: b for b in benchmarks}
+    if name in byname:
+        raise ValueError(f'a group and a benchmark have the same name ({name})')
+
     group = []
+    seen = set()
     for line in lines:
-        bench = _benchmark.parse_benchmark(line)
-        if bench not in benchmarks:
-            try:
-                bench = byname[bench.name]
-            except KeyError:
-                raise ValueError(f'unknown benchmark {bench.name!r} ({name})')
-        group.append(bench)
+        benchname = line
+        _benchmark.check_name(benchname)
+        if benchname in seen:
+            continue
+        if benchname in byname:
+            group.append(byname[benchname])
+        else:
+            # It may be a group.  We check later.
+            group.append(benchname)
     return group
 
 
-#def render_manifest(manifest):
-#    if isinstance(manifest, str):
-#        raise NotImplementedError
-#        manifest = manifest.splitlines()
-#    yield BENCH_HEADER
-#    for row in manifest:
-#        if isinstance(row, str):
-#            row = _parse_manifest_row(row)
-#            if isinstance(row, str):
-#                yield row
-#                continue
-#        line _render_manifest_row(row)
-#
-#    raise NotImplementedError
-#
-#
-#def parse_group_manifest(text):
-#    ...
-#
-#
-#def render_group_manifest(group, benchmarks):
-#    # (manifest file, bm name)
-#    ...
-#
-#
-#def parse_bench_from_manifest(line):
-#    raise NotImplementedError
-#
-#
-#def render_bench_for_manifest(benchmark, columns):
-#    raise NotImplementedError
-#    name, origin, version, metafile = info
+def _check_groups(groups):
+    for group, benchmarks in groups.items():
+        for bench in benchmarks:
+            if not isinstance(bench, str):
+                continue
+            elif bench not in groups:
+                raise ValueError(f'unknown benchmark {name!r} (in group {group!r})')

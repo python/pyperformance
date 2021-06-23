@@ -2,6 +2,7 @@ import argparse
 import os.path
 import sys
 
+from pyperformance import _utils, benchmarks as _benchmarks
 from pyperformance.venv import exec_in_virtualenv, cmd_venv
 
 
@@ -12,8 +13,8 @@ def comma_separated(values):
 
 def filter_opts(cmd):
     cmd.add_argument("--manifest", help="benchmark manifest file to use")
-    cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default="default",
-                     type=(lambda b: b.lower()),
+
+    cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default='default',
                      help=("Comma-separated list of benchmarks to run.  Can"
                            " contain both positive and negative arguments:"
                            "  --benchmarks=run_this,also_this,-not_this.  If"
@@ -157,6 +158,13 @@ def parse_args():
                          help="Path to the virtual environment")
 
     options = parser.parse_args()
+
+    # Process benchmark selections.
+    if hasattr(options, 'benchmarks'):
+        entries = options.benchmarks.lower()
+        parse_entry = (lambda o, s: _benchmarks.parse_selection(s, op=o))
+        parsed = _utils.parse_selections(entries, parse_entry)
+        options.bm_selections = list(parsed)
 
     if options.action == 'run' and options.debug_single_value:
         options.fast = True

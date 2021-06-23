@@ -1,14 +1,17 @@
-from ._spec import parse_benchmark
+from ._spec import BenchmarkSpec
 
 
 class Benchmark:
 
-    def __init__(self, spec, run):
-        if isinstance(spec, str):
-            spec = parse_benchmark(spec)
+    def __init__(self, spec, metafile):
+        spec, _metafile = BenchmarkSpec.from_raw(spec)
+        if not metafile:
+            if not _metafile:
+                raise ValueError(f'missing metafile for {spec!r}')
+            metafile = _metafile
 
         self.spec = spec
-        self.run = run
+        self.metafile = metafile
 
     def __repr__(self):
         return f'{type(self).__name__}(spec={self.spec}, run={self.run})'
@@ -32,3 +35,6 @@ class Benchmark:
         except AttributeError:
             return NotImplemented
         return self.spec > other_spec
+
+    def run(self, *args):
+        return self._func(*args)
