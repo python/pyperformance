@@ -65,7 +65,7 @@ def Relative(*path):
 
 
 def run_perf_script(python, options, name, extra_args=[]):
-    bm_path = Relative("bm_%s.py" % name)
+    bm_path = Relative("bm_%s" % name, "run.py")
     cmd = list(python)
     cmd.append('-u')
     cmd.append(bm_path)
