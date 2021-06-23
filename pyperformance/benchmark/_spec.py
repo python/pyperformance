@@ -1,7 +1,14 @@
 from collections import namedtuple
 
 
-BenchmarkSpec = namedtuple('BenchmarkSpec', 'name version origin metafile')
+class BenchmarkSpec(namedtuple('BenchmarkSpec', 'name version origin')):
+
+    metafile = None
+
+    def __new__(cls, name, version=None, origin=None, metafile=None):
+        self = super().__new__(cls, name, version, origin)
+        self.metafile = metafile
+        return self
 
 
 def parse_benchmark(entry):

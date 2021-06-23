@@ -27,7 +27,8 @@ def load_manifest(filename, *, resolve=None):
                     metafile = os.path.join(DEFAULTS_DIR,
                                             f'bm_{bench.name}',
                                             'METADATA')
-                    bench = bench._replace(metafile=metafile)
+                    #bench = bench._replace(metafile=metafile)
+                    bench.metafile = metafile
                 return bench
     with open(filename) as infile:
         return _manifest.parse_manifest(infile, resolve=resolve)
