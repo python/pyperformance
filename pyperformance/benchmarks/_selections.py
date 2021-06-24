@@ -11,7 +11,7 @@ def parse_selection(selection, *, op=None):
     # * a benchmark pattern
     # * a tag
     # * a tag pattern
-    parsed = parse_benchmark(selection)
+    parsed = parse_benchmark(selection, fail=False)
     spec, metafile = parsed if parsed else (None, None)
     if parsed and spec.version:
         kind = 'benchmark'

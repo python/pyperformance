@@ -14,7 +14,7 @@ def comma_separated(values):
 def filter_opts(cmd):
     cmd.add_argument("--manifest", help="benchmark manifest file to use")
 
-    cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default='default',
+    cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default='<default>',
                      help=("Comma-separated list of benchmarks to run.  Can"
                            " contain both positive and negative arguments:"
                            "  --benchmarks=run_this,also_this,-not_this.  If"
