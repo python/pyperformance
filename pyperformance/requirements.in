@@ -3,6 +3,10 @@
 
 pyperf
 
+# for benchmark metadata:
+packaging
+toml
+
 
 # Benchmarks dependencies
 # -----------------------
@@ -10,6 +14,8 @@ pyperf
 # When one of these dependencies is upgraded, the pyperformance major version
 # should be increased to respect semantic versionning. Comparison between
 # two pyperformance results of two different major versions is not reliable.
+
+# XXX Move these to the individual benchmark dirs.
 
 Chameleon                          # bm_chameleon
 Django                             # bm_django_template
@@ -23,6 +29,32 @@ html5lib                           # bm_html5lib
 pyaes                              # bm_crypto_pyaes
 sympy                              # bm_sympy
 tornado                            # bm_tornado_http
+
+# for the pyston benchmarks:
+requests
+aiohttp
+uvloop
+greenlet
+gevent
+django-cms
+djangocms-bootstrap4
+djangocms-installer
+djangocms-file
+djangocms-googlemap
+djangocms-snippet
+djangocms-style
+djangocms-video
+Flask
+Flask-Login
+Flask-Blogging
+gunicorn
+uvloop
+mypy
+pycparser
+pylint
+torch
+thrift
+typed-ast
 
 
 # Optional dependencies

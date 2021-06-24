@@ -1,7 +1,11 @@
 from ._spec import BenchmarkSpec
+from ._metadata import load_metadata
+from ._run import run_perf_script
 
 
 class Benchmark:
+
+    _metadata = None
 
     def __init__(self, spec, metafile):
         spec, _metafile = BenchmarkSpec.from_raw(spec)
@@ -15,9 +19,6 @@ class Benchmark:
 
     def __repr__(self):
         return f'{type(self).__name__}(spec={self.spec}, run={self.run})'
-
-    def __getattr__(self, name):
-        return getattr(self.spec, name)
 
     def __hash__(self):
         return hash(self.spec)
@@ -36,5 +37,70 @@ class Benchmark:
             return NotImplemented
         return self.spec > other_spec
 
-    def run(self, *args):
-        return self._func(*args)
+    # __getattr__() gets weird when AttributeError comes out of
+    # properties so we spell out all the aliased attributes.
+
+    @property
+    def name(self):
+        return self.spec.name
+
+    @property
+    def version(self):
+        return self.spec.version
+
+    @property
+    def origin(self):
+        return self.spec.origin
+
+    def _init_metadata(self):
+        if self._metadata is not None:
+            raise NotImplementedError
+
+    def _get_metadata_value(self, key, default):
+        try:
+            return self._metadata[key]
+        except TypeError:
+            if self._metadata is None:
+                defaults = {
+                    'name': self.name,
+                    'version': self.version,
+                }
+                self._metadata, _ = load_metadata(self.metafile, defaults)
+        except KeyError:
+            pass
+        return self._metadata.setdefault(key, default)
+
+    @property
+    def tags(self):
+        return self._get_metadata_value('tags', ())
+
+    @property
+    def datadir(self):
+        return self._get_metadata_value('datadir', None)
+
+    @property
+    def prescript(self):
+        return self._get_metadata_value('prescript', None)
+
+    @property
+    def runscript(self):
+        return self._get_metadata_value('runscript', None)
+
+    @property
+    def extra_opts(self):
+        return self._get_metadata_value('extra_opts', ())
+
+    # Other metadata keys:
+    # * base
+    # * python
+    # * dependencies
+    # * requirements
+
+    def run(self, python, pyperf_opts=None, *, verbose=False):
+        return run_perf_script(
+            python,
+            self.runscript,
+            extra_opts=self.extra_opts,
+            pyperf_opts=pyperf_opts,
+            verbose=verbose,
+        )

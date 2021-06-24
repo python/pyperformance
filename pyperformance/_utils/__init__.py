@@ -3,6 +3,8 @@
 # aliases
 from ._fs import (
     temporary_file,
+    check_file,
+    check_dir,
 )
 from ._misc import (
     check_name,
@@ -12,4 +14,12 @@ from ._misc import (
 )
 from ._platform import (
     MS_WINDOWS,
+    run_command,
+)
+from ._pyproject_toml import (
+    parse_person,
+    parse_classifier,
+    parse_entry_point,
+    parse_pyproject_toml,
+    load_pyproject_toml,
 )

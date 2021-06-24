@@ -1,4 +1,5 @@
 from collections import namedtuple
+import os.path
 
 from .. import benchmark as _benchmark, _utils
 
@@ -10,17 +11,20 @@ BENCH_HEADER = '\t'.join(BENCH_COLUMNS)
 BenchmarksManifest = namedtuple('BenchmarksManifest', 'benchmarks groups')
 
 
-def parse_manifest(text, *, resolve=None):
+def parse_manifest(text, *, resolve=None, filename=None):
     if isinstance(text, str):
         lines = text.splitlines()
     else:
         lines = iter(text)
+        if not filename:
+            # Try getting the filename from a file.
+            filename = getattr(text, 'name', None)
 
     benchmarks = None
     groups = {}
     for section, seclines in _iter_sections(lines):
         if section == 'benchmarks':
-            benchmarks = _parse_benchmarks(seclines, resolve)
+            benchmarks = _parse_benchmarks(seclines, resolve, filename)
         elif benchmarks is None:
             raise ValueError('invalid manifest file, expected "benchmarks" section')
         elif section.startswith('group '):
@@ -77,12 +81,14 @@ def _iter_sections(lines):
         raise ValueError('invalid manifest file, no sections found')
 
 
-def _parse_benchmarks(lines, resolve):
+def _parse_benchmarks(lines, resolve, filename):
     if not lines:
         lines = ['<empty>']
     lines = iter(lines)
     if next(lines) != BENCH_HEADER:
         raise ValueError('invalid manifest file, expected benchmarks header')
+
+    localdir = os.path.dirname(filename)
 
     benchmarks = []
     for line in lines:
@@ -96,6 +102,7 @@ def _parse_benchmarks(lines, resolve):
                                         origin or None,
                                         )
         if metafile:
+            metafile = _resolve_metafile(metafile, name, localdir)
             bench = _benchmark.Benchmark(spec, metafile)
         else:
             bench = spec
@@ -103,6 +110,23 @@ def _parse_benchmarks(lines, resolve):
             bench = resolve(bench)
         benchmarks.append(bench)
     return benchmarks
+
+
+def _resolve_metafile(metafile, name, localdir):
+    if not metafile.startswith('<') and not metafile.endswith('>'):
+        return metafile
+
+    directive, _, extra = metafile[1:-1].partition(':')
+    if directive == 'local':
+        if extra:
+            rootdir = f'bm_{extra}'
+            basename = f'bm_{name}.toml'
+        else:
+            rootdir = f'bm_{name}'
+            basename = 'pyproject.toml'
+        return os.path.join(localdir, rootdir, basename)
+    else:
+        raise ValueError(f'unsupported metafile directive {metafile!r}')
 
 
 def _parse_group(name, lines, benchmarks):

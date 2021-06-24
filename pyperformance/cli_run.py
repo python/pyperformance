@@ -7,8 +7,6 @@ import pyperf
 import pyperformance
 from pyperformance.benchmarks import (
     load_manifest,
-    iter_benchmarks,
-    get_benchmarks,
     iter_selections,
 )
 from pyperformance.compare import display_benchmark_suite

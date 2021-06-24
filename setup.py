@@ -106,7 +106,7 @@ def main():
         'entry_points': {
             'console_scripts': ['pyperformance=pyperformance.cli:main']
         },
-        'install_requires': ["pyperf"],
+        'install_requires': ["pyperf", "toml", "packaging"],
     }
     setup(**options)
 

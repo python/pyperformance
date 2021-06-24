@@ -1,0 +1,13 @@
+[project]
+#name = "bm_<name>"
+
+# XXX This should be inherited from metabase.
+dynamic = [
+  "name",
+  "version",
+]
+
+[tool.pyperformance]
+# "name" is set automatically.
+# "metabase" is set automatically
+extra_opts = ["--no-site"]

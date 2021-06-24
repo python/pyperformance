@@ -1,7 +1,7 @@
 import os.path
 
 from .. import __version__
-from .. import _benchmarks, benchmark as _benchmark
+from .. import benchmark as _benchmark
 from . import _manifest
 
 # aliases
@@ -37,20 +37,7 @@ def load_manifest(filename, *, resolve=None):
                     metafile = os.path.join(DEFAULTS_DIR,
                                             f'bm_{bench.name}',
                                             'pyproject.toml')
-                    #bench = bench._replace(metafile=metafile)
                     bench.metafile = metafile
                 return bench
     with open(filename) as infile:
-        return _manifest.parse_manifest(infile, resolve=resolve)
-
-
-def iter_benchmarks(manifest):
-    # XXX Use the benchmark's "run" script.
-    funcs, _ = _benchmarks.get_benchmarks()
-    for bench in manifest.benchmarks:
-        bench._func = funcs[bench.name]
-        yield bench
-
-
-def get_benchmarks(manifest):
-    return list(iter_benchmarks(manifest))
+        return _manifest.parse_manifest(infile, resolve=resolve, filename=filename)

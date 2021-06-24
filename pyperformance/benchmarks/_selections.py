@@ -1,4 +1,3 @@
-from .. import _benchmarks
 from .._utils import check_name, parse_name_pattern, parse_tag_pattern
 from ..benchmark import parse_benchmark, Benchmark
 from ._manifest import expand_benchmark_groups
@@ -57,12 +56,8 @@ def iter_selections(manifest, selections, *, unique=True):
     if not included:
         included = list(_match_selection(manifest, 'tag', 'default', byname))
 
-    funcs, _ = _benchmarks.get_benchmarks()
     for bench in included:
         if bench not in excluded:
-            if isinstance(bench, Benchmark):
-                # XXX Use the benchmark's "run" script.
-                bench._func = funcs[bench.name]
             yield bench
 
 
