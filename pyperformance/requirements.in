@@ -30,32 +30,6 @@ pyaes                              # bm_crypto_pyaes
 sympy                              # bm_sympy
 tornado                            # bm_tornado_http
 
-# for the pyston benchmarks:
-requests
-aiohttp
-uvloop
-greenlet
-gevent
-django-cms
-djangocms-bootstrap4
-djangocms-installer
-djangocms-file
-djangocms-googlemap
-djangocms-snippet
-djangocms-style
-djangocms-video
-Flask
-Flask-Login
-Flask-Blogging
-gunicorn
-uvloop
-mypy
-pycparser
-pylint
-torch
-thrift
-typed-ast
-
 
 # Optional dependencies
 # ---------------------
