@@ -77,7 +77,7 @@ def load_pyproject_toml(filename, *, name=None, tools=None, requirefiles=True):
 
     with open(filename) as infile:
         text = infile.read()
-    data = parse_pyproject_toml(text, rootdir,
+    data = parse_pyproject_toml(text, rootdir, name,
                                 tools=tools,
                                 requirefiles=requirefiles,
                                 )
