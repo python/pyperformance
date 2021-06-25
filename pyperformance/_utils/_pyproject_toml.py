@@ -20,7 +20,7 @@ def parse_person(text):
 
 
 def parse_classifier(text):
-    # XXX
+    # XXX Use https://pypi.org/project/packaging-classifiers.
     return text
 
 
