@@ -49,7 +49,7 @@ def load_metadata(metafile, defaults=None):
     if isinstance(metafile, str):
         name, rootdir = _name_from_filename(metafile)
         data, filename = _utils.load_pyproject_toml(metafile,
-                                                    name=name or '_unknown_',
+                                                    name=name or None,
                                                     requirefiles=False,
                                                     )
     else:
