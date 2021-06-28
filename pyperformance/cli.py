@@ -159,13 +159,6 @@ def parse_args():
 
     options = parser.parse_args()
 
-    # Process benchmark selections.
-    if hasattr(options, 'benchmarks'):
-        entries = options.benchmarks.lower()
-        parse_entry = (lambda o, s: _benchmarks.parse_selection(s, op=o))
-        parsed = _utils.parse_selections(entries, parse_entry)
-        options.bm_selections = list(parsed)
-
     if options.action == 'run' and options.debug_single_value:
         options.fast = True
 
@@ -188,8 +181,41 @@ def parse_args():
     return (parser, options)
 
 
+def _select_benchmarks(raw, manifest):
+    # Get the raw list of benchmarks.
+    entries = raw.lower()
+    parse_entry = (lambda o, s: _benchmarks.parse_selection(s, op=o))
+    parsed = _utils.parse_selections(entries, parse_entry)
+    parsed_infos = list(parsed)
+
+    # Disallow negative groups.
+    for op, _, kind, parsed in parsed_infos:
+        if callable(parsed):
+            continue
+        name = parsed.name if kind == 'benchmark' else parsed
+        if name in manifest.groups and op == '-':
+            raise ValueError(f'negative groups not supported: -{parsed.name}')
+
+    # Get the selections.
+    selected = []
+    for bench in _benchmarks.iter_selections(manifest, parsed_infos):
+        if isinstance(bench, str):
+            logging.warning(f"no benchmark named {bench!r}")
+            continue
+        selected.append(bench)
+    return selected
+
+
 def _main():
     parser, options = parse_args()
+
+    if hasattr(options, 'manifest'):
+        # Load and update the manifest.
+        manifest = _benchmarks.load_manifest(options.manifest)
+        if 'all' not in manifest.groups:
+            manifest.groups['all'] = list(manifest.benchmarks)
+    if hasattr(options, 'benchmarks'):
+        benchmarks = _select_benchmarks(options.benchmarks, manifest)
 
     if options.action == 'venv':
         cmd_venv(options)
@@ -217,14 +243,14 @@ def _main():
     from pyperformance.cli_run import cmd_run, cmd_list, cmd_list_groups
 
     if options.action == 'run':
-        cmd_run(parser, options)
+        cmd_run(options, benchmarks)
     elif options.action == 'compare':
         from pyperformance.compare import cmd_compare
         cmd_compare(options)
     elif options.action == 'list':
-        cmd_list(options)
+        cmd_list(options, benchmarks)
     elif options.action == 'list_groups':
-        cmd_list_groups(options)
+        cmd_list_groups(manifest)
     else:
         parser.print_help()
         sys.exit(1)
