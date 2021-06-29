@@ -10,3 +10,7 @@ include tox.ini
 
 include doc/*.rst doc/images/*.png doc/images/*.jpg
 include doc/conf.py doc/Makefile doc/make.bat
+
+include pyperformance/_benchmarks/MANIFEST
+include pyperformance/_benchmarks/base.toml
+recursive-include pyperformance/_benchmarks/bm_*/* *
