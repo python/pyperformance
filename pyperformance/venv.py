@@ -1,4 +1,5 @@
 import errno
+import hashlib
 import os
 import shutil
 import subprocess
@@ -8,6 +9,7 @@ import urllib.request
 from shlex import quote as shell_quote
 
 import pyperformance
+from . import _utils
 
 
 GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
@@ -15,6 +17,7 @@ REQ_OLD_PIP = 'pip==7.1.2'
 REQ_OLD_SETUPTOOLS = 'setuptools==18.5'
 
 PERFORMANCE_ROOT = os.path.realpath(os.path.dirname(__file__))
+REQUIREMENTS_FILE = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
 
 
 def is_build_dir():
@@ -22,6 +25,17 @@ def is_build_dir():
     if not os.path.exists(os.path.join(root_dir, 'pyperformance')):
         return False
     return os.path.exists(os.path.join(root_dir, 'setup.py'))
+
+
+def iter_clean_lines(filename):
+    with open(filename) as reqsfile:
+        for line in reqsfile:
+            # strip comment
+            line = line.partition('#')[0]
+            line = line.rstrip()
+            if not line:
+                continue
+            yield line
 
 
 class Requirements(object):
@@ -50,25 +64,18 @@ class Requirements(object):
         # optional requirements
         self.optional = []
 
-        with open(filename) as fp:
-            for line in fp.readlines():
-                # strip comment
-                line = line.partition('#')[0]
-                line = line.rstrip()
-                if not line:
-                    continue
+        for line in iter_clean_lines(filename):
+            # strip env markers
+            req = line.partition(';')[0]
 
-                # strip env markers
-                req = line.partition(';')[0]
+            # strip version
+            req = req.partition('==')[0]
+            req = req.partition('>=')[0]
 
-                # strip version
-                req = req.partition('==')[0]
-                req = req.partition('>=')[0]
-
-                if req in optional:
-                    self.optional.append(line)
-                else:
-                    self.req.append(line)
+            if req in optional:
+                self.optional.append(line)
+            else:
+                self.req.append(line)
 
 
 def safe_rmtree(path):
@@ -135,9 +142,43 @@ def download(url, filename):
         fp.flush()
 
 
+def get_compatibility_id(bench=None):
+    # XXX Do not include the pyperformance reqs if a benchmark was provided?
+    reqs = sorted(iter_clean_lines(REQUIREMENTS_FILE))
+    if bench:
+        lockfile = bench.requirements_lockfile
+        if lockfile and os.path.exists(lockfile):
+            reqs += sorted(iter_clean_lines(lockfile))
+
+    data = [
+        # XXX Favor pyperf.__version__ instead?
+        pyperformance.__version__,
+        '\n'.join(reqs),
+    ]
+
+    h = hashlib.sha256()
+    for value in data:
+        h.update(value.encode('utf-8'))
+    compat_id = h.hexdigest()
+    # XXX Return the whole string?
+    compat_id = compat_id[:12]
+
+    return compat_id
+
+
+def get_run_name(python, bench=None):
+    py_id = _utils.get_python_id(python, prefix=True)
+    compat_id = get_compatibility_id(bench)
+    name = f'{py_id}-compat-{compat_id}'
+    if bench:
+        name = f'{name}-{bench.name}'
+    return name
+
+
 class VirtualEnvironment(object):
-    def __init__(self, options):
+    def __init__(self, options, bench=None):
         self.options = options
+        self.bench = bench
         self.python = options.python
         self._venv_path = options.venv
         self._pip_program = None
@@ -202,47 +243,12 @@ class VirtualEnvironment(object):
         return (exitcode, stdout)
 
     def get_path(self):
-        if self._venv_path is not None:
-            return self._venv_path
-
-        script = textwrap.dedent("""
-            import hashlib
-            import sys
-
-            performance_version = sys.argv[1]
-            requirements = sys.argv[2]
-
-            data = performance_version + sys.executable + sys.version
-
-            pyver = sys.version_info
-
-            implementation = sys.implementation.name.lower()
-
-            if not isinstance(data, bytes):
-                data = data.encode('utf-8')
-            with open(requirements, 'rb') as fp:
-                data += fp.read()
-            sha1 = hashlib.sha1(data).hexdigest()
-
-            name = ('%s%s.%s-%s'
-                    % (implementation, pyver.major, pyver.minor, sha1[:12]))
-            print(name)
-        """)
-
-        requirements = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
-        cmd = (self.python, '-c', script,
-               pyperformance.__version__, requirements)
-        proc = subprocess.Popen(cmd,
-                                stdout=subprocess.PIPE,
-                                universal_newlines=True)
-        stdout = proc.communicate()[0]
-        if proc.returncode:
-            print("ERROR: failed to create the name of the virtual environment")
-            sys.exit(1)
-
-        venv_name = stdout.rstrip()
-        self._venv_path = venv_path = os.path.join('venv', venv_name)
-        return venv_path
+        if not self._venv_path:
+            venv_name = get_run_name(self.python, self.bench)
+            self._venv_path = os.path.abspath(
+                os.path.join('venv', venv_name),
+            )
+        return self._venv_path
 
     def _get_pip_program(self):
         venv_path = self.get_path()

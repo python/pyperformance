@@ -52,6 +52,14 @@ class Benchmark:
     def origin(self):
         return self.spec.origin
 
+    def _get_rootdir(self):
+        try:
+            return self._rootdir
+        except AttributeError:
+            script = self.runscript
+            self._rootdir = os.path.dirname(script) if script else None
+            return self._rootdir
+
     def _init_metadata(self):
         if self._metadata is not None:
             raise NotImplementedError
@@ -77,6 +85,19 @@ class Benchmark:
     @property
     def datadir(self):
         return self._get_metadata_value('datadir', None)
+
+    @property
+    def requirements_lockfile(self):
+        try:
+            return self._lockfile
+        except AttributeError:
+            lockfile = self._get_metadata_value('requirements_lockfile', None)
+            if not lockfile:
+                rootdir = self._get_rootdir()
+                if rootdir:
+                    lockfile = os.path.join(rootdir, 'requirements.txt')
+            self._lockfile = lockfile
+            return self._lockfile
 
     @property
     def prescript(self):
