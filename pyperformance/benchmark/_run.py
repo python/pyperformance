@@ -1,9 +1,12 @@
+import sys
+
 import pyperf
 
 from .. import _utils
 
 
 def run_perf_script(python, runscript, *,
+                    venv=None,
                     extra_opts=None,
                     pyperf_opts=None,
                     verbose=False,
@@ -12,10 +15,10 @@ def run_perf_script(python, runscript, *,
         raise ValueError('missing runscript')
     if not isinstance(runscript, str):
         raise TypeError(f'runscript must be a string, got {runscript!r}')
-    if isinstance(python, str):
-        python = [python]
+    if venv and python == sys.executable:
+        python = venv.get_python_program()
     cmd = [
-        *python, '-u', runscript,
+        python, '-u', runscript,
         *(extra_opts or ()),
         *(pyperf_opts or ()),
     ]

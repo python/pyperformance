@@ -70,6 +70,49 @@ def get_python_info(python=sys.executable):
     return json.loads(text)
 
 
+def inspect_python_install(python=sys.executable):
+    if isinstance(python, str):
+        info = get_python_info(python)
+    else:
+        info = python
+    return _inspect_python_install(**info)
+
+
+def _inspect_python_install(executable, prefix, base_prefix, platlibdir,
+                            stdlib_dir, version_info, **_ignored):
+    is_venv = prefix != base_prefix
+
+    if os.path.basename(stdlib_dir) == 'Lib':
+        base_executable = os.path.join(os.path.dirname(stdlib_dir), 'python')
+        if not os.path.exists(base_executable):
+            raise NotImplementedError(base_executable)
+        is_dev = True
+    else:
+        major, minor = version_info[:2]
+        python = f'python{major}.{minor}'
+        if is_venv:
+            if '.' in os.path.basename(executable):
+                ext = executable.rpartition('.')[2]
+                python_exe = f'{python}.{ext}'
+            else:
+                python_exe = python
+            expected = os.path.join(base_prefix, platlibdir, python)
+            if stdlib_dir == expected:
+                bindir = os.path.basename(os.path.dirname(executable))
+                base_executable = os.path.join(base_prefix, bindir, python_exe)
+            else:
+                raise NotImplementedError(stdlib_dir)
+        else:
+            expected = os.path.join(prefix, platlibdir, python)
+            if stdlib_dir == expected:
+                base_executable = executable
+            else:
+                raise NotImplementedError(stdlib_dir)
+        is_dev = False
+
+    return base_executable, is_dev, is_venv
+
+
 def _get_raw_info():
     return {
         'executable': sys.executable,

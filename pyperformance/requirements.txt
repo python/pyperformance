@@ -4,51 +4,13 @@
 #
 #    pip-compile pyperformance/requirements.in
 #
-asgiref==3.3.4
-    # via django
-certifi==2020.12.5
-    # via dulwich
-chameleon==3.9.0
-    # via -r pyperformance/requirements.in
-django==3.2.5
-    # via -r pyperformance/requirements.in
-dulwich==0.20.21
-    # via -r pyperformance/requirements.in
-greenlet==1.1.0
-    # via sqlalchemy
-html5lib==1.1
-    # via -r pyperformance/requirements.in
-mako==1.1.4
-    # via -r pyperformance/requirements.in
-markupsafe==2.0.1
-    # via mako
-mpmath==1.2.1
-    # via sympy
 packaging==21.0
     # via -r pyperformance/requirements.in
 psutil==5.8.0
-    # via -r pyperformance/requirements.in
-pyaes==1.6.1
     # via -r pyperformance/requirements.in
 pyparsing==2.4.7
     # via packaging
 pyperf==2.2.0
     # via -r pyperformance/requirements.in
-pytz==2021.1
-    # via django
-six==1.16.0
-    # via html5lib
-sqlalchemy==1.4.15
-    # via -r pyperformance/requirements.in
-sqlparse==0.4.2
-    # via django
-sympy==1.8
-    # via -r pyperformance/requirements.in
 toml==0.10.2
     # via -r pyperformance/requirements.in
-tornado==6.1
-    # via -r pyperformance/requirements.in
-urllib3==1.26.5
-    # via dulwich
-webencodings==0.5.1
-    # via html5lib

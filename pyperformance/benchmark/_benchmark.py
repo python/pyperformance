@@ -1,3 +1,5 @@
+import os.path
+
 from ._spec import BenchmarkSpec
 from ._metadata import load_metadata
 from ._run import run_perf_script
@@ -117,10 +119,11 @@ class Benchmark:
     # * dependencies
     # * requirements
 
-    def run(self, python, pyperf_opts=None, *, verbose=False):
+    def run(self, python, pyperf_opts=None, *, venv=None, verbose=False):
         return run_perf_script(
             python,
             self.runscript,
+            venv=venv,
             extra_opts=self.extra_opts,
             pyperf_opts=pyperf_opts,
             verbose=verbose,

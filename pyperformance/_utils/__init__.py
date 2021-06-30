@@ -26,4 +26,5 @@ from ._pyproject_toml import (
 from ._pythoninfo import (
     get_python_id,
     get_python_info,
+    inspect_python_install,
 )

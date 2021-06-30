@@ -27,8 +27,7 @@ def cmd_run(options, benchmarks):
         print("ERROR: \"%s\" is not an absolute path" % executable)
         sys.exit(1)
 
-    cmd_prefix = [executable]
-    suite, errors = run_benchmarks(benchmarks, cmd_prefix, options)
+    suite, errors = run_benchmarks(benchmarks, executable, options)
 
     if not suite:
         print("ERROR: No benchmark was run")

@@ -64,18 +64,25 @@ class Requirements(object):
         # optional requirements
         self.optional = []
 
-        for line in iter_clean_lines(filename):
-            # strip env markers
-            req = line.partition(';')[0]
+        if os.path.exists(filename):
+            for line in iter_clean_lines(filename):
+                # strip env markers
+                req = line.partition(';')[0]
 
-            # strip version
-            req = req.partition('==')[0]
-            req = req.partition('>=')[0]
+                # strip version
+                req = req.partition('==')[0]
+                req = req.partition('>=')[0]
 
-            if req in optional:
-                self.optional.append(line)
-            else:
-                self.req.append(line)
+                if req in optional:
+                    self.optional.append(line)
+                else:
+                    self.req.append(line)
+
+    def get(self, name):
+        for req in self.req:
+            if req.startswith(name):
+                return req
+        return None
 
 
 def safe_rmtree(path):
@@ -171,15 +178,20 @@ def get_run_name(python, bench=None):
     compat_id = get_compatibility_id(bench)
     name = f'{py_id}-compat-{compat_id}'
     if bench:
-        name = f'{name}-{bench.name}'
+        name = f'{name}-bm-{bench.name}'
     return name
 
 
 class VirtualEnvironment(object):
-    def __init__(self, options, bench=None):
+
+    def __init__(self, options, bench=None, *, usebase=False):
+        python = options.python
+        if usebase:
+            python, _, _ = _utils.inspect_python_install(python)
+
         self.options = options
         self.bench = bench
-        self.python = options.python
+        self.python = python
         self._venv_path = options.venv
         self._pip_program = None
         self._force_old_pip = False
@@ -393,22 +405,30 @@ class VirtualEnvironment(object):
         pip_program = self.get_pip_program()
 
         # parse requirements
-        filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
-        requirements = Requirements(filename,
-                                    # FIXME: don't hardcode requirements
-                                    ['psutil', 'dulwich'])
+        basereqs = Requirements(REQUIREMENTS_FILE, ['psutil'])
+        if self.bench:
+            reqsfile = self.bench.requirements_lockfile
+            requirements = Requirements(reqsfile, [])
+            # Every benchmark must depend on pyperf.
+            if not requirements.get('pyperf'):
+                pyperf_req = basereqs.get('pyperf')
+                if not pyperf_req:
+                    raise NotImplementedError
+                requirements.req.append(pyperf_req)
+        else:
+            requirements = basereqs
 
         # Upgrade pip
         cmd = pip_program + ['install', '-U']
         if self._force_old_pip:
             cmd.extend((REQ_OLD_PIP, REQ_OLD_SETUPTOOLS))
         else:
-            cmd.extend(requirements.pip)
+            cmd.extend(basereqs.pip)
         self.run_cmd(cmd)
 
         # Upgrade installer dependencies (setuptools, ...)
         cmd = pip_program + ['install', '-U']
-        cmd.extend(requirements.installer)
+        cmd.extend(basereqs.installer)
         self.run_cmd(cmd)
 
         # install requirements
@@ -424,14 +444,15 @@ class VirtualEnvironment(object):
                 print("WARNING: failed to install %s" % req)
                 print()
 
-        # install pyperformance inside the virtual environment
-        if is_build_dir():
-            root_dir = os.path.dirname(PERFORMANCE_ROOT)
-            cmd = pip_program + ['install', '-e', root_dir]
-        else:
-            version = pyperformance.__version__
-            cmd = pip_program + ['install', 'pyperformance==%s' % version]
-        self.run_cmd(cmd)
+        if not self.bench:
+            # install pyperformance inside the virtual environment
+            if is_build_dir():
+                root_dir = os.path.dirname(PERFORMANCE_ROOT)
+                cmd = pip_program + ['install', '-e', root_dir]
+            else:
+                version = pyperformance.__version__
+                cmd = pip_program + ['install', 'pyperformance==%s' % version]
+            self.run_cmd(cmd)
 
         # Display the pip version
         cmd = pip_program + ['--version']

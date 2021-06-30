@@ -7,6 +7,7 @@ except ImportError:
 
 import pyperf
 import pyperformance
+from . import venv as _venv
 
 
 class BenchmarkException(Exception):
@@ -38,9 +39,16 @@ def get_pyperf_opts(options):
     return opts
 
 
-def run_benchmarks(should_run, cmd_prefix, options):
-    suite = None
+def run_benchmarks(should_run, python, options):
     to_run = sorted(should_run)
+
+    venvs = {}
+    for bench in to_run:
+        venv = _venv.VirtualEnvironment(options, bench, usebase=True)
+        venv.create()
+        venvs[bench] = venv
+
+    suite = None
     run_count = str(len(to_run))
     errors = []
 
@@ -70,7 +78,12 @@ def run_benchmarks(should_run, cmd_prefix, options):
             return dest_suite
 
         try:
-            result = bench.run(cmd_prefix, pyperf_opts, verbose=options.verbose)
+            result = bench.run(
+                python,
+                pyperf_opts,
+                venv=venvs.get(bench),
+                verbose=options.verbose,
+            )
         except Exception as exc:
             print("ERROR: Benchmark %s failed: %s" % (name, exc))
             traceback.print_exc()

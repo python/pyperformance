@@ -140,7 +140,7 @@ def _resolve_base(tool, project, filename, version):
                 return None, None
 
     if project is not None:
-        unexpected = set(project) - {'name', 'dynamic'}
+        unexpected = set(project) - {'name', 'dynamic', 'dependencies'}
         if unexpected:
             raise ValueError(f'[project] should be minimal if "metabase" is provided, got extra {sorted(unexpected)}')
 
