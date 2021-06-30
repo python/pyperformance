@@ -1,5 +1,8 @@
 [project]
-#name = "bm_<name>"
+name = "bm_tornado_http"
+dependencies = [
+    "tornado",
+]
 
 # XXX This should be inherited from metabase.
 dynamic = [

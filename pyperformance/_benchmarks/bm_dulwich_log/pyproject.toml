@@ -1,5 +1,9 @@
 [project]
-#name = "bm_<name>"
+name = "bm_dulwich_log"
+dependencies = [
+    # optional?
+    "dulwich",
+]
 
 # XXX This should be inherited from metabase.
 dynamic = [

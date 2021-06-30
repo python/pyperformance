@@ -1,5 +1,8 @@
 [project]
-#name = "bm_<name>"
+name = "bm_sqlalchemy_declarative"
+dependencies = [
+    "SQLAlchemy",
+]
 
 # XXX This should be inherited from metabase.
 dynamic = [
