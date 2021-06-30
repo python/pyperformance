@@ -124,7 +124,8 @@ def _normalize_project(data, rootdir, name, requirefiles, **_ignored):
             raise ValueError(f'invalid name {name!r}')
         name = packaging.utils.canonicalize_name(name)
         data['name'] = name
-        unused.remove('name')
+        if 'name' in unused:
+            unused.remove('name')
     else:
         if 'name' not in data.get('dynamic', []):
             raise ValueError('missing required "name" field')
