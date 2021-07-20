@@ -18,7 +18,10 @@ DEFAULT_MANIFEST = os.path.join(DEFAULTS_DIR, 'MANIFEST')
 def load_manifest(filename, *, resolve=None):
     if not filename:
         filename = DEFAULT_MANIFEST
-        if resolve is None:
+    else:
+        filename = os.path.abspath(filename)
+    if resolve is None:
+        if filename == DEFAULT_MANIFEST:
             def resolve(bench):
                 if isinstance(bench, _benchmark.Benchmark):
                     spec = bench.spec
