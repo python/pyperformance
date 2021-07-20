@@ -26,9 +26,15 @@ def run_perf_script(python, runscript, *,
     ]
     env = dict(os.environ)
     if libsdir:
-        PYTHONPATH = os.environ.get('PYTHONPATH', '').split(os.pathsep)
-        PYTHONPATH.insert(0, libsdir)
-        env['PYTHONPATH'] = os.pathsep.join(PYTHONPATH)
+        if '--copy-env' in pyperf_opts:
+            PYTHONPATH = os.environ.get('PYTHONPATH', '').split(os.pathsep)
+            PYTHONPATH.insert(0, libsdir)
+            env['PYTHONPATH'] = os.pathsep.join(PYTHONPATH)
+        else:
+            env['PYTHONPATH'] = libsdir
+        cmd.extend([
+            '--inherit-environ', 'PYTHONPATH',
+        ])
 
     with _utils.temporary_file() as tmp:
         cmd.extend(('--output', tmp))
