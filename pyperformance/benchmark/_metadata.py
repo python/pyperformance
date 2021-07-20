@@ -67,7 +67,7 @@ def load_metadata(metafile, defaults=None):
             tool.get('metabase'),  # XXX Pop it?
             project,
             filename,
-            project.get('version') or defaults.get('version'),
+            defaults,
     )
     top = _resolve(project or {}, tool, filename)
     merged = _merge_metadata(top, base, defaults)
@@ -124,7 +124,7 @@ def _ensure_defaults(defaults, rootdir):
     return defaults
 
 
-def _resolve_base(metabase, project, filename, version):
+def _resolve_base(metabase, project, filename, defaults):
     rootdir, basename = os.path.split(filename)
 
     if not metabase:
@@ -156,8 +156,9 @@ def _resolve_base(metabase, project, filename, version):
         metabase = os.path.join(rootdir, metabase)
         if metabase == filename:
             raise Exception('circular')
-    return load_metadata(metabase,
-                         {'version': version, 'name': '_base_'})
+
+    defaults = dict(defaults, name='_base_')
+    return load_metadata(metabase, defaults)
 
 
 def _resolve(project, tool, filename):
@@ -232,9 +233,12 @@ def _merge_metadata(*tiers):
         if not data:
             continue
         for field, value in data.items():
+            if field == 'spec':
+                field = 'version'
+                value = value.version
             if merged.get(field):
                 # XXX Merge containers?
                 continue
-            if value:
+            if value or isinstance(value, int):
                 merged[field] = value
     return merged
