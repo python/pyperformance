@@ -86,7 +86,7 @@ def _parse_benchmarks(lines, resolve, filename):
         lines = ['<empty>']
     lines = iter(lines)
     if next(lines) != BENCH_HEADER:
-        raise ValueError('invalid manifest file, expected benchmarks header')
+        raise ValueError('invalid manifest file, expected benchmarks table header')
 
     localdir = os.path.dirname(filename)
 
