@@ -139,9 +139,11 @@ def _normalize_project(data, rootdir, name, requirefiles, **_ignored):
         if 'version' not in data.get('dynamic', []):
             raise ValueError('missing required "version" field')
     else:
-        # This also validates it.
-        version = packaging.utils.canonicalize_version(version)
-        data['version'] = version
+        # We keep the full version string rather than
+        # the canonicalized form.  However, we still validate and
+        # (effectively) normalize it.
+        version = packaging.version.parse(version)
+        data['version'] = str(version)
         unused.remove('version')
 
     ##########
