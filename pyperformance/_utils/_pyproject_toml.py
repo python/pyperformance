@@ -1,3 +1,6 @@
+# This module should be replaced with the equivalent functionality
+# in the PyPI "packaging" package (once it's added there).
+
 import os.path
 import re
 import urllib.parse
