@@ -6,7 +6,7 @@ import sys
 MS_WINDOWS = (sys.platform == 'win32')
 
 
-def run_command(command, hide_stderr=True):
+def run_command(command, env=None, *, hide_stderr=True):
     if hide_stderr:
         kw = {'stderr': subprocess.PIPE}
     else:
@@ -22,6 +22,7 @@ def run_command(command, hide_stderr=True):
 
     proc = subprocess.Popen(command,
                             universal_newlines=True,
+                            env=env,
                             **kw)
     try:
         stderr = proc.communicate()[1]

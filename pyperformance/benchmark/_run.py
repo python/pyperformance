@@ -1,3 +1,4 @@
+import os
 import sys
 
 import pyperf
@@ -9,6 +10,7 @@ def run_perf_script(python, runscript, *,
                     venv=None,
                     extra_opts=None,
                     pyperf_opts=None,
+                    libsdir=None,
                     verbose=False,
                     ):
     if not runscript:
@@ -22,8 +24,13 @@ def run_perf_script(python, runscript, *,
         *(extra_opts or ()),
         *(pyperf_opts or ()),
     ]
+    env = dict(os.environ)
+    if libsdir:
+        PYTHONPATH = os.environ.get('PYTHONPATH', '').split(os.pathsep)
+        PYTHONPATH.insert(0, libsdir)
+        env['PYTHONPATH'] = os.pathsep.join(PYTHONPATH)
 
     with _utils.temporary_file() as tmp:
         cmd.extend(('--output', tmp))
-        _utils.run_command(cmd, hide_stderr=not verbose)
+        _utils.run_command(cmd, env=env, hide_stderr=not verbose)
         return pyperf.BenchmarkSuite.load(tmp)

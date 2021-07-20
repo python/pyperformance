@@ -28,6 +28,7 @@ TOOL_FIELDS = {
     'prescript': None,
     'runscript': None,
     'extra_opts': None,
+    'libsdir': None,
 }
 
 
@@ -63,7 +64,7 @@ def load_metadata(metafile, defaults=None):
 
     defaults = _ensure_defaults(defaults, rootdir)
     base, basefile = _resolve_base(
-            tool,
+            tool.get('metabase'),  # XXX Pop it?
             project,
             filename,
             project.get('version') or defaults.get('version'),
@@ -123,10 +124,9 @@ def _ensure_defaults(defaults, rootdir):
     return defaults
 
 
-def _resolve_base(tool, project, filename, version):
+def _resolve_base(metabase, project, filename, version):
     rootdir, basename = os.path.split(filename)
 
-    metabase = tool.get('metabase')
     if not metabase:
         if basename == 'pyproject.toml':
             return None, None
@@ -216,6 +216,11 @@ def _resolve_value(field, value, rootdir):
         for opt in value:
             if not opt or not isinstance(opt, str):
                 raise TypeError(f'extra_opts should be a list of strings, got {value!r}')
+    elif field == 'libsdir':
+        value = os.path.normpath(
+            os.path.join(rootdir, value)
+        )
+        _utils.check_dir(value)
     else:
         raise NotImplementedError(field)
     return value

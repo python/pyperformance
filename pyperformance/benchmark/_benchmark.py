@@ -89,6 +89,10 @@ class Benchmark:
         return self._get_metadata_value('datadir', None)
 
     @property
+    def libsdir(self):
+        return self._get_metadata_value('libsdir', None)
+
+    @property
     def requirements_lockfile(self):
         try:
             return self._lockfile
@@ -126,5 +130,6 @@ class Benchmark:
             venv=venv,
             extra_opts=self.extra_opts,
             pyperf_opts=pyperf_opts,
+            libsdir=self.libsdir,
             verbose=verbose,
         )
