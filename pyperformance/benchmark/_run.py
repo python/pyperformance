@@ -9,7 +9,6 @@ from .. import _utils
 def run_perf_script(python, runscript, runid, *,
                     extra_opts=None,
                     pyperf_opts=None,
-                    libsdir=None,
                     verbose=False,
                     ):
     if not runscript:
@@ -23,7 +22,7 @@ def run_perf_script(python, runscript, runid, *,
             *(pyperf_opts or ()),
             '--output', tmp,
         ]
-        prepargs = [python, runscript, opts, runid, libsdir]
+        prepargs = [python, runscript, opts, runid]
         if pyperf_opts and '--copy-env' in pyperf_opts:
             argv, env = _prep_basic(*prepargs)
         else:
@@ -35,14 +34,13 @@ def run_perf_script(python, runscript, runid, *,
 
 def run_other_script(python, script, runid, *,
                      extra_opts=None,
-                     libsdir=None,
                      verbose=False
                      ):
-    argv, env = _prep_basic(python, script, extra_opts, runid, libsdir)
+    argv, env = _prep_basic(python, script, extra_opts, runid)
     _utils.run_command(argv, env=env, hide_stderr=not verbose)
 
 
-def _prep_restricted(python, script, opts_orig, runid, libsdir):
+def _prep_restricted(python, script, opts_orig, runid):
     # Deal with --inherit-environ.
     FLAG = '--inherit-environ'
     opts = []
@@ -72,13 +70,11 @@ def _prep_restricted(python, script, opts_orig, runid, libsdir):
 
     # Track the environment variables.
     inherit_env_var('PYPERFORMANCE_RUNID')
-    if libsdir:
-        inherit_env_var('PYTHONPATH')
 
-    return _prep_basic(python, script, opts, runid, libsdir)
+    return _prep_basic(python, script, opts, runid)
 
 
-def _prep_basic(python, script, opts, runid, libsdir):
+def _prep_basic(python, script, opts, runid):
     # Build argv.
     argv = [
         python, '-u', script,
@@ -88,8 +84,6 @@ def _prep_basic(python, script, opts, runid, libsdir):
     # Populate the environment variables.
     env = dict(os.environ)
     env['PYPERFORMANCE_RUNID'] = str(runid)
-    if libsdir:
-        _insert_on_PYTHONPATH(libsdir, env)
 
     return argv, env
 

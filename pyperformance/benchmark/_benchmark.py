@@ -90,10 +90,6 @@ class Benchmark:
         return self._get_metadata_value('datadir', None)
 
     @property
-    def libsdir(self):
-        return self._get_metadata_value('libsdir', None)
-
-    @property
     def requirements_lockfile(self):
         try:
             return self._lockfile
@@ -132,14 +128,12 @@ class Benchmark:
             runid = get_run_id(python, self)
 
         runscript = self.runscript
-
         bench = run_perf_script(
             python,
             runscript,
             runid,
             extra_opts=self.extra_opts,
             pyperf_opts=pyperf_opts,
-            libsdir=self.libsdir,
             verbose=verbose,
         )
 

@@ -26,7 +26,6 @@ TOOL_FIELDS = {
     'datadir': None,
     'runscript': None,
     'extra_opts': None,
-    'libsdir': None,
 }
 
 
@@ -205,11 +204,6 @@ def _resolve_value(field, value, rootdir):
         for opt in value:
             if not opt or not isinstance(opt, str):
                 raise TypeError(f'extra_opts should be a list of strings, got {value!r}')
-    elif field == 'libsdir':
-        value = os.path.normpath(
-            os.path.join(rootdir, value)
-        )
-        _utils.check_dir(value)
     else:
         raise NotImplementedError(field)
     return value
