@@ -1,8 +1,9 @@
 import os.path
+import sys
 
 from ._spec import BenchmarkSpec
 from ._metadata import load_metadata
-from ._run import run_perf_script
+from ._run import run_perf_script, run_other_script
 
 
 class Benchmark:
@@ -123,13 +124,24 @@ class Benchmark:
     # * dependencies
     # * requirements
 
-    def run(self, python, pyperf_opts=None, *, venv=None, verbose=False):
-        return run_perf_script(
+    def run(self, python, runid=None, pyperf_opts=None, *,
+            venv=None,
+            verbose=False,
+            ):
+        if venv and python == sys.executable:
+            python = venv.get_python_program()
+
+        if not runid:
+            from ..run import get_run_id
+            runid = get_run_id(python, self)
+
+        bench = run_perf_script(
             python,
             self.runscript,
-            venv=venv,
+            runid,
             extra_opts=self.extra_opts,
             pyperf_opts=pyperf_opts,
             libsdir=self.libsdir,
             verbose=verbose,
         )
+        return bench

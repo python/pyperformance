@@ -1,6 +1,6 @@
 import errno
-import hashlib
 import os
+import os.path
 import shutil
 import subprocess
 import sys
@@ -25,17 +25,6 @@ def is_build_dir():
     if not os.path.exists(os.path.join(root_dir, 'pyperformance')):
         return False
     return os.path.exists(os.path.join(root_dir, 'setup.py'))
-
-
-def iter_clean_lines(filename):
-    with open(filename) as reqsfile:
-        for line in reqsfile:
-            # strip comment
-            line = line.partition('#')[0]
-            line = line.rstrip()
-            if not line:
-                continue
-            yield line
 
 
 class Requirements(object):
@@ -65,7 +54,7 @@ class Requirements(object):
         self.optional = []
 
         if os.path.exists(filename):
-            for line in iter_clean_lines(filename):
+            for line in _utils.iter_clean_lines(filename):
                 # strip env markers
                 req = line.partition(';')[0]
 
@@ -149,52 +138,28 @@ def download(url, filename):
         fp.flush()
 
 
-def get_compatibility_id(bench=None):
-    # XXX Do not include the pyperformance reqs if a benchmark was provided?
-    reqs = sorted(iter_clean_lines(REQUIREMENTS_FILE))
-    if bench:
-        lockfile = bench.requirements_lockfile
-        if lockfile and os.path.exists(lockfile):
-            reqs += sorted(iter_clean_lines(lockfile))
-
-    data = [
-        # XXX Favor pyperf.__version__ instead?
-        pyperformance.__version__,
-        '\n'.join(reqs),
-    ]
-
-    h = hashlib.sha256()
-    for value in data:
-        h.update(value.encode('utf-8'))
-    compat_id = h.hexdigest()
-    # XXX Return the whole string?
-    compat_id = compat_id[:12]
-
-    return compat_id
-
-
-def get_run_name(python, bench=None):
-    py_id = _utils.get_python_id(python, prefix=True)
-    compat_id = get_compatibility_id(bench)
-    name = f'{py_id}-compat-{compat_id}'
-    if bench:
-        name = f'{name}-bm-{bench.name}'
-    return name
-
-
 class VirtualEnvironment(object):
 
-    def __init__(self, options, bench=None, *, usebase=False):
+    def __init__(self, options, bench=None, name=None, *, usebase=False):
         python = options.python
         if usebase:
             python, _, _ = _utils.inspect_python_install(python)
 
         self.options = options
-        self.bench = bench
         self.python = python
+        self.bench = bench
+        self._name = name or None
         self._venv_path = options.venv
         self._pip_program = None
         self._force_old_pip = False
+
+    @property
+    def name(self):
+        if self._name is None:
+            from .run import get_run_id
+            runid = get_run_id(self.python, self.bench)
+            self._name = runid.name
+        return self._name
 
     def get_python_program(self):
         venv_path = self.get_path()
@@ -256,9 +221,8 @@ class VirtualEnvironment(object):
 
     def get_path(self):
         if not self._venv_path:
-            venv_name = get_run_name(self.python, self.bench)
             self._venv_path = os.path.abspath(
-                os.path.join('venv', venv_name),
+                os.path.join('venv', self.name),
             )
         return self._venv_path
 
