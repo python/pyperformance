@@ -9,6 +9,7 @@ DEPENDENCIES = 'requirements.in'
 REQUIREMENTS = 'requirements.txt'
 DATA = 'data'
 PREP = 'prep_benchmark.py'
+CLEANUP = 'cleanup_benchmark.py'
 RUN = 'run_benchmark.py'
 
 PEP_621_FIELDS = {
@@ -26,6 +27,9 @@ TOOL_FIELDS = {
     'tags': None,
     'datadir': None,
     'prescript': None,
+    'pre_extra_opts': None,
+    'postscript': None,
+    'post_extra_opts': None,
     'runscript': None,
     'extra_opts': None,
     'libsdir': None,
@@ -42,6 +46,7 @@ TOOL_FIELDS = {
 #    requirements  # (from lock file or requirements.txt)
 #    datadir
 #    prescript
+#    postscript
 #    runscript
 #    extra_opts
 
@@ -116,6 +121,11 @@ def _ensure_defaults(defaults, rootdir):
         if os.path.isfile(prescript):
             defaults['prescript'] = prescript
 
+    if not defaults.get('postscript'):
+        postscript = os.path.join(rootdir, CLEANUP)
+        if os.path.isfile(postscript):
+            defaults['postscript'] = postscript
+
     if not defaults.get('runscript'):
         runscript = os.path.join(rootdir, RUN)
         if os.path.isfile(runscript):
@@ -174,6 +184,16 @@ def _resolve(project, tool, filename):
             value = tool.get(field)
             if value is not None:
                 resolved[target] = _resolve_value(field, value, rootdir)
+    if resolved.get('prescript'):
+        resolved['prescript'] = os.path.join(
+            os.path.dirname(filename),
+            resolved['prescript'],
+        )
+    if resolved.get('postscript'):
+        resolved['postscript'] = os.path.join(
+            os.path.dirname(filename),
+            resolved['postscript'],
+        )
 
     for field, target in PEP_621_FIELDS.items():
         if target is None:
@@ -207,11 +227,15 @@ def _resolve_value(field, value, rootdir):
         if not os.path.isabs(value):
             value = os.path.join(rootdir, value)
         _utils.check_file(value)
+    elif field == 'postscript':
+        if not os.path.isabs(value):
+            value = os.path.join(rootdir, value)
+        _utils.check_file(value)
     elif field == 'runscript':
         if not os.path.isabs(value):
             value = os.path.join(rootdir, value)
         _utils.check_file(value)
-    elif field == 'extra_opts':
+    elif field == 'extra_opts' or field.endswith('_extra_opts'):
         if isinstance(value, str):
             raise TypeError(f'extra_opts should be a list of strings, got {value!r}')
         for opt in value:

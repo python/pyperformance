@@ -33,6 +33,15 @@ def run_perf_script(python, runscript, runid, *,
         return pyperf.BenchmarkSuite.load(tmp)
 
 
+def run_other_script(python, script, runid, *,
+                     extra_opts=None,
+                     libsdir=None,
+                     verbose=False
+                     ):
+    argv, env = _prep_basic(python, script, extra_opts, runid, libsdir)
+    _utils.run_command(argv, env=env, hide_stderr=not verbose)
+
+
 def _prep_restricted(python, script, opts_orig, runid, libsdir):
     # Deal with --inherit-environ.
     FLAG = '--inherit-environ'
