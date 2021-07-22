@@ -107,22 +107,6 @@ class Benchmark:
             return self._lockfile
 
     @property
-    def prescript(self):
-        return self._get_metadata_value('prescript', None)
-
-    @property
-    def pre_extra_opts(self):
-        return self._get_metadata_value('pre_extra_opts', ())
-
-    @property
-    def postscript(self):
-        return self._get_metadata_value('postscript', None)
-
-    @property
-    def post_extra_opts(self):
-        return self._get_metadata_value('post_extra_opts', ())
-
-    @property
     def runscript(self):
         return self._get_metadata_value('runscript', None)
 
@@ -147,19 +131,7 @@ class Benchmark:
             from ..run import get_run_id
             runid = get_run_id(python, self)
 
-        prescript = self.prescript
         runscript = self.runscript
-        postscript = self.postscript
-
-        if prescript and os.path.exists(prescript):
-            run_other_script(
-                python,
-                prescript,
-                runid,
-                extra_opts=self.pre_extra_opts,
-                libsdir=self.libsdir,
-                verbose=verbose,
-            )
 
         bench = run_perf_script(
             python,
@@ -170,15 +142,5 @@ class Benchmark:
             libsdir=self.libsdir,
             verbose=verbose,
         )
-
-        if postscript and os.path.exists(postscript):
-            run_other_script(
-                python,
-                postscript,
-                runid,
-                extra_opts=self.post_extra_opts,
-                libsdir=self.libsdir,
-                verbose=verbose,
-            )
 
         return bench
