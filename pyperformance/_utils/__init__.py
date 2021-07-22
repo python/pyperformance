@@ -8,6 +8,7 @@ from ._fs import (
 )
 from ._misc import (
     check_name,
+    iter_clean_lines,
     parse_name_pattern,
     parse_tag_pattern,
     parse_selections,

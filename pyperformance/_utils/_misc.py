@@ -49,3 +49,14 @@ def parse_selections(selections, parse_entry=None):
             entry = entry[1:]
 
         yield parse_entry(op, entry)
+
+
+def iter_clean_lines(filename):
+    with open(filename) as reqsfile:
+        for line in reqsfile:
+            # strip comment
+            line = line.partition('#')[0]
+            line = line.rstrip()
+            if not line:
+                continue
+            yield line
