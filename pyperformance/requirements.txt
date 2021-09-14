@@ -36,7 +36,7 @@ six==1.16.0
     # via html5lib
 sqlalchemy==1.4.15
     # via -r requirements.in
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via django
 sympy==1.8
     # via -r requirements.in
