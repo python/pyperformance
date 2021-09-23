@@ -10,7 +10,7 @@ certifi==2020.12.5
     # via dulwich
 chameleon==3.9.0
     # via -r requirements.in
-django==3.2.4
+django==3.2.5
     # via -r requirements.in
 dulwich==0.20.21
     # via -r requirements.in
