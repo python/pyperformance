@@ -28,7 +28,22 @@ def is_build_dir():
 
 
 class Requirements(object):
-    def __init__(self, filename, optional):
+
+    @classmethod
+    def from_file(cls, filename, optional=None):
+        self = cls()
+        self._add_from_file(filename, optional)
+        return self
+
+    @classmethod
+    def from_benchmarks(cls, benchmarks):
+        self = cls()
+        for bench in benchmarks or ():
+            filename = bench.requirements_lockfile
+            self._add_from_file(filename)
+        return self
+
+    def __init__(self):
         # if pip or setuptools is updated:
         # .github/workflows/main.yml should be updated as well
 
@@ -48,27 +63,42 @@ class Requirements(object):
         ]
 
         # requirements
-        self.req = []
+        self.specs = []
 
         # optional requirements
-        self.optional = []
+        self._optional = set()
 
-        if os.path.exists(filename):
-            for line in _utils.iter_clean_lines(filename):
-                # strip env markers
-                req = line.partition(';')[0]
+    def iter_non_optional(self):
+        for spec in self.specs:
+            if spec in self._optional:
+                continue
+            yield spec
 
-                # strip version
-                req = req.partition('==')[0]
-                req = req.partition('>=')[0]
+    def iter_optional(self):
+        for spec in self.specs:
+            if spec not in self._optional:
+                continue
+            yield spec
 
-                if req in optional:
-                    self.optional.append(line)
-                else:
-                    self.req.append(line)
+    def _add_from_file(self, filename, optional=None):
+        if not os.path.exists(filename):
+            return
+        for line in _utils.iter_clean_lines(filename):
+            self._add(line, optional)
+
+    def _add(self, line, optional=None):
+        self.specs.append(line)
+        if optional:
+            # strip env markers
+            req = line.partition(';')[0]
+            # strip version
+            req = req.partition('==')[0]
+            req = req.partition('>=')[0]
+            if req in optional:
+                self._optional.add(line)
 
     def get(self, name):
-        for req in self.req:
+        for req in self.specs:
             if req.startswith(name):
                 return req
         return None
@@ -140,7 +170,10 @@ def download(url, filename):
 
 class VirtualEnvironment(object):
 
-    def __init__(self, options, bench=None, name=None, *, usebase=False):
+    def __init__(self, options, bench=None, name=None, *,
+                 requirements=None,
+                 usebase=False,
+                 ):
         python = options.python
         if usebase:
             python, _, _ = _utils.inspect_python_install(python)
@@ -152,6 +185,7 @@ class VirtualEnvironment(object):
         self._venv_path = options.venv
         self._pip_program = None
         self._force_old_pip = False
+        self.requirements = requirements
 
     @property
     def name(self):
@@ -365,22 +399,23 @@ class VirtualEnvironment(object):
         venv_python = self.get_python_program()
         return os.path.exists(venv_python)
 
-    def _install_req(self):
+    def _install_reqs(self):
         pip_program = self.get_pip_program()
 
         # parse requirements
-        basereqs = Requirements(REQUIREMENTS_FILE, ['psutil'])
-        if self.bench:
-            reqsfile = self.bench.requirements_lockfile
-            requirements = Requirements(reqsfile, [])
-            # Every benchmark must depend on pyperf.
-            if not requirements.get('pyperf'):
-                pyperf_req = basereqs.get('pyperf')
-                if not pyperf_req:
-                    raise NotImplementedError
-                requirements.req.append(pyperf_req)
+        basereqs = Requirements.from_file(REQUIREMENTS_FILE, ['psutil'])
+        if self.requirements:
+            requirements = self.requirements
+        elif self.bench:
+            requirements = Requirements.from_benchmarks([self.bench])
         else:
             requirements = basereqs
+        # Every benchmark must depend on pyperf.
+        if not requirements.get('pyperf'):
+            pyperf_req = basereqs.get('pyperf')
+            if not pyperf_req:
+                raise NotImplementedError
+            requirements.specs.append(pyperf_req)
 
         # Upgrade pip
         cmd = pip_program + ['install', '-U']
@@ -397,11 +432,11 @@ class VirtualEnvironment(object):
 
         # install requirements
         cmd = pip_program + ['install']
-        cmd.extend(requirements.req)
+        cmd.extend(requirements.iter_non_optional())
         self.run_cmd(cmd)
 
         # install optional requirements
-        for req in requirements.optional:
+        for req in requirements.iter_optional():
             cmd = pip_program + ['install', '-U', req]
             exitcode = self.run_cmd_nocheck(cmd)
             if exitcode:
@@ -435,7 +470,7 @@ class VirtualEnvironment(object):
         print("Creating the virtual environment %s" % venv_path)
         try:
             self._create_venv()
-            self._install_req()
+            self._install_reqs()
         except:   # noqa
             print()
             safe_rmtree(venv_path)
@@ -461,10 +496,12 @@ def exec_in_virtualenv(options):
         os.execv(args[0], args)
 
 
-def cmd_venv(options):
+def cmd_venv(options, benchmarks=None):
     action = options.venv_action
 
-    venv = VirtualEnvironment(options)
+    requirements = Requirements.from_benchmarks(benchmarks)
+
+    venv = VirtualEnvironment(options, requirements=requirements)
     venv_path = venv.get_path()
 
     if action in ('create', 'recreate'):

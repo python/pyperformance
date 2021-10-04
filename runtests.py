@@ -39,7 +39,7 @@ def run_tests(venv):
         cmd = cmd + ('--venv', venv)
         run_cmd(cmd)
 
-    run_bench(python, script, 'venv', 'create')
+    run_bench(python, script, 'venv', 'create', '-b', 'all')
 
     egg_info = "pyperformance.egg-info"
     print("Remove directory %s" % egg_info)

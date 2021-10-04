@@ -157,6 +157,7 @@ def parse_args():
                          default=sys.executable)
         cmd.add_argument("--venv",
                          help="Path to the virtual environment")
+    filter_opts(cmd)
 
     options = parser.parse_args()
 
@@ -219,7 +220,7 @@ def _main():
         benchmarks = _select_benchmarks(options.benchmarks, manifest)
 
     if options.action == 'venv':
-        cmd_venv(options)
+        cmd_venv(options, benchmarks)
         sys.exit()
     elif options.action == 'compile':
         from pyperformance.compile import cmd_compile
