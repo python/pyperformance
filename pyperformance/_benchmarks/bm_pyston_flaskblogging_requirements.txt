@@ -1,5 +1,0 @@
-requests
-django-cms
-Flask
-Flask-Blogging
-Flask-Login

@@ -1,4 +1,0 @@
-requests
-aiohttp
-uvloop
-django-cms

@@ -1,5 +1,0 @@
-requests
-gunicorn
-aiohttp
-uvloop
-django-cms

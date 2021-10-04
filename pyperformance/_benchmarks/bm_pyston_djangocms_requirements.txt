@@ -1,9 +1,0 @@
-requests
-django-cms
-djangocms-bootstrap4
-djangocms-installer
-djangocms-file
-djangocms-googlemap
-djangocms-snippet
-djangocms-style
-djangocms-video
