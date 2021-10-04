@@ -100,11 +100,10 @@ def _inspect_python_install(executable, prefix, base_prefix, platlibdir,
             if stdlib_dir == expected:
                 bindir = os.path.basename(os.path.dirname(executable))
                 base_executable = os.path.join(base_prefix, bindir, python_exe)
-            elif os.name == 'nt':
+            else:
                 # XXX This is good enough for now.
                 base_executable = executable
-            else:
-                raise NotImplementedError(stdlib_dir)
+                #raise NotImplementedError(stdlib_dir)
         else:
             expected = os.path.join(prefix, platlibdir, python)
             if stdlib_dir == expected:
