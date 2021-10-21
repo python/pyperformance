@@ -516,7 +516,7 @@ class BenchmarkRevision(Application):
         if self.options.inherit_environ:
             cmd.append('--inherit-environ=%s' % ','.join(self.options.inherit_environ))
         if self.conf.benchmarks:
-            cmd.extend(('--benchmarks', self.conf.benchmarks))
+            cmd.append('--benchmarks=%s' % self.conf.benchmarks)
         if self.conf.affinity:
             cmd.extend(('--affinity', self.conf.affinity))
         if self.conf.venv:
