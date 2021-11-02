@@ -1,15 +1,12 @@
 [project]
-name = "bm_mako"
+name = "pyperformance_bm_mako"
+requires-python = ">=3.8"
 dependencies = [
-    "Mako",
+    "pyperf",
+     "Mako",
 ]
-
-# XXX This should be inherited from metabase.
-dynamic = [
-  "name",
-  "version",
-]
+urls = {repository = "https://github.com/python/pyperformance"}
+dynamic = ["version"]
 
 [tool.pyperformance]
-# "name" is set automatically.
-metabase = ".."
+name = "mako"
