@@ -24,8 +24,3 @@ from ._pyproject_toml import (
     parse_pyproject_toml,
     load_pyproject_toml,
 )
-from ._pythoninfo import (
-    get_python_id,
-    get_python_info,
-    inspect_python_install,
-)

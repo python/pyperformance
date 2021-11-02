@@ -10,7 +10,7 @@ except ImportError:
 
 import pyperf
 import pyperformance
-from . import _utils
+from . import _utils, _pythoninfo
 from . import venv as _venv
 
 
@@ -48,7 +48,7 @@ class RunID(namedtuple('RunID', 'python compat bench timestamp')):
 
 
 def get_run_id(python, bench=None):
-    py_id = _utils.get_python_id(python, prefix=True)
+    py_id = _pythoninfo.get_python_id(python, prefix=True)
     compat_id = get_compatibility_id(bench)
     ts = time.time()
     return RunID(py_id, compat_id, bench, ts)

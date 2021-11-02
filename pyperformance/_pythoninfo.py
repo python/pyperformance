@@ -1,20 +1,19 @@
+# A utility library for getting information about a Python executable.
+#
+# This may be used as a script.
+
+__all__ = [
+    'get_python_id',
+    'get_python_info',
+    'inspect_python_install',
+]
+
+
 import hashlib
 import json
 import os
 import subprocess
 import sys
-
-
-try:
-    PLATLIBDIR = sys.platlibdir
-except AttributeError:
-    PLATLIBDIR = 'lib'
-STDLIB_DIR = os.path.dirname(os.__file__)
-try:
-    from importlib.util import MAGIC_NUMBER
-except ImportError:
-    import _imp
-    MAGIC_NUMBER = _imp.get_magic()
 
 
 def get_python_id(python=sys.executable, *, prefix=None):
@@ -78,6 +77,21 @@ def inspect_python_install(python=sys.executable):
     return _inspect_python_install(**info)
 
 
+#######################################
+# internal implementation
+
+try:
+    PLATLIBDIR = sys.platlibdir
+except AttributeError:
+    PLATLIBDIR = 'lib'
+STDLIB_DIR = os.path.dirname(os.__file__)
+try:
+    from importlib.util import MAGIC_NUMBER
+except ImportError:
+    import _imp
+    MAGIC_NUMBER = _imp.get_magic()
+
+
 def _inspect_python_install(executable, prefix, base_prefix, platlibdir,
                             stdlib_dir, version_info, **_ignored):
     is_venv = prefix != base_prefix
@@ -135,6 +149,9 @@ def _get_raw_info():
         # XXX Also include the build options (e.g. configure flags)?
     }
 
+
+#######################################
+# use as a script
 
 if __name__ == '__main__':
     info = _get_raw_info()

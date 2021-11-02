@@ -9,7 +9,7 @@ import urllib.request
 from shlex import quote as shell_quote
 
 import pyperformance
-from . import _utils
+from . import _utils, _pythoninfo
 
 
 GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
@@ -176,7 +176,7 @@ class VirtualEnvironment(object):
                  ):
         python = options.python
         if usebase:
-            python, _, _ = _utils.inspect_python_install(python)
+            python, _, _ = _pythoninfo.inspect_python_install(python)
 
         self.options = options
         self.python = python
