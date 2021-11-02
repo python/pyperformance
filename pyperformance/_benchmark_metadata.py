@@ -127,7 +127,8 @@ def _ensure_defaults(defaults, rootdir):
     return defaults
 
 
-def _resolve_base(metabase, project, filename, defaults):
+def _resolve_base(metabase, project, filename, defaults, *,
+                  minimalwithbase=False):
     rootdir, basename = os.path.split(filename)
 
     if not metabase:
@@ -142,7 +143,7 @@ def _resolve_base(metabase, project, filename, defaults):
             if not os.path.isfile(metabase):
                 return None, None
 
-    if project is not None:
+    if project is not None and minimalwithbase:
         unexpected = set(project) - {'name', 'dynamic', 'dependencies'}
         if unexpected:
             raise ValueError(f'[project] should be minimal if "metabase" is provided, got extra {sorted(unexpected)}')
