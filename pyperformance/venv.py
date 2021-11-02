@@ -17,7 +17,7 @@ REQ_OLD_PIP = 'pip==7.1.2'
 REQ_OLD_SETUPTOOLS = 'setuptools==18.5'
 
 PERFORMANCE_ROOT = os.path.realpath(os.path.dirname(__file__))
-REQUIREMENTS_FILE = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
+REQUIREMENTS_FILE = os.path.join(pyperformance.DATA_DIR, 'requirements.txt')
 
 
 def is_build_dir():

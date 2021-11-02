@@ -3,6 +3,7 @@ include COPYING
 include MANIFEST.in
 include README.rst
 include TODO.rst
+include requirements.in
 include requirements.txt
 include runtests.py
 include pyperformance
@@ -11,6 +12,7 @@ include tox.ini
 include doc/*.rst doc/images/*.png doc/images/*.jpg
 include doc/conf.py doc/Makefile doc/make.bat
 
+include pyperformance/data-files/requirements.txt
 include pyperformance/_benchmarks/MANIFEST
 include pyperformance/_benchmarks/base.toml
 recursive-include pyperformance/_benchmarks/bm_*/* *
