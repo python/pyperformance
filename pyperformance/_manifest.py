@@ -12,7 +12,7 @@ import os.path
 
 
 from . import __version__, DATA_DIR
-from . import _benchmark
+from . import _benchmark, _utils
 
 
 DEFAULTS_DIR = os.path.join(DATA_DIR, 'benchmarks')
@@ -72,6 +72,10 @@ def parse_manifest(text, *, resolve=None, filename=None):
             benchmarks = _parse_benchmarks(seclines, resolve, filename)
         elif benchmarks is None:
             raise ValueError('invalid manifest file, expected "benchmarks" section')
+        elif section == 'groups':
+            for group in seclines:
+                _utils.check_name(group)
+                groups.setdefault(group, None)
         elif section.startswith('group '):
             _, _, group = section.partition(' ')
             groups[group] = _parse_group(group, seclines, benchmarks)
@@ -197,7 +201,7 @@ def _parse_group(name, lines, benchmarks):
 
 def _check_groups(groups):
     for group, benchmarks in groups.items():
-        for bench in benchmarks:
+        for bench in benchmarks or ():
             if not isinstance(bench, str):
                 continue
             elif bench not in groups:

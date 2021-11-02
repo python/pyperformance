@@ -55,6 +55,15 @@ unpickle_pure_python	<local:pickle>
 xml_etree	<local>
 
 
+[groups]
+startup
+regex
+serialize
+apps
+math
+template
+
+
 [group default]
 2to3
 chameleon
@@ -74,6 +83,7 @@ json_dumps
 json_loads
 logging
 mako
+#mdp
 meteor_contest
 nbody
 nqueens

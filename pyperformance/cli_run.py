@@ -59,7 +59,7 @@ def cmd_list_groups(manifest):
     all_benchmarks = set(manifest.benchmarks)
 
     for group, specs in sorted(manifest.groups.items()):
-        known = set(specs) & all_benchmarks
+        known = set(specs or ()) & all_benchmarks
         if not known:
             # skip empty groups
             continue
