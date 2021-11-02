@@ -12,7 +12,7 @@ import os.path
 
 
 from . import __version__, DATA_DIR
-from . import _manifest, _benchmark
+from . import _benchmark
 
 
 DEFAULTS_DIR = os.path.join(DATA_DIR, 'benchmarks')
@@ -53,7 +53,7 @@ def load_manifest(filename, *, resolve=None):
                     bench.metafile = metafile
                 return bench
     with open(filename) as infile:
-        return _manifest.parse_manifest(infile, resolve=resolve, filename=filename)
+        return parse_manifest(infile, resolve=resolve, filename=filename)
 
 
 def parse_manifest(text, *, resolve=None, filename=None):
