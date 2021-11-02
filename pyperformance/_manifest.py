@@ -18,7 +18,7 @@ from . import _benchmark
 DEFAULTS_DIR = os.path.join(DATA_DIR, 'benchmarks')
 DEFAULT_MANIFEST = os.path.join(DEFAULTS_DIR, 'MANIFEST')
 
-BENCH_COLUMNS = ('name', 'version', 'origin', 'metafile')
+BENCH_COLUMNS = ('name', 'metafile')
 BENCH_HEADER = '\t'.join(BENCH_COLUMNS)
 
 
@@ -139,16 +139,14 @@ def _parse_benchmarks(lines, resolve, filename):
     localdir = os.path.dirname(filename)
 
     benchmarks = []
+    version = origin = None
     for line in lines:
         try:
-            name, version, origin, metafile = (None if l == '-' else l
+            name, metafile = (None if l == '-' else l
                                                for l in line.split('\t'))
         except ValueError:
             raise ValueError(f'bad benchmark line {line!r}')
-        spec = _benchmark.BenchmarkSpec(name or None,
-                                        version or None,
-                                        origin or None,
-                                        )
+        spec = _benchmark.BenchmarkSpec(name or None, version, origin)
         if metafile:
             metafile = _resolve_metafile(metafile, name, localdir)
             bench = _benchmark.Benchmark(spec, metafile)

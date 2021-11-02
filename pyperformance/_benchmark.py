@@ -48,6 +48,10 @@ class BenchmarkSpec(namedtuple('BenchmarkSpec', 'name version origin')):
         else:
             raise ValueError(f'unsupported raw spec {raw!r}')
 
+    def __new__(cls, name, version=None, origin=None):
+        self = super().__new__(cls, name, version or None, origin or None)
+        return self
+
 
 class Benchmark:
 
