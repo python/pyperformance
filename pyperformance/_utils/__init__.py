@@ -17,10 +17,3 @@ from ._platform import (
     MS_WINDOWS,
     run_command,
 )
-from ._pyproject_toml import (
-    parse_person,
-    parse_classifier,
-    parse_entry_point,
-    parse_pyproject_toml,
-    load_pyproject_toml,
-)

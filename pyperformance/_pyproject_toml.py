@@ -1,6 +1,15 @@
 # This module should be replaced with the equivalent functionality
 # in the PyPI "packaging" package (once it's added there).
 
+__all__ = [
+    'parse_person',
+    'parse_classifier',
+    'parse_entry_point',
+    'parse_pyproject_toml',
+    'load_pyproject_toml',
+]
+
+
 import os.path
 import re
 import urllib.parse
@@ -11,7 +20,7 @@ import packaging.utils
 import packaging.version
 import toml
 
-from ._misc import check_name
+from ._utils import check_name
 
 
 NAME_RE = re.compile('^([A-Z0-9]|[A-Z0-9][A-Z0-9._-]*[A-Z0-9])$', re.IGNORECASE)
@@ -38,6 +47,52 @@ def parse_entry_point(text):
 
     raise ValueError(f'invalid entry point {text!r}')
 
+
+def parse_pyproject_toml(text, rootdir, name=None, *,
+                         tools=None,
+                         requirefiles=True,
+                         ):
+    data = toml.loads(text)
+    unused = list(data)
+
+    for section, normalize in SECTIONS.items():
+        try:
+            secdata = data[section]
+        except KeyError:
+            data[section] = None
+        else:
+            data[section] = normalize(secdata,
+                                      name=name,
+                                      tools=tools,
+                                      rootdir=rootdir,
+                                      requirefiles=requirefiles,
+                                      )
+            unused.remove(section)
+
+    if unused:
+        raise ValueError(f'unsupported sections ({", ".join(sorted(unused))})')
+
+    return data
+
+
+def load_pyproject_toml(filename, *, name=None, tools=None, requirefiles=True):
+    if os.path.isdir(filename):
+        rootdir = filename
+        filename = os.path.join(rootdir, 'pyproject.toml')
+    else:
+        rootdir = os.path.dirname(filename)
+
+    with open(filename) as infile:
+        text = infile.read()
+    data = parse_pyproject_toml(text, rootdir, name,
+                                tools=tools,
+                                requirefiles=requirefiles,
+                                )
+    return data, filename
+
+
+#######################################
+# internal implementation
 
 def _check_relfile(relname, rootdir, kind):
     if os.path.isabs(relname):
@@ -69,49 +124,6 @@ def _check_file_or_text(table, rootdir, requirefiles, extra=None):
     else:
         text = table['text']
         # XXX Validate it?
-
-
-def load_pyproject_toml(filename, *, name=None, tools=None, requirefiles=True):
-    if os.path.isdir(filename):
-        rootdir = filename
-        filename = os.path.join(rootdir, 'pyproject.toml')
-    else:
-        rootdir = os.path.dirname(filename)
-
-    with open(filename) as infile:
-        text = infile.read()
-    data = parse_pyproject_toml(text, rootdir, name,
-                                tools=tools,
-                                requirefiles=requirefiles,
-                                )
-    return data, filename
-
-
-def parse_pyproject_toml(text, rootdir, name=None, *,
-                         tools=None,
-                         requirefiles=True,
-                         ):
-    data = toml.loads(text)
-    unused = list(data)
-
-    for section, normalize in SECTIONS.items():
-        try:
-            secdata = data[section]
-        except KeyError:
-            data[section] = None
-        else:
-            data[section] = normalize(secdata,
-                                      name=name,
-                                      tools=tools,
-                                      rootdir=rootdir,
-                                      requirefiles=requirefiles,
-                                      )
-            unused.remove(section)
-
-    if unused:
-        raise ValueError(f'unsupported sections ({", ".join(sorted(unused))})')
-
-    return data
 
 
 def _normalize_project(data, rootdir, name, requirefiles, **_ignored):

@@ -1,6 +1,6 @@
 import os.path
 
-from .. import _utils
+from .. import _utils, _pyproject_toml
 from ._spec import BenchmarkSpec
 
 
@@ -45,16 +45,19 @@ TOOL_FIELDS = {
 def load_metadata(metafile, defaults=None):
     if isinstance(metafile, str):
         name, rootdir = _name_from_filename(metafile)
-        data, filename = _utils.load_pyproject_toml(metafile,
-                                                    name=name or None,
-                                                    requirefiles=False,
-                                                    )
+        data, filename = _pyproject_toml.load_pyproject_toml(
+            metafile,
+            name=name or None,
+            requirefiles=False,
+        )
     else:
         text = metafile.read()
         filename = metafile.name
         name, rootdir = _name_from_filename(filename)
-        data = _utils.parse_pyproject_toml(text, rootdir, name,
-                                           requirefiles=False)
+        data = _pyproject_toml.parse_pyproject_toml(
+            text, rootdir, name,
+            requirefiles=False,
+        )
     project = data.get('project')
     tool = data.get('tool', {}).get('pyperformance', {})
 
