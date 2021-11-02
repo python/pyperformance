@@ -12,8 +12,7 @@ import os.path
 
 
 from . import __version__, DATA_DIR
-from . import _manifest
-from . import benchmark as _benchmark
+from . import _manifest, _benchmark
 
 
 DEFAULTS_DIR = os.path.join(DATA_DIR, 'benchmarks')

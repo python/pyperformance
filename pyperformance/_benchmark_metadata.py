@@ -1,7 +1,13 @@
+
+__all__ = [
+    'load_metadata',
+]
+
+
 import os.path
 
-from .. import _utils, _pyproject_toml
-from ._spec import BenchmarkSpec
+from . import _utils, _pyproject_toml
+from . import _benchmark
 
 
 METADATA = 'pyproject.toml'
@@ -77,7 +83,7 @@ def load_metadata(metafile, defaults=None):
         raise ValueError('missing benchmark version')
 
     metafile = merged.pop('metafile')
-    merged['spec'] = BenchmarkSpec(
+    merged['spec'] = _benchmark.BenchmarkSpec(
         merged.pop('name'),
         merged.pop('version'),
         # XXX Should we leave this (origin) blank?
@@ -88,6 +94,9 @@ def load_metadata(metafile, defaults=None):
 
     return merged, filename
 
+
+#######################################
+# internal implementation
 
 def _name_from_filename(metafile):
     rootdir, basename = os.path.split(metafile)
