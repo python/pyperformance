@@ -1,6 +1,6 @@
 import os.path
 
-from .. import __version__
+from .. import __version__, DATA_DIR
 from .. import benchmark as _benchmark
 from . import _manifest
 
@@ -9,9 +9,7 @@ from ._manifest import expand_benchmark_groups
 from ._selections import parse_selection, iter_selections
 
 
-DEFAULTS_DIR = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)),
-        '_benchmarks')
+DEFAULTS_DIR = os.path.join(DATA_DIR, 'benchmarks')
 DEFAULT_MANIFEST = os.path.join(DEFAULTS_DIR, 'MANIFEST')
 
 
