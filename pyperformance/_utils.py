@@ -106,9 +106,11 @@ def run_command(command, env=None, *, hide_stderr=True):
 #######################################
 # misc utils
 
-def check_name(name, *, loose=False):
+def check_name(name, *, loose=False, allownumeric=False):
     if not name or not isinstance(name, str):
         raise ValueError(f'bad name {name!r}')
+    if allownumeric:
+        name = f'_{name}'
     if not loose:
         if name.startswith('-'):
             raise ValueError(name)

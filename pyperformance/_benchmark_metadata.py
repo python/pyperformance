@@ -194,7 +194,7 @@ def _resolve(project, tool, filename):
 
 def _resolve_value(field, value, rootdir):
     if field == 'name':
-        _utils.check_name(value)
+        _utils.check_name(value, allownumeric=True)
     elif field == 'metafile':
         assert False, 'unreachable'
     elif field == 'tags':
