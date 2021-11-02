@@ -1,14 +1,60 @@
+
+__all__ = [
+    'BenchmarksManifest',
+    'load_manifest',
+    'parse_manifest',
+    'expand_benchmark_groups',
+]
+
+
 from collections import namedtuple
 import os.path
 
-from .. import benchmark as _benchmark, _utils
 
+from . import __version__, DATA_DIR
+from . import _manifest
+from . import benchmark as _benchmark
+
+
+DEFAULTS_DIR = os.path.join(DATA_DIR, 'benchmarks')
+DEFAULT_MANIFEST = os.path.join(DEFAULTS_DIR, 'MANIFEST')
 
 BENCH_COLUMNS = ('name', 'version', 'origin', 'metafile')
 BENCH_HEADER = '\t'.join(BENCH_COLUMNS)
 
 
 BenchmarksManifest = namedtuple('BenchmarksManifest', 'benchmarks groups')
+
+
+def load_manifest(filename, *, resolve=None):
+    if not filename:
+        filename = DEFAULT_MANIFEST
+    else:
+        filename = os.path.abspath(filename)
+    if resolve is None:
+        if filename == DEFAULT_MANIFEST:
+            def resolve(bench):
+                if isinstance(bench, _benchmark.Benchmark):
+                    spec = bench.spec
+                else:
+                    spec = bench
+                    bench = _benchmark.Benchmark(spec, '<bogus>')
+                    bench.metafile = None
+
+                if not spec.version:
+                    spec = spec._replace(version=__version__)
+                if not spec.origin:
+                    spec = spec._replace(origin='<default>')
+                bench.spec = spec
+
+                if not bench.metafile:
+                    metafile = os.path.join(DEFAULTS_DIR,
+                                            f'bm_{bench.name}',
+                                            'pyproject.toml')
+                    bench.metafile = metafile
+                return bench
+    with open(filename) as infile:
+        return _manifest.parse_manifest(infile, resolve=resolve, filename=filename)
 
 
 def parse_manifest(text, *, resolve=None, filename=None):
@@ -56,6 +102,9 @@ def expand_benchmark_groups(bench, groups):
         for bench in benchmarks or ():
             yield from expand_benchmark_groups(bench, groups)
 
+
+#######################################
+# internal implementation
 
 def _iter_sections(lines):
     lines = (line.split('#')[0].strip()

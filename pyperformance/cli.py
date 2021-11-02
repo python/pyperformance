@@ -3,7 +3,7 @@ import logging
 import os.path
 import sys
 
-from pyperformance import _utils, benchmarks as _benchmarks
+from pyperformance import _utils, _manifest, _benchmark_selections
 from pyperformance.venv import exec_in_virtualenv, cmd_venv
 
 
@@ -186,7 +186,7 @@ def parse_args():
 def _select_benchmarks(raw, manifest):
     # Get the raw list of benchmarks.
     entries = raw.lower()
-    parse_entry = (lambda o, s: _benchmarks.parse_selection(s, op=o))
+    parse_entry = (lambda o, s: _benchmark_selections.parse_selection(s, op=o))
     parsed = _utils.parse_selections(entries, parse_entry)
     parsed_infos = list(parsed)
 
@@ -200,7 +200,7 @@ def _select_benchmarks(raw, manifest):
 
     # Get the selections.
     selected = []
-    for bench in _benchmarks.iter_selections(manifest, parsed_infos):
+    for bench in _benchmark_selections.iter_selections(manifest, parsed_infos):
         if isinstance(bench, str):
             logging.warning(f"no benchmark named {bench!r}")
             continue
@@ -213,7 +213,7 @@ def _main():
 
     if hasattr(options, 'manifest'):
         # Load and update the manifest.
-        manifest = _benchmarks.load_manifest(options.manifest)
+        manifest = _manifest.load_manifest(options.manifest)
         if 'all' not in manifest.groups:
             manifest.groups['all'] = list(manifest.benchmarks)
     if hasattr(options, 'benchmarks'):

@@ -1,6 +1,12 @@
-from .._utils import check_name, parse_name_pattern, parse_tag_pattern
-from ..benchmark import parse_benchmark, Benchmark
-from ._manifest import expand_benchmark_groups
+
+__all__ = [
+    'parse_selection',
+    'iter_selections',
+]
+
+
+from . import _utils, _manifest
+from . import benchmark as _benchmark
 
 
 def parse_selection(selection, *, op=None):
@@ -10,25 +16,25 @@ def parse_selection(selection, *, op=None):
     # * a benchmark pattern
     # * a tag
     # * a tag pattern
-    parsed = parse_benchmark(selection, fail=False)
+    parsed = _benchmark.parse_benchmark(selection, fail=False)
     spec, metafile = parsed if parsed else (None, None)
     if parsed and spec.version:
         kind = 'benchmark'
         spec, metafile = parsed
         if metafile:
-            parsed = Benchmark(spec, metafile)
+            parsed = _benchmark.Benchmark(spec, metafile)
         else:
             parsed = spec
     elif parsed and (spec.origin or metafile):
         raise NotImplementedError(selection)
     else:
-        parsed = parse_tag_pattern(selection)
+        parsed = _utils.parse_tag_pattern(selection)
         if parsed:
             kind = 'tag'
         else:
             kind = 'name'
-            parsed = parse_name_pattern(selection, fail=True)
-#            parsed = parse_name_pattern(selection, fail=False)
+            parsed = _utils.parse_name_pattern(selection, fail=True)
+#            parsed = _utils.parse_name_pattern(selection, fail=False)
             if not parsed:
                 raise ValueError(f'unsupported selection {selection!r}')
     return op or '+', selection, kind, parsed
@@ -61,6 +67,9 @@ def iter_selections(manifest, selections, *, unique=True):
             yield bench
 
 
+#######################################
+# internal implementation
+
 def _match_selection(manifest, kind, parsed, byname):
     if kind == 'benchmark':
         bench = parsed
@@ -89,7 +98,7 @@ def _match_selection(manifest, kind, parsed, byname):
         else:
             raise ValueError(f'unsupported selection {parsed!r}')
         for group in groups:
-            yield from expand_benchmark_groups(group, manifest.groups)
+            yield from _manifest.expand_benchmark_groups(group, manifest.groups)
     elif kind == 'name':
         if callable(parsed):
             match_bench = parsed
@@ -104,7 +113,7 @@ def _match_selection(manifest, kind, parsed, byname):
             elif name in manifest.groups:
                 yield from _match_selection(manifest, 'tag', name, byname)
             else:
-                check_name(name)
+                _utils.check_name(name)
                 # No match!  The caller can handle this as they like.
                 yield name
     else:
