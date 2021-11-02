@@ -8,3 +8,4 @@ dynamic = ["version"]
 [tool.pyperformance]
 name = "python_startup_no_site"
 extra_opts = ["--no-site"]
+tags = "startup"

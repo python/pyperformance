@@ -7,4 +7,5 @@ dynamic = ["version"]
 
 [tool.pyperformance]
 name = "unpickle_list"
+tags = "serialize"
 extra_opts = ["unpickle_list"]

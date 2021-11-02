@@ -7,3 +7,4 @@ dynamic = ["version"]
 
 [tool.pyperformance]
 name = "float"
+tags = "math"

@@ -10,3 +10,4 @@ dynamic = ["version"]
 
 [tool.pyperformance]
 name = "tornado_http"
+tags = "apps"

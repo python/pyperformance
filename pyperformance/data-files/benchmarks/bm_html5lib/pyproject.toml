@@ -10,3 +10,4 @@ dynamic = ["version"]
 
 [tool.pyperformance]
 name = "html5lib"
+tags = "apps"

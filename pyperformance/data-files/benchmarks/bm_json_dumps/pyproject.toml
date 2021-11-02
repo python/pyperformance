@@ -7,3 +7,4 @@ dynamic = ["version"]
 
 [tool.pyperformance]
 name = "json_dumps"
+tags = "serialize"

@@ -7,3 +7,4 @@ dynamic = ["version"]
 
 [tool.pyperformance]
 name = "2to3"
+tags = "apps"

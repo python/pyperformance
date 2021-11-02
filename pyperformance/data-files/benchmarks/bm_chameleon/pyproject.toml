@@ -10,3 +10,4 @@ dynamic = ["version"]
 
 [tool.pyperformance]
 name = "chameleon"
+tags = "apps"
