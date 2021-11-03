@@ -66,7 +66,7 @@ def parse_manifest(text, *, resolve=None, filename=None):
             filename = getattr(text, 'name', None)
 
     benchmarks = None
-    groups = {}
+    groups = {'default': None}
     for section, seclines in _iter_sections(lines):
         if section == 'benchmarks':
             benchmarks = _parse_benchmarks(seclines, resolve, filename)
@@ -80,6 +80,26 @@ def parse_manifest(text, *, resolve=None, filename=None):
             _, _, group = section.partition(' ')
             groups[group] = _parse_group(group, seclines, benchmarks)
     _check_groups(groups)
+
+    if groups['default'] is None:
+        groups['default'] = [b.name for name in benchmarks or ()]
+
+    # Fill in groups from benchmark tags.
+    tags = {}
+    for bench in benchmarks or ():
+        for tag in getattr(bench, 'tags', ()):
+            if tag in tags:
+                tags[tag].append(bench)
+            else:
+                tags[tag] = [bench]
+    tags.pop('default', None)  # "default" is manifest-specific.
+    if list(groups) == ['default']:
+        groups.update(tags)
+    else:
+        for group in groups:
+            if groups[group] is None:
+                groups[group] = tags.get(group)
+
     # XXX Update tags for each benchmark with member groups.
     return BenchmarksManifest(benchmarks, groups)
 

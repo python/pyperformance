@@ -55,13 +55,13 @@ unpickle_pure_python	<local:pickle>
 xml_etree	<local>
 
 
-[groups]
-startup
-regex
-serialize
-apps
-math
-template
+#[groups]
+#startup
+#regex
+#serialize
+#apps
+#math
+#template
 
 
 [group default]
@@ -115,44 +115,3 @@ unpickle
 unpickle_list
 unpickle_pure_python
 xml_etree
-
-
-[group startup]
-python_startup
-python_startup_no_site
-#hg_startup
-
-
-[group regex]
-regex_v8
-regex_effbot
-regex_compile
-regex_dna
-
-
-[group serialize]
-pickle_pure_python
-unpickle_pure_python  # Not for Python 3
-pickle
-unpickle
-xml_etree
-json_dumps
-json_loads
-
-
-[group apps]
-2to3
-chameleon
-#html5lib
-tornado_http
-
-
-[group math]
-float
-nbody
-pidigits
-
-
-[group template]
-django_template
-mako
