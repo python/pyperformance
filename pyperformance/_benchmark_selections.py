@@ -85,7 +85,6 @@ def _match_selection(manifest, kind, parsed, byname):
             # No match!  The caller can handle this as they like.
             yield str(bench)
     elif kind == 'tag':
-        # XXX Instad, walk all benchmarks to check the "tags" field?
         groups = []
         if callable(parsed):
             match_tag = parsed
