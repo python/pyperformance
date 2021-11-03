@@ -58,7 +58,12 @@ def cmd_list(options, benchmarks):
 def cmd_list_groups(manifest):
     all_benchmarks = set(manifest.benchmarks)
 
-    for group, specs in sorted(manifest.groups.items()):
+    groups = sorted(manifest.groups)
+    groups.remove('all')
+    groups.remove('default')
+    groups[0:0] = ['all', 'default']
+    for group in groups:
+        specs = manifest.groups[group]
         known = set(specs or ()) & all_benchmarks
         if not known:
             # skip empty groups
