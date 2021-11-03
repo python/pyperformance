@@ -111,22 +111,23 @@ class Benchmark:
             return self._rootdir
 
     def _init_metadata(self):
-        if self._metadata is not None:
-            raise NotImplementedError
+        #assert self._metadata is None
+        defaults = {
+            'name': self.name,
+            'version': self.version,
+        }
+        self._metadata, _ = _benchmark_metadata.load_metadata(
+            self.metafile,
+            defaults,
+        )
 
     def _get_metadata_value(self, key, default):
         try:
             return self._metadata[key]
         except TypeError:
-            if self._metadata is None:
-                defaults = {
-                    'name': self.name,
-                    'version': self.version,
-                }
-                self._metadata, _ = _benchmark_metadata.load_metadata(
-                    self.metafile,
-                    defaults,
-                )
+            if self._metadata is not None:
+                raise  # re-raise
+            self._init_metadata()
         except KeyError:
             pass
         return self._metadata.setdefault(key, default)
