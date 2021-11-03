@@ -25,7 +25,7 @@ PEP_621_FIELDS = {
     #'urls': '',
 }
 TOOL_FIELDS = {
-    #'metabase': None,
+    #'inherits': None,
     'metafile': None,
     'name': None,
     'tags': None,
@@ -69,7 +69,7 @@ def load_metadata(metafile, defaults=None):
 
     defaults = _ensure_defaults(defaults, rootdir)
     base, basefile = _resolve_base(
-            tool.get('metabase'),  # XXX Pop it?
+            tool.get('inherits'),  # XXX Pop it?
             project,
             filename,
             defaults,
@@ -146,7 +146,7 @@ def _resolve_base(metabase, project, filename, defaults, *,
     if project is not None and minimalwithbase:
         unexpected = set(project) - {'name', 'dynamic', 'dependencies'}
         if unexpected:
-            raise ValueError(f'[project] should be minimal if "metabase" is provided, got extra {sorted(unexpected)}')
+            raise ValueError(f'[project] should be minimal if "inherits" is provided, got extra {sorted(unexpected)}')
 
     if metabase == '..':
         metabase = os.path.join(
