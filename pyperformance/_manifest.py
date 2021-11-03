@@ -206,7 +206,23 @@ def _parse_group(name, lines, benchmarks):
 
     group = []
     seen = set()
+    unresolved = 0
     for line in lines:
+        if line.startswith('-'):
+            # Exclude a benchmark.
+            if unresolved:
+                raise NotImplementedError(line)
+            if not group:
+                group.extend(benchmarks)
+            excluded = line[1:]
+            _benchmark.check_name(excluded)
+            try:
+                bench = byname[excluded]
+            except KeyError:
+                raise NotImplementedError(line)
+            if bench in group:
+                group.remove(bench)
+            continue
         benchname = line
         _benchmark.check_name(benchname)
         if benchname in seen:
@@ -216,6 +232,7 @@ def _parse_group(name, lines, benchmarks):
         else:
             # It may be a group.  We check later.
             group.append(benchname)
+            unresolved += 1
     return group
 
 
