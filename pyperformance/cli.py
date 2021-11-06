@@ -211,6 +211,7 @@ def _select_benchmarks(raw, manifest):
 def _main():
     parser, options = parse_args()
 
+    manifest = benchmarks = None
     if hasattr(options, 'manifest'):
         # Load and update the manifest.
         manifest = _manifest.load_manifest(options.manifest)

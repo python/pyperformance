@@ -82,7 +82,7 @@ def parse_manifest(text, *, resolve=None, filename=None):
     _check_groups(groups)
 
     if groups['default'] is None:
-        groups['default'] = [b.name for b in benchmarks or ()]
+        groups['default'] = list(benchmarks or ())
 
     # Fill in groups from benchmark tags.
     tags = {}
