@@ -462,10 +462,11 @@ class VirtualEnvironment(object):
         self.run_cmd(cmd)
 
     def create(self):
-        if self.exists():
-            return
-
         venv_path = self.get_path()
+        if self.exists():
+            print("Installing the virtual environment %s" % venv_path)
+            self._install_reqs()
+            return
 
         print("Creating the virtual environment %s" % venv_path)
         try:
