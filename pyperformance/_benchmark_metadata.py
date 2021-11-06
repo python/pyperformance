@@ -80,6 +80,17 @@ def load_metadata(metafile, defaults=None):
     if not merged.get('name'):
         raise ValueError('missing benchmark name')
     if not merged.get('version'):
+        print('====================')
+        from pprint import pprint
+        print('top:')
+        pprint(top)
+        print('base:')
+        pprint(base)
+        print('defaults:')
+        pprint(defaults)
+        print('merged:')
+        pprint(merged)
+        print('====================')
         raise ValueError('missing benchmark version')
 
     metafile = merged.pop('metafile')
