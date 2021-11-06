@@ -82,7 +82,7 @@ def parse_manifest(text, *, resolve=None, filename=None):
     _check_groups(groups)
 
     if groups['default'] is None:
-        groups['default'] = [b.name for name in benchmarks or ()]
+        groups['default'] = [b.name for b in benchmarks or ()]
 
     # Fill in groups from benchmark tags.
     tags = {}
@@ -183,7 +183,7 @@ def _parse_benchmarks(lines, resolve, filename):
 
 
 def _resolve_metafile(metafile, name, localdir):
-    if not metafile.startswith('<') and not metafile.endswith('>'):
+    if not metafile.startswith('<') or not metafile.endswith('>'):
         return metafile
 
     directive, _, extra = metafile[1:-1].partition(':')

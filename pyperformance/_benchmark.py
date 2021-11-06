@@ -68,7 +68,7 @@ class Benchmark:
         self.metafile = metafile
 
     def __repr__(self):
-        return f'{type(self).__name__}(spec={self.spec}, metafile={self.metafile})'
+        return f'{type(self).__name__}(spec={self.spec!r}, metafile={self.metafile!r})'
 
     def __hash__(self):
         return hash(self.spec)
