@@ -96,7 +96,10 @@ class Benchmark:
 
     @property
     def version(self):
-        return self.spec.version
+        version = self.spec.version
+        if version is None:
+            version = self._get_metadata_value('version', None)
+        return version
 
     @property
     def origin(self):
@@ -113,8 +116,8 @@ class Benchmark:
     def _init_metadata(self):
         #assert self._metadata is None
         defaults = {
-            'name': self.name,
-            'version': self.version,
+            'name': self.spec.name,
+            'version': self.spec.version,
         }
         self._metadata, _ = _benchmark_metadata.load_metadata(
             self.metafile,
