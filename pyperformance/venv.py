@@ -464,8 +464,9 @@ class VirtualEnvironment(object):
     def create(self):
         venv_path = self.get_path()
         if self.exists():
-            print("Installing the virtual environment %s" % venv_path)
-            self._install_reqs()
+            if self.bench:
+                print("Installing the virtual environment %s" % venv_path)
+                self._install_reqs()
             return
 
         print("Creating the virtual environment %s" % venv_path)
