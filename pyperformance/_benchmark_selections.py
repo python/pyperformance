@@ -91,12 +91,14 @@ def _match_selection(manifest, kind, parsed, byname):
             for group in manifest.groups:
                 if match_tag(group):
                     groups.append(group)
+        elif parsed in ('all', 'default'):
+            groups.append(parsed)
         elif parsed in manifest.groups:
             groups.append(parsed)
         else:
             raise ValueError(f'unsupported selection {parsed!r}')
         for group in groups:
-            yield from _manifest.expand_benchmark_groups(group, manifest.groups)
+            yield from manifest.resolve_group(group)
     elif kind == 'name':
         if callable(parsed):
             match_bench = parsed

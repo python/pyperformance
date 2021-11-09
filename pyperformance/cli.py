@@ -215,8 +215,8 @@ def _main():
     if hasattr(options, 'manifest'):
         # Load and update the manifest.
         manifest = _manifest.load_manifest(options.manifest)
-        if 'all' not in manifest.groups:
-            manifest.groups['all'] = list(manifest.benchmarks)
+#        if 'all' not in manifest.groups:
+#            manifest.groups['all'] = list(manifest.benchmarks)
     if hasattr(options, 'benchmarks'):
         benchmarks = _select_benchmarks(options.benchmarks, manifest)
 

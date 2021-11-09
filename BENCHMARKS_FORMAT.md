@@ -194,9 +194,17 @@ manifests = ["...", "..."]
 
 ### Merging Manifests
 
-Note that the `pyperformance` CLI does not support passing multiple
-manifests.  Instead you must merge the files manually into another file
-and pass that.
+To combine manifests, use the `[includes]` section in the manifest:
+
+```
+[includes]
+project1/benchmarks/MANIFEST
+project2/benchmarks/MANIFEST
+<default>
+```
+
+Note that `<default>` is the same as including the manifest file
+for the default pyperformance benchmarks.
 
 
 ## Benchmark Metadata Files

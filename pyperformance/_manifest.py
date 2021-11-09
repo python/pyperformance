@@ -3,7 +3,6 @@ __all__ = [
     'BenchmarksManifest',
     'load_manifest',
     'parse_manifest',
-    'expand_benchmark_groups',
 ]
 
 
@@ -22,108 +21,210 @@ BENCH_COLUMNS = ('name', 'metafile')
 BENCH_HEADER = '\t'.join(BENCH_COLUMNS)
 
 
-BenchmarksManifest = namedtuple('BenchmarksManifest', 'benchmarks groups')
-
-
 def load_manifest(filename, *, resolve=None):
     if not filename:
         filename = DEFAULT_MANIFEST
+    sections = _parse_manifest_file(filename)
+    return BenchmarksManifest._from_sections(sections, resolve, filename)
+
+
+def parse_manifest(lines, *, resolve=None, filename=None):
+    if isinstance(lines, str):
+        lines = lines.splitlines()
     else:
-        filename = os.path.abspath(filename)
-    if resolve is None:
-        if filename == DEFAULT_MANIFEST:
-            def resolve(bench):
-                if isinstance(bench, _benchmark.Benchmark):
-                    spec = bench.spec
-                else:
-                    spec = bench
-                    bench = _benchmark.Benchmark(spec, '<bogus>')
-                    bench.metafile = None
-
-                if not spec.version:
-                    spec = spec._replace(version=__version__)
-                if not spec.origin:
-                    spec = spec._replace(origin='<default>')
-                bench.spec = spec
-
-                if not bench.metafile:
-                    metafile = os.path.join(DEFAULTS_DIR,
-                                            f'bm_{bench.name}',
-                                            'pyproject.toml')
-                    bench.metafile = metafile
-                return bench
-    with open(filename) as infile:
-        return parse_manifest(infile, resolve=resolve, filename=filename)
-
-
-def parse_manifest(text, *, resolve=None, filename=None):
-    if isinstance(text, str):
-        lines = text.splitlines()
-    else:
-        lines = iter(text)
         if not filename:
             # Try getting the filename from a file.
-            filename = getattr(text, 'name', None)
-
-    benchmarks = None
-    groups = {'default': None}
-    for section, seclines in _iter_sections(lines):
-        if section == 'benchmarks':
-            benchmarks = _parse_benchmarks(seclines, resolve, filename)
-        elif benchmarks is None:
-            raise ValueError('invalid manifest file, expected "benchmarks" section')
-        elif section == 'groups':
-            for group in seclines:
-                _utils.check_name(group)
-                groups.setdefault(group, None)
-        elif section.startswith('group '):
-            _, _, group = section.partition(' ')
-            groups[group] = _parse_group(group, seclines, benchmarks)
-    _check_groups(groups)
-
-    if groups['default'] is None:
-        groups['default'] = list(benchmarks or ())
-
-    # Fill in groups from benchmark tags.
-    tags = {}
-    for bench in benchmarks or ():
-        for tag in getattr(bench, 'tags', ()):
-            if tag in tags:
-                tags[tag].append(bench)
-            else:
-                tags[tag] = [bench]
-    tags.pop('default', None)  # "default" is manifest-specific.
-    if list(groups) == ['default']:
-        groups.update(tags)
-    else:
-        for group in groups:
-            if groups[group] is None:
-                groups[group] = tags.get(group)
-
-    # XXX Update tags for each benchmark with member groups.
-    return BenchmarksManifest(benchmarks, groups)
+            filename = getattr(lines, 'name', None)
+    sections = _parse_manifest(lines, filename)
+    return BenchmarksManifest._from_sections(sections, resolve, filename)
 
 
-def expand_benchmark_groups(bench, groups):
-    if isinstance(bench, str):
-        spec, metafile = _benchmark.parse_benchmark(bench)
-        if metafile:
-            bench = _benchmark.Benchmark(spec, metafile)
-        else:
-            bench = spec
-    elif isinstance(bench, _benchmark.Benchmark):
+def resolve_default_benchmark(bench):
+    if isinstance(bench, _benchmark.Benchmark):
         spec = bench.spec
     else:
         spec = bench
+        bench = _benchmark.Benchmark(spec, '<bogus>')
+        bench.metafile = None
 
-    if not groups:
-        yield bench
-    elif bench.name not in groups:
-        yield bench
-    else:
-        benchmarks = groups[bench.name]
-        for bench in benchmarks or ():
-            yield from expand_benchmark_groups(bench, groups)
+    if not spec.version:
+        spec = spec._replace(version=__version__)
+    if not spec.origin:
+        spec = spec._replace(origin='<default>')
+    bench.spec = spec
+
+    if not bench.metafile:
+        metafile = os.path.join(DEFAULTS_DIR,
+                                f'bm_{bench.name}',
+                                'pyproject.toml')
+        bench.metafile = metafile
+    return bench
+
+
+class BenchmarksManifest:
+
+    @classmethod
+    def _from_sections(cls, sections, resolve=None, filename=None):
+        self = cls(filename=filename)
+        self._add_sections(sections, resolve)
+        return self
+
+    def __init__(self, benchmarks=None, groups=None, filename=None):
+        self._raw_benchmarks = []
+        # XXX Support disabling all groups (except all and default)?
+        self._raw_groups = {}
+        self._raw_filename = filename
+        self._byname = {}
+        self._groups = None
+        self._tags = None
+
+        if benchmarks:
+            self._add_benchmarks(benchmarks)
+        if groups:
+            self._add_groups(groups)
+
+    def __repr__(self):
+        args = (f'{n}={getattr(self, "_raw_" + n)}'
+                for n in ('benchmarks', 'groups', 'filename'))
+        return f'{type(self).__name__}({", ".join(args)})'
+
+    @property
+    def benchmarks(self):
+        return list(self._byname.values())
+
+    @property
+    def groups(self):
+        names = self._custom_groups()
+        if not names:
+            names = set(self._get_tags())
+        return names
+
+    @property
+    def filename(self):
+        return self._raw_filename
+
+    def _add_sections(self, sections, resolve):
+        filename = self._raw_filename
+        _resolve = resolve
+        if resolve is None and filename == DEFAULT_MANIFEST:
+            _resolve = default_resolve = resolve_default_benchmark
+        sections_seen = {filename: set()}
+        lastfile = None
+        for filename, section, data in sections:
+            if filename != lastfile:
+                _resolve = resolve
+                if _resolve is None and filename == DEFAULT_MANIFEST:
+                    _resolve = resolve_default_benchmark
+            lastfile = filename
+
+            if filename not in sections_seen:
+                sections_seen[filename] = {section}
+            elif section in sections_seen[filename]:
+                # For now each section can only show up once.
+                raise NotImplementedError((section, data))
+            else:
+                sections_seen[filename].add(section)
+
+            if section == 'includes':
+                pass
+            elif section == 'benchmarks':
+                entries = ((s, m, filename) for s, m in data)
+                self._add_benchmarks(entries, _resolve)
+            elif section == 'groups':
+                for name in data:
+                    self._add_group(name, None)
+            elif section == 'group':
+                name, entries = data
+                self._add_group(name, entries)
+            else:
+                raise NotImplementedError((section, data))
+
+    def _add_benchmarks(self, entries, resolve):
+        for spec, metafile, filename in entries:
+            # XXX Ignore duplicates?
+            self._add_benchmark(spec, metafile, resolve, filename)
+
+    def _add_benchmark(self, spec, metafile, resolve, filename):
+        if spec.name in self._raw_groups:
+            raise ValueError(f'a group and a benchmark have the same name ({spec.name})')
+        if metafile:
+            if filename:
+                localdir = os.path.dirname(filename)
+                metafile = os.path.join(localdir, metafile)
+            bench = _benchmark.Benchmark(spec, metafile)
+        else:
+            metafile = None
+            bench = spec
+        self._raw_benchmarks.append((spec, metafile, filename))
+        if resolve is not None:
+            bench = resolve(bench)
+        self._byname[bench.name] = bench
+        self._groups = None  # Force re-resolution.
+        self._tags = None  # Force re-resolution.
+
+    def _add_group(self, name, entries):
+        if name in self._byname:
+            raise ValueError(f'a group and a benchmark have the same name ({name})')
+        if name == 'all':
+            # XXX Emit a warning?
+            return
+        if entries:
+            raw = self._raw_groups.get(name)
+            if raw is None:
+                raw = self._raw_groups[name] = list(entries) if entries else None
+            elif entries is not None:
+                raw.extend(entries)
+        elif name in self._raw_groups:
+            return
+        else:
+            self._raw_groups[name] = None
+        self._groups = None  # Force re-resolution.
+
+    def _custom_groups(self):
+        return set(self._raw_groups) - {'all', 'default'}
+
+    def _get_tags(self):
+        if self._tags is None:
+            self._tags = _get_tags(self._byname.values())
+            self._tags.pop('all', None)  # It is manifest-specific.
+            self._tags.pop('default', None)  # It is manifest-specific.
+        return self._tags
+
+    def _resolve_groups(self):
+        if self._groups is not None:
+            return self._groups
+
+        raw = {}
+        for name, entries in self._raw_groups.items():
+            if entries and entries[0][0] == '-':
+                entries = list(entries)
+                entries.insert(0, ('+', '<all>'))
+            raw[name] = entries
+        self._groups = _resolve_groups(raw, self._byname)
+        return self._groups
+
+    def resolve_group(self, name, *, fail=True):
+        if name == 'all':
+            benchmarks = self._byname.values()
+        elif name == 'default':
+            if 'default' not in self._raw_groups:
+                benchmarks = self._byname.values()
+            else:
+                groups = self._resolve_groups()
+                benchmarks = groups.get(name)
+        elif not self._custom_groups():
+            benchmarks = self._get_tags().get(name)
+            if benchmarks is None and fail:
+                raise KeyError(name)
+        else:
+            groups = self._resolve_groups()
+            benchmarks = groups.get(name)
+            if not benchmarks:
+                if name in (set(self._raw_groups) - {'default'}):
+                    benchmarks = self._get_tags().get(name, ())
+                elif fail:
+                    raise KeyError(name)
+        yield from benchmarks or ()
 
 
 #######################################
@@ -153,93 +254,157 @@ def _iter_sections(lines):
         raise ValueError('invalid manifest file, no sections found')
 
 
-def _parse_benchmarks(lines, resolve, filename):
+def _parse_manifest_file(filename):
+    filename = os.path.abspath(filename)
+    with open(filename) as infile:
+        yield from _parse_manifest(infile, filename)
+
+
+def _parse_manifest(lines, filename):
+    for section, seclines in _iter_sections(lines):
+        if section == 'includes':
+            yield filename, section, list(seclines)
+            for line in seclines:
+                if line == '<default>':
+                    line = DEFAULT_MANIFEST
+                yield from _parse_manifest_file(line)
+        elif section == 'benchmarks':
+            yield filename, section, list(_parse_benchmarks_section(seclines))
+        elif section == 'groups':
+            yield filename, section, list(_parse_groups_section(seclines))
+        elif section.startswith('group '):
+            section, _, group = section.partition(' ')
+            entries = list(_parse_group_section(seclines))
+            yield filename, section, (group, entries)
+        else:
+            raise ValueError(f'unsupported section {section!r}')
+
+
+def _parse_benchmarks_section(lines):
     if not lines:
         lines = ['<empty>']
     lines = iter(lines)
     if next(lines) != BENCH_HEADER:
         raise ValueError('invalid manifest file, expected benchmarks table header')
 
-    localdir = os.path.dirname(filename)
-
-    benchmarks = []
     version = origin = None
     for line in lines:
         try:
             name, metafile = (None if l == '-' else l
-                                               for l in line.split('\t'))
+                              for l in line.split('\t'))
         except ValueError:
             raise ValueError(f'bad benchmark line {line!r}')
         spec = _benchmark.BenchmarkSpec(name or None, version, origin)
-        if metafile:
-            metafile = _resolve_metafile(metafile, name, localdir)
-            bench = _benchmark.Benchmark(spec, metafile)
+        metafile = _parse_metafile(metafile, name)
+        yield spec, metafile
+
+
+def _parse_metafile(metafile, name):
+    if not metafile:
+        return None
+    elif metafile.startswith('<') and metafile.endswith('>'):
+        directive, _, extra = metafile[1:-1].partition(':')
+        if directive == 'local':
+            if extra:
+                rootdir = f'bm_{extra}'
+                basename = f'bm_{name}.toml'
+            else:
+                rootdir = f'bm_{name}'
+                basename = 'pyproject.toml'
+            # A relative path will be resolved against the manifset file.
+            return os.path.join(rootdir, basename)
         else:
-            bench = spec
-        if resolve is not None:
-            bench = resolve(bench)
-        benchmarks.append(bench)
-    return benchmarks
-
-
-def _resolve_metafile(metafile, name, localdir):
-    if not metafile.startswith('<') or not metafile.endswith('>'):
-        return metafile
-
-    directive, _, extra = metafile[1:-1].partition(':')
-    if directive == 'local':
-        if extra:
-            rootdir = f'bm_{extra}'
-            basename = f'bm_{name}.toml'
-        else:
-            rootdir = f'bm_{name}'
-            basename = 'pyproject.toml'
-        return os.path.join(localdir, rootdir, basename)
+            raise ValueError(f'unsupported metafile directive {metafile!r}')
     else:
-        raise ValueError(f'unsupported metafile directive {metafile!r}')
+        return os.path.abspath(metafile)
 
 
-def _parse_group(name, lines, benchmarks):
-    byname = {b.name: b for b in benchmarks}
-    if name in byname:
-        raise ValueError(f'a group and a benchmark have the same name ({name})')
+def _parse_groups_section(lines):
+    for name in seclines:
+        _utils.check_name(name)
+        yield name
 
-    group = []
-    seen = set()
-    unresolved = 0
+
+def _parse_group_section(lines):
+    yielded = False
     for line in lines:
         if line.startswith('-'):
-            # Exclude a benchmark.
-            if unresolved:
-                raise NotImplementedError(line)
-            if not group:
-                group.extend(benchmarks)
-            excluded = line[1:]
-            _benchmark.check_name(excluded)
-            try:
-                bench = byname[excluded]
-            except KeyError:
-                raise NotImplementedError(line)
-            if bench in group:
-                group.remove(bench)
-            continue
-        benchname = line
-        _benchmark.check_name(benchname)
-        if benchname in seen:
-            continue
-        if benchname in byname:
-            group.append(byname[benchname])
+            # Exclude a benchmark or group.
+            op = '-'
+            name = line[1:]
+        elif line.startswith('+'):
+            op = '+'
+            name = line[1:]
         else:
-            # It may be a group.  We check later.
-            group.append(benchname)
-            unresolved += 1
-    return group
+            name = line
+        _benchmark.check_name(name)
+        yield op, name
+        yielded = True
 
 
-def _check_groups(groups):
-    for group, benchmarks in groups.items():
-        for bench in benchmarks or ():
-            if not isinstance(bench, str):
-                continue
-            elif bench not in groups:
-                raise ValueError(f'unknown benchmark {name!r} (in group {group!r})')
+def _get_tags(benchmarks):
+    # Fill in groups from benchmark tags.
+    tags = {}
+    for bench in benchmarks:
+        for tag in getattr(bench, 'tags', ()):
+            if tag in tags:
+                tags[tag].append(bench)
+            else:
+                tags[tag] = [bench]
+    return tags
+
+
+def _resolve_groups(rawgroups, byname):
+    benchmarks = set(byname.values())
+    tags = None
+    groups = {
+        'all': list(benchmarks),
+    }
+    unresolved = {}
+    for groupname, entries in rawgroups.items():
+        if groupname == 'all':
+            continue
+        if not entries:
+            if groupname == 'default':
+                groups[groupname] = list(benchmarks)
+            else:
+                if tags is None:
+                    tags = _get_tags(benchmarks)
+                groups[groupname] = tags.get(groupname, ())
+            continue
+        assert entries[0][0] == '+', (groupname, entries)
+        unresolved[groupname] = names = set()
+        for op, name in entries:
+            if op == '+':
+                if name == '<all>':
+                    names.update(byname)
+                elif name in byname or name in rawgroups:
+                    names.add(name)
+            elif op == '-':
+                if name == '<all>':
+                    raise NotImplementedError((groupname, op, name))
+                elif name in byname or name in rawgroups:
+                    if name in names:
+                        names.remove(name)
+            else:
+                raise NotImplementedError((groupname, op, name))
+    while unresolved:
+        for groupname, names in list(unresolved.items()):
+            benchmarks = set()
+            for name in names:
+                if name in byname:
+                    benchmarks.add(byname[name])
+                elif name in groups:
+                    benchmarks.update(groups[name])
+                    names.remove(name)
+                elif name == groupname:
+                    names.remove(name)
+                    break
+                else:  # name in unresolved
+                    names.remove(name)
+                    names.extend(unresolved[name])
+                    break
+            else:
+                groups[groupname] = benchmarks
+                del unresolved[groupname]
+    return groups
