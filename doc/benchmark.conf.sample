@@ -64,6 +64,9 @@ install = True
 # Run "sudo python3 -m pyperf system tune" before running benchmarks?
 system_tune = True
 
+# --manifest option for 'pyperformance run'
+manifest =
+
 # --benchmarks option for 'pyperformance run'
 benchmarks =
 
