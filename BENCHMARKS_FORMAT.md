@@ -9,9 +9,10 @@ For each benchmark, there are two required files and several optional
 ones.  Those files are expected to be in a specific directory structure
 (unless customized in the metadata).
 
-The structure (see below) is such that it's much easier to maintain
+The structure (see below) is such that it's easy to maintain
 a benchmark (or set of benchmarks) on GitHub and distribute it on PyPI.
 It also simplifies publishing a Python project's benchmarks.
+The alternative is pointing people at a repo.
 
 Benchmarks can inherit metadata from other metadata files.
 This is useful for keeping common metadata for a set of benchmarks
@@ -54,18 +55,19 @@ When a benchmark has variants, each has its own metadata file next to
 the normal "pyproject.toml", named "bm_NAME.toml".  (Note the "bm\_" prefix.)
 The format of variant metadata files is exactly the same.  `pyperformance`
 treats them the same, except that the sibling "pyproject.toml" is
-inherited by default).
+inherited by default.
 
 
 ## Manifest Files
 
 A manifest file identifies a set of benchmarks, as well as (optionally)
 how they should be grouped.  `pyperformance` uses the manifest to
-determine which benchmarks are available to run (and thus which to run).
+determine which benchmarks are available to run (and thus which to run
+by default).
 
 A manifest normally looks like this:
 
-````
+```
 [benchmarks]
 
 name	metafile
@@ -140,13 +142,28 @@ bench3	anotherdir/mybench.toml
 This means by default only "bench2" and "bench3" are run.
 
 
+### Merging Manifests
+
+To combine manifests, use the `[includes]` section in the manifest:
+
+```
+[includes]
+project1/benchmarks/MANIFEST
+project2/benchmarks/MANIFEST
+<default>
+```
+
+Note that `<default>` is the same as including the manifest file
+for the default pyperformance benchmarks.
+
+
 ### A Local Benchmark Suite
 
 Often a project will have more than one benchmark that it will treat
 as a suite.  `pyperformance` handles this without any extra work.
 
 In the dirctory holding the manifest file put all the benchmarks.  Then
-you will `<local>` in the "metafile" column, like this:
+put `<local>` in the "metafile" column, like this:
 
 ```
 [benchmarks]
@@ -191,20 +208,7 @@ manifest = "..."
 manifests = ["...", "..."]
 ```
 
-
-### Merging Manifests
-
-To combine manifests, use the `[includes]` section in the manifest:
-
-```
-[includes]
-project1/benchmarks/MANIFEST
-project2/benchmarks/MANIFEST
-<default>
-```
-
-Note that `<default>` is the same as including the manifest file
-for the default pyperformance benchmarks.
+(Reminder: that is the pyproject.toml, not the manifest file.)
 
 
 ## Benchmark Metadata Files
