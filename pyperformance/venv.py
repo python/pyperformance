@@ -461,10 +461,10 @@ class VirtualEnvironment(object):
         cmd = pip_program + ['freeze']
         self.run_cmd(cmd)
 
-    def create(self):
+    def create(self, refresh=True):
         venv_path = self.get_path()
         if self.exists():
-            if self.bench:
+            if refresh:
                 print("Installing the virtual environment %s" % venv_path)
                 self._install_reqs()
             return
