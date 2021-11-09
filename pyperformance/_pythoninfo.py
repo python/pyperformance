@@ -129,6 +129,8 @@ def _inspect_python_install(executable, prefix, base_prefix,
                 base_executable = executable
             else:
                 raise NotImplementedError(stdlib_dir)
+        else:
+            base_executable = executable
         is_dev = False
 
     return base_executable, is_dev, is_venv
