@@ -92,8 +92,10 @@ except ImportError:
     MAGIC_NUMBER = _imp.get_magic()
 
 
-def _inspect_python_install(executable, prefix, base_prefix, platlibdir,
-                            stdlib_dir, version_info, **_ignored):
+def _inspect_python_install(executable, prefix, base_prefix,
+                            platlibdir, stdlib_dir,
+                            version_info, platform, implementation_name,
+                            **_ignored):
     is_venv = prefix != base_prefix
 
     if os.path.basename(stdlib_dir) == 'Lib':
@@ -118,8 +120,11 @@ def _inspect_python_install(executable, prefix, base_prefix, platlibdir,
                 # XXX This is good enough for now.
                 base_executable = executable
                 #raise NotImplementedError(stdlib_dir)
-        else:
-            expected = os.path.join(prefix, platlibdir, python)
+        elif implementation_name == 'cpython':
+            if platform == 'win32':
+                expected = os.path.join(prefix, platlibdir)
+            else:
+                expected = os.path.join(prefix, platlibdir, python)
             if stdlib_dir == expected:
                 base_executable = executable
             else:
