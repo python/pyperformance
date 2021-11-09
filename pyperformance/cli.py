@@ -1,4 +1,5 @@
 import argparse
+import contextlib
 import logging
 import os.path
 import sys
@@ -136,9 +137,18 @@ def parse_args():
     # venv
     cmd = subparsers.add_parser('venv',
                                 help='Actions on the virtual environment')
-    cmd.add_argument("venv_action", nargs="?",
-                     choices=('show', 'create', 'recreate', 'remove'),
-                     default='show')
+    cmd.set_defaults(venv_action='show')
+    cmds.append(cmd)
+    venvsubs = cmd.add_subparsers(dest="venv_action")
+    cmd = venvsubs.add_parser('show')
+    cmds.append(cmd)
+    cmd = venvsubs.add_parser('create')
+    filter_opts(cmd)
+    cmds.append(cmd)
+    cmd = venvsubs.add_parser('recreate')
+    filter_opts(cmd)
+    cmds.append(cmd)
+    cmd = venvsubs.add_parser('remove')
     cmds.append(cmd)
 
     for cmd in cmds:
@@ -157,7 +167,6 @@ def parse_args():
                          default=sys.executable)
         cmd.add_argument("--venv",
                          help="Path to the virtual environment")
-    filter_opts(cmd)
 
     options = parser.parse_args()
 
@@ -181,6 +190,29 @@ def parse_args():
         options.python = abs_python
 
     return (parser, options)
+
+
+@contextlib.contextmanager
+def _might_need_venv(options):
+    try:
+        yield
+    except ModuleNotFoundError:
+        if not options.inside_venv:
+            print('switching to a venv.')
+            exec_in_virtualenv(options)
+        raise  # re-raise
+
+
+def _manifest_from_options(options):
+    from pyperformance import _manifest
+    return _manifest.load_manifest(options.manifest)
+
+
+def _benchmarks_from_options(options):
+    if not getattr(options, 'benchmarks', None):
+        return None
+    manifest = _manifest_from_options(options)
+    return _select_benchmarks(options.benchmarks, manifest)
 
 
 def _select_benchmarks(raw, manifest):
@@ -213,17 +245,9 @@ def _select_benchmarks(raw, manifest):
 def _main():
     parser, options = parse_args()
 
-    manifest = benchmarks = None
-    if hasattr(options, 'manifest'):
-        from pyperformance import _manifest
-        # Load and update the manifest.
-        manifest = _manifest.load_manifest(options.manifest)
-#        if 'all' not in manifest.groups:
-#            manifest.groups['all'] = list(manifest.benchmarks)
-    if hasattr(options, 'benchmarks'):
-        benchmarks = _select_benchmarks(options.benchmarks, manifest)
-
     if options.action == 'venv':
+        with _might_need_venv(options):
+            benchmarks = _benchmarks_from_options(options)
         cmd_venv(options, benchmarks)
         sys.exit()
     elif options.action == 'compile':
@@ -242,20 +266,24 @@ def _main():
         from pyperformance.compare import cmd_show
         cmd_show(options)
         sys.exit()
-
-    if not options.inside_venv:
-        exec_in_virtualenv(options)
-
-    from pyperformance.cli_run import cmd_run, cmd_list, cmd_list_groups
-
-    if options.action == 'run':
+    elif options.action == 'run':
+        with _might_need_venv(options):
+            from pyperformance.cli_run import cmd_run
+            benchmarks = _benchmarks_from_options(options)
         cmd_run(options, benchmarks)
     elif options.action == 'compare':
-        from pyperformance.compare import cmd_compare
+        with _might_need_venv(options):
+            from pyperformance.compare import cmd_compare
         cmd_compare(options)
     elif options.action == 'list':
+        with _might_need_venv(options):
+            from pyperformance.cli_run import cmd_list
+            benchmarks = _benchmarks_from_options(options)
         cmd_list(options, benchmarks)
     elif options.action == 'list_groups':
+        with _might_need_venv(options):
+            from pyperformance.cli_run import cmd_list_groups
+            manifest = _manifest_from_options(options)
         cmd_list_groups(manifest)
     else:
         parser.print_help()

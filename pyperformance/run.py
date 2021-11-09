@@ -8,7 +8,6 @@ try:
 except ImportError:
     multiprocessing = None
 
-import pyperf
 import pyperformance
 from . import _utils, _pythoninfo
 from . import venv as _venv
@@ -73,6 +72,7 @@ def run_benchmarks(should_run, python, options):
 
     pyperf_opts = get_pyperf_opts(options)
 
+    import pyperf
     for index, bench in enumerate(to_run):
         name = bench.name
         print("[%s/%s] %s..." %
