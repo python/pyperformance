@@ -91,8 +91,6 @@ def _match_selection(manifest, kind, parsed, byname):
             for group in manifest.groups:
                 if match_tag(group):
                     groups.append(group)
-        elif parsed in ('all', 'default'):
-            groups.append(parsed)
         elif parsed in manifest.groups:
             groups.append(parsed)
         else:

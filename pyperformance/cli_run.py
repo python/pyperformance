@@ -58,7 +58,7 @@ def cmd_list(options, benchmarks):
 def cmd_list_groups(manifest):
     all_benchmarks = set(manifest.benchmarks)
 
-    groups = sorted(manifest.groups)
+    groups = sorted(manifest.groups - {'all', 'default'})
     groups[0:0] = ['all', 'default']
     for group in groups:
         specs = list(manifest.resolve_group(group))
