@@ -97,7 +97,7 @@ class BenchmarksManifest:
         names = self._custom_groups()
         if not names:
             names = set(self._get_tags())
-        return names
+        return names | {'all', 'default'}
 
     @property
     def filename(self):
