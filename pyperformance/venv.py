@@ -515,7 +515,7 @@ def cmd_venv(options, benchmarks=None):
             venv.create()
     elif action == 'recreate':
         if venv.exists():
-            if venv_path == sys.executable:
+            if venv.get_python_program() == sys.executable:
                 print("The virtual environment %s already exists" % venv_path)
                 venv.create()
             else:
