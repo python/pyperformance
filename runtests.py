@@ -7,7 +7,7 @@ import tempfile
 
 
 def run_cmd(cmd):
-    print("Execute: %s" % ' '.join(cmd), flush=True)
+    print("(runtests.py) Execute: %s" % ' '.join(cmd), flush=True)
     proc = subprocess.Popen(cmd)
     try:
         proc.wait()
