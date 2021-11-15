@@ -4,7 +4,7 @@ import logging
 import os.path
 import sys
 
-from pyperformance import _utils
+from pyperformance import _utils, is_installed
 from pyperformance.venv import exec_in_virtualenv, cmd_venv
 
 
@@ -244,6 +244,11 @@ def _select_benchmarks(raw, manifest):
 
 def _main():
     parser, options = parse_args()
+
+    if not is_installed():
+        assert not options.inside_venv
+        print('switching to a venv.')
+        exec_in_virtualenv(options)
 
     if options.action == 'venv':
         with _might_need_venv(options):
