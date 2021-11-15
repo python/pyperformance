@@ -7,7 +7,7 @@ import tempfile
 
 
 def run_cmd(cmd):
-    print("Execute: %s" % ' '.join(cmd))
+    print("Execute: %s" % ' '.join(cmd), flush=True)
     proc = subprocess.Popen(cmd)
     try:
         proc.wait()
@@ -15,10 +15,11 @@ def run_cmd(cmd):
         proc.kill()
         proc.wait()
         raise
+    sys.stdout.flush()
     exitcode = proc.returncode
     if exitcode:
         sys.exit(exitcode)
-    print("")
+    print("", flush=True)
 
 
 def run_tests(venv):
@@ -42,7 +43,7 @@ def run_tests(venv):
     run_bench(python, '-u', script, 'venv', 'create', '-b', 'all')
 
     egg_info = "pyperformance.egg-info"
-    print("Remove directory %s" % egg_info)
+    print("Remove directory %s" % egg_info, flush=True)
     try:
         shutil.rmtree(egg_info)
     except FileNotFoundError:
