@@ -956,6 +956,8 @@ def cmd_compile(options):
             conf.update = False
         if options.no_tune:
             conf.system_tune = False
+        if options.venv:
+            conf.venv = options.venv
     bench = BenchmarkRevision(conf, options.revision, options.branch,
                               patch=options.patch, options=options)
     bench.main()
