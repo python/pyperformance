@@ -185,7 +185,7 @@ def parse_args():
         abs_python = os.path.abspath(options.python)
         if not abs_python:
             print("ERROR: Unable to locate the Python executable: %r" %
-                  options.python)
+                  options.python, flush=True)
             sys.exit(1)
         options.python = abs_python
 
@@ -198,7 +198,7 @@ def _might_need_venv(options):
         yield
     except ModuleNotFoundError:
         if not options.inside_venv:
-            print('switching to a venv.')
+            print('switching to a venv.', flush=True)
             exec_in_virtualenv(options)
         raise  # re-raise
 
@@ -247,7 +247,7 @@ def _main():
 
     if not is_installed():
         assert not options.inside_venv
-        print('switching to a venv.')
+        print('switching to a venv.', flush=True)
         exec_in_virtualenv(options)
 
     if options.action == 'venv':
@@ -299,5 +299,5 @@ def main():
     try:
         _main()
     except KeyboardInterrupt:
-        print("Benchmark suite interrupted: exit!")
+        print("Benchmark suite interrupted: exit!", flush=True)
         sys.exit(1)
