@@ -43,7 +43,7 @@ def run_tests(venv):
     run_bench(python, '-u', script, 'venv', 'create', '-b', 'all')
 
     egg_info = "pyperformance.egg-info"
-    print("Remove directory %s" % egg_info, flush=True)
+    print("(runtests.py) Remove directory %s" % egg_info, flush=True)
     try:
         shutil.rmtree(egg_info)
     except FileNotFoundError:
