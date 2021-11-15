@@ -509,13 +509,16 @@ def cmd_venv(options, benchmarks=None):
 
     requirements = Requirements.from_benchmarks(benchmarks)
 
+    print(2, options.venv)
     venv = VirtualEnvironment(
         options.python,
         options.venv,
         inherit_environ=options.inherit_environ,
         requirements=requirements,
     )
+    print(3, options.venv)
     venv_path = venv.get_path()
+    print(4, venv_path)
 
     if action == 'create':
         if not venv.exists():
@@ -528,8 +531,10 @@ def cmd_venv(options, benchmarks=None):
         if venv.exists():
             if venv.get_python_program() == sys.executable:
                 print("The virtual environment %s already exists" % venv_path)
+                print("(it matches the currently running Python executable)")
                 venv.create()
             else:
+                print("The virtual environment %s already exists" % venv_path)
                 shutil.rmtree(venv_path)
                 print("The old virtual environment %s has been removed" % venv_path)
                 print()

@@ -253,6 +253,7 @@ def _main():
     if options.action == 'venv':
         with _might_need_venv(options):
             benchmarks = _benchmarks_from_options(options)
+        print(1, options.venv)
         cmd_venv(options, benchmarks)
         sys.exit()
     elif options.action == 'compile':
