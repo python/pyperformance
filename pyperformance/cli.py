@@ -243,7 +243,9 @@ def _select_benchmarks(raw, manifest):
 
 
 def _main():
+    print(sys.argv)
     parser, options = parse_args()
+    print(options)
 
     if not is_installed():
         assert not options.inside_venv
