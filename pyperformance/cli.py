@@ -243,9 +243,7 @@ def _select_benchmarks(raw, manifest):
 
 
 def _main():
-    print(sys.argv)
     parser, options = parse_args()
-    print(options)
 
     if not is_installed():
         assert not options.inside_venv
@@ -253,6 +251,8 @@ def _main():
         exec_in_virtualenv(options)
 
     if options.action == 'venv':
+        print(sys.argv)
+        print(options)
         with _might_need_venv(options):
             benchmarks = _benchmarks_from_options(options)
         print(1, options.venv)
