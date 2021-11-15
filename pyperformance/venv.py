@@ -506,21 +506,22 @@ def cmd_venv(options, benchmarks=None):
     venv = VirtualEnvironment(options, requirements=requirements)
     venv_path = venv.get_path()
 
-    if action in ('create', 'recreate'):
-        recreated = False
-        if action == 'recreate' and venv.exists():
-            recreated = True
+    if action == 'create':
+        if not venv.exists():
+            venv.create()
+            print("The virtual environment %s has been created" % venv_path)
+        else:
+            print("The virtual environment %s already exists" % venv_path)
+    elif action == 'recreate':
+        if venv.exists():
             shutil.rmtree(venv_path)
             print("The old virtual environment %s has been removed" % venv_path)
             print()
-
-        if not venv.exists():
             venv.create()
-
-            what = 'recreated' if recreated else 'created'
-            print("The virtual environment %s has been %s" % (venv_path, what))
+            print("The virtual environment %s has been recreated" % venv_path)
         else:
-            print("The virtual environment %s already exists" % venv_path)
+            venv.create()
+            print("The virtual environment %s has been created" % venv_path)
 
     elif action == 'remove':
         if os.path.exists(venv_path):
