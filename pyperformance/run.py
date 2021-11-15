@@ -62,8 +62,14 @@ def run_benchmarks(should_run, python, options):
     venvs = set()
     for bench in to_run:
         bench_runid = runid._replace(bench=bench)
-        venv = _venv.VirtualEnvironment(options, bench, bench_runid.name,
-                                        usebase=True)
+        venv = _venv.VirtualEnvironment(
+            options.python,
+            options.venv,
+            inherit_environ=options.inherit_environ,
+            bench=bench,
+            name=bench_runid.name,
+            usebase=True,
+        )
         venv.create(refresh=venv.get_path() not in venvs)
         venvs.add(venv.get_path())
         benchmarks[bench] = (venv, bench_runid)

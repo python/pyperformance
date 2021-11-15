@@ -170,19 +170,21 @@ def download(url, filename):
 
 class VirtualEnvironment(object):
 
-    def __init__(self, options, bench=None, name=None, *,
+    def __init__(self, python, root=None, *,
+                 inherit_environ=None,
+                 bench=None,
+                 name=None,
                  requirements=None,
                  usebase=False,
                  ):
-        python = options.python
         if usebase:
             python, _, _ = _pythoninfo.inspect_python_install(python)
 
-        self.options = options
         self.python = python
-        self.bench = bench
+        self.inherit_environ = inherit_environ or None
+        self.bench = bench or None
         self._name = name or None
-        self._venv_path = options.venv
+        self._venv_path = root or None
         self._pip_program = None
         self._force_old_pip = False
         self.requirements = requirements
@@ -213,7 +215,7 @@ class VirtualEnvironment(object):
         sys.stdout.flush()
         sys.stderr.flush()
 
-        env = create_environ(self.options.inherit_environ)
+        env = create_environ(self.inherit_environ)
         try:
             proc = subprocess.Popen(cmd, env=env)
         except OSError as exc:
@@ -480,7 +482,11 @@ class VirtualEnvironment(object):
 
 
 def exec_in_virtualenv(options):
-    venv = VirtualEnvironment(options)
+    venv = VirtualEnvironment(
+        options.python,
+        options.venv,
+        inherit_environ=options.inherit_environ,
+    )
 
     venv.create()
     venv_python = venv.get_python_program()
@@ -503,7 +509,12 @@ def cmd_venv(options, benchmarks=None):
 
     requirements = Requirements.from_benchmarks(benchmarks)
 
-    venv = VirtualEnvironment(options, requirements=requirements)
+    venv = VirtualEnvironment(
+        options.python,
+        options.venv,
+        inherit_environ=options.inherit_environ,
+        requirements=requirements,
+    )
     venv_path = venv.get_path()
 
     if action == 'create':
