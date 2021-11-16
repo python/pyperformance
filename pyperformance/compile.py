@@ -411,6 +411,10 @@ class Python(Task):
 
 
 class BenchmarkRevision(Application):
+
+    #_dryrun = False
+    _dryrun = True
+
     def __init__(self, conf, revision, branch=None, patch=None,
                  setup_log=True, filename=None, commit_date=None,
                  options=None):
@@ -496,8 +500,10 @@ class BenchmarkRevision(Application):
 
     def create_venv(self):
         # Create venv
-        cmd = [self.python.program, '-u', '-m', 'pyperformance',
-               'venv', 'recreate']
+        python = self.python.program
+        if self._dryrun:
+            python = sys.executable
+        cmd = [python, '-u', '-m', 'pyperformance', 'venv', 'recreate']
         if self.conf.venv:
             cmd.extend(('--venv', self.conf.venv))
         if self.options.inherit_environ:
@@ -508,7 +514,10 @@ class BenchmarkRevision(Application):
 
     def run_benchmark(self):
         self.safe_makedirs(os.path.dirname(self.filename))
-        cmd = [self.python.program, '-u',
+        python = self.python.program
+        if self._dryrun:
+            python = sys.executable
+        cmd = [python, '-u',
                '-m', 'pyperformance',
                'run',
                '--verbose',
@@ -675,10 +684,11 @@ class BenchmarkRevision(Application):
     def compile_bench(self):
         self.python = Python(self, self.conf)
 
-        try:
-            self.compile_install()
-        except SystemExit:
-            sys.exit(EXIT_COMPILE_ERROR)
+        if not self._dryrun:
+            try:
+                self.compile_install()
+            except SystemExit:
+                sys.exit(EXIT_COMPILE_ERROR)
 
         self.create_venv()
 
