@@ -13,7 +13,7 @@ def comma_separated(values):
     return list(filter(None, values))
 
 
-def filter_opts(cmd):
+def filter_opts(cmd, *, benchrequired=True):
     cmd.add_argument("--manifest", help="benchmark manifest file to use")
 
     cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST",
@@ -23,6 +23,11 @@ def filter_opts(cmd):
                            " there are no positive arguments, we'll run all"
                            " benchmarks except the negative arguments. "
                            " Otherwise we run only the positive arguments."))
+    cmd.set_defaults(use_benchmarks_default=True)
+    if not benchrequired:
+        cmd.add_argument('--no-benchmarks-default',
+                         dest='use_benchmarks_default',
+                         action='store_false')
 
 
 def parse_args():
@@ -142,10 +147,10 @@ def parse_args():
     cmd = venvsubs.add_parser('show')
     cmds.append(cmd)
     cmd = venvsubs.add_parser('create')
-    filter_opts(cmd)
+    filter_opts(cmd, benchrequired=False)
     cmds.append(cmd)
     cmd = venvsubs.add_parser('recreate')
-    filter_opts(cmd)
+    filter_opts(cmd, benchrequired=False)
     cmds.append(cmd)
     cmd = venvsubs.add_parser('remove')
     cmds.append(cmd)
@@ -189,7 +194,7 @@ def parse_args():
         options.python = abs_python
 
     if hasattr(options, 'benchmarks'):
-        if not options.benchmarks:
+        if not options.benchmarks and options.use_benchmarks_default:
             options.benchmarks = '<default>'
 
     return (parser, options)
