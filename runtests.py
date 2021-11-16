@@ -49,7 +49,7 @@ def run_tests(venv):
     except FileNotFoundError:
         pass
 
-    run_bench(python, '-u', script, 'venv')
+    run_bench(python, '-u', script, 'venv', 'create')
 
     for filename in (
         os.path.join('pyperformance', 'tests', 'data', 'py36.json'),
