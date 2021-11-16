@@ -53,6 +53,19 @@ def check_dir(dirname):
         raise ValueError(f'directory missing ({dirname})')
 
 
+def resolve_file(filename, relroot=None):
+    resolved = os.path.normpath(filename)
+    resolved = os.path.expanduser(resolved)
+    #resolved = os.path.expandvars(filename)
+    if not os.path.isabs(resolved):
+        if not relroot:
+            relroot = os.getcwd()
+        elif not os.path.isabs(relroot):
+            raise NotImplementedError(relroot)
+        resolved = os.path.join(relroot, resolved)
+    return resolved
+
+
 #######################################
 # platform utils
 
