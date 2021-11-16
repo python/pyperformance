@@ -226,6 +226,26 @@ class BenchmarksManifest:
                     raise KeyError(name)
         yield from benchmarks or ()
 
+    def show(self, *, raw=True, resolved=True):
+        yield self.filename
+        yield 'groups:'
+        if raw:
+            yield f' {self._raw_groups}'
+        if resolved:
+            yield f' {self.groups}'
+        yield 'default:'
+        if resolved:
+            for i, bench in enumerate(self.resolve_group('default')):
+                yield f' {i:>2} {bench}'
+        if raw:
+            yield 'benchmarks (raw):'
+            for i, bench in enumerate(self._raw_benchmarks):
+                yield f' {i:>2} {bench}'
+        if resolved:
+            yield 'benchmarks:'
+            for i, bench in enumerate(self.benchmarks):
+                yield f' {i:>2} {bench}'
+
 
 #######################################
 # internal implementation
