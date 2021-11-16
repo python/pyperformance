@@ -744,6 +744,13 @@ def parse_config(filename, command):
         # strip spaces
         return value.strip()
 
+    def getfile(section, key, default=None):
+        value = getstr(section, key, default)
+        if not value:
+            return value
+        value = os.path.expanduser(value)
+        return value
+
     def getboolean(section, key, default):
         try:
             sectionobj = cfgobj[section]
@@ -752,19 +759,19 @@ def parse_config(filename, command):
             return default
 
     # [config]
-    conf.json_dir = os.path.expanduser(getstr('config', 'json_dir'))
+    conf.json_dir = getfile('config', 'json_dir')
     conf.json_patch_dir = os.path.join(conf.json_dir, 'patch')
     conf.uploaded_json_dir = os.path.join(conf.json_dir, 'uploaded')
     conf.debug = getboolean('config', 'debug', False)
 
     if parse_compile:
         # [scm]
-        conf.repo_dir = os.path.expanduser(getstr('scm', 'repo_dir'))
+        conf.repo_dir = getfile('scm', 'repo_dir')
         conf.update = getboolean('scm', 'update', True)
         conf.git_remote = getstr('config', 'git_remote', default='remotes/origin')
 
         # [compile]
-        conf.directory = os.path.expanduser(getstr('compile', 'bench_dir'))
+        conf.directory = getfile('compile', 'bench_dir')
         conf.lto = getboolean('compile', 'lto', True)
         conf.pgo = getboolean('compile', 'pgo', True)
         conf.install = getboolean('compile', 'install', True)
@@ -772,7 +779,7 @@ def parse_config(filename, command):
 
         # [run_benchmark]
         conf.system_tune = getboolean('run_benchmark', 'system_tune', True)
-        conf.manifest = getstr('run_benchmark', 'manifest', default='')
+        conf.manifest = getfile('run_benchmark', 'manifest')
         conf.benchmarks = getstr('run_benchmark', 'benchmarks', default='')
         conf.affinity = getstr('run_benchmark', 'affinity', default='')
         conf.upload = getboolean('run_benchmark', 'upload', False)
