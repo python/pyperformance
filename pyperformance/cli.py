@@ -250,11 +250,8 @@ def _main():
         exec_in_virtualenv(options)
 
     if options.action == 'venv':
-        print(sys.argv)
-        print(options)
         with _might_need_venv(options):
             benchmarks = _benchmarks_from_options(options)
-        print(1, options.venv)
         cmd_venv(options, benchmarks)
         sys.exit()
     elif options.action == 'compile':
