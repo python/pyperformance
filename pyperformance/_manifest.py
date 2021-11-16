@@ -275,18 +275,22 @@ def _iter_sections(lines):
 
 
 def _parse_manifest_file(filename):
-    filename = os.path.abspath(filename)
+    relroot = os.path.dirname(filename)
+    filename = _utils.resolve_file(filename, relroot)
     with open(filename) as infile:
         yield from _parse_manifest(infile, filename)
 
 
 def _parse_manifest(lines, filename):
+    relroot = os.path.dirname(filename)
     for section, seclines in _iter_sections(lines):
         if section == 'includes':
             yield filename, section, list(seclines)
             for line in seclines:
                 if line == '<default>':
                     line = DEFAULT_MANIFEST
+                else:
+                    line = _utils.resolve_file(line, relroot)
                 yield from _parse_manifest_file(line)
         elif section == 'benchmarks':
             yield filename, section, list(_parse_benchmarks_section(seclines))
