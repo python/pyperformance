@@ -502,7 +502,8 @@ class BenchmarkRevision(Application):
         python = self.python.program
         if self._dryrun:
             python = sys.executable
-        cmd = [python, '-u', '-m', 'pyperformance', 'venv', 'recreate']
+        cmd = [python, '-u', '-m', 'pyperformance', 'venv', 'recreate',
+               '--benchmarks', '<NONE>']
         if self.conf.venv:
             cmd.extend(('--venv', self.conf.venv))
         if self.options.inherit_environ:

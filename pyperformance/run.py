@@ -61,11 +61,13 @@ def run_benchmarks(should_run, python, options):
     benchmarks = {}
     venvs = set()
     if options.venv:
-        venvs.add(_venv.VirtualEnvironment(
+        venv = _venv.VirtualEnvironment(
             options.python,
             options.venv,
             inherit_environ=options.inherit_environ,
-        ))
+        )
+        venv.ensure(refresh=False)
+        venvs.add(venv.get_path())
     for bench in to_run:
         bench_runid = runid._replace(bench=bench)
         assert bench_runid.name, (bench, bench_runid)
@@ -76,7 +78,10 @@ def run_benchmarks(should_run, python, options):
             name=bench_runid.name,
             usebase=True,
         )
-        venv.ensure(refresh=venv.get_path() not in venvs)
+        print(f'creating venv for benchmark ({bench.name})')
+        alreadyseen = venv.get_path() in venvs
+        venv.ensure(refresh=not alreadyseen)
+        # XXX Do not override when there is a requirements collision.
         venv.install_reqs(bench)
         venvs.add(venv.get_path())
         benchmarks[bench] = (venv, bench_runid)
