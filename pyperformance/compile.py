@@ -412,8 +412,7 @@ class Python(Task):
 
 class BenchmarkRevision(Application):
 
-    #_dryrun = False
-    _dryrun = True
+    _dryrun = False
 
     def __init__(self, conf, revision, branch=None, patch=None,
                  setup_log=True, filename=None, commit_date=None,
