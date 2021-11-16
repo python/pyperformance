@@ -60,6 +60,12 @@ def run_benchmarks(should_run, python, options):
 
     benchmarks = {}
     venvs = set()
+    if options.venv:
+        venvs.add(_venv.VirtualEnvironment(
+            options.python,
+            options.venv,
+            inherit_environ=options.inherit_environ,
+        ))
     for bench in to_run:
         bench_runid = runid._replace(bench=bench)
         venv = _venv.VirtualEnvironment(
