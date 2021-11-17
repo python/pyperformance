@@ -87,6 +87,7 @@ def run_benchmarks(should_run, python, options):
             venv.install_reqs(bench)
         except _venv.RequirementsInstallationFailedError:
             print('(benchmark will be skipped)')
+            print()
             venv = None
         venvs.add(venv_path)
         benchmarks[bench] = (venv, bench_runid)
