@@ -237,6 +237,29 @@ class Application(object):
                 raise
 
 
+def resolve_python(prefix, builddir, *, fallback=True):
+    if sys.platform in ('darwin', 'win32'):
+        program_ext = '.exe'
+    else:
+        program_ext = ''
+
+    if prefix:
+        if sys.platform == 'darwin':
+            program_ext = ''
+        program = os.path.join(prefix, "bin", "python3" + program_ext)
+        exists = os.path.exists(program)
+        if not exists and fallback:
+            program2 = os.path.join(prefix, "bin", "python" + program_ext)
+            if os.path.exists(program2):
+                program = program2
+                exists = True
+    else:
+        assert builddir
+        program = os.path.join(builddir, "python" + program_ext)
+        exists = os.path.exists(program)
+    return program, exists
+
+
 class Python(Task):
     def __init__(self, app, conf):
         super().__init__(app, conf.build_dir)
@@ -246,27 +269,6 @@ class Python(Task):
         self.logger = app.logger
         self.program = None
         self.hexversion = None
-
-    def resolve_program(self):
-        if sys.platform in ('darwin', 'win32'):
-            program_ext = '.exe'
-        else:
-            program_ext = ''
-
-        if self.conf.install:
-            prefix = self.conf.prefix
-
-            if sys.platform == 'darwin':
-                program_ext = ''
-
-            program = os.path.join(prefix, "bin", "python3" + program_ext)
-            if not os.path.exists(program):
-                program = os.path.join(prefix, "bin", "python" + program_ext)
-        else:
-            program = os.path.join(self.conf.build_dir, "python" + program_ext)
-        if not os.path.exists(program):
-            program = None
-        return program
 
     def patch(self, filename):
         if not filename:
@@ -309,11 +311,17 @@ class Python(Task):
             self.run('make')
 
     def install_python(self):
-        program = self.resolve_program()
+        program, _ = resolve_python(
+            self.conf.prefix if self.conf.install else None,
+            self.conf.build_dir,
+        )
         if self.conf.install:
+            program, _ = resolve_python(self.conf.prefix, self.conf.build_dir)
             self.app.safe_rmdir(self.conf.prefix)
             self.app.safe_makedirs(self.conf.prefix)
             self.run('make', 'install')
+        else:
+            program, _ = resolve_python(None, self.conf.build_dir)
         # else don't install: run python from the compilation directory
         self.program = program
 
@@ -507,8 +515,11 @@ class BenchmarkRevision(Application):
         # Create venv
         python = self.python.program
         if self._dryrun:
-            python = self.python.resolve_program()
-            if not os.path.exists(python):
+            program, exists = resolve_python(
+                self.conf.prefix if self.conf.installed else None,
+                self.conf.build_dir,
+            )
+            if not exists:
                 python = sys.executable
         cmd = [python, '-u', '-m', 'pyperformance', 'venv', 'recreate',
                '--benchmarks', '<NONE>']
