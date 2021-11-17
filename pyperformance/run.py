@@ -123,9 +123,11 @@ def run_benchmarks(should_run, python, options):
             return dest_suite
 
         bench_venv, bench_runid = benchmarks.get(bench)
+        if bench_venv is None:
+            print("ERROR: Benchmark %s failed: could not install requirements" % name)
+            errors.append(name)
+            continue
         try:
-            if bench_venv is None:
-                raise Exception('could not install requirements')
             result = bench.run(
                 python,
                 bench_runid,
