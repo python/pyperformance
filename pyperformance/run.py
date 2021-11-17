@@ -79,11 +79,16 @@ def run_benchmarks(should_run, python, options):
             usebase=True,
         )
         print(f'({i+1:>2}/{len(to_run)}) creating venv for benchmark ({bench.name})')
-        alreadyseen = venv.get_path() in venvs
+        venv_path = venv.get_path()
+        alreadyseen = venv_path in venvs
         venv.ensure(refresh=not alreadyseen)
-        # XXX Do not override when there is a requirements collision.
-        venv.install_reqs(bench)
-        venvs.add(venv.get_path())
+        try:
+            # XXX Do not override when there is a requirements collision.
+            venv.install_reqs(bench)
+        except _venv.RequirementsInstallationFailedError:
+            print('(benchmark will be skipped)')
+            venv = None
+        venvs.add(venv_path)
         benchmarks[bench] = (venv, bench_runid)
 
     suite = None
@@ -118,6 +123,8 @@ def run_benchmarks(should_run, python, options):
 
         bench_venv, bench_runid = benchmarks.get(bench)
         try:
+            if bench_venv is None:
+                raise Exception('could not install requirements')
             result = bench.run(
                 python,
                 bench_runid,

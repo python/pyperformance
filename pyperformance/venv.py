@@ -27,6 +27,10 @@ def is_build_dir():
     return os.path.exists(os.path.join(root_dir, 'setup.py'))
 
 
+class RequirementsInstallationFailedError(Exception):
+    pass
+
+
 class Requirements(object):
 
     @classmethod
@@ -468,7 +472,7 @@ class VirtualEnvironment(object):
         else:
             self.create(install)
 
-    def install_reqs(self, requirements=None):
+    def install_reqs(self, requirements=None, *, exitonerror=False):
         venv_path = self.get_path()
         print("Installing requirements into the virtual environment %s" % venv_path)
 
@@ -497,8 +501,13 @@ class VirtualEnvironment(object):
 
             # install requirements
             cmd = pip_program + ['install']
-            cmd.extend(requirements.iter_non_optional())
-            self.run_cmd(cmd)
+            reqs = list(requirements.iter_non_optional())
+            cmd.extend(reqs)
+            exitcode = self.run_cmd_nocheck(cmd)
+            if exitcode:
+                if exitonerror:
+                    sys.exit(exitcode)
+                raise RequirementsInstallationFailedError(reqs)
 
             # install optional requirements
             for req in requirements.iter_optional():
@@ -555,7 +564,7 @@ def cmd_venv(options, benchmarks=None):
         if exists:
             print("The virtual environment %s already exists" % venv_path)
         venv.ensure()
-        venv.install_reqs(requirements)
+        venv.install_reqs(requirements, exitonerror=True)
         if not exists:
             print("The virtual environment %s has been created" % venv_path)
 
@@ -565,18 +574,18 @@ def cmd_venv(options, benchmarks=None):
                 print("The virtual environment %s already exists" % venv_path)
                 print("(it matches the currently running Python executable)")
                 venv.ensure()
-                venv.install_reqs(requirements)
+                venv.install_reqs(requirements, exitonerror=True)
             else:
                 print("The virtual environment %s already exists" % venv_path)
                 shutil.rmtree(venv_path)
                 print("The old virtual environment %s has been removed" % venv_path)
                 print()
                 venv.ensure()
-                venv.install_reqs(requirements)
+                venv.install_reqs(requirements, exitonerror=True)
                 print("The virtual environment %s has been recreated" % venv_path)
         else:
             venv.create()
-            venv.install_reqs(requirements)
+            venv.install_reqs(requirements, exitonerror=True)
             print("The virtual environment %s has been created" % venv_path)
 
     elif action == 'remove':
