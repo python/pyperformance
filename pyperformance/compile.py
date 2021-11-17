@@ -264,6 +264,8 @@ class Python(Task):
                 program = os.path.join(prefix, "bin", "python" + program_ext)
         else:
             program = os.path.join(self.conf.build_dir, "python" + program_ext)
+        if not os.path.exists(program):
+            program = None
         return program
 
     def patch(self, filename):
