@@ -516,10 +516,10 @@ class BenchmarkRevision(Application):
         python = self.python.program
         if self._dryrun:
             program, exists = resolve_python(
-                self.conf.prefix if self.conf.installed else None,
+                self.conf.prefix if self.conf.install else None,
                 self.conf.build_dir,
             )
-            if not exists:
+            if not python or not exists:
                 python = sys.executable
         cmd = [python, '-u', '-m', 'pyperformance', 'venv', 'recreate',
                '--benchmarks', '<NONE>']
