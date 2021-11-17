@@ -514,10 +514,6 @@ class BenchmarkRevision(Application):
             cmd.extend(('--venv', self.conf.venv))
         if self.options.inherit_environ:
             cmd.append('--inherit-environ=%s' % ','.join(self.options.inherit_environ))
-        if self.conf.manifest:
-            cmd.extend(('--manifest', self.conf.manifest))
-        if self.conf.benchmarks:
-            cmd.extend(('--benchmarks', self.conf.benchmarks))
         exitcode = self.run_nocheck(*cmd)
         if exitcode:
             sys.exit(EXIT_VENV_ERROR)
