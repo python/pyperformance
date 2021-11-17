@@ -247,6 +247,25 @@ class Python(Task):
         self.program = None
         self.hexversion = None
 
+    def resolve_program(self):
+        if sys.platform in ('darwin', 'win32'):
+            program_ext = '.exe'
+        else:
+            program_ext = ''
+
+        if self.conf.install:
+            prefix = self.conf.prefix
+
+            if sys.platform == 'darwin':
+                program_ext = ''
+
+            program = os.path.join(prefix, "bin", "python3" + program_ext)
+            if not os.path.exists(program):
+                program = os.path.join(prefix, "bin", "python" + program_ext)
+        else:
+            program = os.path.join(self.conf.build_dir, "python" + program_ext)
+        return program
+
     def patch(self, filename):
         if not filename:
             return
@@ -288,28 +307,13 @@ class Python(Task):
             self.run('make')
 
     def install_python(self):
-        if sys.platform in ('darwin', 'win32'):
-            program_ext = '.exe'
-        else:
-            program_ext = ''
-
+        program = self.resolve_program()
         if self.conf.install:
-            prefix = self.conf.prefix
-            self.app.safe_rmdir(prefix)
-            self.app.safe_makedirs(prefix)
-
+            self.app.safe_rmdir(self.conf.prefix)
+            self.app.safe_makedirs(self.conf.prefix)
             self.run('make', 'install')
-
-            if sys.platform == 'darwin':
-                program_ext = ''
-
-            self.program = os.path.join(prefix, "bin", "python" + program_ext)
-            if not os.path.exists(self.program):
-                self.program = os.path.join(prefix, "bin", "python3" + program_ext)
-        else:
-            # don't install: run python from the compilation directory
-            self.program = os.path.join(self.conf.build_dir,
-                                        "python" + program_ext)
+        # else don't install: run python from the compilation directory
+        self.program = program
 
     def get_version(self):
         # Dump the Python version
@@ -501,7 +505,9 @@ class BenchmarkRevision(Application):
         # Create venv
         python = self.python.program
         if self._dryrun:
-            python = sys.executable
+            python = self.python.resolve_program()
+            if not os.path.exists(python):
+                python = sys.executable
         cmd = [python, '-u', '-m', 'pyperformance', 'venv', 'recreate',
                '--benchmarks', '<NONE>']
         if self.conf.venv:
