@@ -233,8 +233,8 @@ def BM_nbody(python, options):
     return run_perf_script(python, options, "nbody")
 
 
-# def BM_html5lib(python, options):
-#     return run_perf_script(python, options, "html5lib")
+def BM_html5lib(python, options):
+    return run_perf_script(python, options, "html5lib")
 
 
 def BM_richards(python, options):
