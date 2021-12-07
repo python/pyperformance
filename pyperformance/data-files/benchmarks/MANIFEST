@@ -16,7 +16,7 @@ hexiom	<local>
 # FIXME: this benchmark fails with:
 # Unable to get the program 'hg' from the virtual environment
 #hg_startup	<local>
-#html5lib	<local>
+html5lib	<local>
 json_dumps	<local>
 json_loads	<local>
 logging	<local>
