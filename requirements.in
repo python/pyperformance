@@ -1,0 +1,25 @@
+# When one of these dependencies is upgraded, the pyperformance major version
+# should be increased to respect semantic versionning. Comparison between
+# two pyperformance results of two different major versions is not reliable.
+#
+# To rebuild requirements.txt:
+#
+#   pip-compile --upgrade -o requirements.txt requirements.in
+
+# pyperformance dependencies
+# --------------------------
+
+pyperf
+
+# for benchmark metadata:
+packaging
+toml
+
+
+# Optional dependencies
+# ---------------------
+#
+# The list of optional dependencies is hardcoded in pyperformance/venv.py
+
+# XXX Do we still need this?
+psutil

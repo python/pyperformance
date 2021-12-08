@@ -1,7 +1,10 @@
 import argparse
+import contextlib
+import logging
 import os.path
 import sys
 
+from pyperformance import _utils, is_installed
 from pyperformance.venv import exec_in_virtualenv, cmd_venv
 
 
@@ -10,14 +13,17 @@ def comma_separated(values):
     return list(filter(None, values))
 
 
-def filter_opts(cmd):
-    cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default="default",
+def filter_opts(cmd, *, allow_no_benchmarks=False):
+    cmd.add_argument("--manifest", help="benchmark manifest file to use")
+
+    cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default='<default>',
                      help=("Comma-separated list of benchmarks to run.  Can"
                            " contain both positive and negative arguments:"
                            "  --benchmarks=run_this,also_this,-not_this.  If"
                            " there are no positive arguments, we'll run all"
                            " benchmarks except the negative arguments. "
                            " Otherwise we run only the positive arguments."))
+    cmd.set_defaults(allow_no_benchmarks=allow_no_benchmarks)
 
 
 def parse_args():
@@ -89,6 +95,7 @@ def parse_args():
     cmd = subparsers.add_parser(
         'list_groups', help='List benchmark groups of the running Python')
     cmds.append(cmd)
+    cmd.add_argument("--manifest", help="benchmark manifest file to use")
 
     # compile
     cmd = subparsers.add_parser(
@@ -131,9 +138,17 @@ def parse_args():
     # venv
     cmd = subparsers.add_parser('venv',
                                 help='Actions on the virtual environment')
-    cmd.add_argument("venv_action", nargs="?",
-                     choices=('show', 'create', 'recreate', 'remove'),
-                     default='show')
+    cmd.set_defaults(venv_action='show')
+    venvsubs = cmd.add_subparsers(dest="venv_action")
+    cmd = venvsubs.add_parser('show')
+    cmds.append(cmd)
+    cmd = venvsubs.add_parser('create')
+    filter_opts(cmd, allow_no_benchmarks=True)
+    cmds.append(cmd)
+    cmd = venvsubs.add_parser('recreate')
+    filter_opts(cmd, allow_no_benchmarks=True)
+    cmds.append(cmd)
+    cmd = venvsubs.add_parser('remove')
     cmds.append(cmd)
 
     for cmd in cmds:
@@ -170,18 +185,81 @@ def parse_args():
         abs_python = os.path.abspath(options.python)
         if not abs_python:
             print("ERROR: Unable to locate the Python executable: %r" %
-                  options.python)
+                  options.python, flush=True)
             sys.exit(1)
         options.python = abs_python
 
+    if hasattr(options, 'benchmarks'):
+        if options.benchmarks == '<NONE>':
+            if not options.allow_no_benchmarks:
+                parser.error('--benchmarks cannot be empty')
+            options.benchmarks = None
+
     return (parser, options)
+
+
+@contextlib.contextmanager
+def _might_need_venv(options):
+    try:
+        yield
+    except ModuleNotFoundError:
+        if not options.inside_venv:
+            print('switching to a venv.', flush=True)
+            exec_in_virtualenv(options)
+        raise  # re-raise
+
+
+def _manifest_from_options(options):
+    from pyperformance import _manifest
+    return _manifest.load_manifest(options.manifest)
+
+
+def _benchmarks_from_options(options):
+    if not getattr(options, 'benchmarks', None):
+        return None
+    manifest = _manifest_from_options(options)
+    return _select_benchmarks(options.benchmarks, manifest)
+
+
+def _select_benchmarks(raw, manifest):
+    from pyperformance import _benchmark_selections
+
+    # Get the raw list of benchmarks.
+    entries = raw.lower()
+    parse_entry = (lambda o, s: _benchmark_selections.parse_selection(s, op=o))
+    parsed = _utils.parse_selections(entries, parse_entry)
+    parsed_infos = list(parsed)
+
+    # Disallow negative groups.
+    for op, _, kind, parsed in parsed_infos:
+        if callable(parsed):
+            continue
+        name = parsed.name if kind == 'benchmark' else parsed
+        if name in manifest.groups and op == '-':
+            raise ValueError(f'negative groups not supported: -{parsed.name}')
+
+    # Get the selections.
+    selected = []
+    for bench in _benchmark_selections.iter_selections(manifest, parsed_infos):
+        if isinstance(bench, str):
+            logging.warning(f"no benchmark named {bench!r}")
+            continue
+        selected.append(bench)
+    return selected
 
 
 def _main():
     parser, options = parse_args()
 
+    if not is_installed():
+        assert not options.inside_venv
+        print('switching to a venv.', flush=True)
+        exec_in_virtualenv(options)
+
     if options.action == 'venv':
-        cmd_venv(options)
+        with _might_need_venv(options):
+            benchmarks = _benchmarks_from_options(options)
+        cmd_venv(options, benchmarks)
         sys.exit()
     elif options.action == 'compile':
         from pyperformance.compile import cmd_compile
@@ -199,21 +277,25 @@ def _main():
         from pyperformance.compare import cmd_show
         cmd_show(options)
         sys.exit()
-
-    if not options.inside_venv:
-        exec_in_virtualenv(options)
-
-    from pyperformance.cli_run import cmd_run, cmd_list, cmd_list_groups
-
-    if options.action == 'run':
-        cmd_run(parser, options)
+    elif options.action == 'run':
+        with _might_need_venv(options):
+            from pyperformance.cli_run import cmd_run
+            benchmarks = _benchmarks_from_options(options)
+        cmd_run(options, benchmarks)
     elif options.action == 'compare':
-        from pyperformance.compare import cmd_compare
+        with _might_need_venv(options):
+            from pyperformance.compare import cmd_compare
         cmd_compare(options)
     elif options.action == 'list':
-        cmd_list(options)
+        with _might_need_venv(options):
+            from pyperformance.cli_run import cmd_list
+            benchmarks = _benchmarks_from_options(options)
+        cmd_list(options, benchmarks)
     elif options.action == 'list_groups':
-        cmd_list_groups(options)
+        with _might_need_venv(options):
+            from pyperformance.cli_run import cmd_list_groups
+            manifest = _manifest_from_options(options)
+        cmd_list_groups(manifest)
     else:
         parser.print_help()
         sys.exit(1)
@@ -223,5 +305,5 @@ def main():
     try:
         _main()
     except KeyboardInterrupt:
-        print("Benchmark suite interrupted: exit!")
+        print("Benchmark suite interrupted: exit!", flush=True)
         sys.exit(1)

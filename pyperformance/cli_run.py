@@ -5,18 +5,11 @@ import sys
 import pyperf
 
 import pyperformance
-from pyperformance.benchmarks import get_benchmarks, select_benchmarks
 from pyperformance.compare import display_benchmark_suite
 from pyperformance.run import run_benchmarks
 
 
-def get_benchmarks_to_run(options):
-    bench_funcs, bench_groups = get_benchmarks()
-    should_run = select_benchmarks(options.benchmarks, bench_groups)
-    return (bench_funcs, bench_groups, should_run)
-
-
-def cmd_run(parser, options):
+def cmd_run(options, benchmarks):
     logging.basicConfig(level=logging.INFO)
 
     print("Python benchmark suite %s" % pyperformance.__version__)
@@ -33,9 +26,8 @@ def cmd_run(parser, options):
     if not os.path.isabs(executable):
         print("ERROR: \"%s\" is not an absolute path" % executable)
         sys.exit(1)
-    bench_funcs, bench_groups, should_run = get_benchmarks_to_run(options)
-    cmd_prefix = [executable]
-    suite, errors = run_benchmarks(bench_funcs, should_run, cmd_prefix, options)
+
+    suite, errors = run_benchmarks(benchmarks, executable, options)
 
     if not suite:
         print("ERROR: No benchmark was run")
@@ -55,29 +47,27 @@ def cmd_run(parser, options):
         sys.exit(1)
 
 
-def cmd_list(options):
-    bench_funcs, bench_groups, all_funcs = get_benchmarks_to_run(options)
-
+def cmd_list(options, benchmarks):
     print("%r benchmarks:" % options.benchmarks)
-    for func in sorted(all_funcs):
-        print("- %s" % func)
+    for bench in sorted(benchmarks):
+        print("- %s" % bench.name)
     print()
-    print("Total: %s benchmarks" % len(all_funcs))
+    print("Total: %s benchmarks" % len(benchmarks))
 
 
-def cmd_list_groups(options):
-    bench_funcs, bench_groups = get_benchmarks()
+def cmd_list_groups(manifest):
+    all_benchmarks = set(manifest.benchmarks)
 
-    funcs = set(bench_groups['all'])
-    all_funcs = set(funcs)
-
-    for group, funcs in sorted(bench_groups.items()):
-        funcs = set(funcs) & all_funcs
-        if not funcs:
+    groups = sorted(manifest.groups - {'all', 'default'})
+    groups[0:0] = ['all', 'default']
+    for group in groups:
+        specs = list(manifest.resolve_group(group))
+        known = set(specs) & all_benchmarks
+        if not known:
             # skip empty groups
             continue
 
-        print("%s (%s):" % (group, len(funcs)))
-        for func in sorted(funcs):
-            print("- %s" % func)
+        print("%s (%s):" % (group, len(specs)))
+        for spec in sorted(specs):
+            print("- %s" % spec.name)
         print()

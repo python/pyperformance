@@ -18,7 +18,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 import pyperformance
-from pyperformance.utils import MS_WINDOWS
+from pyperformance._utils import MS_WINDOWS
 from pyperformance.venv import (GET_PIP_URL, REQ_OLD_PIP, PERFORMANCE_ROOT,
                                 download, is_build_dir)
 
@@ -237,6 +237,29 @@ class Application(object):
                 raise
 
 
+def resolve_python(prefix, builddir, *, fallback=True):
+    if sys.platform in ('darwin', 'win32'):
+        program_ext = '.exe'
+    else:
+        program_ext = ''
+
+    if prefix:
+        if sys.platform == 'darwin':
+            program_ext = ''
+        program = os.path.join(prefix, "bin", "python3" + program_ext)
+        exists = os.path.exists(program)
+        if not exists and fallback:
+            program2 = os.path.join(prefix, "bin", "python" + program_ext)
+            if os.path.exists(program2):
+                program = program2
+                exists = True
+    else:
+        assert builddir
+        program = os.path.join(builddir, "python" + program_ext)
+        exists = os.path.exists(program)
+    return program, exists
+
+
 class Python(Task):
     def __init__(self, app, conf):
         super().__init__(app, conf.build_dir)
@@ -288,28 +311,19 @@ class Python(Task):
             self.run('make')
 
     def install_python(self):
-        if sys.platform in ('darwin', 'win32'):
-            program_ext = '.exe'
-        else:
-            program_ext = ''
-
+        program, _ = resolve_python(
+            self.conf.prefix if self.conf.install else None,
+            self.conf.build_dir,
+        )
         if self.conf.install:
-            prefix = self.conf.prefix
-            self.app.safe_rmdir(prefix)
-            self.app.safe_makedirs(prefix)
-
+            program, _ = resolve_python(self.conf.prefix, self.conf.build_dir)
+            self.app.safe_rmdir(self.conf.prefix)
+            self.app.safe_makedirs(self.conf.prefix)
             self.run('make', 'install')
-
-            if sys.platform == 'darwin':
-                program_ext = ''
-
-            self.program = os.path.join(prefix, "bin", "python" + program_ext)
-            if not os.path.exists(self.program):
-                self.program = os.path.join(prefix, "bin", "python3" + program_ext)
         else:
-            # don't install: run python from the compilation directory
-            self.program = os.path.join(self.conf.build_dir,
-                                        "python" + program_ext)
+            program, _ = resolve_python(None, self.conf.build_dir)
+        # else don't install: run python from the compilation directory
+        self.program = program
 
     def get_version(self):
         # Dump the Python version
@@ -411,6 +425,9 @@ class Python(Task):
 
 
 class BenchmarkRevision(Application):
+
+    _dryrun = False
+
     def __init__(self, conf, revision, branch=None, patch=None,
                  setup_log=True, filename=None, commit_date=None,
                  options=None):
@@ -496,8 +513,16 @@ class BenchmarkRevision(Application):
 
     def create_venv(self):
         # Create venv
-        cmd = [self.python.program, '-u', '-m', 'pyperformance',
-               'venv', 'recreate']
+        python = self.python.program
+        if self._dryrun:
+            program, exists = resolve_python(
+                self.conf.prefix if self.conf.install else None,
+                self.conf.build_dir,
+            )
+            if not python or not exists:
+                python = sys.executable
+        cmd = [python, '-u', '-m', 'pyperformance', 'venv', 'recreate',
+               '--benchmarks', '<NONE>']
         if self.conf.venv:
             cmd.extend(('--venv', self.conf.venv))
         if self.options.inherit_environ:
@@ -508,13 +533,18 @@ class BenchmarkRevision(Application):
 
     def run_benchmark(self):
         self.safe_makedirs(os.path.dirname(self.filename))
-        cmd = [self.python.program, '-u',
+        python = self.python.program
+        if self._dryrun:
+            python = sys.executable
+        cmd = [python, '-u',
                '-m', 'pyperformance',
                'run',
                '--verbose',
                '--output', self.filename]
         if self.options.inherit_environ:
             cmd.append('--inherit-environ=%s' % ','.join(self.options.inherit_environ))
+        if self.conf.manifest:
+            cmd.extend(('--manifest', self.conf.manifest))
         if self.conf.benchmarks:
             cmd.append('--benchmarks=%s' % self.conf.benchmarks)
         if self.conf.affinity:
@@ -673,10 +703,11 @@ class BenchmarkRevision(Application):
     def compile_bench(self):
         self.python = Python(self, self.conf)
 
-        try:
-            self.compile_install()
-        except SystemExit:
-            sys.exit(EXIT_COMPILE_ERROR)
+        if not self._dryrun:
+            try:
+                self.compile_install()
+            except SystemExit:
+                sys.exit(EXIT_COMPILE_ERROR)
 
         self.create_venv()
 
@@ -742,6 +773,13 @@ def parse_config(filename, command):
         # strip spaces
         return value.strip()
 
+    def getfile(section, key, default=None):
+        value = getstr(section, key, default)
+        if not value:
+            return value
+        value = os.path.expanduser(value)
+        return value
+
     def getboolean(section, key, default):
         try:
             sectionobj = cfgobj[section]
@@ -750,19 +788,19 @@ def parse_config(filename, command):
             return default
 
     # [config]
-    conf.json_dir = os.path.expanduser(getstr('config', 'json_dir'))
+    conf.json_dir = getfile('config', 'json_dir')
     conf.json_patch_dir = os.path.join(conf.json_dir, 'patch')
     conf.uploaded_json_dir = os.path.join(conf.json_dir, 'uploaded')
     conf.debug = getboolean('config', 'debug', False)
 
     if parse_compile:
         # [scm]
-        conf.repo_dir = os.path.expanduser(getstr('scm', 'repo_dir'))
+        conf.repo_dir = getfile('scm', 'repo_dir')
         conf.update = getboolean('scm', 'update', True)
         conf.git_remote = getstr('config', 'git_remote', default='remotes/origin')
 
         # [compile]
-        conf.directory = os.path.expanduser(getstr('compile', 'bench_dir'))
+        conf.directory = getfile('compile', 'bench_dir')
         conf.lto = getboolean('compile', 'lto', True)
         conf.pgo = getboolean('compile', 'pgo', True)
         conf.install = getboolean('compile', 'install', True)
@@ -770,6 +808,7 @@ def parse_config(filename, command):
 
         # [run_benchmark]
         conf.system_tune = getboolean('run_benchmark', 'system_tune', True)
+        conf.manifest = getfile('run_benchmark', 'manifest')
         conf.benchmarks = getstr('run_benchmark', 'benchmarks', default='')
         conf.affinity = getstr('run_benchmark', 'affinity', default='')
         conf.upload = getboolean('run_benchmark', 'upload', False)
@@ -953,6 +992,8 @@ def cmd_compile(options):
             conf.update = False
         if options.no_tune:
             conf.system_tune = False
+        if options.venv:
+            conf.venv = options.venv
     bench = BenchmarkRevision(conf, options.revision, options.branch,
                               patch=options.patch, options=options)
     bench.main()

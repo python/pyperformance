@@ -1,5 +1,6 @@
 import errno
 import os
+import os.path
 import shutil
 import subprocess
 import sys
@@ -8,6 +9,7 @@ import urllib.request
 from shlex import quote as shell_quote
 
 import pyperformance
+from . import _utils, _pythoninfo
 
 
 GET_PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
@@ -15,6 +17,7 @@ REQ_OLD_PIP = 'pip==7.1.2'
 REQ_OLD_SETUPTOOLS = 'setuptools==18.5'
 
 PERFORMANCE_ROOT = os.path.realpath(os.path.dirname(__file__))
+REQUIREMENTS_FILE = os.path.join(pyperformance.DATA_DIR, 'requirements.txt')
 
 
 def is_build_dir():
@@ -24,8 +27,27 @@ def is_build_dir():
     return os.path.exists(os.path.join(root_dir, 'setup.py'))
 
 
+class RequirementsInstallationFailedError(Exception):
+    pass
+
+
 class Requirements(object):
-    def __init__(self, filename, optional):
+
+    @classmethod
+    def from_file(cls, filename, optional=None):
+        self = cls()
+        self._add_from_file(filename, optional)
+        return self
+
+    @classmethod
+    def from_benchmarks(cls, benchmarks):
+        self = cls()
+        for bench in benchmarks or ():
+            filename = bench.requirements_lockfile
+            self._add_from_file(filename)
+        return self
+
+    def __init__(self):
         # if pip or setuptools is updated:
         # .github/workflows/main.yml should be updated as well
 
@@ -45,30 +67,48 @@ class Requirements(object):
         ]
 
         # requirements
-        self.req = []
+        self.specs = []
 
         # optional requirements
-        self.optional = []
+        self._optional = set()
 
-        with open(filename) as fp:
-            for line in fp.readlines():
-                # strip comment
-                line = line.partition('#')[0]
-                line = line.rstrip()
-                if not line:
-                    continue
+    def __len__(self):
+        return len(self.specs)
 
-                # strip env markers
-                req = line.partition(';')[0]
+    def iter_non_optional(self):
+        for spec in self.specs:
+            if spec in self._optional:
+                continue
+            yield spec
 
-                # strip version
-                req = req.partition('==')[0]
-                req = req.partition('>=')[0]
+    def iter_optional(self):
+        for spec in self.specs:
+            if spec not in self._optional:
+                continue
+            yield spec
 
-                if req in optional:
-                    self.optional.append(line)
-                else:
-                    self.req.append(line)
+    def _add_from_file(self, filename, optional=None):
+        if not os.path.exists(filename):
+            return
+        for line in _utils.iter_clean_lines(filename):
+            self._add(line, optional)
+
+    def _add(self, line, optional=None):
+        self.specs.append(line)
+        if optional:
+            # strip env markers
+            req = line.partition(';')[0]
+            # strip version
+            req = req.partition('==')[0]
+            req = req.partition('>=')[0]
+            if req in optional:
+                self._optional.add(line)
+
+    def get(self, name):
+        for req in self.specs:
+            if req.startswith(name):
+                return req
+        return None
 
 
 def safe_rmtree(path):
@@ -136,12 +176,30 @@ def download(url, filename):
 
 
 class VirtualEnvironment(object):
-    def __init__(self, options):
-        self.options = options
-        self.python = options.python
-        self._venv_path = options.venv
+
+    def __init__(self, python, root=None, *,
+                 inherit_environ=None,
+                 name=None,
+                 usebase=False,
+                 ):
+        if usebase:
+            python, _, _ = _pythoninfo.inspect_python_install(python)
+
+        self.python = python
+        self.inherit_environ = inherit_environ or None
+        self._name = name or None
+        self._venv_path = root or None
         self._pip_program = None
         self._force_old_pip = False
+        self._prepared = False
+
+    @property
+    def name(self):
+        if self._name is None:
+            from .run import get_run_id
+            runid = get_run_id(self.python)
+            self._name = runid.name
+        return self._name
 
     def get_python_program(self):
         venv_path = self.get_path()
@@ -161,7 +219,7 @@ class VirtualEnvironment(object):
         sys.stdout.flush()
         sys.stderr.flush()
 
-        env = create_environ(self.options.inherit_environ)
+        env = create_environ(self.inherit_environ)
         try:
             proc = subprocess.Popen(cmd, env=env)
         except OSError as exc:
@@ -202,47 +260,11 @@ class VirtualEnvironment(object):
         return (exitcode, stdout)
 
     def get_path(self):
-        if self._venv_path is not None:
-            return self._venv_path
-
-        script = textwrap.dedent("""
-            import hashlib
-            import sys
-
-            performance_version = sys.argv[1]
-            requirements = sys.argv[2]
-
-            data = performance_version + sys.executable + sys.version
-
-            pyver = sys.version_info
-
-            implementation = sys.implementation.name.lower()
-
-            if not isinstance(data, bytes):
-                data = data.encode('utf-8')
-            with open(requirements, 'rb') as fp:
-                data += fp.read()
-            sha1 = hashlib.sha1(data).hexdigest()
-
-            name = ('%s%s.%s-%s'
-                    % (implementation, pyver.major, pyver.minor, sha1[:12]))
-            print(name)
-        """)
-
-        requirements = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
-        cmd = (self.python, '-c', script,
-               pyperformance.__version__, requirements)
-        proc = subprocess.Popen(cmd,
-                                stdout=subprocess.PIPE,
-                                universal_newlines=True)
-        stdout = proc.communicate()[0]
-        if proc.returncode:
-            print("ERROR: failed to create the name of the virtual environment")
-            sys.exit(1)
-
-        venv_name = stdout.rstrip()
-        self._venv_path = venv_path = os.path.join('venv', venv_name)
-        return venv_path
+        if not self._venv_path:
+            self._venv_path = os.path.abspath(
+                os.path.join('venv', self.name),
+            )
+        return self._venv_path
 
     def _get_pip_program(self):
         venv_path = self.get_path()
@@ -383,49 +405,43 @@ class VirtualEnvironment(object):
         venv_python = self.get_python_program()
         return os.path.exists(venv_python)
 
-    def _install_req(self):
+    def prepare(self, install=True):
+        venv_path = self.get_path()
+        print("Installing the virtual environment %s" % venv_path)
+        if self._prepared or (self._prepared is None and not install):
+            print('(already installed)')
+            return
         pip_program = self.get_pip_program()
 
-        # parse requirements
-        filename = os.path.join(PERFORMANCE_ROOT, 'requirements.txt')
-        requirements = Requirements(filename,
-                                    # FIXME: don't hardcode requirements
-                                    ['psutil', 'dulwich'])
+        if not self._prepared:
+            # parse requirements
+            basereqs = Requirements.from_file(REQUIREMENTS_FILE, ['psutil'])
 
-        # Upgrade pip
-        cmd = pip_program + ['install', '-U']
-        if self._force_old_pip:
-            cmd.extend((REQ_OLD_PIP, REQ_OLD_SETUPTOOLS))
+            # Upgrade pip
+            cmd = pip_program + ['install', '-U']
+            if self._force_old_pip:
+                cmd.extend((REQ_OLD_PIP, REQ_OLD_SETUPTOOLS))
+            else:
+                cmd.extend(basereqs.pip)
+            self.run_cmd(cmd)
+
+            # Upgrade installer dependencies (setuptools, ...)
+            cmd = pip_program + ['install', '-U']
+            cmd.extend(basereqs.installer)
+            self.run_cmd(cmd)
+
+        if install:
+            # install pyperformance inside the virtual environment
+            if is_build_dir():
+                root_dir = os.path.dirname(PERFORMANCE_ROOT)
+                cmd = pip_program + ['install', '-e', root_dir]
+            else:
+                version = pyperformance.__version__
+                cmd = pip_program + ['install', 'pyperformance==%s' % version]
+            self.run_cmd(cmd)
+            self._prepared = True
         else:
-            cmd.extend(requirements.pip)
-        self.run_cmd(cmd)
-
-        # Upgrade installer dependencies (setuptools, ...)
-        cmd = pip_program + ['install', '-U']
-        cmd.extend(requirements.installer)
-        self.run_cmd(cmd)
-
-        # install requirements
-        cmd = pip_program + ['install']
-        cmd.extend(requirements.req)
-        self.run_cmd(cmd)
-
-        # install optional requirements
-        for req in requirements.optional:
-            cmd = pip_program + ['install', '-U', req]
-            exitcode = self.run_cmd_nocheck(cmd)
-            if exitcode:
-                print("WARNING: failed to install %s" % req)
-                print()
-
-        # install pyperformance inside the virtual environment
-        if is_build_dir():
-            root_dir = os.path.dirname(PERFORMANCE_ROOT)
-            cmd = pip_program + ['install', '-e', root_dir]
-        else:
-            version = pyperformance.__version__
-            cmd = pip_program + ['install', 'pyperformance==%s' % version]
-        self.run_cmd(cmd)
+            self._prepared = None
 
         # Display the pip version
         cmd = pip_program + ['--version']
@@ -435,26 +451,87 @@ class VirtualEnvironment(object):
         cmd = pip_program + ['freeze']
         self.run_cmd(cmd)
 
-    def create(self):
-        if self.exists():
-            return
-
+    def create(self, install=True):
         venv_path = self.get_path()
-
         print("Creating the virtual environment %s" % venv_path)
+        if self.exists():
+            raise Exception(f'virtual environment {venv_path} already exists')
         try:
             self._create_venv()
-            self._install_req()
+            self.prepare(install)
         except:   # noqa
             print()
             safe_rmtree(venv_path)
             raise
 
+    def ensure(self, refresh=True, install=True):
+        venv_path = self.get_path()
+        if self.exists():
+            if refresh:
+                self.prepare(install)
+        else:
+            self.create(install)
+
+    def install_reqs(self, requirements=None, *, exitonerror=False):
+        venv_path = self.get_path()
+        print("Installing requirements into the virtual environment %s" % venv_path)
+
+        # parse requirements
+        bench = None
+        if requirements is None:
+            requirements = Requirements()
+        elif hasattr(requirements, 'requirements_lockfile'):
+            bench = requirements
+            requirements = Requirements.from_benchmarks([bench])
+
+        # Every benchmark must depend on pyperf.
+        if requirements and bench is not None:
+            if not requirements.get('pyperf'):
+                basereqs = Requirements.from_file(REQUIREMENTS_FILE, ['psutil'])
+                pyperf_req = basereqs.get('pyperf')
+                if not pyperf_req:
+                    raise NotImplementedError
+                requirements.specs.append(pyperf_req)
+
+        pip_program = self.get_pip_program()
+        if not requirements:
+            print('(nothing to install)')
+        else:
+            self.prepare(install=bench is None)
+
+            # install requirements
+            cmd = pip_program + ['install']
+            reqs = list(requirements.iter_non_optional())
+            cmd.extend(reqs)
+            exitcode = self.run_cmd_nocheck(cmd)
+            if exitcode:
+                if exitonerror:
+                    sys.exit(exitcode)
+                raise RequirementsInstallationFailedError(reqs)
+
+            # install optional requirements
+            for req in requirements.iter_optional():
+                cmd = pip_program + ['install', '-U', req]
+                exitcode = self.run_cmd_nocheck(cmd)
+                if exitcode:
+                    print("WARNING: failed to install %s" % req)
+                    print()
+
+        # Dump the package list and their versions: pip freeze
+        cmd = pip_program + ['freeze']
+        self.run_cmd(cmd)
+
+        return requirements
+
 
 def exec_in_virtualenv(options):
-    venv = VirtualEnvironment(options)
+    venv = VirtualEnvironment(
+        options.python,
+        options.venv,
+        inherit_environ=options.inherit_environ,
+    )
 
-    venv.create()
+    venv.ensure()
     venv_python = venv.get_python_program()
 
     args = [venv_python, "-m", "pyperformance"] + \
@@ -470,27 +547,46 @@ def exec_in_virtualenv(options):
         os.execv(args[0], args)
 
 
-def cmd_venv(options):
+def cmd_venv(options, benchmarks=None):
     action = options.venv_action
 
-    venv = VirtualEnvironment(options)
+    requirements = Requirements.from_benchmarks(benchmarks)
+
+    venv = VirtualEnvironment(
+        options.python,
+        options.venv,
+        inherit_environ=options.inherit_environ,
+    )
     venv_path = venv.get_path()
+    exists = venv.exists()
 
-    if action in ('create', 'recreate'):
-        recreated = False
-        if action == 'recreate' and venv.exists():
-            recreated = True
-            shutil.rmtree(venv_path)
-            print("The old virtual environment %s has been removed" % venv_path)
-            print()
-
-        if not venv.exists():
-            venv.create()
-
-            what = 'recreated' if recreated else 'created'
-            print("The virtual environment %s has been %s" % (venv_path, what))
-        else:
+    if action == 'create':
+        if exists:
             print("The virtual environment %s already exists" % venv_path)
+        venv.ensure()
+        venv.install_reqs(requirements, exitonerror=True)
+        if not exists:
+            print("The virtual environment %s has been created" % venv_path)
+
+    elif action == 'recreate':
+        if exists:
+            if venv.get_python_program() == sys.executable:
+                print("The virtual environment %s already exists" % venv_path)
+                print("(it matches the currently running Python executable)")
+                venv.ensure()
+                venv.install_reqs(requirements, exitonerror=True)
+            else:
+                print("The virtual environment %s already exists" % venv_path)
+                shutil.rmtree(venv_path)
+                print("The old virtual environment %s has been removed" % venv_path)
+                print()
+                venv.ensure()
+                venv.install_reqs(requirements, exitonerror=True)
+                print("The virtual environment %s has been recreated" % venv_path)
+        else:
+            venv.create()
+            venv.install_reqs(requirements, exitonerror=True)
+            print("The virtual environment %s has been created" % venv_path)
 
     elif action == 'remove':
         if os.path.exists(venv_path):

@@ -1,0 +1,68 @@
+[benchmarks]
+
+name	metafile
+2to3	<local>
+chameleon	<local>
+chaos	<local>
+crypto_pyaes	<local>
+deltablue	<local>
+django_template	<local>
+dulwich_log	<local>
+fannkuch	<local>
+float	<local>
+genshi	<local>
+go	<local>
+hexiom	<local>
+# FIXME: this benchmark fails with:
+# Unable to get the program 'hg' from the virtual environment
+#hg_startup	<local>
+html5lib	<local>
+json_dumps	<local>
+json_loads	<local>
+logging	<local>
+mako	<local>
+mdp	<local>
+meteor_contest	<local>
+nbody	<local>
+nqueens	<local>
+pathlib	<local>
+pickle	<local>
+pickle_dict	<local:pickle>
+pickle_list	<local:pickle>
+pickle_pure_python	<local:pickle>
+pidigits	<local>
+pyflate	<local>
+python_startup	<local>
+python_startup_no_site	<local:python_startup>
+raytrace	<local>
+regex_compile	<local>
+regex_dna	<local>
+regex_effbot	<local>
+regex_v8	<local>
+richards	<local>
+scimark	<local>
+spectral_norm	<local>
+sqlalchemy_declarative	<local>
+sqlalchemy_imperative	<local>
+sqlite_synth	<local>
+sympy	<local>
+telco	<local>
+tornado_http	<local>
+unpack_sequence	<local>
+unpickle	<local:pickle>
+unpickle_list	<local:pickle>
+unpickle_pure_python	<local:pickle>
+xml_etree	<local>
+
+
+#[groups]
+#startup
+#regex
+#serialize
+#apps
+#math
+#template
+
+
+[group default]
+-mdp

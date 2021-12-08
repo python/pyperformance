@@ -7,7 +7,7 @@ import tempfile
 
 
 def run_cmd(cmd):
-    print("Execute: %s" % ' '.join(cmd))
+    print("(runtests.py) Execute: %s" % ' '.join(cmd), flush=True)
     proc = subprocess.Popen(cmd)
     try:
         proc.wait()
@@ -15,10 +15,11 @@ def run_cmd(cmd):
         proc.kill()
         proc.wait()
         raise
+    sys.stdout.flush()
     exitcode = proc.returncode
     if exitcode:
         sys.exit(exitcode)
-    print("")
+    print("", flush=True)
 
 
 def run_tests(venv):
@@ -39,16 +40,16 @@ def run_tests(venv):
         cmd = cmd + ('--venv', venv)
         run_cmd(cmd)
 
-    run_bench(python, script, 'venv', 'create')
+    run_bench(python, '-u', script, 'venv', 'create', '-b', 'all')
 
     egg_info = "pyperformance.egg-info"
-    print("Remove directory %s" % egg_info)
+    print("(runtests.py) Remove directory %s" % egg_info, flush=True)
     try:
         shutil.rmtree(egg_info)
     except FileNotFoundError:
         pass
 
-    run_bench(python, script, 'venv')
+    run_bench(python, '-u', script, 'venv', 'create')
 
     for filename in (
         os.path.join('pyperformance', 'tests', 'data', 'py36.json'),
@@ -56,8 +57,8 @@ def run_tests(venv):
     ):
         run_cmd((python, script, 'show', filename))
 
-    run_bench(python, script, 'list')
-    run_bench(python, script, 'list_groups')
+    run_bench(python, '-u', script, 'list')
+    run_bench(python, '-u', script, 'list_groups')
 
     json = os.path.join(venv, 'bench.json')
 
@@ -65,18 +66,18 @@ def run_tests(venv):
     #
     # --debug-single-value: benchmark results don't matter, we only
     # check that running benchmarks don't fail.
-    run_bench(python, script, 'run', '-b', 'all', '--debug-single-value',
+    run_bench(python, '-u', script, 'run', '-b', 'all', '--debug-single-value',
               '-o', json)
 
     # Display slowest benchmarks
-    run_cmd((venv_python, '-m', 'pyperf', 'slowest', json))
+    run_cmd((venv_python, '-u', '-m', 'pyperf', 'slowest', json))
 
-    run_bench(python, script, 'venv', 'remove')
+    run_bench(python, '-u', script, 'venv', 'remove')
 
 
 def main():
     # Unit tests
-    cmd = [sys.executable,
+    cmd = [sys.executable, '-u',
            os.path.join('pyperformance', 'tests', 'test_compare.py')]
     run_cmd(cmd)
 

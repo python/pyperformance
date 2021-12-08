@@ -9,7 +9,7 @@
 #
 #  - python3 -m pip install --user --upgrade pip-tools
 #  - git clean -fdx  # remove all untracked files!
-#  - (cd pyperformance; pip-compile --upgrade requirements.in)
+#  - (pip-compile --upgrade -o requirements.txt requirements.in)
 #
 # Prepare a release:
 #
@@ -59,38 +59,10 @@ CLASSIFIERS = [
 def main():
     import io
     import os.path
-    from setuptools import setup
+    from setuptools import setup, find_packages
 
     with io.open('README.rst', encoding="utf8") as fp:
         long_description = fp.read().strip()
-
-    packages = [
-        'pyperformance',
-        'pyperformance.benchmarks',
-        'pyperformance.benchmarks.data',
-        'pyperformance.benchmarks.data.2to3',
-        'pyperformance.tests',
-        'pyperformance.tests.data',
-    ]
-
-    data = {
-        'pyperformance': ['requirements.txt'],
-        'pyperformance.tests': ['data/*.json'],
-    }
-
-    # Search for all files in pyperformance/benchmarks/data/
-    data_dir = os.path.join('pyperformance', 'benchmarks', 'data')
-    benchmarks_data = []
-    for root, dirnames, filenames in os.walk(data_dir):
-        # Strip pyperformance/benchmarks/ prefix
-        root = os.path.normpath(root)
-        root = root.split(os.path.sep)
-        root = os.path.sep.join(root[2:])
-
-        for filename in filenames:
-            filename = os.path.join(root, filename)
-            benchmarks_data.append(filename)
-    data['pyperformance.benchmarks'] = benchmarks_data
 
     options = {
         'name': 'pyperformance',
@@ -101,12 +73,12 @@ def main():
         'long_description': long_description,
         'url': 'https://github.com/python/benchmarks',
         'classifiers': CLASSIFIERS,
-        'packages': packages,
-        'package_data': data,
+        'packages': find_packages(),
+        'include_package_data': True,
         'entry_points': {
             'console_scripts': ['pyperformance=pyperformance.cli:main']
         },
-        'install_requires': ["pyperf"],
+        'install_requires': ["pyperf", "toml", "packaging"],
     }
     setup(**options)
 
