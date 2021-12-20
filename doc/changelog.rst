@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 1.0.3 (2021-12-20)
+-------------
+
+* Support user-defined benchmark suites.
+
 Version 1.0.2 (2021-05-11)
 -------------
 
