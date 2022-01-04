@@ -198,6 +198,14 @@ def parse_args():
     return (parser, options)
 
 
+def _needs_venv(options):
+    if is_installed():
+        return False
+    if not hasattr(options, 'python'):
+        return False
+    return not options.inside_venv
+
+
 @contextlib.contextmanager
 def _might_need_venv(options):
     try:
@@ -251,7 +259,7 @@ def _select_benchmarks(raw, manifest):
 def _main():
     parser, options = parse_args()
 
-    if not is_installed() and not options.inside_venv:
+    if _needs_venv(options):
         print('switching to a venv.', flush=True)
         exec_in_virtualenv(options)
 
