@@ -45,6 +45,7 @@ class CompareTests(unittest.TestCase):
         else:
             file1 = 'py36.json'
             file2 = kw.get('file2', 'py38.json')
+        marker = file1
 
         cmd = [sys.executable, '-m', 'pyperformance', 'compare',
                os.path.join(DATA_DIR, file1),
@@ -55,6 +56,8 @@ class CompareTests(unittest.TestCase):
                                 universal_newlines=True)
         stdout = proc.communicate()[0]
         self.assertEqual(proc.returncode, exitcode, repr(stdout))
+        if marker in stdout:
+            stdout = stdout[stdout.index(marker):]
         return stdout.rstrip() + "\n"
 
     def test_compare(self):

@@ -6,13 +6,15 @@ include TODO.rst
 include requirements.in
 include requirements.txt
 include runtests.py
-include pyperformance
 include tox.ini
 
 include doc/*.rst doc/images/*.png doc/images/*.jpg
 include doc/conf.py doc/Makefile doc/make.bat
 
+include pyperformance/*.py
 include pyperformance/data-files/requirements.txt
 include pyperformance/data-files/benchmarks/MANIFEST
-include pyperformance/data-files/benchmarks/base.toml
-recursive-include pyperformance/data-files/benchmarks/bm_*/* *
+include pyperformance/data-files/benchmarks/bm_*/*.toml
+include pyperformance/data-files/benchmarks/bm_*/*.py
+recursive-include pyperformance/data-files/benchmarks/bm_*/data *
+recursive-exclude pyperformance/tests *

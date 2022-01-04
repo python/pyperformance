@@ -20,6 +20,7 @@ PERFORMANCE_ROOT = os.path.realpath(os.path.dirname(__file__))
 REQUIREMENTS_FILE = os.path.join(pyperformance.DATA_DIR, 'requirements.txt')
 
 
+# XXX Use pyperformance.is_installed() instead?
 def is_build_dir():
     root_dir = os.path.join(PERFORMANCE_ROOT, '..')
     if not os.path.exists(os.path.join(root_dir, 'pyperformance')):
@@ -113,10 +114,12 @@ class Requirements(object):
 
 def safe_rmtree(path):
     if not os.path.exists(path):
-        return
+        return False
 
     print("Remove directory %s" % path)
+    # XXX Pass onerror to report on any files that could not be deleted?
     shutil.rmtree(path)
+    return True
 
 
 def python_implementation():
@@ -548,10 +551,6 @@ def exec_in_virtualenv(options):
 
 
 def cmd_venv(options, benchmarks=None):
-    action = options.venv_action
-
-    requirements = Requirements.from_benchmarks(benchmarks)
-
     venv = VirtualEnvironment(
         options.python,
         options.venv,
@@ -560,7 +559,9 @@ def cmd_venv(options, benchmarks=None):
     venv_path = venv.get_path()
     exists = venv.exists()
 
+    action = options.venv_action
     if action == 'create':
+        requirements = Requirements.from_benchmarks(benchmarks)
         if exists:
             print("The virtual environment %s already exists" % venv_path)
         venv.ensure()
@@ -569,6 +570,7 @@ def cmd_venv(options, benchmarks=None):
             print("The virtual environment %s has been created" % venv_path)
 
     elif action == 'recreate':
+        requirements = Requirements.from_benchmarks(benchmarks)
         if exists:
             if venv.get_python_program() == sys.executable:
                 print("The virtual environment %s already exists" % venv_path)
@@ -577,7 +579,7 @@ def cmd_venv(options, benchmarks=None):
                 venv.install_reqs(requirements, exitonerror=True)
             else:
                 print("The virtual environment %s already exists" % venv_path)
-                shutil.rmtree(venv_path)
+                safe_rmtree(venv_path)
                 print("The old virtual environment %s has been removed" % venv_path)
                 print()
                 venv.ensure()
@@ -589,8 +591,7 @@ def cmd_venv(options, benchmarks=None):
             print("The virtual environment %s has been created" % venv_path)
 
     elif action == 'remove':
-        if os.path.exists(venv_path):
-            shutil.rmtree(venv_path)
+        if safe_rmtree(venv_path):
             print("The virtual environment %s has been removed" % venv_path)
         else:
             print("The virtual environment %s does not exist" % venv_path)
@@ -598,14 +599,13 @@ def cmd_venv(options, benchmarks=None):
     else:
         # show command
         text = "Virtual environment path: %s" % venv_path
-        created = venv.exists()
-        if created:
+        if exists:
             text += " (already created)"
         else:
             text += " (not created yet)"
         print(text)
 
-        if not created:
+        if not exists:
             print()
             print("Command to create it:")
             cmd = "%s -m pyperformance venv create" % options.python
