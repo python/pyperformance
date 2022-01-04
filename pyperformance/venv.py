@@ -114,10 +114,12 @@ class Requirements(object):
 
 def safe_rmtree(path):
     if not os.path.exists(path):
-        return
+        return False
 
     print("Remove directory %s" % path)
+    # XXX Pass onerror to report on any files that could not be deleted?
     shutil.rmtree(path)
+    return True
 
 
 def python_implementation():
@@ -577,7 +579,7 @@ def cmd_venv(options, benchmarks=None):
                 venv.install_reqs(requirements, exitonerror=True)
             else:
                 print("The virtual environment %s already exists" % venv_path)
-                shutil.rmtree(venv_path)
+                safe_rmtree(venv_path)
                 print("The old virtual environment %s has been removed" % venv_path)
                 print()
                 venv.ensure()
@@ -589,8 +591,7 @@ def cmd_venv(options, benchmarks=None):
             print("The virtual environment %s has been created" % venv_path)
 
     elif action == 'remove':
-        if os.path.exists(venv_path):
-            shutil.rmtree(venv_path)
+        if safe_rmtree(venv_path):
             print("The virtual environment %s has been removed" % venv_path)
         else:
             print("The virtual environment %s does not exist" % venv_path)
