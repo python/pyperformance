@@ -251,8 +251,7 @@ def _select_benchmarks(raw, manifest):
 def _main():
     parser, options = parse_args()
 
-    if not is_installed():
-        assert not options.inside_venv
+    if not is_installed() and not options.inside_venv:
         print('switching to a venv.', flush=True)
         exec_in_virtualenv(options)
 
