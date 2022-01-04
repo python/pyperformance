@@ -198,17 +198,13 @@ def parse_args():
     return (parser, options)
 
 
-def _needs_venv(options):
-    if is_installed():
-        return False
-    if not hasattr(options, 'python'):
-        return False
-    return not options.inside_venv
-
-
 @contextlib.contextmanager
 def _might_need_venv(options):
     try:
+        if not is_installed():
+            # Always force a local checkout to be installed.
+            assert not options.inside_venv
+            raise ModuleNotFoundError
         yield
     except ModuleNotFoundError:
         if not options.inside_venv:
@@ -258,10 +254,6 @@ def _select_benchmarks(raw, manifest):
 
 def _main():
     parser, options = parse_args()
-
-    if _needs_venv(options):
-        print('switching to a venv.', flush=True)
-        exec_in_virtualenv(options)
 
     if options.action == 'venv':
         with _might_need_venv(options):
