@@ -549,10 +549,6 @@ def exec_in_virtualenv(options):
 
 
 def cmd_venv(options, benchmarks=None):
-    action = options.venv_action
-
-    requirements = Requirements.from_benchmarks(benchmarks)
-
     venv = VirtualEnvironment(
         options.python,
         options.venv,
@@ -561,7 +557,9 @@ def cmd_venv(options, benchmarks=None):
     venv_path = venv.get_path()
     exists = venv.exists()
 
+    action = options.venv_action
     if action == 'create':
+        requirements = Requirements.from_benchmarks(benchmarks)
         if exists:
             print("The virtual environment %s already exists" % venv_path)
         venv.ensure()
@@ -570,6 +568,7 @@ def cmd_venv(options, benchmarks=None):
             print("The virtual environment %s has been created" % venv_path)
 
     elif action == 'recreate':
+        requirements = Requirements.from_benchmarks(benchmarks)
         if exists:
             if venv.get_python_program() == sys.executable:
                 print("The virtual environment %s already exists" % venv_path)
@@ -599,14 +598,13 @@ def cmd_venv(options, benchmarks=None):
     else:
         # show command
         text = "Virtual environment path: %s" % venv_path
-        created = venv.exists()
-        if created:
+        if exists:
             text += " (already created)"
         else:
             text += " (not created yet)"
         print(text)
 
-        if not created:
+        if not exists:
             print()
             print("Command to create it:")
             cmd = "%s -m pyperformance venv create" % options.python

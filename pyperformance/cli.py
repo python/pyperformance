@@ -256,8 +256,11 @@ def _main():
     parser, options = parse_args()
 
     if options.action == 'venv':
-        with _might_need_venv(options):
-            benchmarks = _benchmarks_from_options(options)
+        if options.venv_action in ('create', 'recreate'):
+            with _might_need_venv(options):
+                benchmarks = _benchmarks_from_options(options)
+        else:
+            benchmarks = None
         cmd_venv(options, benchmarks)
         sys.exit()
     elif options.action == 'compile':
