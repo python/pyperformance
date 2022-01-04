@@ -1,4 +1,5 @@
 import os.path
+import sys
 
 
 VERSION = (1, 0, 3)
@@ -10,5 +11,32 @@ DATA_DIR = os.path.join(PKG_ROOT, 'data-files')
 
 
 def is_installed():
+    if _is_venv():
+        return True
     parent = os.path.dirname(PKG_ROOT)
-    return not os.path.exists(os.path.join(parent, 'setup.py'))
+    if not os.path.exists(os.path.join(parent, 'setup.py')):
+        return True
+    return _is_devel_install()
+
+
+def _is_venv():
+    if sys.base_prefix == sys.prefix:
+        return False
+    return True
+
+
+def _is_devel_install():
+    # pip install <path-to-git-checkout> will do a "devel" install.
+    # This means it creates a link back to the checkout instead
+    # of copying the files.
+    try:
+        import toml
+    except ModuleNotFoundError:
+        return False
+    sitepackages = os.path.dirname(toml.__file__)
+    if os.path.isdir(os.path.join(sitepackages, 'pyperformance')):
+        return False
+    if not os.path.exists(os.path.join(sitepackages, 'pyperformance.egg-link')):
+        # XXX Check the contents?
+        return False
+    return True
