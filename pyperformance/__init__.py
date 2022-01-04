@@ -11,10 +11,10 @@ DATA_DIR = os.path.join(PKG_ROOT, 'data-files')
 
 
 def is_installed():
-    if _is_venv():
-        return True
     parent = os.path.dirname(PKG_ROOT)
     if not os.path.exists(os.path.join(parent, 'setup.py')):
+        return True
+    if _is_venv():
         return True
     return _is_devel_install()
 
