@@ -808,7 +808,7 @@ def parse_config(filename, command):
 
         # [run_benchmark]
         conf.system_tune = getboolean('run_benchmark', 'system_tune', True)
-        conf.manifest = getfile('run_benchmark', 'manifest')
+        conf.manifest = getfile('run_benchmark', 'manifest', default='')
         conf.benchmarks = getstr('run_benchmark', 'benchmarks', default='')
         conf.affinity = getstr('run_benchmark', 'affinity', default='')
         conf.upload = getboolean('run_benchmark', 'upload', False)
