@@ -11,12 +11,12 @@ Command to install pyperformance::
 
 The command installs a new ``pyperformance`` program.
 
-If needed, ``pyperf`` and ``six`` dependencies are installed automatically.
+If needed, the ``pyperf`` dependency is installed automatically.
 
-pyperformance works on Python 3.6 and newer, but it may work on Python 3.4 and
-3.5.
+pyperformance works on Python 3.7 and newer, but it may work on Python 3.4 and
+newer.
 
-Mercurial might need Python developement headers to build its C extensions. For
+Mercurial might need Python development headers to build its C extensions. For
 example, on Fedora, use::
 
     sudo dnf install pypy3-devel
@@ -32,11 +32,11 @@ extension. Commands on Fedora to install dependencies:
 Run benchmarks
 ==============
 
-Commands to compare Python 3.6 and Python 3.7 performances::
+Commands to compare Python 3.9 and Python 3.10 performances::
 
-    pyperformance run --python=python3.6 -o py36.json
-    pyperformance run --python=python3.7 -o py38.json
-    pyperformance compare py36.json py38.json
+    pyperformance run --python=python3.9 -o py39.json
+    pyperformance run --python=python3.10 -o py310.json
+    pyperformance compare py39.json py310.json
 
 Note: ``python3 -m pyperformance ...`` syntax works as well (ex: ``python3 -m
 pyperformance run -o py38.json``), but requires to install pyperformance on each
@@ -45,17 +45,17 @@ tested Python version.
 JSON files are produced by the pyperf module and so can be analyzed using pyperf
 commands::
 
-    python3 -m pyperf show py36.json
-    python3 -m pyperf check py36.json
-    python3 -m pyperf metadata py36.json
-    python3 -m pyperf stats py36.json
-    python3 -m pyperf hist py36.json
-    python3 -m pyperf dump py36.json
+    python3 -m pyperf show py39.json
+    python3 -m pyperf check py39.json
+    python3 -m pyperf metadata py39.json
+    python3 -m pyperf stats py39.json
+    python3 -m pyperf hist py39.json
+    python3 -m pyperf dump py39.json
     (...)
 
 It's also possible to use pyperf to compare results of two JSON files::
 
-    python3 -m pyperf compare_to py36.json py38.json --table
+    python3 -m pyperf compare_to py39.json py310.json --table
 
 pyperformance actions::
 
