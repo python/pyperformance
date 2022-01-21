@@ -1,7 +1,12 @@
 import contextlib
 import errno
 import os
+import os.path
 import tempfile
+
+
+TESTS_ROOT = os.path.realpath(os.path.dirname(__file__))
+DATA_DIR = os.path.join(TESTS_ROOT, 'data')
 
 
 @contextlib.contextmanager

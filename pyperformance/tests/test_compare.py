@@ -9,9 +9,6 @@ import unittest
 from pyperformance import tests
 
 
-DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), 'data'))
-
-
 def run_cmd(cmd):
     print("Execute: %s" % ' '.join(cmd))
     proc = subprocess.Popen(cmd)
@@ -48,8 +45,8 @@ class CompareTests(unittest.TestCase):
         marker = file1
 
         cmd = [sys.executable, '-m', 'pyperformance', 'compare',
-               os.path.join(DATA_DIR, file1),
-               os.path.join(DATA_DIR, file2)]
+               os.path.join(tests.DATA_DIR, file1),
+               os.path.join(tests.DATA_DIR, file2)]
         cmd.extend(args)
         proc = subprocess.Popen(cmd,
                                 stdout=subprocess.PIPE,
