@@ -9,28 +9,7 @@ import unittest
 from pyperformance import tests
 
 
-def run_cmd(cmd):
-    print("Execute: %s" % ' '.join(cmd))
-    proc = subprocess.Popen(cmd)
-    try:
-        proc.wait()
-    except:   # noqa
-        proc.kill()
-        proc.wait()
-        raise
-
-    exitcode = proc.returncode
-    if exitcode:
-        sys.exit(exitcode)
-
-
-class CompareTests(unittest.TestCase):
-    maxDiff = 80 * 100
-
-    @classmethod
-    def setUpClass(cls):
-        cmd = [sys.executable, '-m', 'pyperformance', 'venv', 'create']
-        run_cmd(cmd)
+class FunctionalTests(tests.Functional, unittest.TestCase):
 
     def compare(self, *args, **kw):
         dataset = kw.get('dataset', 'py')
