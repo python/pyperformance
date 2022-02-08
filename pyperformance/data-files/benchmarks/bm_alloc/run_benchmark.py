@@ -2,8 +2,8 @@
 """
 Allocate blocks of memory with bytearray
 
-This benchmark stresses memory allocator. Default sizes are <=
-obmalloc small request threshold.
+This benchmark stresses the memory allocator. Default sizes are <=
+obmalloc's small request threshold.
 """
 
 import sys
