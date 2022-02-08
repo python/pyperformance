@@ -2,19 +2,36 @@
 """
 Allocate blocks of memory with bytearray
 
-This benchmark stresses memory allocator
+This benchmark stresses memory allocator. Default sizes are <=
+obmalloc small request threshold.
 """
+
+import sys
 
 import pyperf
 
+# see Objects/obmalloc.c
+SMALL_REQUEST_THRESHOLD = 512
+APPEND_SIZE = 10
+SIZEOF_BYTEARRAY = sys.getsizeof(bytearray())
 
-ONE_MB = 1024 * 1024
-
-DEFAULT_SIZES = [32, 128, 512, 8192, ONE_MB, 8 * ONE_MB]
 REPEAT_ALLOCS = 100
+
+DEFAULT_SIZES = [
+    4,
+    8,
+    16,
+    32,
+    64,
+    128,
+    256,
+    # keep below obmalloc threshold
+    SMALL_REQUEST_THRESHOLD - SIZEOF_BYTEARRAY - APPEND_SIZE,
+]
 
 
 def allocate(repeat, sizes, alloc_func=bytearray):
+    append = alloc_func(APPEND_SIZE)
     for size in sizes:
         append = alloc_func(size)
         for i in range(repeat):
