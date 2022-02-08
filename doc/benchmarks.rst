@@ -56,11 +56,12 @@ depending on the Python version.
 alloc
 -----
 
-Allocate blocks of memory with ``bytesarray``.
+Allocate blocks of memory with ``bytesarray``. The default sizes are smaller or
+equal to obmalloc's small request threshold.
 
 Command lines options::
 
-  sizes                 Block sizes (default: 32 128 512 8192 1048576 8388608)
+  sizes                 Block sizes (default: 4 8 16 32 64 128 256 446)
   
   --repeat REPEAT       Repeat allocations (default: 100)
 
