@@ -2,6 +2,7 @@
 
 name	metafile
 2to3	<local>
+alloc	<local>
 chameleon	<local>
 chaos	<local>
 crypto_pyaes	<local>

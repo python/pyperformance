@@ -53,6 +53,17 @@ depending on the Python version.
    Files are called ``.py.txt`` instead of ``.py`` to not run PEP 8 checks on
    them, and more generally to not modify them.
 
+alloc
+-----
+
+Allocate blocks of memory with ``bytesarray``.
+
+Command lines options::
+
+  sizes                 Block sizes (default: 32 128 512 8192 1048576 8388608)
+  
+  --repeat REPEAT       Repeat allocations (default: 100)
+
 
 chameleon
 ---------
