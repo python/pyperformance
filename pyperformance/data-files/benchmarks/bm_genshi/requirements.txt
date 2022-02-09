@@ -1,3 +1,2 @@
-# genshi 0.7.5+:
-git+git://github.com/edgewall/genshi.git@d5975012c4175bcca16ccf4928fdd54dcd211940
+genshi==0.7.6
 six==1.16.0
