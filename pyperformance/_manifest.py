@@ -277,7 +277,7 @@ def _iter_sections(lines):
 def _parse_manifest_file(filename):
     relroot = os.path.dirname(filename)
     filename = _utils.resolve_file(filename, relroot)
-    with open(filename) as infile:
+    with open(filename, encoding="utf-8") as infile:
         yield from _parse_manifest(infile, filename)
 
 

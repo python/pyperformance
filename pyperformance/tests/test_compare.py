@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import io
 import os.path
 import subprocess
 import sys
@@ -135,7 +134,7 @@ class CompareTests(unittest.TestCase):
         with tests.temporary_file() as tmp:
             self.compare("--csv", tmp)
 
-            with io.open(tmp, "r") as fp:
+            with open(tmp, "r", encoding="utf-8") as fp:
                 csv = fp.read()
 
             self.assertEqual(csv,

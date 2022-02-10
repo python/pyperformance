@@ -174,7 +174,7 @@ def parse_selections(selections, parse_entry=None):
 
 
 def iter_clean_lines(filename):
-    with open(filename) as reqsfile:
+    with open(filename, encoding="utf-8") as reqsfile:
         for line in reqsfile:
             # strip comment
             line = line.partition('#')[0]
