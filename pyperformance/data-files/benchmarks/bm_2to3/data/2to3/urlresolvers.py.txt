@@ -347,7 +347,7 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, current
             try:
                 extra, resolver = resolver.namespace_dict[ns]
                 resolved_path.append(ns)
-                prefix = prefix + extra
+                prefix += extra
             except KeyError, key:
                 if resolved_path:
                     raise NoReverseMatch("%s is not a registered namespace inside '%s'" % (key, ':'.join(resolved_path)))

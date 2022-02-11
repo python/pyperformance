@@ -494,7 +494,7 @@ class BenchmarkRevision(Application):
             patch = os.path.basename(self.patch)
             patch = os.path.splitext(patch)[0]
             filename = "%s-patch-%s" % (filename, patch)
-        filename = filename + ".json.gz"
+        filename += ".json.gz"
         if self.patch:
             self.filename = os.path.join(self.conf.json_patch_dir, filename)
         else:

@@ -326,7 +326,7 @@ class SimpleSurface(object):
             for lightPoint in scene.visibleLights(p):
                 contribution = (lightPoint - p).normalized().dot(normal)
                 if contribution > 0:
-                    lambertAmount = lambertAmount + contribution
+                    lambertAmount += contribution
             lambertAmount = min(1, lambertAmount)
             c = addColours(c, self.lambertCoefficient * lambertAmount, b)
 

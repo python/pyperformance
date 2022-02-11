@@ -37,7 +37,7 @@ def run_tests(venv):
         venv_python = os.path.join(venv, 'bin', 'python')
 
     def run_bench(*cmd):
-        cmd = cmd + ('--venv', venv)
+        cmd += ('--venv', venv)
         run_cmd(cmd)
 
     run_bench(python, '-u', script, 'venv', 'create', '-b', 'all')
