@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    # Midnight UTC:
+    - cron: "0 0 * * *"
 
 jobs:
 
@@ -12,17 +15,21 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} - ${{ matrix.python }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
-        python: [3.9]
+        # Test all supported versions on Ubuntu:
+        os: [ubuntu-latest]
+        python: ["3.7", "3.8", "3.9", "3.10", 3.11-dev]
         include:
-          - os: ubuntu-latest
-            python: 3.6
-          - os: ubuntu-latest
-            python: 3.9
+          # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
             python: pypy3
+          - os: macos-latest
+            python: "3.10"
+          # XXX: We should be testing 3.10, but for some reason setuptools can't
+          # seem to find the runner's C compiler for new wheel builds... 
           - os: windows-latest
+            python: "3.9"
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python }}
