@@ -7,24 +7,7 @@ import textwrap
 import unittest
 
 from pyperformance import tests
-
-
-DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), 'data'))
-
-
-def run_cmd(cmd):
-    print("Execute: %s" % ' '.join(cmd))
-    proc = subprocess.Popen(cmd)
-    try:
-        proc.wait()
-    except:   # noqa
-        proc.kill()
-        proc.wait()
-        raise
-
-    exitcode = proc.returncode
-    if exitcode:
-        sys.exit(exitcode)
+from pyperformance.tests import run_cmd, DATA_DIR
 
 
 class CompareTests(unittest.TestCase):

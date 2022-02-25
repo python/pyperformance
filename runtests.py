@@ -77,8 +77,7 @@ def run_tests(venv):
 
 def main():
     # Unit tests
-    cmd = [sys.executable, '-u',
-           os.path.join('pyperformance', 'tests', 'test_compare.py')]
+    cmd = [sys.executable, '-u', '-m', 'unittest']
     run_cmd(cmd)
 
     # Functional tests
