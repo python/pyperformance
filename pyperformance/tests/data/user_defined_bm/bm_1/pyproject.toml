@@ -1,0 +1,11 @@
+[project]
+name = "test_bm_1"
+requires-python = ">=3.8"
+dependencies = ["pyperf"]
+urls = { repository = "https://github.com/python/pyperformance" }
+dynamic = ["version"]
+
+[tool.pyperformance]
+name = "1"
+tags = "test"
+inherits = ".."
