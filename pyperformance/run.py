@@ -192,5 +192,7 @@ def get_pyperf_opts(options):
         opts.append('--track-memory')
     if options.inherit_environ:
         opts.append('--inherit-environ=%s' % ','.join(options.inherit_environ))
+    if options.track_energy:
+        opts.append('--track-energy')
 
     return opts
