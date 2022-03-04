@@ -10,7 +10,7 @@ psutil==5.8.0
     # via -r requirements.in
 pyparsing==3.0.6
     # via packaging
-pyperf==2.3.0
+pyperf @ file:///home/cappadokes/code/pyperf
     # via -r requirements.in
 toml==0.10.2
     # via -r requirements.in
