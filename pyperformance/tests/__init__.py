@@ -42,6 +42,17 @@ def run_cmd(*argv):
     print("", flush=True)
 
 
+class Resources:
+    """A mixin that can create resources."""
+
+    def venv(self, python=sys.executable):
+        tmpdir = tempfile.mkdtemp()
+        venv = os.path.join(tmpdir, 'venv')
+        run_cmd(python or sys.executable, '-u', '-m', 'venv', venv)
+        self.addCleanup(lambda: shutil.rmtree(tmpdir))
+        return venv, resolve_venv_python(venv)
+
+
 def resolve_venv_python(venv):
     if os.name == "nt":
         basename = os.path.basename(sys.executable)
