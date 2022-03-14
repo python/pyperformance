@@ -9,31 +9,7 @@ import unittest
 from pyperformance import tests
 
 
-DATA_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), 'data'))
-
-
-def run_cmd(cmd):
-    print("Execute: %s" % ' '.join(cmd))
-    proc = subprocess.Popen(cmd)
-    try:
-        proc.wait()
-    except:   # noqa
-        proc.kill()
-        proc.wait()
-        raise
-
-    exitcode = proc.returncode
-    if exitcode:
-        sys.exit(exitcode)
-
-
-class CompareTests(unittest.TestCase):
-    maxDiff = 80 * 100
-
-    @classmethod
-    def setUpClass(cls):
-        cmd = [sys.executable, '-m', 'pyperformance', 'venv', 'create']
-        run_cmd(cmd)
+class FunctionalTests(tests.Functional, unittest.TestCase):
 
     def compare(self, *args, **kw):
         dataset = kw.get('dataset', 'py')
@@ -48,8 +24,8 @@ class CompareTests(unittest.TestCase):
         marker = file1
 
         cmd = [sys.executable, '-m', 'pyperformance', 'compare',
-               os.path.join(DATA_DIR, file1),
-               os.path.join(DATA_DIR, file2)]
+               os.path.join(tests.DATA_DIR, file1),
+               os.path.join(tests.DATA_DIR, file2)]
         cmd.extend(args)
         proc = subprocess.Popen(cmd,
                                 stdout=subprocess.PIPE,
