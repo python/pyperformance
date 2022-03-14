@@ -42,6 +42,15 @@ def run_cmd(*argv):
     print("", flush=True)
 
 
+def resolve_venv_python(venv):
+    if os.name == "nt":
+        basename = os.path.basename(sys.executable)
+        venv_python = os.path.join(venv, 'Scripts', basename)
+    else:
+        venv_python = os.path.join(venv, 'bin', 'python3')
+    return venv_python
+
+
 #############################
 # functional tests
 
@@ -94,11 +103,7 @@ class Functional:
 
     @property
     def venv_python(self):
-        if os.name == "nt":
-            python = os.path.basename(sys.executable)
-            return os.path.join(self._VENV, 'Scripts', python)
-        else:
-            return os.path.join(self._VENV, 'bin', 'python3')
+        return resolve_venv_python(self._VENV)
 
     def run_pyperformance(self, cmd, *args, invenv=True):
         if invenv:
