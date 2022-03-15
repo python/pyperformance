@@ -66,8 +66,7 @@ def get_python_info(python=sys.executable):
         )
     except subprocess.CalledProcessError:
         raise Exception(f'could not get info for {python}')
-    return {k: (tuple(v) if isinstance(v, list) else v)
-            for k, v in json.loads(text).items()}
+    return json.loads(text)
 
 
 def inspect_python_install(python=sys.executable):
@@ -170,12 +169,12 @@ def _get_raw_info():
     return {
         'executable': sys.executable,
         'version_str': sys.version,
-        'version_info': tuple(sys.version_info),
+        'version_info': list(sys.version_info),
         'hexversion': sys.hexversion,
         'api_version': sys.api_version,
         'magic_number': MAGIC_NUMBER.hex(),
         'implementation_name': sys.implementation.name.lower(),
-        'implementation_version': tuple(sys.implementation.version),
+        'implementation_version': list(sys.implementation.version),
         'platform': sys.platform,
         'prefix': sys.prefix,
         'exec_prefix': sys.exec_prefix,
