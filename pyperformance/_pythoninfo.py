@@ -92,13 +92,17 @@ except ImportError:
     MAGIC_NUMBER = _imp.get_magic()
 
 
+def _is_dev(stdlib_dir):
+    return os.path.basename(stdlib_dir) == 'Lib'
+
+
 def _inspect_python_install(executable, prefix, base_prefix,
                             platlibdir, stdlib_dir,
                             version_info, platform, implementation_name,
                             **_ignored):
     is_venv = prefix != base_prefix
 
-    if os.path.basename(stdlib_dir) == 'Lib':
+    if _is_dev(stdlib_dir):
         base_executable = os.path.join(os.path.dirname(stdlib_dir), 'python')
         if not os.path.exists(base_executable):
             raise NotImplementedError(base_executable)
