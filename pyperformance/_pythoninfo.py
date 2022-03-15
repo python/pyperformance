@@ -66,7 +66,8 @@ def get_python_info(python=sys.executable):
         )
     except subprocess.CalledProcessError:
         raise Exception(f'could not get info for {python}')
-    return json.loads(text)
+    return {k: (tuple(v) if isinstance(v, list) else v)
+            for k, v in json.loads(text).items()}
 
 
 def inspect_python_install(python=sys.executable):
