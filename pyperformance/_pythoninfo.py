@@ -191,7 +191,8 @@ def _get_raw_info():
 
 if __name__ == '__main__':
     info = _get_raw_info()
-    (info['_base_executable'], info['_is_dev'], info['_is_venv'],
-     ) = _inspect_python_install(**info)
+    if '--inspect' in sys.argv:
+        (info['_base_executable'], info['_is_dev'], info['_is_venv'],
+         ) = _inspect_python_install(**info)
     json.dump(info, sys.stdout, indent=4)
     print()
