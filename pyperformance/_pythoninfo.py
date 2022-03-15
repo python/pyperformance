@@ -92,16 +92,45 @@ except ImportError:
     MAGIC_NUMBER = _imp.get_magic()
 
 
+def _is_dev_stdlib(stdlib_dir):
+    if os.path.basename(stdlib_dir) != 'Lib':
+        return False
+    srcdir = os.path.dirname(stdlib_dir)
+    for filename in [
+        os.path.join(srcdir, 'Python', 'pylifecycle.c'),
+        os.path.join(srcdir, 'PCbuild', 'pythoncore.vcxproj'),
+    ]:
+        if not os.path.exists(filename):
+            return False
+    return True
+
+
+def _is_dev_executable(executable, stdlib_dir):
+    builddir = os.path.dirname(executable)
+    if os.path.exists(os.path.join(builddir, 'pybuilddir.txt')):
+        return True
+    if os.name == 'nt':
+        pcbuild = os.path.dirname(os.path.dirname(executable))
+        if os.path.basename(pcbuild) == 'PCbuild':
+            srcdir = os.path.dirname(pcbuild)
+            if os.path.join(srcdir, 'Lib') == stdlib_dir:
+                return True
+    return False
+
+
 def _inspect_python_install(executable, prefix, base_prefix,
                             platlibdir, stdlib_dir,
                             version_info, platform, implementation_name,
                             **_ignored):
     is_venv = prefix != base_prefix
 
-    if os.path.basename(stdlib_dir) == 'Lib':
-        base_executable = os.path.join(os.path.dirname(stdlib_dir), 'python')
-        if not os.path.exists(base_executable):
-            raise NotImplementedError(base_executable)
+    if (_is_dev_stdlib(stdlib_dir) and
+            _is_dev_executable(executable, stdlib_dir)):
+        # XXX What about venv?
+        try:
+            base_executable = sys._base_executable
+        except AttributeError:
+            base_executable = executable
         is_dev = True
     else:
         major, minor = version_info[:2]
@@ -162,5 +191,7 @@ def _get_raw_info():
 
 if __name__ == '__main__':
     info = _get_raw_info()
+    (info['_base_executable'], info['_is_dev'], info['_is_venv'],
+     ) = _inspect_python_install(**info)
     json.dump(info, sys.stdout, indent=4)
     print()
