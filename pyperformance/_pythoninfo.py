@@ -127,7 +127,10 @@ def _inspect_python_install(executable, prefix, base_prefix,
     if (_is_dev_stdlib(stdlib_dir) and
             _is_dev_executable(executable, stdlib_dir)):
         # XXX What about venv?
-        base_executable = executable
+        try:
+            base_executable = sys._base_executable
+        except AttributeError:
+            base_executable = executable
         is_dev = True
     else:
         major, minor = version_info[:2]
