@@ -4,6 +4,7 @@
 
 __all__ = [
     'PythonInfo', 'SysSnapshot', 'SysImplementationSnapshot',
+    'VenvConfig',
     'get_python_id',
     'get_python_info',
     'inspect_python_install',
@@ -237,6 +238,70 @@ class SysImplementationSnapshot(
             sys.implementation.name,
             sys.implementation.version,
         )
+
+
+class VenvConfig(
+        namedtuple('VenvConfig', ('home executable version '
+                                  'system_site_packages command'))):
+
+    @classmethod
+    def from_root(cls, root, *, populate_old=True):
+        cfgfile = os.path.join(root, 'pyvenv.cfg')
+        with open(cfgfile, encoding='utf-8') as infile:
+            text = infile.read()
+        return cls.parse(text, root)
+
+    @classmethod
+    def parse(cls, lines, root=None, *, populate_old=True):
+        if isinstance(lines, str):
+            lines = lines.splitlines()
+        else:
+            lines = (l.rstrip(os.linesep) for l in lines)
+        # Parse the lines.
+        # (We do not validate then).
+        kwargs = {}
+        for line in lines:
+            name, sep, value = line.partition('=')
+            if not sep:
+                continue
+            # We do not check for duplicate names.
+            name = name.strip().lower()
+            if name == 'include-system-site-packages':
+                name = 'system_site_packages'
+            if name not in cls._fields:
+                # XXX Preserve this anyway?
+                continue
+            value = value.lstrip()
+            if name == 'system_site_packages':
+                value = (value == 'true')
+            kwargs[name] = value
+        # Deal with older Pythons.
+        if 'executable' not in kwargs:
+            kwargs['executable'] = None
+            if populate_old and os.path.isdir(kwargs['home']):
+                files = set(os.listdir(kwargs['home']))
+                major, minor = kwargs['version'].split('.')[:2]
+                _, suffix = os.path.splitext(sys.executable)
+                for name in [
+                        f'python{major}.{minor}{suffix}',
+                        f'python{major}{minor}{suffix}',
+                        f'python{major}{suffix}',
+                        f'python{suffix}',
+                        ]:
+                    filename = os.path.join(kwargs['home'], name)
+                    if os.path.isfile(filename):
+                        kwargs['executable'] = filename
+                        break
+        if 'command' not in kwargs:
+            if populate_old and root and kwargs['executable']:
+                kwargs['command'] = f'{kwargs["executable"]} -m venv {root}'
+            else:
+                kwargs['command'] = None
+        # Create the object.
+        self = cls(**kwargs)
+        if root:
+            self._root = root
+        return self
 
 
 def get_python_id(python=sys.executable, *, prefix=None, short=True):
