@@ -506,7 +506,6 @@ class BenchmarkRevision(Application):
         # First: remove everything
         self.safe_rmdir(self.conf.build_dir)
         self.safe_rmdir(self.conf.prefix)
-        self.safe_rmdir(self.conf.venv)
 
         self.python.patch(self.patch)
         self.python.compile_install()
@@ -522,18 +521,22 @@ class BenchmarkRevision(Application):
             if not python or not exists:
                 python = sys.executable
         cmd = [python, '-u', '-m', 'pyperformance', 'venv', 'recreate',
-               '--benchmarks', '<NONE>']
-        if self.conf.venv:
-            cmd.extend(('--venv', self.conf.venv))
+               '--venv', self.conf.venv,
+               '--benchmarks', '<NONE>',
+               ]
         if self.options.inherit_environ:
             cmd.append('--inherit-environ=%s' % ','.join(self.options.inherit_environ))
         exitcode = self.run_nocheck(*cmd)
         if exitcode:
             sys.exit(EXIT_VENV_ERROR)
+        binname = 'Scripts' if os.name == 'nt' else 'bin'
+        base = os.path.basename(python)
+        return os.path.join(self.conf.venv, binname, base)
 
-    def run_benchmark(self):
+    def run_benchmark(self, python=None):
         self.safe_makedirs(os.path.dirname(self.filename))
-        python = self.python.program
+        if not python:
+            python = self.python.program
         if self._dryrun:
             python = sys.executable
         cmd = [python, '-u',
@@ -549,8 +552,6 @@ class BenchmarkRevision(Application):
             cmd.append('--benchmarks=%s' % self.conf.benchmarks)
         if self.conf.affinity:
             cmd.extend(('--affinity', self.conf.affinity))
-        if self.conf.venv:
-            cmd.extend(('--venv', self.conf.venv))
         if self.conf.debug:
             cmd.append('--debug-single-value')
         exitcode = self.run_nocheck(*cmd)
@@ -709,9 +710,12 @@ class BenchmarkRevision(Application):
             except SystemExit:
                 sys.exit(EXIT_COMPILE_ERROR)
 
-        self.create_venv()
+        if self.conf.venv:
+            python = self.create_venv()
+        else:
+            python = None
 
-        failed = self.run_benchmark()
+        failed = self.run_benchmark(python)
         if not failed and self.conf.upload:
             self.upload()
         return failed
@@ -992,8 +996,6 @@ def cmd_compile(options):
             conf.update = False
         if options.no_tune:
             conf.system_tune = False
-        if options.venv:
-            conf.venv = options.venv
     bench = BenchmarkRevision(conf, options.revision, options.branch,
                               patch=options.patch, options=options)
     bench.main()

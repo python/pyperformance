@@ -135,19 +135,21 @@ def parse_args():
     cmds.append(cmd)
 
     # venv
-    cmd = subparsers.add_parser('venv',
+    venv_common = argparse.ArgumentParser(add_help=False)
+    venv_common.add_argument("--venv", help="Path to the virtual environment")
+    cmd = subparsers.add_parser('venv', parents=[venv_common],
                                 help='Actions on the virtual environment')
     cmd.set_defaults(venv_action='show')
     venvsubs = cmd.add_subparsers(dest="venv_action")
-    cmd = venvsubs.add_parser('show')
+    cmd = venvsubs.add_parser('show', parents=[venv_common])
     cmds.append(cmd)
-    cmd = venvsubs.add_parser('create')
+    cmd = venvsubs.add_parser('create', parents=[venv_common])
     filter_opts(cmd, allow_no_benchmarks=True)
     cmds.append(cmd)
-    cmd = venvsubs.add_parser('recreate')
+    cmd = venvsubs.add_parser('recreate', parents=[venv_common])
     filter_opts(cmd, allow_no_benchmarks=True)
     cmds.append(cmd)
-    cmd = venvsubs.add_parser('remove')
+    cmd = venvsubs.add_parser('remove', parents=[venv_common])
     cmds.append(cmd)
 
     for cmd in cmds:
@@ -160,8 +162,6 @@ def parse_args():
         cmd.add_argument("-p", "--python",
                          help="Python executable (default: use running Python)",
                          default=sys.executable)
-        cmd.add_argument("--venv",
-                         help="Path to the virtual environment")
 
     options = parser.parse_args()
 
