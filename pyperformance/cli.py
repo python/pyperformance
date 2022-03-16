@@ -244,8 +244,7 @@ def _main():
 
     if options.action == 'venv':
         if options.venv_action in ('create', 'recreate'):
-            with _might_need_venv(options):
-                benchmarks = _benchmarks_from_options(options)
+            benchmarks = _benchmarks_from_options(options)
         else:
             benchmarks = None
         cmd_venv(options, benchmarks)
