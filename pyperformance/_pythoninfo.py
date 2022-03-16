@@ -68,7 +68,7 @@ class PythonInfo(
         # We would use type(sys.version_info) if it allowed it.
         data['version_info'] = tuple(data['version_info'])
         data['implementation_version'] = tuple(data['implementation_version'])
-        return cls(
+        self = cls(
             executable or data['executable (actual)'],
             SysSnapshot(
                 data['executable'],
@@ -76,6 +76,7 @@ class PythonInfo(
                 data['exec_prefix'],
                 data['platlibdir'],
                 data['stdlib_dir'],
+                data['base_executable'],
                 data['base_prefix'],
                 data['base_exec_prefix'],
                 data['version_str'],
@@ -91,6 +92,9 @@ class PythonInfo(
             data['stdlib_dir (actual)'],
             bytes.fromhex(data['pyc_magic_number']),
         )
+        if data['base_executable (actual)']:
+            self._base_executable = data['base_executable (actual)']
+        return self
 
     def __getattr__(self, name):
         if hasattr(type(self), name):
@@ -108,6 +112,23 @@ class PythonInfo(
     @property
     def platlibdir(self):
         return self.sys.platlibdir or 'lib'
+
+    @property
+    def base_executable(self):
+        if getattr(self, '_base_executable', None):
+            return self._base_executable
+
+        base = self.sys._base_executable
+        if self.is_venv:
+            # XXX There is probably a bug in venv, since
+            # sys._base_executable should be different.
+            if not base or base == self.sys.executable:
+                venv = VenvConfig.from_root(self.prefix)
+                base = venv.executable
+        elif not base:
+            base = self.executable
+        self._base_executable = base
+        return self._base_executable
 
     @property
     def is_venv(self):
@@ -161,6 +182,8 @@ class PythonInfo(
             'stdlib_dir': self.sys._stdlib_dir,
             'stdlib_dir (actual)': self.stdlib_dir,
             # base locations
+            'base_executable': self.sys._base_executable,
+            'base_executable (actual)': self.base_executable,
             'base_prefix': self.sys.base_prefix,
             'base_exec_prefix': self.sys.base_exec_prefix,
             # version
@@ -187,6 +210,7 @@ class SysSnapshot(
                     'platlibdir '
                     'stdlib_dir '
                     # base locations
+                    'base_executable '
                     'base_prefix '
                     'base_exec_prefix '
                     # version
@@ -208,12 +232,17 @@ class SysSnapshot(
             if abspaths:
                 return os.path.abspath(filename)
             return filename
+        base_executable = getattr(sys, '_base_executable', None)
+        if sys.prefix != sys.base_prefix and base_executable == sys.executable:
+            # There is a bug in venv, so figure it out later...
+            base_executable = None
         return cls(
             loc(sys.executable),
             loc(sys.prefix),
             loc(sys.exec_prefix),
             getattr(sys, 'platlibdir', None),
             loc(getattr(sys, '_stdlib_dir', None)),
+            loc(base_executable),
             loc(sys.base_prefix),
             loc(sys.base_exec_prefix),
             sys.version,
@@ -227,6 +256,10 @@ class SysSnapshot(
     @property
     def _stdlib_dir(self):
         return self.stdlib_dir
+
+    @property
+    def _base_executable(self):
+        return self.base_executable
 
 
 class SysImplementationSnapshot(
@@ -327,7 +360,7 @@ def inspect_python_install(python=sys.executable):
         info = PythonInfo.from_jsonable(python)
     else:
         info = python
-    return _inspect_python_install(info)
+    return info.base_executable, info.is_dev, info.is_venv
 
 
 def is_dev_stdlib(dirname):
@@ -358,57 +391,13 @@ def is_dev_executable(executable, stdlib_dir):
 
 
 #######################################
-# internal implementation
-
-def _inspect_python_install(info):
-    if info.is_dev:
-        # XXX What about venv?
-        try:
-            base_executable = sys._base_executable
-        except AttributeError:
-            base_executable = info.executable
-        is_dev = True
-    else:
-        major, minor = info.version_info[:2]
-        python = f'python{major}.{minor}'
-        if info.is_venv:
-            if '.' in os.path.basename(info.executable):
-                ext = info.executable.rpartition('.')[2]
-                python_exe = f'{python}.{ext}'
-            else:
-                python_exe = python
-            expected = os.path.join(info.base_prefix, info.platlibdir, python)
-            if info.stdlib_dir == expected:
-                bindir = os.path.basename(os.path.dirname(info.executable))
-                base_executable = os.path.join(info.base_prefix, bindir, python_exe)
-            else:
-                # XXX This is good enough for now.
-                base_executable = info.executable
-                #raise NotImplementedError(stdlib_dir)
-        elif info.implementation.name.lower() == 'cpython':
-            if info.platform == 'win32':
-                expected = os.path.join(info.prefix, info.platlibdir)
-            else:
-                expected = os.path.join(info.prefix, info.platlibdir, python)
-            if info.stdlib_dir == expected:
-                base_executable = info.executable
-            else:
-                raise NotImplementedError(stdlib_dir)
-        else:
-            base_executable = info.executable
-        is_dev = False
-
-    return base_executable, is_dev, info.is_venv
-
-
-#######################################
 # use as a script
 
 if __name__ == '__main__':
     info = PythonInfo.from_current()
     data = info.as_jsonable()
     if '--inspect' in sys.argv:
-        (data['_base_executable'], data['_is_dev'], data['_is_venv'],
-         ) = _inspect_python_install(info)
+        data['is_dev'] = info.is_dev
+        data['is_venv'] = info.is_venv
     json.dump(data, sys.stdout, indent=4)
     print()

@@ -6,9 +6,12 @@ import unittest
 from pyperformance import tests, _pythoninfo
 
 
+IS_VENV = sys.prefix != sys.base_prefix
 CURRENT = {
     'executable': sys.executable,
     'executable (actual)': sys.executable,
+    'base_executable': getattr(sys, '_base_executable', None),
+    'base_executable (actual)': sys.executable,
     'version_str': sys.version,
     'version_info': sys.version_info,
     'hexversion': sys.hexversion,
@@ -26,9 +29,34 @@ CURRENT = {
     'stdlib_dir': getattr(sys, '_stdlib_dir', None),
     'stdlib_dir (actual)': os.path.dirname(os.__file__),
 }
+if IS_VENV:
+    BASE = CURRENT['base_executable']
+    if BASE == sys.executable:  # a bug in venv?
+        CURRENT['base_executable'] = None
+        CURRENT['base_executable (actual)'] = None
+        BASE = None
+    if not BASE:
+        major, minor = sys.version_info[:2]
+        _, suffix = os.path.splitext(sys.executable)
+        for name in [
+                f'python{major}.{minor}{suffix}',
+                f'python{major}{minor}{suffix}',
+                f'python{major}{suffix}',
+                f'python{suffix}',
+                ]:
+            filename = os.path.join(sys._home, name)
+            if os.path.exists(filename):
+                BASE = filename
+                CURRENT['base_executable (actual)'] = BASE
+                break
+        del major, minor, suffix, name, filename
+else:
+    BASE = sys.executable
 
 
 class GetPythonInfoTests(tests.Resources, unittest.TestCase):
+
+    maxDiff = 80 * 100
 
     def test_no_args(self):
         info = _pythoninfo.get_python_info()
@@ -41,9 +69,8 @@ class GetPythonInfoTests(tests.Resources, unittest.TestCase):
         self.assertEqual(info, CURRENT)
 
     def test_venv(self):
-        self.maxDiff = 80 * 100
         expected = dict(CURRENT)
-        if sys.prefix != sys.base_prefix:
+        if IS_VENV:
             python = sys.executable
         else:
             venv, python = self.venv()
@@ -57,6 +84,9 @@ class GetPythonInfoTests(tests.Resources, unittest.TestCase):
 
         info = _pythoninfo.get_python_info(python)
 
+        # We have to work around an apparent bug in venv.
+        if not info['base_executable']:
+            expected['base_executable'] = None
         self.assertEqual(info, expected)
 
 
@@ -71,10 +101,7 @@ class GetPythonIDTests(unittest.TestCase):
         'implementation_name': 'cpython',
         'implementation_version': (3, 8, 10, 'final', 0),
     })
-    if sys.prefix == sys.base_prefix:
-        ID = '736789ab47e4'
-    else:
-        ID = '7f16883789f5'
+    ID = '7f16883789f5' if IS_VENV else '736789ab47e4'
 
     def test_no_prefix(self):
         pyid = _pythoninfo.get_python_id(self.INFO)
@@ -118,24 +145,20 @@ def get_venv_base(venv):
 
 class InspectPythonInstallTests(tests.Resources, unittest.TestCase):
 
-    BASE = getattr(sys, '_base_executable', None)
-
     def test_info(self):
         info = dict(CURRENT)
-        if sys.prefix != sys.base_prefix:
+        if IS_VENV:
             info['prefix'] = info['base_prefix']
             info['exec_prefix'] = info['base_exec_prefix']
         (base, isdev, isvenv,
          ) = _pythoninfo.inspect_python_install(info)
 
-        if self.BASE:
-            self.assertEqual(base, self.BASE)
-        self.assertEqual(base, info['executable'])
+        self.assertEqual(base, BASE)
         self.assertFalse(isdev)
         self.assertFalse(isvenv)
 
     def test_normal(self):
-        if sys.prefix != sys.base_prefix:
+        if IS_VENV:
             try:
                 python = sys._base_executable
             except AttributeError:
@@ -153,7 +176,7 @@ class InspectPythonInstallTests(tests.Resources, unittest.TestCase):
         self.assertFalse(isvenv)
 
     def test_venv(self):
-        if sys.prefix != sys.base_prefix:
+        if IS_VENV:
             python = sys.executable
             try:
                 base_expected = sys._base_executable
