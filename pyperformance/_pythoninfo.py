@@ -198,7 +198,7 @@ class SysImplementationSnapshot(
         )
 
 
-def get_python_id(python=sys.executable, *, prefix=None):
+def get_python_id(python=sys.executable, *, prefix=None, short=True):
     """Return a unique (str) identifier for the given Python executable."""
     if not python or isinstance(python, str):
         info = PythonInfo.from_executable(python)
@@ -227,8 +227,8 @@ def get_python_id(python=sys.executable, *, prefix=None):
         h.update(value)
     # XXX Also include the sorted output of "python -m pip freeze"?
     py_id = h.hexdigest()
-    # XXX Return the whole string?
-    py_id = py_id[:12]
+    if short:
+        py_id = py_id[:12]
 
     if prefix:
         if prefix is True:
