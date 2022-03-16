@@ -84,18 +84,6 @@ def inspect_python_install(python=sys.executable):
 #######################################
 # internal implementation
 
-try:
-    PLATLIBDIR = sys.platlibdir
-except AttributeError:
-    PLATLIBDIR = 'lib'
-STDLIB_DIR = os.path.dirname(os.__file__)
-try:
-    from importlib.util import MAGIC_NUMBER
-except ImportError:
-    import _imp
-    MAGIC_NUMBER = _imp.get_magic()
-
-
 def _is_dev_stdlib(stdlib_dir):
     if os.path.basename(stdlib_dir) != 'Lib':
         return False
@@ -170,13 +158,19 @@ def _inspect_python_install(executable, prefix, base_prefix,
 
 
 def _get_raw_info():
+    try:
+        from importlib.util import MAGIC_NUMBER
+    except ImportError:
+        import _imp
+        MAGIC_NUMBER = _imp.get_magic()
     return {
         # locations
         'executable': sys.executable,
         'prefix': sys.prefix,
         'exec_prefix': sys.exec_prefix,
-        'platlibdir': PLATLIBDIR,
-        'stdlib_dir': STDLIB_DIR,
+        'platlibdir': getattr(sys, 'platlibdir', 'lib'),
+        'stdlib_dir': getattr(sys, '_stdlib_dir',
+                              os.path.dirname(os.__file__)),
         # base locations
         'base_prefix': sys.base_prefix,
         'base_exec_prefix': sys.base_exec_prefix,
