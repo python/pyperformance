@@ -171,21 +171,27 @@ def _inspect_python_install(executable, prefix, base_prefix,
 
 def _get_raw_info():
     return {
+        # locations
         'executable': sys.executable,
+        'prefix': sys.prefix,
+        'exec_prefix': sys.exec_prefix,
+        'platlibdir': PLATLIBDIR,
+        'stdlib_dir': STDLIB_DIR,
+        # base locations
+        'base_prefix': sys.base_prefix,
+        'base_exec_prefix': sys.base_exec_prefix,
+        # version
         'version_str': sys.version,
         'version_info': sys.version_info,
         'hexversion': sys.hexversion,
         'api_version': sys.api_version,
-        'magic_number': MAGIC_NUMBER.hex(),
+        # implementation
         'implementation_name': sys.implementation.name.lower(),
         'implementation_version': sys.implementation.version,
+        # host
         'platform': sys.platform,
-        'prefix': sys.prefix,
-        'exec_prefix': sys.exec_prefix,
-        'base_prefix': sys.base_prefix,
-        'base_exec_prefix': sys.base_exec_prefix,
-        'platlibdir': PLATLIBDIR,
-        'stdlib_dir': STDLIB_DIR,
+        # import system
+        'magic_number': MAGIC_NUMBER.hex(),
         # XXX Also include the build options (e.g. configure flags)?
     }
 
