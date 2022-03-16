@@ -9,13 +9,13 @@ from pyperformance import tests, _pythoninfo
 INFO = {
     'executable': sys.executable,
     'version_str': sys.version,
-    'version_info': tuple(sys.version_info),
+    'version_info': sys.version_info,
     'hexversion': sys.hexversion,
     'api_version': sys.api_version,
     # importlib.util.MAGIC_NUMBER has been around since 3.5.
     'magic_number': importlib.util.MAGIC_NUMBER.hex(),
     'implementation_name': sys.implementation.name.lower(),
-    'implementation_version': tuple(sys.implementation.version),
+    'implementation_version': sys.implementation.version,
     'platform': sys.platform,
     'prefix': sys.prefix,
     'exec_prefix': sys.exec_prefix,

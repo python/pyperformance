@@ -66,7 +66,11 @@ def get_python_info(python=sys.executable):
         )
     except subprocess.CalledProcessError:
         raise Exception(f'could not get info for {python}')
-    return json.loads(text)
+    info = json.loads(text)
+    # We would use type(sys.version_info) if it allowed it.
+    info['version_info'] = tuple(info['version_info'])
+    info['implementation_version'] = tuple(info['implementation_version'])
+    return info
 
 
 def inspect_python_install(python=sys.executable):
@@ -169,12 +173,12 @@ def _get_raw_info():
     return {
         'executable': sys.executable,
         'version_str': sys.version,
-        'version_info': tuple(sys.version_info),
+        'version_info': sys.version_info,
         'hexversion': sys.hexversion,
         'api_version': sys.api_version,
         'magic_number': MAGIC_NUMBER.hex(),
         'implementation_name': sys.implementation.name.lower(),
-        'implementation_version': tuple(sys.implementation.version),
+        'implementation_version': sys.implementation.version,
         'platform': sys.platform,
         'prefix': sys.prefix,
         'exec_prefix': sys.exec_prefix,
@@ -191,7 +195,8 @@ def _get_raw_info():
 
 if __name__ == '__main__':
     info = _get_raw_info()
-    (info['_base_executable'], info['_is_dev'], info['_is_venv'],
-     ) = _inspect_python_install(**info)
+    if '--inspect' in sys.argv:
+        (info['_base_executable'], info['_is_dev'], info['_is_venv'],
+         ) = _inspect_python_install(**info)
     json.dump(info, sys.stdout, indent=4)
     print()
