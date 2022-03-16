@@ -527,29 +527,6 @@ class VirtualEnvironment(object):
         return requirements
 
 
-def exec_in_virtualenv(options):
-    venv = VirtualEnvironment(
-        options.python,
-        options.venv,
-        inherit_environ=options.inherit_environ,
-    )
-
-    venv.ensure()
-    venv_python = venv.get_python_program()
-
-    args = [venv_python, "-m", "pyperformance"] + \
-        sys.argv[1:] + ["--inside-venv"]
-    # os.execv() is buggy on windows, which is why we use run_cmd/subprocess
-    # on windows.
-    # * https://bugs.python.org/issue19124
-    # * https://github.com/python/benchmarks/issues/5
-    if os.name == "nt":
-        venv.run_cmd(args, verbose=False)
-        sys.exit(0)
-    else:
-        os.execv(args[0], args)
-
-
 def cmd_venv(options, benchmarks=None):
     venv = VirtualEnvironment(
         options.python,

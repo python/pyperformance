@@ -12,7 +12,7 @@ class FunctionalTests(tests.Functional, unittest.TestCase):
             os.path.join(tests.DATA_DIR, 'mem1.json'),
         ):
             with self.subTest(filename):
-                self.run_pyperformance('show', filename, invenv=False)
+                self.run_pyperformance('show', filename)
 
 
 if __name__ == "__main__":

@@ -1,11 +1,10 @@
 import argparse
-import contextlib
 import logging
 import os.path
 import sys
 
-from pyperformance import _utils, is_installed
-from pyperformance.venv import exec_in_virtualenv, cmd_venv
+from pyperformance import _utils, is_installed, is_dev
+from pyperformance.venv import cmd_venv
 
 
 def comma_separated(values):
@@ -136,19 +135,21 @@ def parse_args():
     cmds.append(cmd)
 
     # venv
-    cmd = subparsers.add_parser('venv',
+    venv_common = argparse.ArgumentParser(add_help=False)
+    venv_common.add_argument("--venv", help="Path to the virtual environment")
+    cmd = subparsers.add_parser('venv', parents=[venv_common],
                                 help='Actions on the virtual environment')
     cmd.set_defaults(venv_action='show')
     venvsubs = cmd.add_subparsers(dest="venv_action")
-    cmd = venvsubs.add_parser('show')
+    cmd = venvsubs.add_parser('show', parents=[venv_common])
     cmds.append(cmd)
-    cmd = venvsubs.add_parser('create')
+    cmd = venvsubs.add_parser('create', parents=[venv_common])
     filter_opts(cmd, allow_no_benchmarks=True)
     cmds.append(cmd)
-    cmd = venvsubs.add_parser('recreate')
+    cmd = venvsubs.add_parser('recreate', parents=[venv_common])
     filter_opts(cmd, allow_no_benchmarks=True)
     cmds.append(cmd)
-    cmd = venvsubs.add_parser('remove')
+    cmd = venvsubs.add_parser('remove', parents=[venv_common])
     cmds.append(cmd)
 
     for cmd in cmds:
@@ -158,15 +159,9 @@ def parse_args():
                                "names that are inherited from the parent "
                                "environment when running benchmarking "
                                "subprocesses."))
-        cmd.add_argument("--inside-venv", action="store_true",
-                         help=("Option for internal usage only, don't use "
-                               "it directly. Notice that we are already "
-                               "inside the virtual environment."))
         cmd.add_argument("-p", "--python",
                          help="Python executable (default: use running Python)",
                          default=sys.executable)
-        cmd.add_argument("--venv",
-                         help="Path to the virtual environment")
 
     options = parser.parse_args()
 
@@ -196,21 +191,6 @@ def parse_args():
             options.benchmarks = None
 
     return (parser, options)
-
-
-@contextlib.contextmanager
-def _might_need_venv(options):
-    try:
-        if not is_installed():
-            # Always force a local checkout to be installed.
-            assert not options.inside_venv
-            raise ModuleNotFoundError
-        yield
-    except ModuleNotFoundError:
-        if not options.inside_venv:
-            print('switching to a venv.', flush=True)
-            exec_in_virtualenv(options)
-        raise  # re-raise
 
 
 def _manifest_from_options(options):
@@ -253,12 +233,18 @@ def _select_benchmarks(raw, manifest):
 
 
 def _main():
+    if not is_installed():
+        # Always require a local checkout to be installed.
+        print('ERROR: pyperformance should not be run without installing first')
+        if is_dev():
+            print('(consider using the dev.py script)')
+        sys.exit(1)
+
     parser, options = parse_args()
 
     if options.action == 'venv':
         if options.venv_action in ('create', 'recreate'):
-            with _might_need_venv(options):
-                benchmarks = _benchmarks_from_options(options)
+            benchmarks = _benchmarks_from_options(options)
         else:
             benchmarks = None
         cmd_venv(options, benchmarks)
@@ -280,23 +266,19 @@ def _main():
         cmd_show(options)
         sys.exit()
     elif options.action == 'run':
-        with _might_need_venv(options):
-            from pyperformance.cli_run import cmd_run
-            benchmarks = _benchmarks_from_options(options)
+        from pyperformance.cli_run import cmd_run
+        benchmarks = _benchmarks_from_options(options)
         cmd_run(options, benchmarks)
     elif options.action == 'compare':
-        with _might_need_venv(options):
-            from pyperformance.compare import cmd_compare
+        from pyperformance.compare import cmd_compare
         cmd_compare(options)
     elif options.action == 'list':
-        with _might_need_venv(options):
-            from pyperformance.cli_run import cmd_list
-            benchmarks = _benchmarks_from_options(options)
+        from pyperformance.cli_run import cmd_list
+        benchmarks = _benchmarks_from_options(options)
         cmd_list(options, benchmarks)
     elif options.action == 'list_groups':
-        with _might_need_venv(options):
-            from pyperformance.cli_run import cmd_list_groups
-            manifest = _manifest_from_options(options)
+        from pyperformance.cli_run import cmd_list_groups
+        manifest = _manifest_from_options(options)
         cmd_list_groups(manifest)
     else:
         parser.print_help()

@@ -60,20 +60,15 @@ def run_benchmarks(should_run, python, options):
 
     benchmarks = {}
     venvs = set()
-    if options.venv:
-        venv = _venv.VirtualEnvironment(
-            options.python,
-            options.venv,
-            inherit_environ=options.inherit_environ,
-        )
-        venv.ensure(refresh=False)
-        venvs.add(venv.get_path())
+    if sys.prefix != sys.base_prefix:
+        venvs.add(sys.prefix)
+    common_venv = None  # XXX Add the ability to combine venvs.
     for i, bench in enumerate(to_run):
         bench_runid = runid._replace(bench=bench)
         assert bench_runid.name, (bench, bench_runid)
         venv = _venv.VirtualEnvironment(
             options.python,
-            options.venv,
+            common_venv,
             inherit_environ=options.inherit_environ,
             name=bench_runid.name,
             usebase=True,
