@@ -6,23 +6,25 @@ import unittest
 from pyperformance import tests, _pythoninfo
 
 
-INFO = {
+CURRENT = {
     'executable': sys.executable,
+    'executable (actual)': sys.executable,
     'version_str': sys.version,
     'version_info': sys.version_info,
     'hexversion': sys.hexversion,
     'api_version': sys.api_version,
     # importlib.util.MAGIC_NUMBER has been around since 3.5.
-    'magic_number': importlib.util.MAGIC_NUMBER.hex(),
-    'implementation_name': sys.implementation.name.lower(),
+    'pyc_magic_number': importlib.util.MAGIC_NUMBER.hex(),
+    'implementation_name': sys.implementation.name,
     'implementation_version': sys.implementation.version,
     'platform': sys.platform,
     'prefix': sys.prefix,
     'exec_prefix': sys.exec_prefix,
     'base_prefix': sys.base_prefix,
     'base_exec_prefix': sys.base_exec_prefix,
-    'platlibdir': getattr(sys, 'platlibdir', 'lib'),
-    'stdlib_dir': os.path.dirname(os.__file__)
+    'platlibdir': getattr(sys, 'platlibdir', None),
+    'stdlib_dir': getattr(sys, '_stdlib_dir', None),
+    'stdlib_dir (actual)': os.path.dirname(os.__file__),
 }
 
 
@@ -31,23 +33,27 @@ class GetPythonInfoTests(tests.Resources, unittest.TestCase):
     def test_no_args(self):
         info = _pythoninfo.get_python_info()
 
-        self.assertEqual(info, INFO)
+        self.assertEqual(info, CURRENT)
 
     def test_current_python(self):
         info = _pythoninfo.get_python_info(sys.executable)
 
-        self.assertEqual(info, INFO)
+        self.assertEqual(info, CURRENT)
 
     def test_venv(self):
         self.maxDiff = 80 * 100
-        expected = dict(INFO)
+        expected = dict(CURRENT)
         if sys.prefix != sys.base_prefix:
             python = sys.executable
         else:
             venv, python = self.venv()
             expected['executable'] = python
+            expected['executable (actual)'] = python
             expected['prefix'] = venv
             expected['exec_prefix'] = venv
+            expected['version_info'] = tuple(expected['version_info'])
+            (expected['implementation_version']
+             ) = tuple(expected['implementation_version'])
 
         info = _pythoninfo.get_python_info(python)
 
@@ -56,16 +62,19 @@ class GetPythonInfoTests(tests.Resources, unittest.TestCase):
 
 class GetPythonIDTests(unittest.TestCase):
 
-    INFO = {
+    INFO = dict(CURRENT, **{
         'executable': '/a/b/c/bin/spam-python',
         'version_str': '3.8.10 (default, May  5 2021, 03:01:07) \n[GCC 7.5.0]',
         'version_info': (3, 8, 10, 'final', 0),
         'api_version': 1013,
-        'magic_number': b'U\r\r\n'.hex(),
+        'pyc_magic_number': b'U\r\r\n'.hex(),
         'implementation_name': 'cpython',
         'implementation_version': (3, 8, 10, 'final', 0),
-    }
-    ID = 'b14d92fd0e6f'
+    })
+    if sys.prefix == sys.base_prefix:
+        ID = '587d9b9b3bc8'
+    else:
+        ID = '361c6e32e53d'
 
     def test_no_prefix(self):
         pyid = _pythoninfo.get_python_id(self.INFO)
@@ -112,7 +121,7 @@ class InspectPythonInstallTests(tests.Resources, unittest.TestCase):
     BASE = getattr(sys, '_base_executable', None)
 
     def test_info(self):
-        info = dict(INFO)
+        info = dict(CURRENT)
         if sys.prefix != sys.base_prefix:
             info['prefix'] = info['base_prefix']
             info['exec_prefix'] = info['base_exec_prefix']
