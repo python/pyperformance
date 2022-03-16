@@ -112,6 +112,12 @@ class PythonInfo(
     def is_venv(self):
         return self.sys.prefix != self.sys.base_prefix
 
+    @property
+    def is_dev(self):
+        if not is_dev_stdlib(self.stdlib_dir):
+            return False
+        return is_dev_executable(self.executable, self.stdlib_dir)
+
     def get_id(self, prefix=None, *, short=True):
         data = [
             # "executable" represents the install location
@@ -259,13 +265,10 @@ def inspect_python_install(python=sys.executable):
     return _inspect_python_install(info)
 
 
-#######################################
-# internal implementation
-
-def _is_dev_stdlib(stdlib_dir):
-    if os.path.basename(stdlib_dir) != 'Lib':
+def is_dev_stdlib(dirname):
+    if os.path.basename(dirname) != 'Lib':
         return False
-    srcdir = os.path.dirname(stdlib_dir)
+    srcdir = os.path.dirname(dirname)
     for filename in [
         os.path.join(srcdir, 'Python', 'pylifecycle.c'),
         os.path.join(srcdir, 'PCbuild', 'pythoncore.vcxproj'),
@@ -275,7 +278,8 @@ def _is_dev_stdlib(stdlib_dir):
     return True
 
 
-def _is_dev_executable(executable, stdlib_dir):
+def is_dev_executable(executable, stdlib_dir):
+    # This is meant to work on all platforms and for out-of-tree builds.
     builddir = os.path.dirname(executable)
     if os.path.exists(os.path.join(builddir, 'pybuilddir.txt')):
         return True
@@ -288,9 +292,11 @@ def _is_dev_executable(executable, stdlib_dir):
     return False
 
 
+#######################################
+# internal implementation
+
 def _inspect_python_install(info):
-    if (_is_dev_stdlib(info.stdlib_dir) and
-            _is_dev_executable(info.executable, info.stdlib_dir)):
+    if info.is_dev:
         # XXX What about venv?
         try:
             base_executable = sys._base_executable
