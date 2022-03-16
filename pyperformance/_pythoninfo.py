@@ -108,6 +108,10 @@ class PythonInfo(
     def platlibdir(self):
         return self.sys.platlibdir or 'lib'
 
+    @property
+    def is_venv(self):
+        return self.sys.prefix != self.sys.base_prefix
+
     def get_id(self, prefix=None, *, short=True):
         data = [
             # "executable" represents the install location
@@ -285,8 +289,6 @@ def _is_dev_executable(executable, stdlib_dir):
 
 
 def _inspect_python_install(info):
-    is_venv = info.prefix != info.base_prefix
-
     if (_is_dev_stdlib(info.stdlib_dir) and
             _is_dev_executable(info.executable, info.stdlib_dir)):
         # XXX What about venv?
@@ -298,7 +300,7 @@ def _inspect_python_install(info):
     else:
         major, minor = info.version_info[:2]
         python = f'python{major}.{minor}'
-        if is_venv:
+        if info.is_venv:
             if '.' in os.path.basename(info.executable):
                 ext = info.executable.rpartition('.')[2]
                 python_exe = f'{python}.{ext}'
@@ -325,7 +327,7 @@ def _inspect_python_install(info):
             base_executable = info.executable
         is_dev = False
 
-    return base_executable, is_dev, is_venv
+    return base_executable, is_dev, info.is_venv
 
 
 #######################################
