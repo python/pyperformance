@@ -5,31 +5,16 @@ import sys
 
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
-VENV = os.path.join(REPO_ROOT, '.venvs', 'dev')
+VENVS = os.path.join(REPO_ROOT, '.venvs')
 
 
-def main(venvroot=None):
-    if sys.prefix != sys.base_prefix:  # already in a venv
+def ensure_venv_ready(venvroot=None, kind='dev'):
+    if sys.prefix != sys.base_prefix:
         assert os.path.exists(os.path.join(sys.prefix, 'pyvenv.cfg'))
-        # Make sure the venv has pyperformance installed.
-        ready = os.path.join(sys.prefix, 'READY')
-        if not os.path.exists(ready):
-            import subprocess
-            relroot = os.path.relpath(sys.prefix)
-            print(f'venv {relroot} not ready, installing dependencies...')
-            proc = subprocess.run(
-                [sys.executable, '-m', 'pip', 'install',
-                 '--upgrade',
-                 '--editable', REPO_ROOT],
-            )
-            if proc.returncode != 0:
-                sys.exit('ERROR: install failed')
-            with open(ready, 'w'):
-                pass
-            print('...venv {relroot} ready!')
-        # Now run pyperformance.
-        import pyperformance.cli
-        pyperformance.cli.main()
+        venvroot = sys.prefix
+        python = sys.executable
+        readyfile = os.path.join(sys.prefix, 'READY')
+        isready = os.path.exists(readyfile)
     else:
         import venv
         if not venvroot:
@@ -37,25 +22,58 @@ def main(venvroot=None):
             if sysconfig.is_python_build():
                 sys.exit('please install your built Python first (or pass it using --python)')
             # XXX Handle other implementations too?
+            base = os.path.join(VENVS, kind or 'dev')
             major, minor = sys.version_info[:2]
             pyloc = ((os.path.abspath(sys.executable)
                       ).partition(os.path.sep)[2].lstrip(os.path.sep)
                      ).replace(os.path.sep, '-')
-            venvroot = f'{VENV}-{major}.{minor}-{pyloc}'
+            venvroot = f'{base}-{major}.{minor}-{pyloc}'
         # Make sure the venv exists.
-        ready = os.path.join(venvroot, 'READY')
-        if not os.path.exists(ready):
+        readyfile = os.path.join(venvroot, 'READY')
+        isready = os.path.exists(readyfile)
+        if not isready:
             relroot = os.path.relpath(venvroot)
             if not os.path.exists(venvroot):
                 print(f'creating venv at {relroot}...')
             else:
                 print(f'venv {relroot} not ready, re-creating...')
             venv.create(venvroot, with_pip=True, clear=True)
-        # Now re-run dev.py using the venv.
+        else:
+            assert os.path.exists(os.path.join(venvroot, 'pyvenv.cfg'))
+        # Return the venv's Python executable.
         binname = 'Scripts' if os.name == 'nt' else 'bin'
         exename = os.path.basename(sys.executable)
         python = os.path.join(venvroot, binname, exename)
+
+    # Now make sure the venv has pyperformance installed.
+    if not isready:
+        import subprocess
+        relroot = os.path.relpath(venvroot)
+        print(f'venv {relroot} not ready, installing dependencies...')
+        proc = subprocess.run(
+            [python, '-m', 'pip', 'install',
+             '--upgrade',
+             '--editable', REPO_ROOT],
+        )
+        if proc.returncode != 0:
+            sys.exit('ERROR: install failed')
+        with open(readyfile, 'w'):
+            pass
+        print('...venv {relroot} ready!')
+
+    return python
+
+
+def main(venvroot=None):
+    python = ensure_venv_ready(venvroot)
+    if python != sys.executable:
+        # Now re-run using the venv.
         os.execv(python, [python, *sys.argv])
+        # <unreachable>
+
+    # Now run pyperformance.
+    import pyperformance.cli
+    pyperformance.cli.main()
 
 
 if __name__ == '__main__':
