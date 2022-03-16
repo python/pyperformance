@@ -72,9 +72,9 @@ class GetPythonIDTests(unittest.TestCase):
         'implementation_version': (3, 8, 10, 'final', 0),
     })
     if sys.prefix == sys.base_prefix:
-        ID = '587d9b9b3bc8'
+        ID = '736789ab47e4'
     else:
-        ID = '361c6e32e53d'
+        ID = '7f16883789f5'
 
     def test_no_prefix(self):
         pyid = _pythoninfo.get_python_id(self.INFO)

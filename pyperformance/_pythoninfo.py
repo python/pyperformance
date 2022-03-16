@@ -108,6 +108,37 @@ class PythonInfo(
     def platlibdir(self):
         return self.sys.platlibdir or 'lib'
 
+    def get_id(self, prefix=None, *, short=True):
+        data = [
+            # "executable" represents the install location
+            # (and build, to an extent).
+            self.executable,
+            # sys.version encodes version, git info, build_date, and build_tool.
+            self.sys.version,
+            self.sys.implementation.name.lower(),
+            '.'.join(str(v) for v in self.sys.implementation.version),
+            str(self.sys.api_version),
+            self.pyc_magic_number.hex(),
+        ]
+        # XXX Add git info if a dev build.
+
+        h = hashlib.sha256()
+        for value in data:
+            h.update(value.encode('utf-8'))
+        # XXX Also include the sorted output of "python -m pip freeze"?
+        py_id = h.hexdigest()
+        if short:
+            py_id = py_id[:12]
+
+        if prefix:
+            if prefix is True:
+                major, minor = self.sys.version_info[:2]
+                py_id = f'{self.implementation.name}{major}.{minor}-{py_id}'
+            else:
+                py_id = prefix + py_id
+
+        return py_id
+
     def as_jsonable(self):
         return {
             # locations
@@ -206,38 +237,7 @@ def get_python_id(python=sys.executable, *, prefix=None, short=True):
         info = PythonInfo.from_jsonable(python)
     else:
         info = python
-
-    data = [
-        # "executable" represents the install location
-        # (and build, to an extent).
-        info.executable,
-        # sys.version encodes version, git info, build_date, and build_tool.
-        info.version_str,
-        info.implementation.name.lower(),
-        '.'.join(str(v) for v in info.implementation.version),
-        str(info.api_version),
-        info.pyc_magic_number,
-    ]
-    # XXX Add git info if a dev build.
-
-    h = hashlib.sha256()
-    for value in data:
-        if isinstance(value, str):
-            value = value.encode('utf-8')
-        h.update(value)
-    # XXX Also include the sorted output of "python -m pip freeze"?
-    py_id = h.hexdigest()
-    if short:
-        py_id = py_id[:12]
-
-    if prefix:
-        if prefix is True:
-            major, minor = info.version_info[:2]
-            py_id = f'{info.implementation.name}{major}.{minor}-{py_id}'
-        else:
-            py_id = prefix + py_id
-
-    return py_id
+    return info.get_id(prefix, short=short)
 
 
 def get_python_info(python=sys.executable):
