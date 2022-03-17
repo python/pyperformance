@@ -25,7 +25,6 @@ CURRENT = {
     'exec_prefix': sys.exec_prefix,
     'base_prefix': sys.base_prefix,
     'base_exec_prefix': sys.base_exec_prefix,
-    'platlibdir': getattr(sys, 'platlibdir', None),
     'stdlib_dir': getattr(sys, '_stdlib_dir', None),
     'stdlib_dir (actual)': os.path.dirname(os.__file__),
 }

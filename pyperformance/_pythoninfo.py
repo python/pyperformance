@@ -70,7 +70,6 @@ class PythonInfo(
                 data['executable'],
                 data['prefix'],
                 data['exec_prefix'],
-                data['platlibdir'],
                 data['stdlib_dir'],
                 data['base_executable'],
                 data['base_prefix'],
@@ -104,10 +103,6 @@ class PythonInfo(
     @property
     def stdlib_dir(self):
         return self.sys._stdlib_dir or super().stdlib_dir
-
-    @property
-    def platlibdir(self):
-        return self.sys.platlibdir or 'lib'
 
     @property
     def base_executable(self):
@@ -174,7 +169,6 @@ class PythonInfo(
             'executable': self.sys.executable,
             'prefix': self.sys.prefix,
             'exec_prefix': self.sys.exec_prefix,
-            'platlibdir': self.sys.platlibdir,
             'stdlib_dir': self.sys._stdlib_dir,
             'stdlib_dir (actual)': self.stdlib_dir,
             # base locations
@@ -203,7 +197,6 @@ class SysSnapshot(
                     'executable '
                     'prefix '
                     'exec_prefix '
-                    'platlibdir '
                     'stdlib_dir '
                     # base locations
                     'base_executable '
@@ -236,7 +229,6 @@ class SysSnapshot(
             loc(sys.executable),
             loc(sys.prefix),
             loc(sys.exec_prefix),
-            getattr(sys, 'platlibdir', None),
             loc(getattr(sys, '_stdlib_dir', None)),
             loc(base_executable),
             loc(sys.base_prefix),
@@ -267,6 +259,11 @@ class SysImplementationSnapshot(
             sys.implementation.name,
             sys.implementation.version,
         )
+
+
+#class SysconfigSnapshot:
+#    ...
+#    # XXX Also include the build options (e.g. configure flags)?
 
 
 class VenvConfig(
