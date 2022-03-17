@@ -350,7 +350,7 @@ def get_python_info(python=sys.executable):
 
 
 def inspect_python_install(python=sys.executable):
-    if isinstance(python, str):
+    if not python or isinstance(python, str):
         info = PythonInfo.from_executable(python)
     elif not isinstance(python, PythonInfo):
         info = PythonInfo.from_jsonable(python)
