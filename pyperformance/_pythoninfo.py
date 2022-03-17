@@ -3,7 +3,8 @@
 # This may be used as a script.
 
 __all__ = [
-    'PythonInfo', 'SysSnapshot', 'SysImplementationSnapshot',
+    'PythonInfo',
+    'SysSnapshot', 'SysImplementationSnapshot', 'SysconfigSnapshot',
     'VenvConfig',
     'get_python_id',
     'get_python_info',
@@ -19,10 +20,12 @@ import os
 import os.path
 import subprocess
 import sys
+import sysconfig
 
 
 class PythonInfo(
-        namedtuple('PythonInfo', 'executable sys stdlib_dir pyc_magic_number')):
+        namedtuple('PythonInfo', ('executable sys sysconfig '
+                                  'stdlib_dir pyc_magic_number'))):
 
     @classmethod
     def from_current(cls):
@@ -30,6 +33,7 @@ class PythonInfo(
         return cls(
             _sys.executable,
             _sys,
+            SysconfigSnapshot.from_current(),
             os.path.dirname(os.__file__),
             importlib.util.MAGIC_NUMBER,
         )
@@ -84,6 +88,10 @@ class PythonInfo(
                 ),
                 data['platform'],
             ),
+            SysconfigSnapshot(
+                data['stdlib_dir (sysconfig)'],
+                data['is_dev'],
+            ),
             data['stdlib_dir (actual)'],
             bytes.fromhex(data['pyc_magic_number']),
         )
@@ -127,9 +135,7 @@ class PythonInfo(
 
     @property
     def is_dev(self):
-        if not is_dev_stdlib(self.stdlib_dir):
-            return False
-        return is_dev_executable(self.executable, self.stdlib_dir)
+        return self.sysconfig.is_python_build()
 
     def get_id(self, prefix=None, *, short=True):
         data = [
@@ -171,6 +177,7 @@ class PythonInfo(
             'exec_prefix': self.sys.exec_prefix,
             'stdlib_dir': self.sys._stdlib_dir,
             'stdlib_dir (actual)': self.stdlib_dir,
+            'stdlib_dir (sysconfig)': self.sysconfig.stdlib,
             # base locations
             'base_executable': self.sys._base_executable,
             'base_executable (actual)': self.base_executable,
@@ -184,6 +191,8 @@ class PythonInfo(
             # implementation
             'implementation_name': self.sys.implementation.name,
             'implementation_version': self.sys.implementation.version,
+            # build
+            'is_dev': self.sysconfig.is_python_build(),
             # host
             'platform': self.sys.platform,
             # import system
@@ -261,9 +270,21 @@ class SysImplementationSnapshot(
         )
 
 
-#class SysconfigSnapshot:
-#    ...
-#    # XXX Also include the build options (e.g. configure flags)?
+class SysconfigSnapshot(
+        namedtuple('SysconfigSnapshot', 'stdlib is_python_build')):
+    # It may be helpful to include the build options (e.g. configure flags).
+
+    @classmethod
+    def from_current(cls):
+        return cls(
+            (sysconfig.get_path('stdlib')
+             if 'stdlib' in sysconfig.get_path_names()
+             else None),
+            sysconfig.is_python_build(),
+        )
+
+    def is_python_build(self):
+        return super().is_python_build
 
 
 class VenvConfig(
@@ -356,33 +377,6 @@ def inspect_python_install(python=sys.executable):
     return info.base_executable, info.is_dev, info.is_venv
 
 
-def is_dev_stdlib(dirname):
-    if os.path.basename(dirname) != 'Lib':
-        return False
-    srcdir = os.path.dirname(dirname)
-    for filename in [
-        os.path.join(srcdir, 'Python', 'pylifecycle.c'),
-        os.path.join(srcdir, 'PCbuild', 'pythoncore.vcxproj'),
-    ]:
-        if not os.path.exists(filename):
-            return False
-    return True
-
-
-def is_dev_executable(executable, stdlib_dir):
-    # This is meant to work on all platforms and for out-of-tree builds.
-    builddir = os.path.dirname(executable)
-    if os.path.exists(os.path.join(builddir, 'pybuilddir.txt')):
-        return True
-    if os.name == 'nt':
-        pcbuild = os.path.dirname(os.path.dirname(executable))
-        if os.path.basename(pcbuild) == 'PCbuild':
-            srcdir = os.path.dirname(pcbuild)
-            if os.path.join(srcdir, 'Lib') == stdlib_dir:
-                return True
-    return False
-
-
 #######################################
 # use as a script
 
@@ -390,7 +384,6 @@ if __name__ == '__main__':
     info = PythonInfo.from_current()
     data = info.as_jsonable()
     if '--inspect' in sys.argv:
-        data['is_dev'] = info.is_dev
         data['is_venv'] = info.is_venv
     json.dump(data, sys.stdout, indent=4)
     print()

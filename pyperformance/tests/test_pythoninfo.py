@@ -1,6 +1,7 @@
 import importlib.util
 import os
 import sys
+import sysconfig
 import unittest
 
 from pyperformance import tests, _pythoninfo
@@ -27,6 +28,8 @@ CURRENT = {
     'base_exec_prefix': sys.base_exec_prefix,
     'stdlib_dir': getattr(sys, '_stdlib_dir', None),
     'stdlib_dir (actual)': os.path.dirname(os.__file__),
+    'stdlib_dir (sysconfig)': sysconfig.get_path('stdlib'),
+    'is_dev': sysconfig.is_python_build(),
 }
 if IS_VENV:
     BASE = CURRENT['base_executable']
