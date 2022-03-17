@@ -24,16 +24,21 @@ class PythonInfo(
         namedtuple('PythonInfo', ('executable sys sysconfig '
                                   'stdlib_dir pyc_magic_number'))):
 
+    _CURRENT = None
+
     @classmethod
     def from_current(cls):
+        if cls._CURRENT is not None:
+            return cls._CURRENT
         _sys = SysSnapshot.from_current()
-        return cls(
+        cls._CURRENT = cls(
             _sys.executable,
             _sys,
             SysconfigSnapshot.from_current(),
             os.path.dirname(os.__file__),
             importlib.util.MAGIC_NUMBER,
         )
+        return cls._CURRENT
 
     @classmethod
     def from_executable(cls, executable=sys.executable):
@@ -133,6 +138,15 @@ class PythonInfo(
     @property
     def is_dev(self):
         return self.sysconfig.is_python_build()
+
+    @property
+    def is_current(self):
+        if self is self._CURRENT:
+            return True
+        # It shouldn't be able to match without being self._CURRENT.
+        assert self.executable != os.path.abspath(sys.executable), \
+                (self.executable, sys.executable)
+        return False
 
     def get_id(self, prefix=None, *, short=True):
         data = [
