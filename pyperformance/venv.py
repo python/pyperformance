@@ -122,10 +122,6 @@ def safe_rmtree(path):
     return True
 
 
-def python_implementation():
-    return sys.implementation.name.lower()
-
-
 def get_venv_program(program):
     bin_path = os.path.dirname(sys.executable)
     bin_path = os.path.realpath(bin_path)
