@@ -11,7 +11,7 @@ CURRENT = {
     'executable': sys.executable,
     'executable (actual)': sys.executable,
     'base_executable': getattr(sys, '_base_executable', None),
-    'base_executable (actual)': sys.executable,
+    'base_executable (actual)': os.path.realpath(sys.executable),
     'version_str': sys.version,
     'version_info': sys.version_info,
     'hexversion': sys.hexversion,
@@ -46,12 +46,12 @@ if IS_VENV:
                 ]:
             filename = os.path.join(sys._home, name)
             if os.path.exists(filename):
-                BASE = filename
+                BASE = os.path.realpath(filename)
                 CURRENT['base_executable (actual)'] = BASE
                 break
         del major, minor, suffix, name, filename
 else:
-    BASE = sys.executable
+    BASE = CURRENT['base_executable (actual)']
 
 
 class GetPythonInfoTests(tests.Resources, unittest.TestCase):
@@ -92,7 +92,7 @@ class GetPythonInfoTests(tests.Resources, unittest.TestCase):
 
 class GetPythonIDTests(unittest.TestCase):
 
-    INFO = dict(CURRENT, **{
+    INFO = {
         'executable': '/a/b/c/bin/spam-python',
         'version_str': '3.8.10 (default, May  5 2021, 03:01:07) \n[GCC 7.5.0]',
         'version_info': (3, 8, 10, 'final', 0),
@@ -100,23 +100,45 @@ class GetPythonIDTests(unittest.TestCase):
         'pyc_magic_number': b'U\r\r\n'.hex(),
         'implementation_name': 'cpython',
         'implementation_version': (3, 8, 10, 'final', 0),
-    })
-    ID = '7f16883789f5' if IS_VENV else '736789ab47e4'
+    }
+    ID = '334c63e71d63'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.INFO.update((k, '') for k in CURRENT if k not in cls.INFO)
 
     def test_no_prefix(self):
-        pyid = _pythoninfo.get_python_id(self.INFO)
+        info = dict(self.INFO)
+        expected = self.ID
 
-        self.assertEqual(pyid, self.ID)
+        pyid = _pythoninfo.get_python_id(
+            _pythoninfo.PythonInfo.from_jsonable(info),
+        )
+
+        self.assertEqual(pyid, expected)
 
     def test_true_prefix(self):
-        pyid = _pythoninfo.get_python_id(self.INFO, prefix=True)
+        info = dict(self.INFO)
+        expected = f'cpython3.8-{self.ID}'
 
-        self.assertEqual(pyid, f'cpython3.8-{self.ID}')
+        pyid = _pythoninfo.get_python_id(
+            _pythoninfo.PythonInfo.from_jsonable(info),
+            prefix=True,
+        )
+
+        self.assertEqual(pyid, expected)
 
     def test_given_prefix(self):
-        pyid = _pythoninfo.get_python_id(self.INFO, prefix='spam-')
+        info = dict(self.INFO)
+        expected = f'spam-{self.ID}'
 
-        self.assertEqual(pyid, f'spam-{self.ID}')
+        pyid = _pythoninfo.get_python_id(
+            _pythoninfo.PythonInfo.from_jsonable(info),
+            prefix='spam-',
+        )
+
+        self.assertEqual(pyid, expected)
 
 
 def read_venv_config(venv):
@@ -158,35 +180,24 @@ class InspectPythonInstallTests(tests.Resources, unittest.TestCase):
         self.assertFalse(isvenv)
 
     def test_normal(self):
+        base_expected = BASE
         if IS_VENV:
-            try:
-                python = sys._base_executable
-            except AttributeError:
-                python = sys.executable
-            if python == sys.executable:
-                python = get_venv_base(sys.prefix)
-                assert python
+            python = BASE
         else:
             python = sys.executable
         (base, isdev, isvenv,
          ) = _pythoninfo.inspect_python_install(python)
 
-        self.assertEqual(base, python)
+        self.assertEqual(base, base_expected)
         self.assertFalse(isdev)
         self.assertFalse(isvenv)
 
     def test_venv(self):
+        base_expected = BASE
+        assert base_expected
         if IS_VENV:
             python = sys.executable
-            try:
-                base_expected = sys._base_executable
-            except AttributeError:
-                base_expected = sys.executable
-            if base_expected == sys.executable:
-                base_expected = get_venv_base(sys.prefix)
-                assert base_expected
         else:
-            base_expected = sys.executable
             _, python = self.venv(base_expected)
         (base, isdev, isvenv,
          ) = _pythoninfo.inspect_python_install(python)

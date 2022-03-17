@@ -123,7 +123,7 @@ class PythonInfo(
                 base = venv.executable
         elif not base:
             base = self.executable
-        self._base_executable = base
+        self._base_executable = os.path.realpath(base)
         return self._base_executable
 
     @property
