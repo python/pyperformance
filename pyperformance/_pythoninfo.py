@@ -13,6 +13,7 @@ __all__ = [
 
 from collections import namedtuple
 import hashlib
+import importlib.util
 import json
 import os
 import os.path
@@ -25,17 +26,12 @@ class PythonInfo(
 
     @classmethod
     def from_current(cls):
-        try:
-            from importlib.util import MAGIC_NUMBER
-        except ImportError:
-            import _imp
-            MAGIC_NUMBER = _imp.get_magic()
         _sys = SysSnapshot.from_current()
         return cls(
             _sys.executable,
             _sys,
             os.path.dirname(os.__file__),
-            MAGIC_NUMBER,
+            importlib.util.MAGIC_NUMBER,
         )
 
     @classmethod
