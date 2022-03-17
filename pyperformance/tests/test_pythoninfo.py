@@ -58,6 +58,53 @@ else:
 
 class PythonInfoTests(tests.Resources, unittest.TestCase):
 
+    maxDiff = 80 * 100
+
+    def test_from_current(self):
+        expected = _pythoninfo.PythonInfo.from_jsonable(CURRENT)
+
+        info = _pythoninfo.PythonInfo.from_current()
+
+        self.assertEqual(info, expected)
+
+    def test_from_executable_no_args(self):
+        expected = _pythoninfo.PythonInfo.from_jsonable(CURRENT)
+
+        info = _pythoninfo.PythonInfo.from_executable()
+
+        self.assertEqual(info, expected)
+
+    def test_from_executable_current(self):
+        expected = _pythoninfo.PythonInfo.from_jsonable(CURRENT)
+
+        info = _pythoninfo.PythonInfo.from_executable(sys.executable)
+
+        self.assertEqual(info, expected)
+
+    def test_from_executable_venv(self):
+        expected = dict(CURRENT)
+        if IS_VENV:
+            python = sys.executable
+        else:
+            venv, python = self.venv()
+            expected['executable'] = python
+            expected['executable (actual)'] = python
+            expected['prefix'] = venv
+            expected['exec_prefix'] = venv
+            expected['version_info'] = tuple(expected['version_info'])
+            (expected['implementation_version']
+             ) = tuple(expected['implementation_version'])
+        expected = _pythoninfo.PythonInfo.from_jsonable(expected)
+
+        info = _pythoninfo.PythonInfo.from_executable(python)
+
+        # We have to work around an apparent bug in venv.
+        if not info.sys.base_executable:
+            expected = expected._replace(
+                sys=expected.sys._replace(base_executable=None),
+            )
+        self.assertEqual(info, expected)
+
     def test_is_dev(self):
         data = dict(CURRENT)
         expected = CURRENT['is_dev']
@@ -115,42 +162,6 @@ class PythonInfoTests(tests.Resources, unittest.TestCase):
         base = info.base_executable
 
         self.assertEqual(base, base_expected)
-
-
-class GetPythonInfoTests(tests.Resources, unittest.TestCase):
-
-    maxDiff = 80 * 100
-
-    def test_no_args(self):
-        info = _pythoninfo.get_python_info()
-
-        self.assertEqual(info, CURRENT)
-
-    def test_current_python(self):
-        info = _pythoninfo.get_python_info(sys.executable)
-
-        self.assertEqual(info, CURRENT)
-
-    def test_venv(self):
-        expected = dict(CURRENT)
-        if IS_VENV:
-            python = sys.executable
-        else:
-            venv, python = self.venv()
-            expected['executable'] = python
-            expected['executable (actual)'] = python
-            expected['prefix'] = venv
-            expected['exec_prefix'] = venv
-            expected['version_info'] = tuple(expected['version_info'])
-            (expected['implementation_version']
-             ) = tuple(expected['implementation_version'])
-
-        info = _pythoninfo.get_python_info(python)
-
-        # We have to work around an apparent bug in venv.
-        if not info['base_executable']:
-            expected['base_executable'] = None
-        self.assertEqual(info, expected)
 
 
 class GetPythonIDTests(unittest.TestCase):

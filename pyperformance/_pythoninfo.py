@@ -362,11 +362,6 @@ def get_python_id(python=sys.executable, *, prefix=None, short=True):
     return info.get_id(prefix, short=short)
 
 
-def get_python_info(python=sys.executable):
-    info = PythonInfo.from_executable(python)
-    return info.as_jsonable()
-
-
 #######################################
 # use as a script
 
