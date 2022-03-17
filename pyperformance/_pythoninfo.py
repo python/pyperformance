@@ -6,9 +6,6 @@ __all__ = [
     'PythonInfo',
     'SysSnapshot', 'SysImplementationSnapshot', 'SysconfigSnapshot',
     'VenvConfig',
-    'get_python_id',
-    'get_python_info',
-    'inspect_python_install',
 ]
 
 
