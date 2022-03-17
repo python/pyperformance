@@ -186,7 +186,9 @@ class VirtualEnvironment(object):
                  usebase=False,
                  ):
         if usebase:
-            python, _, _ = _pythoninfo.inspect_python_install(python)
+            info = _pythoninfo.PythonInfo.from_executable(python)
+            python = info.base_executable
+            assert python
 
         self.python = python
         self.inherit_environ = inherit_environ or None
