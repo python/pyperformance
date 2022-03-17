@@ -47,7 +47,8 @@ class RunID(namedtuple('RunID', 'python compat bench timestamp')):
 
 
 def get_run_id(python, bench=None):
-    py_id = _pythoninfo.get_python_id(python, prefix=True)
+    info = _pythoninfo.PythonInfo.from_executable(python)
+    py_id = info.get_id(prefix=True)
     compat_id = get_compatibility_id(bench)
     ts = time.time()
     return RunID(py_id, compat_id, bench, ts)

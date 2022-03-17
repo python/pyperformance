@@ -163,53 +163,40 @@ class PythonInfoTests(tests.Resources, unittest.TestCase):
 
         self.assertEqual(base, base_expected)
 
+    def _dummy_info(self):
+        data = {
+            'executable': '/a/b/c/bin/spam-python',
+            'version_str': '3.8.10 (default, May  5 2021, 03:01:07) \n[GCC 7.5.0]',
+            'version_info': (3, 8, 10, 'final', 0),
+            'api_version': 1013,
+            'pyc_magic_number': b'U\r\r\n'.hex(),
+            'implementation_name': 'cpython',
+            'implementation_version': (3, 8, 10, 'final', 0),
+        }
+        data.update((k, '') for k in CURRENT if k not in data)
+        base_id = '334c63e71d63'
+        info = _pythoninfo.PythonInfo.from_jsonable(data)
+        return info, base_id
 
-class GetPythonIDTests(unittest.TestCase):
+    def test_get_id_no_prefix(self):
+        info, expected = self._dummy_info()
 
-    INFO = {
-        'executable': '/a/b/c/bin/spam-python',
-        'version_str': '3.8.10 (default, May  5 2021, 03:01:07) \n[GCC 7.5.0]',
-        'version_info': (3, 8, 10, 'final', 0),
-        'api_version': 1013,
-        'pyc_magic_number': b'U\r\r\n'.hex(),
-        'implementation_name': 'cpython',
-        'implementation_version': (3, 8, 10, 'final', 0),
-    }
-    ID = '334c63e71d63'
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.INFO.update((k, '') for k in CURRENT if k not in cls.INFO)
-
-    def test_no_prefix(self):
-        info = dict(self.INFO)
-        expected = self.ID
-
-        pyid = _pythoninfo.get_python_id(
-            _pythoninfo.PythonInfo.from_jsonable(info),
-        )
+        pyid = info.get_id()
 
         self.assertEqual(pyid, expected)
 
-    def test_true_prefix(self):
-        info = dict(self.INFO)
-        expected = f'cpython3.8-{self.ID}'
+    def test_get_id_true_prefix(self):
+        info, expected = self._dummy_info()
+        expected = f'cpython3.8-{expected}'
 
-        pyid = _pythoninfo.get_python_id(
-            _pythoninfo.PythonInfo.from_jsonable(info),
-            prefix=True,
-        )
+        pyid = info.get_id(prefix=True)
 
         self.assertEqual(pyid, expected)
 
-    def test_given_prefix(self):
-        info = dict(self.INFO)
-        expected = f'spam-{self.ID}'
+    def test_get_id_given_prefix(self):
+        info, expected = self._dummy_info()
+        expected = f'spam-{expected}'
 
-        pyid = _pythoninfo.get_python_id(
-            _pythoninfo.PythonInfo.from_jsonable(info),
-            prefix='spam-',
-        )
+        pyid = info.get_id(prefix='spam-')
 
         self.assertEqual(pyid, expected)

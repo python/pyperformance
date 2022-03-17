@@ -351,17 +351,6 @@ class VenvConfig(
         return self
 
 
-def get_python_id(python=sys.executable, *, prefix=None, short=True):
-    """Return a unique (str) identifier for the given Python executable."""
-    if not python or isinstance(python, str):
-        info = PythonInfo.from_executable(python)
-    elif not isinstance(python, PythonInfo):
-        info = PythonInfo.from_jsonable(python)
-    else:
-        info = python
-    return info.get_id(prefix, short=short)
-
-
 #######################################
 # use as a script
 
