@@ -143,30 +143,6 @@ class GetPythonIDTests(unittest.TestCase):
         self.assertEqual(pyid, expected)
 
 
-def read_venv_config(venv):
-    filename = os.path.join(venv, 'pyvenv.cfg')
-    with open(filename, encoding='utf-8') as infile:
-        text = infile.read()
-    cfg = {}
-    for line in text.splitlines():
-        name, sep, value = line.partition(' = ')
-        if sep:
-            cfg[name.strip()] = value.strip()
-    return cfg
-
-
-def get_venv_base(venv):
-    cfg = read_venv_config(sys.prefix)
-    if 'executable' in cfg:
-        return cfg['executable']
-    elif 'home' in cfg:
-        major, minor = cfg['version'].split('.')[:2]
-        base = f'python{major}.{minor}'
-        return os.path.join(cfg['home'], base)
-    else:
-        return None
-
-
 class InspectPythonInstallTests(tests.Resources, unittest.TestCase):
 
     def test_info(self):
