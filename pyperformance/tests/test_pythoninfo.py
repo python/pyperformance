@@ -56,6 +56,67 @@ else:
     BASE = CURRENT['base_executable (actual)']
 
 
+class PythonInfoTests(tests.Resources, unittest.TestCase):
+
+    def test_is_dev(self):
+        data = dict(CURRENT)
+        expected = CURRENT['is_dev']
+        info = _pythoninfo.PythonInfo.from_jsonable(data)
+
+        isdev = info.is_dev
+        self.assertIs(isdev, expected)
+
+        expected = not expected
+        data['is_dev'] = not data['is_dev']
+        info = _pythoninfo.PythonInfo.from_jsonable(data)
+
+        isdev = info.is_dev
+        self.assertIs(isdev, expected)
+
+    def test_is_venv(self):
+        data = dict(CURRENT)
+        expected = IS_VENV
+        info = _pythoninfo.PythonInfo.from_jsonable(data)
+
+        isvenv = info.is_venv
+        self.assertIs(isvenv, expected)
+
+        expected = not expected
+        if IS_VENV:
+            data['prefix'] = data['base_prefix']
+        else:
+            data['prefix'] = data['base_prefix'] + '-spam'
+        info = _pythoninfo.PythonInfo.from_jsonable(data)
+
+        isvenv = info.is_venv
+        self.assertIs(isvenv, expected)
+
+    def test_base_executable_normal(self):
+        base_expected = BASE
+        if IS_VENV:
+            python = BASE
+        else:
+            python = sys.executable
+        info = _pythoninfo.PythonInfo.from_executable(python)
+
+        base = info.base_executable
+
+        self.assertEqual(base, base_expected)
+
+    def test_base_executable_venv(self):
+        base_expected = BASE
+        assert base_expected
+        if IS_VENV:
+            python = sys.executable
+        else:
+            _, python = self.venv(base_expected)
+        info = _pythoninfo.PythonInfo.from_executable(python)
+
+        base = info.base_executable
+
+        self.assertEqual(base, base_expected)
+
+
 class GetPythonInfoTests(tests.Resources, unittest.TestCase):
 
     maxDiff = 80 * 100
@@ -141,50 +202,3 @@ class GetPythonIDTests(unittest.TestCase):
         )
 
         self.assertEqual(pyid, expected)
-
-
-class InspectPythonInstallTests(tests.Resources, unittest.TestCase):
-
-    def test_info(self):
-        info = dict(CURRENT)
-        if IS_VENV:
-            info['prefix'] = info['base_prefix']
-            info['exec_prefix'] = info['base_exec_prefix']
-        (base, isdev, isvenv,
-         ) = _pythoninfo.inspect_python_install(info)
-
-        self.assertEqual(base, BASE)
-        self.assertFalse(isdev)
-        self.assertFalse(isvenv)
-
-    def test_normal(self):
-        base_expected = BASE
-        if IS_VENV:
-            python = BASE
-        else:
-            python = sys.executable
-        (base, isdev, isvenv,
-         ) = _pythoninfo.inspect_python_install(python)
-
-        self.assertEqual(base, base_expected)
-        self.assertFalse(isdev)
-        self.assertFalse(isvenv)
-
-    def test_venv(self):
-        base_expected = BASE
-        assert base_expected
-        if IS_VENV:
-            python = sys.executable
-        else:
-            _, python = self.venv(base_expected)
-        (base, isdev, isvenv,
-         ) = _pythoninfo.inspect_python_install(python)
-
-        self.assertEqual(base, base_expected)
-        self.assertFalse(isdev)
-        self.assertTrue(isvenv)
-
-    @unittest.skip('needs platform-specific testing')
-    def test_dev(self):
-        # XXX
-        raise NotImplementedError

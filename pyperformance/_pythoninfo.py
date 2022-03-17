@@ -367,16 +367,6 @@ def get_python_info(python=sys.executable):
     return info.as_jsonable()
 
 
-def inspect_python_install(python=sys.executable):
-    if not python or isinstance(python, str):
-        info = PythonInfo.from_executable(python)
-    elif not isinstance(python, PythonInfo):
-        info = PythonInfo.from_jsonable(python)
-    else:
-        info = python
-    return info.base_executable, info.is_dev, info.is_venv
-
-
 #######################################
 # use as a script
 
