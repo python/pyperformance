@@ -42,8 +42,37 @@ def run_cmd(*argv):
     print("", flush=True)
 
 
-class Resources:
+class Compat:
+    """A mixin that lets older Pythons use newer unittest features."""
+
+    if sys.version_info < (3, 8):
+        @classmethod
+        def setUpClass(cls):
+            super().setUpClass()
+            cls._cleanups = []
+
+        @classmethod
+        def tearDownClass(cls):
+            super().tearDownClass()
+            for cleanup in cls._cleanups:
+                cleanup()
+
+        @classmethod
+        def addClassCleanup(cls, cleanup):
+            cls._cleanups.append(cleanup)
+
+
+class Resources(Compat):
     """A mixin that can create resources."""
+
+    @classmethod
+    def resolve_tmp(cls, *relpath):
+        try:
+            tmpdir = cls._tmpdir
+        except AttributeError:
+            tmpdir = cls._tmpdir = tempfile.mkdtemp()
+            cls.addClassCleanup(lambda: shutil.rmtree(tmpdir))
+        return os.path.join(tmpdir, *relpath)
 
     def venv(self, python=sys.executable):
         tmpdir = tempfile.mkdtemp()
