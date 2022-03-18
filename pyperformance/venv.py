@@ -225,13 +225,7 @@ class VirtualEnvironment(object):
     def __init__(self, python, root=None, *,
                  inherit_environ=None,
                  name=None,
-                 usebase=False,
                  ):
-        if usebase:
-            info = _pythoninfo.PythonInfo.from_executable(python)
-            python = info.base_executable
-            assert python
-
         self.python = python
         self.inherit_environ = inherit_environ or None
         self._name = name or None

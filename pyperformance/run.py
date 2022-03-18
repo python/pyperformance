@@ -72,7 +72,6 @@ def run_benchmarks(should_run, python, options):
             common_venv,
             inherit_environ=options.inherit_environ,
             name=bench_runid.name,
-            usebase=True,
         )
         print(f'({i+1:>2}/{len(to_run)}) creating venv for benchmark ({bench.name})')
         venv_path = venv.get_path()
