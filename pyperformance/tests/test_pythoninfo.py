@@ -31,6 +31,12 @@ CURRENT = {
     'is_dev (sysconfig)': sysconfig.is_python_build(),
     'is_venv': sys.prefix != sys.base_prefix,
 }
+if IS_VENV:
+    if CURRENT['base_executable'] == sys.executable:
+        if CURRENT['base_executable (sys)'] == sys.executable:
+            CURRENT['base_executable'] = None
+        else:
+            CURRENT['base_executable'] = CURRENT['base_executable (sys)']
 
 
 class GetInfoTests(tests.Resources, unittest.TestCase):
@@ -42,7 +48,6 @@ class GetInfoTests(tests.Resources, unittest.TestCase):
 
         info = _pythoninfo.get_info()
 
-        self.assertEqual(vars(info.sys), vars(expected.sys))
         self.assertEqual(vars(info), vars(expected))
 
     def test_current(self):
@@ -50,7 +55,6 @@ class GetInfoTests(tests.Resources, unittest.TestCase):
 
         info = _pythoninfo.get_info(sys.executable)
 
-        self.assertEqual(vars(info.sys), vars(expected.sys))
         self.assertEqual(vars(info), vars(expected))
 
     def test_venv(self):
@@ -60,6 +64,8 @@ class GetInfoTests(tests.Resources, unittest.TestCase):
         else:
             venv, python = self.venv()
             expected.sys.executable = python
+            expected.sys._base_executable = os.path.normpath(sys.executable)
+            expected.base_executable = os.path.normpath(sys.executable)
             expected.sys.prefix = venv
             expected.sys.exec_prefix = venv
             expected.sys.version_info = tuple(expected.sys.version_info)
@@ -73,5 +79,4 @@ class GetInfoTests(tests.Resources, unittest.TestCase):
         if not info.base_executable:
             expected.base_executable = None
             expected.sys._base_executable = info.sys._base_executable
-        self.assertEqual(vars(info.sys), vars(expected.sys))
         self.assertEqual(vars(info), vars(expected))
