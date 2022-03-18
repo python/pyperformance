@@ -4,7 +4,7 @@ import os.path
 import shutil
 import subprocess
 import sys
-import textwrap
+import types
 import urllib.request
 from shlex import quote as shell_quote
 
@@ -122,10 +122,6 @@ def safe_rmtree(path):
     return True
 
 
-def python_implementation():
-    return sys.implementation.name.lower()
-
-
 def get_venv_program(program):
     bin_path = os.path.dirname(sys.executable)
     bin_path = os.path.realpath(bin_path)
@@ -152,6 +148,52 @@ def get_venv_program(program):
         sys.exit(1)
 
     return path
+
+
+def read_venv_config(root=None):
+    """Return the config for the given venv, from its pyvenv.cfg file."""
+    if not root:
+        if sys.prefix == sys.base_prefix:
+            raise Exception('current Python is not a venv')
+        root = sys.prefix
+    cfgfile = os.path.join(root, 'pyvenv.cfg')
+    with open(cfgfile, encoding='utf-8') as infile:
+        text = infile.read()
+    return parse_venv_config(text, root)
+
+
+def parse_venv_config(lines, root=None):
+    if isinstance(lines, str):
+        lines = lines.splitlines()
+    else:
+        lines = (l.rstrip(os.linesep) for l in lines)
+
+    cfg = types.SimpleNamespace(
+        home=None,
+        version=None,
+        system_site_packages=None,
+        prompt=None,
+        executable=None,
+        command=None,
+    )
+    fields = set(vars(cfg))
+    for line in lines:
+        # We do not validate the lines.
+        name, sep, value = line.partition('=')
+        if not sep:
+            continue
+        # We do not check for duplicate names.
+        name = name.strip().lower()
+        if name == 'include-system-site-packages':
+            name = 'system_site_packages'
+        if name not in fields:
+            # XXX Preserve this anyway?
+            continue
+        value = value.lstrip()
+        if name == 'system_site_packages':
+            value = (value == 'true')
+        setattr(cfg, name, value)
+    return cfg
 
 
 def create_environ(inherit_environ):
@@ -183,13 +225,7 @@ class VirtualEnvironment(object):
     def __init__(self, python, root=None, *,
                  inherit_environ=None,
                  name=None,
-                 usebase=False,
                  ):
-        if usebase:
-            info = _pythoninfo.PythonInfo.from_executable(python)
-            python = info.base_executable
-            assert python
-
         self.python = python
         self.inherit_environ = inherit_environ or None
         self._name = name or None

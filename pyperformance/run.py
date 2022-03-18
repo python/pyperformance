@@ -9,7 +9,7 @@ except ImportError:
     multiprocessing = None
 
 import pyperformance
-from . import _utils, _pythoninfo
+from . import _utils, _python
 from . import venv as _venv
 
 
@@ -47,8 +47,7 @@ class RunID(namedtuple('RunID', 'python compat bench timestamp')):
 
 
 def get_run_id(python, bench=None):
-    info = _pythoninfo.PythonInfo.from_executable(python)
-    py_id = info.get_id(prefix=True)
+    py_id = _python.get_id(python, prefix=True)
     compat_id = get_compatibility_id(bench)
     ts = time.time()
     return RunID(py_id, compat_id, bench, ts)
@@ -72,7 +71,6 @@ def run_benchmarks(should_run, python, options):
             common_venv,
             inherit_environ=options.inherit_environ,
             name=bench_runid.name,
-            usebase=True,
         )
         print(f'({i+1:>2}/{len(to_run)}) creating venv for benchmark ({bench.name})')
         venv_path = venv.get_path()
