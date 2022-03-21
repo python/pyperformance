@@ -193,12 +193,18 @@ class VirtualEnvironment(object):
                  name=None,
                  ):
         self.python = python
+        self._info = _pythoninfo.get_info(python or sys.executable)
+
         self.inherit_environ = inherit_environ or None
         self._name = name or None
         self._venv_path = root or None
         self._pip_program = None
-        self._force_old_pip = False
         self._prepared = False
+
+        # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 7.1.2,
+        # the last version working on Python 3.5a0:
+        # https://sourceforge.net/p/pyparsing/bugs/100/
+        self._force_old_pip = (0x30500a0 <= self._info.hexversion < 0x30500f0)
 
     @property
     def name(self):
@@ -306,23 +312,6 @@ class VirtualEnvironment(object):
             self._get_pip_program()
         return self._pip_program
 
-    def _get_python_version(self):
-        venv_python = resolve_venv_python(self.get_path())
-
-        # FIXME: use a get_output() function
-        code = 'import sys; print(sys.hexversion)'
-        exitcode, stdout = self.get_output_nocheck(venv_python, '-c', code)
-        if exitcode:
-            print("ERROR: failed to get the Python version")
-            sys.exit(exitcode)
-        hexversion = int(stdout.rstrip())
-        print("Python hexversion: %x" % hexversion)
-
-        # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 7.1.2,
-        # the last version working on Python 3.5a0:
-        # https://sourceforge.net/p/pyparsing/bugs/100/
-        self._force_old_pip = (0x30500a0 <= hexversion < 0x30500f0)
-
     def install_pip(self):
         venv_python = resolve_venv_python(self.get_path())
 
@@ -368,8 +357,6 @@ class VirtualEnvironment(object):
         if exitcode:
             print("%s command failed" % ' '.join(cmd))
             return False
-
-        self._get_python_version()
 
         if install_pip:
             ok = self.install_pip()
