@@ -23,7 +23,10 @@ import contextlib
 import errno
 import os
 import os.path
+import shlex
 import shutil
+import subprocess
+import sys
 import tempfile
 
 
@@ -142,6 +145,29 @@ def download(url, filename):
 
 #######################################
 # misc utils
+
+def run_cmd(argv, *, env=None, capture=None, verbose=True):
+    kwargs = dict(
+        env=env,
+    )
+    if capture:
+        kwargs.update(dict(
+            encoding='utf-8',
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+
+    if verbose:
+        print('#', ' '.join(shlex.quote(a) for a in argv))
+    try:
+        proc = subprocess.run(argv, **kwargs)
+    except OSError as exc:
+        if exc.errno == errno.ENOENT:
+            # Command not found
+            return 127
+        raise
+    return proc.returncode, proc.stdout, proc.stderr
+
 
 def check_name(name, *, loose=False, allownumeric=False):
     if not name or not isinstance(name, str):
