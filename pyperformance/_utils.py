@@ -142,6 +142,11 @@ def run_cmd(argv, *, env=None, capture=None, verbose=True):
     return proc.returncode, proc.stdout, proc.stderr
 
 
+def run_python(*args, python=sys.executable, **kwargs):
+    python = getattr(python, 'executable', python) or sys.executable
+    return run_cmd([python, *args], **kwargs)
+
+
 #######################################
 # network utils
 
