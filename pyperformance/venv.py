@@ -157,7 +157,9 @@ def parse_venv_config(lines, root=None):
 
 
 def resolve_venv_python(root):
-    python_exe = os.path.basename(sys.executable)
+    python_exe = 'python'
+    if sys.executable.endswith('.exe'):
+        python_exe += '.exe'
     if os.name == "nt":
         return os.path.join(root, 'Scripts', python_exe)
     else:
