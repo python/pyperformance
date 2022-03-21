@@ -178,20 +178,6 @@ def parse_venv_config(lines, root=None):
     return cfg
 
 
-def create_environ(inherit_environ):
-    env = {}
-
-    copy_env = ["PATH", "HOME", "TEMP", "COMSPEC", "SystemRoot"]
-    if inherit_environ:
-        copy_env.extend(inherit_environ)
-
-    for name in copy_env:
-        if name in os.environ:
-            env[name] = os.environ[name]
-
-    return env
-
-
 class VirtualEnvironment(object):
 
     def __init__(self, python, root=None, *,
@@ -232,7 +218,15 @@ class VirtualEnvironment(object):
         sys.stdout.flush()
         sys.stderr.flush()
 
-        env = create_environ(self.inherit_environ)
+        # Restrict the env we use.
+        env = {}
+        copy_env = ["PATH", "HOME", "TEMP", "COMSPEC", "SystemRoot"]
+        if self.inherit_environ:
+            copy_env.extend(self.inherit_environ)
+        for name in copy_env:
+            if name in os.environ:
+                env[name] = os.environ[name]
+
         try:
             proc = subprocess.Popen(cmd, env=env)
         except OSError as exc:
