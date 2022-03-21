@@ -133,7 +133,7 @@ def run_cmd(argv, *, env=None, capture=None, verbose=True):
     sys.stderr.flush()
 
     try:
-        proc = subprocess.run(argv, **kwargs)
+        proc = subprocess.run(argv, **kw)
     except OSError as exc:
         if exc.errno == errno.ENOENT:
             # Command not found
