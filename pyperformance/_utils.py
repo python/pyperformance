@@ -93,6 +93,12 @@ MS_WINDOWS = (sys.platform == 'win32')
 
 
 def run_cmd(argv, *, env=None, capture=None, verbose=True):
+    try:
+        cmdstr = ' '.join(shlex.quote(a) for a in argv)
+    except TypeError:
+        print(argv)
+        raise  # re-raise
+
     if capture is True:
         capture = 'both'
     kw = dict(
@@ -125,7 +131,6 @@ def run_cmd(argv, *, env=None, capture=None, verbose=True):
 
     # XXX Use a logger.
     if verbose:
-        cmdstr = ' '.join(shlex.quote(a) for a in argv)
         print('#', cmdstr)
 
     # Explicitly flush standard streams, required if streams are buffered
