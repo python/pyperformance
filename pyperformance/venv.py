@@ -178,6 +178,14 @@ def parse_venv_config(lines, root=None):
     return cfg
 
 
+def resolve_venv_python(root):
+    python_exe = os.path.basename(sys.executable)
+    if os.name == "nt":
+        return os.path.join(root, 'Scripts', python_exe)
+    else:
+        return os.path.join(root, 'bin', python_exe)
+
+
 class VirtualEnvironment(object):
 
     def __init__(self, python, root=None, *,
@@ -199,14 +207,6 @@ class VirtualEnvironment(object):
             runid = get_run_id(self.python)
             self._name = runid.name
         return self._name
-
-    def get_python_program(self):
-        venv_path = self.get_path()
-        if os.name == "nt":
-            python_executable = os.path.basename(self.python)
-            return os.path.join(venv_path, 'Scripts', python_executable)
-        else:
-            return os.path.join(venv_path, 'bin', 'python')
 
     def run_cmd_nocheck(self, cmd, verbose=True):
         cmd_str = ' '.join(map(shell_quote, cmd))
@@ -278,7 +278,7 @@ class VirtualEnvironment(object):
         args = ['--version']
 
         # python -m pip
-        venv_python = self.get_python_program()
+        venv_python = resolve_venv_python(self.get_path())
         pip_program = [venv_python, '-m', 'pip']
         if self.run_cmd_nocheck(pip_program + args) == 0:
             self._pip_program = pip_program
@@ -307,7 +307,7 @@ class VirtualEnvironment(object):
         return self._pip_program
 
     def _get_python_version(self):
-        venv_python = self.get_python_program()
+        venv_python = resolve_venv_python(self.get_path())
 
         # FIXME: use a get_output() function
         code = 'import sys; print(sys.hexversion)'
@@ -324,7 +324,7 @@ class VirtualEnvironment(object):
         self._force_old_pip = (0x30500a0 <= hexversion < 0x30500f0)
 
     def install_pip(self):
-        venv_python = self.get_python_program()
+        venv_python = resolve_venv_python(self.get_path())
 
         # python -m ensurepip
         cmd = [venv_python, '-m', 'ensurepip', '--verbose']
@@ -409,7 +409,7 @@ class VirtualEnvironment(object):
         sys.exit(1)
 
     def exists(self):
-        venv_python = self.get_python_program()
+        venv_python = resolve_venv_python(self.get_path())
         return os.path.exists(venv_python)
 
     def prepare(self, install=True):
@@ -553,7 +553,8 @@ def cmd_venv(options, benchmarks=None):
     elif action == 'recreate':
         requirements = Requirements.from_benchmarks(benchmarks)
         if exists:
-            if venv.get_python_program() == sys.executable:
+            venv_python = resolve_venv_python(self.get_path())
+            if venv_python == sys.executable:
                 print("The virtual environment %s already exists" % venv_path)
                 print("(it matches the currently running Python executable)")
                 venv.ensure()
