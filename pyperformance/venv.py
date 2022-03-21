@@ -20,14 +20,6 @@ PERFORMANCE_ROOT = os.path.realpath(os.path.dirname(__file__))
 REQUIREMENTS_FILE = os.path.join(pyperformance.DATA_DIR, 'requirements.txt')
 
 
-# XXX Use pyperformance.is_installed() instead?
-def is_build_dir():
-    root_dir = os.path.join(PERFORMANCE_ROOT, '..')
-    if not os.path.exists(os.path.join(root_dir, 'pyperformance')):
-        return False
-    return os.path.exists(os.path.join(root_dir, 'setup.py'))
-
-
 class RequirementsInstallationFailedError(Exception):
     pass
 
@@ -473,7 +465,7 @@ class VirtualEnvironment(object):
 
         if install:
             # install pyperformance inside the virtual environment
-            if is_build_dir():
+            if pyperformance.is_installed():
                 root_dir = os.path.dirname(PERFORMANCE_ROOT)
                 cmd = pip_program + ['install', '-e', root_dir]
             else:
