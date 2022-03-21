@@ -137,7 +137,7 @@ def run_cmd(argv, *, env=None, capture=None, verbose=True):
     except OSError as exc:
         if exc.errno == errno.ENOENT:
             # Command not found
-            return 127
+            return 127, None, None
         raise
     return proc.returncode, proc.stdout, proc.stderr
 
