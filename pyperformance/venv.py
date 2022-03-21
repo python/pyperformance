@@ -317,6 +317,7 @@ class VirtualEnvironment(object):
 
     def install_reqs(self, requirements=None, *, exitonerror=False):
         venv_path = self.get_path()
+        venv_python = resolve_venv_python(venv_path)
         print("Installing requirements into the virtual environment %s" % venv_path)
 
         # parse requirements
@@ -346,7 +347,7 @@ class VirtualEnvironment(object):
             reqs = list(requirements.iter_non_optional())
             ec, _, _ = _pip.install_requirements(
                 *reqs,
-                python=self._info,
+                python=venv_python,
                 env=self._env,
                 upgrade=False,
             )
@@ -359,7 +360,7 @@ class VirtualEnvironment(object):
             for req in requirements.iter_optional():
                 ec, _, _ = _pip.install_requirements(
                     req,
-                    python=self._info,
+                    python=venv_python,
                     env=self._env,
                     upgrade=True,
                 )
