@@ -171,6 +171,51 @@ def venv_exists(root):
     return os.path.exists(venv_python)
 
 
+class VenvCreationFailedError(Exception):
+    def __init__(self, root, exitcode, already_existed):
+        super().__init__(f'venv creation failed ({root})')
+        self.root = root
+        self.exitcode = exitcode
+        self.already_existed = already_existed
+
+
+class VenvPipInstallFailedError(Exception):
+    def __init__(self, root, exitcode):
+        super().__init__(f'failed to install pip in venv {root}')
+        self.root = root
+        self.exitcode = exitcode
+
+
+def create_venv(root, python=sys.executable, *,
+                info=None,
+                env=None,
+                downloaddir=None,
+                installpip=True,  # False, 'after'
+                ):
+    """Create a new venv at the given root, optionally installing pip."""
+    already_existed = os.path.exists(root)
+    if not installpip or installpip == 'after':
+        args = ['-m', 'venv', '--without-pip', root]
+    else:
+        args = ['-m', 'venv', root]
+    ec, _, _ = _utils.run_python(*args, python=python, env=env)
+    if ec != 0:
+        raise VenvCreationFailed(root, ec, already_existed)
+
+    venv_python = resolve_venv_python(root)
+    if installpip == 'after':
+        ec, _, _ = _pip.install_pip(
+            venv_python,
+            info=info,
+            downloaddir=downloaddir or root,
+            env=env,
+        )
+        if ec != 0:
+            raise VenvPipInstallFailedError(root, ec)
+        elif not _pip.is_pip_installed(venv_python, env=env):
+            raise VenvPipInstallFailedError(root, 0)
+    return venv_python
+
 
 class VirtualEnvironment(object):
 
@@ -212,37 +257,6 @@ class VirtualEnvironment(object):
                 os.path.join('venv', self.name),
             )
         return self._venv_path
-
-    def _create_venv(self):
-        venv_path = self.get_path()
-        argv = [self.python, '-m', 'venv',
-                '--without-pip', venv_path]
-        ec, _, _ = _utils.run_python(
-            '-m', 'venv', '--without-pip', venv_path,
-            python=self.python,
-            env=self._env,
-        )
-        if ec != 0:
-            if ec != 127:
-                print("%s command failed" % ' '.join(argv))
-                _utils.safe_rmtree(venv_path)
-            sys.exit(1)
-
-        # Now install pip.
-        venv_python = resolve_venv_python(venv_path)
-        ec, _, _ = _pip.install_pip(
-            venv_python,
-            info=self._info,
-            downloaddir=venv_path,
-            env=self._env,
-        )
-        if ec != 0:
-            print("failed to install pip")
-            return False
-        elif not _pip.is_pip_installed(venv_python, env=self._env):
-            print("ERROR: pip doesn't work")
-            return False
-        return True
 
     def prepare(self, install=True):
         venv_path = self.get_path()
@@ -301,8 +315,30 @@ class VirtualEnvironment(object):
         print("Creating the virtual environment %s" % venv_path)
         if venv_exists(venv_path):
             raise Exception(f'virtual environment {venv_path} already exists')
+
         try:
-            self._create_venv()
+            create_venv(
+                venv_path,
+                self.python,
+                env=self._env,
+                installpip='after',
+            )
+        except VenvCreationFailed as exc:
+            if not exc.already_existed:
+                _utils.safe_rmtree(root)
+            sys.exit(1)
+        except VenvPipInstallFailed as exc:
+            if exc.exitcode != 0:
+                print("failed to install pip")
+            else:
+                print("ERROR: pip doesn't work")
+            sys.exit(1)
+        except BaseException:
+            print()
+            _utils.safe_rmtree(venv_path)
+            raise
+
+        try:
             self.prepare(install)
         except BaseException:
             print()
