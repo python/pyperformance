@@ -23,6 +23,7 @@ import contextlib
 import errno
 import os
 import os.path
+import shutil
 import tempfile
 
 
@@ -64,6 +65,16 @@ def resolve_file(filename, relroot=None):
             raise NotImplementedError(relroot)
         resolved = os.path.join(relroot, resolved)
     return resolved
+
+
+def safe_rmtree(path):
+    if not os.path.exists(path):
+        return False
+
+    print("Remove directory %s" % path)
+    # XXX Pass onerror to report on any files that could not be deleted?
+    shutil.rmtree(path)
+    return True
 
 
 #######################################

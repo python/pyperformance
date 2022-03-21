@@ -104,16 +104,6 @@ class Requirements(object):
         return None
 
 
-def safe_rmtree(path):
-    if not os.path.exists(path):
-        return False
-
-    print("Remove directory %s" % path)
-    # XXX Pass onerror to report on any files that could not be deleted?
-    shutil.rmtree(path)
-    return True
-
-
 def get_venv_program(program):
     bin_path = os.path.dirname(sys.executable)
     bin_path = os.path.realpath(bin_path)
