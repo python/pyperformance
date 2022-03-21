@@ -415,7 +415,7 @@ class VirtualEnvironment(object):
                 return True
 
             # Command failed: remove the directory
-            safe_rmtree(venv_path)
+            _utils.safe_rmtree(venv_path)
 
         # All commands failed
         print("ERROR: failed to create the virtual environment")
@@ -484,7 +484,7 @@ class VirtualEnvironment(object):
             self.prepare(install)
         except:   # noqa
             print()
-            safe_rmtree(venv_path)
+            _utils.safe_rmtree(venv_path)
             raise
 
     def ensure(self, refresh=True, install=True):
@@ -576,7 +576,7 @@ def cmd_venv(options, benchmarks=None):
                 venv.install_reqs(requirements, exitonerror=True)
             else:
                 print("The virtual environment %s already exists" % venv_path)
-                safe_rmtree(venv_path)
+                _utils.safe_rmtree(venv_path)
                 print("The old virtual environment %s has been removed" % venv_path)
                 print()
                 venv.ensure()
@@ -588,7 +588,7 @@ def cmd_venv(options, benchmarks=None):
             print("The virtual environment %s has been created" % venv_path)
 
     elif action == 'remove':
-        if safe_rmtree(venv_path):
+        if _utils.safe_rmtree(venv_path):
             print("The virtual environment %s has been removed" % venv_path)
         else:
             print("The virtual environment %s does not exist" % venv_path)
