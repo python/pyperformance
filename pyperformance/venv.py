@@ -266,8 +266,9 @@ class VirtualEnvironment(object):
             print("%s command failed: command not found" % ' '.join(cmd))
             ec = 127
         else:
-            print("%s command failed" % ' '.join(argv))
-            _utils.safe_rmtree(venv_path)
+            if ec != 0:
+                print("%s command failed" % ' '.join(argv))
+                _utils.safe_rmtree(venv_path)
         if ec != 0:
             sys.exit(1)
 
