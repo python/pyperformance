@@ -125,7 +125,8 @@ def run_cmd(argv, *, env=None, capture=None, verbose=True):
 
     # XXX Use a logger.
     if verbose:
-        print('#', ' '.join(shlex.quote(a) for a in argv))
+        cmdstr = ' '.join(shlex.quote(a) for a in argv)
+        print('#', cmdstr)
 
     # Explicitly flush standard streams, required if streams are buffered
     # (not TTY) to write lines in the expected order
@@ -136,9 +137,12 @@ def run_cmd(argv, *, env=None, capture=None, verbose=True):
         proc = subprocess.run(argv, **kw)
     except OSError as exc:
         if exc.errno == errno.ENOENT:
-            # Command not found
+            if verbose:
+                print('command failed (not found)')
             return 127, None, None
         raise
+    if proc.returncode != 0 and verbose:
+        print(f'Command failed with exit code {proc.returncode}')
     return proc.returncode, proc.stdout, proc.stderr
 
 

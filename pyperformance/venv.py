@@ -198,56 +198,6 @@ class VirtualEnvironment(object):
                 env[name] = os.environ[name]
         return env
 
-    def run_cmd_nocheck(self, cmd, verbose=True):
-        cmd_str = ' '.join(map(shell_quote, cmd))
-        if verbose:
-            print("Execute: %s" % cmd_str)
-
-        # Explicitly flush standard streams, required if streams are buffered
-        # (not TTY) to write lines in the expected order
-        sys.stdout.flush()
-        sys.stderr.flush()
-
-        env = self._env
-        try:
-            proc = subprocess.Popen(cmd, env=env)
-        except OSError as exc:
-            if exc.errno == errno.ENOENT:
-                # Command not found
-                return 127
-            raise
-
-        try:
-            proc.wait()
-        except:   # noqa
-            proc.kill()
-            proc.wait()
-            raise
-
-        exitcode = proc.returncode
-        if exitcode and verbose:
-            print("Command %s failed with exit code %s" % (cmd_str, exitcode))
-        return exitcode
-
-    def run_cmd(self, cmd, verbose=True):
-        exitcode = self.run_cmd_nocheck(cmd, verbose=verbose)
-        if exitcode:
-            sys.exit(exitcode)
-        print()
-
-    def get_output_nocheck(self, *cmd):
-        cmd_str = ' '.join(map(shell_quote, cmd))
-        print("Execute: %s" % cmd_str)
-
-        proc = subprocess.Popen(cmd,
-                                stdout=subprocess.PIPE,
-                                universal_newlines=True)
-        stdout = proc.communicate()[0]
-        exitcode = proc.returncode
-        if exitcode:
-            print("Command %s failed with exit code %s" % (cmd_str, exitcode))
-        return (exitcode, stdout)
-
     def get_path(self):
         if not self._venv_path:
             self._venv_path = os.path.abspath(
@@ -257,19 +207,17 @@ class VirtualEnvironment(object):
 
     def _create_venv(self):
         venv_path = self.get_path()
-        argv = [self.python, '-m', 'venv', '--without-pip', venv_path]
-        try:
-            ec = self.run_cmd_nocheck(argv)
-        except OSError as exc:
-            if exc.errno != errno.ENOENT:
-                raise
-            print("%s command failed: command not found" % ' '.join(cmd))
-            ec = 127
-        else:
-            if ec != 0:
+        argv = [self.python, '-m', 'venv',
+                '--without-pip', venv_path]
+        ec, _, _ = _utils.run_python(
+            '-m', 'venv', '--without-pip', venv_path,
+            python=self.python,
+            env=self._env,
+        )
+        if ec != 0:
+            if ec != 127:
                 print("%s command failed" % ' '.join(argv))
                 _utils.safe_rmtree(venv_path)
-        if ec != 0:
             sys.exit(1)
 
         # Now install pip.
