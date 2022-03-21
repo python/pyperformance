@@ -72,7 +72,10 @@ def run_benchmarks(should_run, python, options):
             inherit_environ=options.inherit_environ,
             name=bench_runid.name,
         )
+        print()
+        print('='*50)
         print(f'({i+1:>2}/{len(to_run)}) creating venv for benchmark ({bench.name})')
+        print()
         venv_path = venv.get_path()
         alreadyseen = venv_path in venvs
         venv.ensure(refresh=not alreadyseen)
