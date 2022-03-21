@@ -192,16 +192,6 @@ def create_environ(inherit_environ):
     return env
 
 
-def download(url, filename):
-    response = urllib.request.urlopen(url)
-    with response:
-        content = response.read()
-
-    with open(filename, 'wb') as fp:
-        fp.write(content)
-        fp.flush()
-
-
 class VirtualEnvironment(object):
 
     def __init__(self, python, root=None, *,
@@ -354,7 +344,7 @@ class VirtualEnvironment(object):
         filename = os.path.join(os.path.dirname(venv_path), 'get-pip.py')
         if not os.path.exists(filename):
             print("Download %s into %s" % (GET_PIP_URL, filename))
-            download(GET_PIP_URL, filename)
+            utils.download(GET_PIP_URL, filename)
 
         # python get-pip.py
         if self._force_old_pip:

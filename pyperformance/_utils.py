@@ -128,6 +128,19 @@ def run_command(command, env=None, *, hide_stderr=True):
 
 
 #######################################
+# network utils
+
+def download(url, filename):
+    response = urllib.request.urlopen(url)
+    with response:
+        content = response.read()
+
+    with open(filename, 'wb') as fp:
+        fp.write(content)
+        fp.flush()
+
+
+#######################################
 # misc utils
 
 def check_name(name, *, loose=False, allownumeric=False):
