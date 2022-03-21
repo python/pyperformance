@@ -138,4 +138,4 @@ def install_requirements(reqs, *extra,
 
 def install_editable(projectroot, **kwargs):
     """Install the given project as an "editable" install."""
-    return run_pip('-e', projectroot, **kwargs)
+    return run_pip('install', '-e', projectroot, **kwargs)
