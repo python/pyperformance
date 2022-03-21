@@ -23,7 +23,7 @@ def get_best_pip_version(python):
     # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 7.1.2,
     # the last version working on Python 3.5a0:
     # https://sourceforge.net/p/pyparsing/bugs/100/
-    if 0x30500a0 <= info.hexversion < 0x30500f0:
+    if 0x30500a0 <= info.sys.hexversion < 0x30500f0:
         return OLD_PIP
     else:
         return None
