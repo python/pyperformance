@@ -9,7 +9,7 @@ except ImportError:
     multiprocessing = None
 
 import pyperformance
-from . import _utils, _python
+from . import _utils, _python, _pythoninfo
 from . import venv as _venv
 
 
@@ -56,28 +56,28 @@ def get_run_id(python, bench=None):
 def run_benchmarks(should_run, python, options):
     to_run = sorted(should_run)
 
-    runid = get_run_id(python)
+    info = _pythoninfo.get_info(python)
+    runid = get_run_id(info)
 
     benchmarks = {}
     venvs = set()
     if sys.prefix != sys.base_prefix:
         venvs.add(sys.prefix)
-    common_venv = None  # XXX Add the ability to combine venvs.
     for i, bench in enumerate(to_run):
         bench_runid = runid._replace(bench=bench)
         assert bench_runid.name, (bench, bench_runid)
+        name = bench_runid.name
+        venv_root = _venv.get_venv_root(name, python=info)
         venv = _venv.VirtualEnvironment(
-            options.python,
-            common_venv,
+            python=info,
+            root=venv_root,
             inherit_environ=options.inherit_environ,
-            name=bench_runid.name,
         )
         print()
         print('='*50)
         print(f'({i+1:>2}/{len(to_run)}) creating venv for benchmark ({bench.name})')
         print()
-        venv_path = venv.get_path()
-        alreadyseen = venv_path in venvs
+        alreadyseen = venv_root in venvs
         venv.ensure(refresh=not alreadyseen)
         try:
             # XXX Do not override when there is a requirements collision.
@@ -86,7 +86,7 @@ def run_benchmarks(should_run, python, options):
             print('(benchmark will be skipped)')
             print()
             venv = None
-        venvs.add(venv_path)
+        venvs.add(venv_root)
         benchmarks[bench] = (venv, bench_runid)
 
     suite = None

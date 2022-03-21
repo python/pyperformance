@@ -217,27 +217,37 @@ def create_venv(root, python=sys.executable, *,
     return venv_python
 
 
+def get_venv_root(name=None, venvsdir='venv', *, python=sys.executable):
+    """Return the venv root to use for the given name (or given python)."""
+    if not name:
+        from .run import get_run_id
+        runid = get_run_id(python)
+        name = runid.name
+    return os.path.abspath(
+        os.path.join(venvsdir or '.', name),
+    )
+
+
 class VirtualEnvironment(object):
 
     def __init__(self, python, root=None, *,
                  inherit_environ=None,
-                 name=None,
                  ):
-        self.python = python
-        self._info = _pythoninfo.get_info(python or sys.executable)
+        if not python or isinstance(python, str):
+            info = _pythoninfo.get_info(python)
+        else:
+            info = python
+        if not root:
+            root = get_venv_root(python=info)
 
+        self.info = info
+        self.root = root
         self.inherit_environ = inherit_environ or None
-        self._name = name or None
-        self._venv_path = root or None
         self._prepared = False
 
     @property
-    def name(self):
-        if self._name is None:
-            from .run import get_run_id
-            runid = get_run_id(self.python)
-            self._name = runid.name
-        return self._name
+    def python(self):
+        return self.info.sys.executable
 
     @property
     def _env(self):
@@ -251,17 +261,9 @@ class VirtualEnvironment(object):
                 env[name] = os.environ[name]
         return env
 
-    def get_path(self):
-        if not self._venv_path:
-            self._venv_path = os.path.abspath(
-                os.path.join('venv', self.name),
-            )
-        return self._venv_path
-
     def prepare(self, install=True):
-        venv_path = self.get_path()
-        venv_python = resolve_venv_python(venv_path)
-        print("Installing the virtual environment %s" % venv_path)
+        venv_python = resolve_venv_python(self.root)
+        print("Installing the virtual environment %s" % self.root)
         if self._prepared or (self._prepared is None and not install):
             print('(already installed)')
             return
@@ -273,7 +275,7 @@ class VirtualEnvironment(object):
             # Upgrade pip
             ec, _, _ = _pip.upgrade_pip(
                 venv_python,
-                info=self._info,
+                info=self.info,
                 env=self._env,
                 installer=True,
             )
@@ -288,14 +290,14 @@ class VirtualEnvironment(object):
                 root_dir = os.path.dirname(pyperformance.PKG_ROOT)
                 ec, _, _ = _pip.install_editable(
                     root_dir,
-                    python=self._info,
+                    python=self.info,
                     env=self._env,
                 )
             else:
                 version = pyperformance.__version__
                 ec, _, _ = _pip.install_requirements(
                     f'pyperformance=={version}',
-                    python=self._info,
+                    python=self.info,
                     env=self._env,
                 )
             if ec != 0:
@@ -311,14 +313,13 @@ class VirtualEnvironment(object):
         _pip.run_pip('freeze', python=venv_python, env=self._env)
 
     def create(self, install=True):
-        venv_path = self.get_path()
-        print("Creating the virtual environment %s" % venv_path)
-        if venv_exists(venv_path):
-            raise Exception(f'virtual environment {venv_path} already exists')
+        print("Creating the virtual environment %s" % self.root)
+        if venv_exists(self.root):
+            raise Exception(f'virtual environment {self.root} already exists')
 
         try:
             create_venv(
-                venv_path,
+                self.root,
                 self.python,
                 env=self._env,
                 installpip='after',
@@ -335,28 +336,26 @@ class VirtualEnvironment(object):
             sys.exit(1)
         except BaseException:
             print()
-            _utils.safe_rmtree(venv_path)
+            _utils.safe_rmtree(self.root)
             raise
 
         try:
             self.prepare(install)
         except BaseException:
             print()
-            _utils.safe_rmtree(venv_path)
+            _utils.safe_rmtree(self.root)
             raise
 
     def ensure(self, refresh=True, install=True):
-        venv_path = self.get_path()
-        if venv_exists(venv_path):
+        if venv_exists(self.root):
             if refresh:
                 self.prepare(install)
         else:
             self.create(install)
 
     def install_reqs(self, requirements=None, *, exitonerror=False):
-        venv_path = self.get_path()
-        venv_python = resolve_venv_python(venv_path)
-        print("Installing requirements into the virtual environment %s" % venv_path)
+        venv_python = resolve_venv_python(self.root)
+        print("Installing requirements into the virtual environment %s" % self.root)
 
         # parse requirements
         bench = None
@@ -413,55 +412,64 @@ class VirtualEnvironment(object):
 
 
 def cmd_venv(options, benchmarks=None):
+    if not options.venv:
+        info = _pythoninfo.get_info(options.python)
+        root = get_venv_root(python=info)
+    else:
+        root = options.venv
+        venv_python = resolve_venv_python(root)
+        if os.path.exists(venv_python):
+            info = _pythoninfo.get_info(venv_python)
+        else:
+            info = None
+    exists = venv_exists(root)
     venv = VirtualEnvironment(
-        options.python,
-        options.venv,
+        python=info or options.python,
+        root=root,
         inherit_environ=options.inherit_environ,
     )
-    venv_path = venv.get_path()
-    exists = venv.exists()
 
     action = options.venv_action
     if action == 'create':
         requirements = Requirements.from_benchmarks(benchmarks)
         if exists:
-            print("The virtual environment %s already exists" % venv_path)
+            print("The virtual environment %s already exists" % root)
         venv.ensure()
         venv.install_reqs(requirements, exitonerror=True)
         if not exists:
-            print("The virtual environment %s has been created" % venv_path)
+            print("The virtual environment %s has been created" % root)
 
     elif action == 'recreate':
         requirements = Requirements.from_benchmarks(benchmarks)
         if exists:
-            venv_python = resolve_venv_python(self.get_path())
+            venv_python = resolve_venv_python(root)
             if venv_python == sys.executable:
-                print("The virtual environment %s already exists" % venv_path)
+                print("The virtual environment %s already exists" % root)
                 print("(it matches the currently running Python executable)")
                 venv.ensure()
                 venv.install_reqs(requirements, exitonerror=True)
             else:
-                print("The virtual environment %s already exists" % venv_path)
-                _utils.safe_rmtree(venv_path)
-                print("The old virtual environment %s has been removed" % venv_path)
+                print("The virtual environment %s already exists" % root)
+                _utils.safe_rmtree(root)
+                print("The old virtual environment %s has been removed" % root)
                 print()
                 venv.ensure()
                 venv.install_reqs(requirements, exitonerror=True)
-                print("The virtual environment %s has been recreated" % venv_path)
+                print("The virtual environment %s has been recreated" % root)
         else:
             venv.create()
             venv.install_reqs(requirements, exitonerror=True)
-            print("The virtual environment %s has been created" % venv_path)
+            print("The virtual environment %s has been created" % root)
 
     elif action == 'remove':
-        if _utils.safe_rmtree(venv_path):
-            print("The virtual environment %s has been removed" % venv_path)
+        if _utils.safe_rmtree(root):
+            print("The virtual environment %s has been removed" % root)
         else:
-            print("The virtual environment %s does not exist" % venv_path)
+            print("The virtual environment %s does not exist" % root)
 
     else:
         # show command
-        text = "Virtual environment path: %s" % venv_path
+        text = "Virtual environment path: %s" % root
         if exists:
             text += " (already created)"
         else:
