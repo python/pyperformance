@@ -51,7 +51,11 @@ def install_pip(python=sys.executable, *,
         python = getattr(info, 'executable', None) or sys.executable
 
     # python -m ensurepip
-    res = _utils.run_python('-m', 'ensurepip', '--verbose', **kwargs)
+    res = _utils.run_python(
+        '-m', 'ensurepip', '--verbose',
+        python=python,
+        **kwargs
+    )
     ec, _, _ = res
     if ec == 0 and is_pip_installed(python, env=env):
         return res
