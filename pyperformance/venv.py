@@ -166,6 +166,12 @@ def resolve_venv_python(root):
         return os.path.join(root, 'bin', python_exe)
 
 
+def venv_exists(root):
+    venv_python = resolve_venv_python(root)
+    return os.path.exists(venv_python)
+
+
+
 class VirtualEnvironment(object):
 
     def __init__(self, python, root=None, *,
@@ -238,10 +244,6 @@ class VirtualEnvironment(object):
             return False
         return True
 
-    def exists(self):
-        venv_python = resolve_venv_python(self.get_path())
-        return os.path.exists(venv_python)
-
     def prepare(self, install=True):
         venv_path = self.get_path()
         venv_python = resolve_venv_python(venv_path)
@@ -297,7 +299,7 @@ class VirtualEnvironment(object):
     def create(self, install=True):
         venv_path = self.get_path()
         print("Creating the virtual environment %s" % venv_path)
-        if self.exists():
+        if venv_exists(venv_path):
             raise Exception(f'virtual environment {venv_path} already exists')
         try:
             self._create_venv()
@@ -309,7 +311,7 @@ class VirtualEnvironment(object):
 
     def ensure(self, refresh=True, install=True):
         venv_path = self.get_path()
-        if self.exists():
+        if venv_exists(venv_path):
             if refresh:
                 self.prepare(install)
         else:
