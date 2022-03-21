@@ -91,43 +91,54 @@ import sys
 MS_WINDOWS = (sys.platform == 'win32')
 
 
-def run_command(command, env=None, *, hide_stderr=True):
-    if hide_stderr:
-        kw = {'stderr': subprocess.PIPE}
-    else:
-        kw = {}
+def run_cmd(argv, *, env=None, capture=None, verbose=True):
+    if capture is True:
+        capture = 'both'
+    kw = dict(
+        env=env,
+    )
+    if capture == 'both':
+        kw.update(dict(
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        ))
+    elif capture == 'combined':
+        kw.update(dict(
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        ))
+    elif capture == 'stdout':
+        kw.update(dict(
+            stdout=subprocess.PIPE,
+        ))
+    elif capture == 'stderr':
+        kw.update(dict(
+            stderr=subprocess.PIPE,
+        ))
+    elif capture:
+        raise NotImplementedError(repr(capture))
+    if capture:
+        kw.update(dict(
+            encoding='utf-8',
+        ))
 
-    logging.info("Running `%s`",
-                 " ".join(list(map(str, command))))
+    # XXX Use a logger.
+    if verbose:
+        print('#', ' '.join(shlex.quote(a) for a in argv))
 
     # Explicitly flush standard streams, required if streams are buffered
     # (not TTY) to write lines in the expected order
     sys.stdout.flush()
     sys.stderr.flush()
 
-    proc = subprocess.Popen(command,
-                            universal_newlines=True,
-                            env=env,
-                            **kw)
     try:
-        stderr = proc.communicate()[1]
-    except:   # noqa
-        if proc.stderr:
-            proc.stderr.close()
-        try:
-            proc.kill()
-        except OSError:
-            # process already exited
-            pass
-        proc.wait()
+        proc = subprocess.run(argv, **kwargs)
+    except OSError as exc:
+        if exc.errno == errno.ENOENT:
+            # Command not found
+            return 127
         raise
-
-    if proc.returncode != 0:
-        if hide_stderr:
-            sys.stderr.flush()
-            sys.stderr.write(stderr)
-            sys.stderr.flush()
-        raise RuntimeError("Benchmark died")
+    return proc.returncode, proc.stdout, proc.stderr
 
 
 #######################################
@@ -145,29 +156,6 @@ def download(url, filename):
 
 #######################################
 # misc utils
-
-def run_cmd(argv, *, env=None, capture=None, verbose=True):
-    kwargs = dict(
-        env=env,
-    )
-    if capture:
-        kwargs.update(dict(
-            encoding='utf-8',
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-
-    if verbose:
-        print('#', ' '.join(shlex.quote(a) for a in argv))
-    try:
-        proc = subprocess.run(argv, **kwargs)
-    except OSError as exc:
-        if exc.errno == errno.ENOENT:
-            # Command not found
-            return 127
-        raise
-    return proc.returncode, proc.stdout, proc.stderr
-
 
 def check_name(name, *, loose=False, allownumeric=False):
     if not name or not isinstance(name, str):

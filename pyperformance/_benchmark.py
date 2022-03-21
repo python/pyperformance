@@ -218,8 +218,18 @@ def _run_perf_script(python, runscript, runid, *,
         else:
             opts, inherit_envvar = _resolve_restricted_opts(opts)
             argv, env = _prep_cmd(python, runscript, opts, runid, inherit_envvar)
-        _utils.run_command(argv, env=env, hide_stderr=not verbose)
-
+        hide_stderr = not verbose
+        ec, _, stderr = _utils.run_cmd(
+            argv,
+            env=env,
+            capture='stderr' if hide_stderr else None,
+        )
+        if ec != 0:
+            if hide_stderr:
+                sys.stderr.flush()
+                sys.stderr.write(stderr)
+                sys.stderr.flush()
+            raise RuntimeError("Benchmark died")
         return pyperf.BenchmarkSuite.load(tmp)
 
 
