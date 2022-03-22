@@ -180,9 +180,6 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
             return
 
         if not self._prepared:
-            # parse requirements
-            basereqs = Requirements.from_file(REQUIREMENTS_FILE, ['psutil'])
-
             # Upgrade pip
             ec, _, _ = _pip.upgrade_pip(
                 self.python,
