@@ -78,7 +78,6 @@ def run_benchmarks(should_run, python, options):
             venv_root,
             info,
             inherit_environ=options.inherit_environ,
-            refresh=not alreadyseen,
         )
         try:
             # XXX Do not override when there is a requirements collision.

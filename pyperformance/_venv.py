@@ -198,6 +198,8 @@ class VirtualEnvironment:
             return self._base
 
     def ensure_pip(self, downloaddir=None, *, upgrade=True):
+        if not upgrade and _pip.is_pip_installed(self.python, env=self._env):
+            return
         ec, _, _ = _pip.install_pip(
             self.python,
             info=self.info,
