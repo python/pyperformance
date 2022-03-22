@@ -60,10 +60,16 @@ def run_benchmarks(should_run, python, options):
     info = _pythoninfo.get_info(python)
     runid = get_run_id(info)
 
+    unique = getattr(options, 'unique_venvs', False)
+    if not unique:
+        common = VenvForBenchmarks.ensure(
+            _venv.get_venv_root(runid.name, python=info),
+            info,
+            inherit_environ=options.inherit_environ,
+        )
+
     benchmarks = {}
     venvs = set()
-    if sys.prefix != sys.base_prefix:
-        venvs.add(sys.prefix)
     for i, bench in enumerate(to_run):
         bench_runid = runid._replace(bench=bench)
         assert bench_runid.name, (bench, bench_runid)
@@ -73,12 +79,20 @@ def run_benchmarks(should_run, python, options):
         print('='*50)
         print(f'({i+1:>2}/{len(to_run)}) creating venv for benchmark ({bench.name})')
         print()
-        alreadyseen = venv_root in venvs
+        if not unique:
+            print('(trying common venv first)')
+            # Try the common venv first.
+            try:
+                common.ensure_reqs(bench)
+            except _venv.RequirementsInstallationFailedError:
+                print('(falling back to unique venv)')
+            else:
+                benchmarks[bench] = (common, bench_runid)
+                continue
         venv = VenvForBenchmarks.ensure(
             venv_root,
             info,
             inherit_environ=options.inherit_environ,
-            refresh=not alreadyseen,
         )
         try:
             # XXX Do not override when there is a requirements collision.
@@ -89,6 +103,7 @@ def run_benchmarks(should_run, python, options):
             venv = None
         venvs.add(venv_root)
         benchmarks[bench] = (venv, bench_runid)
+    print()
 
     suite = None
     run_count = str(len(to_run))

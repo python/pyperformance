@@ -120,7 +120,7 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
     @classmethod
     def create(cls, root=None, python=None, *,
                inherit_environ=None,
-               install=True,
+               upgrade=False,
                ):
         env = _get_envvars(inherit_environ)
         try:
@@ -131,7 +131,7 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
         self.inherit_environ = inherit_environ
 
         try:
-            self.ensure_pip()
+            self.ensure_pip(upgrade=upgrade)
         except _venv.VenvPipInstallFailedError as exc:
             print(f'ERROR: {exc}')
             _utils.safe_rmtree(self.root)
@@ -140,92 +140,64 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
             _utils.safe_rmtree(self.root)
             raise
 
-        try:
-            self.prepare(install)
-        except BaseException:
-            print()
-            _utils.safe_rmtree(venv.root)
-            raise
+        # Display the pip version
+        _pip.run_pip('--version', python=self.python, env=self._env)
 
         return self
 
     @classmethod
     def ensure(cls, root, python=None, *,
-               refresh=True,
-               install=True,
+               upgrade=False,
                **kwargs
                ):
         if _venv.venv_exists(root):
             self = super().ensure(root)
-            if refresh:
-                self.prepare(install)
+            if upgrade:
+                self.upgrade_pip()
+            else:
+                self.ensure_pip(upgrade=False)
             return self
         else:
-            return cls.create(root, python, install=install, **kwargs)
+            return cls.create(
+                root,
+                python,
+                upgrade=upgrade,
+                **kwargs
+            )
 
     def __init__(self, root, *, base=None, inherit_environ=None):
         super().__init__(root, base=base)
         self.inherit_environ = inherit_environ or None
-        self._prepared = False
 
     @property
     def _env(self):
         # Restrict the env we use.
         return _get_envvars(self.inherit_environ)
 
-    def prepare(self, install=True):
-        print("Installing the virtual environment %s" % self.root)
-        if self._prepared or (self._prepared is None and not install):
-            print('(already installed)')
-            return
-
-        if not self._prepared:
-            # parse requirements
+    def install_pyperformance(self):
+        print("installing pyperformance in the venv at %s" % self.root)
+        # Install pyperformance inside the virtual environment.
+        if pyperformance.is_dev():
             basereqs = Requirements.from_file(REQUIREMENTS_FILE, ['psutil'])
+            self.ensure_reqs(basereqs)
 
-            # Upgrade pip
-            ec, _, _ = _pip.upgrade_pip(
-                self.python,
-                info=self.info,
+            root_dir = os.path.dirname(pyperformance.PKG_ROOT)
+            ec, _, _ = _pip.install_editable(
+                root_dir,
+                python=self.info,
                 env=self._env,
-                installer=True,
             )
-            if ec != 0:
-                sys.exit(ec)
-
-        # XXX not for benchmark venvs
-        if install:
-            # install pyperformance inside the virtual environment
-            # XXX This isn't right...
-            if pyperformance.is_installed():
-                root_dir = os.path.dirname(pyperformance.PKG_ROOT)
-                ec, _, _ = _pip.install_editable(
-                    root_dir,
-                    python=self.info,
-                    env=self._env,
-                )
-            else:
-                version = pyperformance.__version__
-                ec, _, _ = _pip.install_requirements(
-                    f'pyperformance=={version}',
-                    python=self.info,
-                    env=self._env,
-                )
-            if ec != 0:
-                sys.exit(ec)
-            self._prepared = True
         else:
-            self._prepared = None
-
-        # Display the pip version
-        _pip.run_pip('--version', python=self.python, env=self._env)
-
-        # Dump the package list and their versions: pip freeze
-        _pip.run_pip('freeze', python=self.python, env=self._env)
+            version = pyperformance.__version__
+            ec, _, _ = _pip.install_requirements(
+                f'pyperformance=={version}',
+                python=self.info,
+                env=self._env,
+            )
+        if ec != 0:
+            sys.exit(ec)
 
     def ensure_reqs(self, requirements=None, *, exitonerror=False):
-        print("Installing requirements into the virtual environment %s" % self.root)
-
         # parse requirements
         bench = None
         if requirements is None:
@@ -235,20 +207,17 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
             requirements = Requirements.from_benchmarks([bench])
 
         # Every benchmark must depend on pyperf.
-        if requirements and bench is not None:
-            if not requirements.get('pyperf'):
-                basereqs = Requirements.from_file(REQUIREMENTS_FILE, ['psutil'])
-                pyperf_req = basereqs.get('pyperf')
-                if not pyperf_req:
-                    raise NotImplementedError
-                requirements.specs.append(pyperf_req)
-                # XXX what about psutil?
+        if bench is not None and not requirements.get('pyperf'):
+            basereqs = Requirements.from_file(REQUIREMENTS_FILE, ['psutil'])
+            pyperf_req = basereqs.get('pyperf')
+            if not pyperf_req:
+                raise NotImplementedError
+            requirements.specs.append(pyperf_req)
+            # XXX what about psutil?
 
         if not requirements:
             print('(nothing to install)')
         else:
-            self.prepare(install=bench is None)
-
             # install requirements
             try:
                 super().ensure_reqs(
@@ -287,6 +256,12 @@ def cmd_venv(options, benchmarks=None):
             info = None
     exists = _venv.venv_exists(root)
 
+    def install(venv):
+        try:
+            venv.install_pyperformance()
+        except _venv.RequirementsInstallationFailedError:
+            sys.exit(1)
+
     action = options.venv_action
     if action == 'create':
         requirements = Requirements.from_benchmarks(benchmarks)
@@ -297,6 +272,8 @@ def cmd_venv(options, benchmarks=None):
             info,
             inherit_environ=options.inherit_environ,
         )
+        venv.ensure_pip()
+        install(venv)
         venv.ensure_reqs(requirements, exitonerror=True)
         if not exists:
             print("The virtual environment %s has been created" % root)
@@ -313,6 +290,8 @@ def cmd_venv(options, benchmarks=None):
                     info,
                     inherit_environ=options.inherit_environ,
                 )
+                venv.ensure_pip()
+                install(venv)
                 venv.ensure_reqs(requirements, exitonerror=True)
             else:
                 print("The virtual environment %s already exists" % root)
@@ -324,6 +303,8 @@ def cmd_venv(options, benchmarks=None):
                     info,
                     inherit_environ=options.inherit_environ,
                 )
+                venv.ensure_pip()
+                install(venv)
                 venv.ensure_reqs(requirements, exitonerror=True)
                 print("The virtual environment %s has been recreated" % root)
         else:
@@ -332,6 +313,8 @@ def cmd_venv(options, benchmarks=None):
                 info,
                 inherit_environ=options.inherit_environ,
             )
+            venv.ensure_pip()
+            install(venv)
             venv.ensure_reqs(requirements, exitonerror=True)
             print("The virtual environment %s has been created" % root)
 

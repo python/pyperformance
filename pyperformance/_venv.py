@@ -197,17 +197,40 @@ class VirtualEnvironment:
             self._base = _pythoninfo.get_info(base_exe)
             return self._base
 
-    def ensure_pip(self, downloaddir=None):
+    def ensure_pip(self, downloaddir=None, *, installer=True, upgrade=True):
+        if not upgrade and _pip.is_pip_installed(self.python, env=self._env):
+            return
         ec, _, _ = _pip.install_pip(
             self.python,
             info=self.info,
             downloaddir=downloaddir or self.root,
             env=self._env,
+            upgrade=upgrade,
         )
         if ec != 0:
             raise VenvPipInstallFailedError(root, ec)
         elif not _pip.is_pip_installed(self.python, env=self._env):
             raise VenvPipInstallFailedError(root, 0, "pip doesn't work")
+
+        if installer:
+            # Upgrade installer dependencies (setuptools, ...)
+            ec, _, _ = _pip.ensure_installer(
+                self.python,
+                env=self._env,
+                upgrade=True,
+            )
+            if ec != 0:
+                raise RequirementsInstallationFailedError('wheel')
+
+    def upgrade_pip(self, *, installer=True):
+        ec, _, _ = _pip.upgrade_pip(
+            self.python,
+            info=self.info,
+            env=self._env,
+            installer=installer,
+        )
+        if ec != 0:
+            raise RequirementsInstallationFailedError('pip')
 
     def ensure_reqs(self, *reqs, upgrade=True):
         print("Installing requirements into the virtual environment %s" % self.root)

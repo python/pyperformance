@@ -36,7 +36,13 @@ def run_pip(cmd, *args, **kwargs):
 
 def is_pip_installed(python, *, env=None):
     """Return True if pip is installed on the given Python executable."""
-    ec, _, _ = run_pip('--version', env=env, capture=True, verbose=False)
+    ec, _, _ = run_pip(
+        '--version',
+        python=python,
+        env=env,
+        capture=True,
+        verbose=False,
+    )
     return ec == 0
 
 
@@ -44,6 +50,7 @@ def install_pip(python=sys.executable, *,
                 info=None,
                 downloaddir=None,
                 env=None,
+                upgrade=True,
                 **kwargs
                 ):
     """Install pip on the given Python executable."""
@@ -51,11 +58,10 @@ def install_pip(python=sys.executable, *,
         python = getattr(info, 'executable', None) or sys.executable
 
     # python -m ensurepip
-    res = _utils.run_python(
-        '-m', 'ensurepip', '--verbose',
-        python=python,
-        **kwargs
-    )
+    args = ['-m', 'ensurepip', '-v']  # --verbose
+    if upgrade:
+        args.append('-U')  # --upgrade
+    res = _utils.run_python(*args, python=python, **kwargs)
     ec, _, _ = res
     if ec == 0 and is_pip_installed(python, env=env):
         return res
@@ -111,14 +117,18 @@ def upgrade_pip(python=sys.executable, *,
 
     if installer:
         # Upgrade installer dependencies (setuptools, ...)
-        reqs = [
-            f'setuptools>={OLD_SETUPTOOLS}',
-            # install wheel so pip can cache binary wheel packages locally,
-            # and install prebuilt wheel packages from PyPI.
-            'wheel',
-        ]
-        res = install_requirements(*reqs, python=python, upgrade=True, **kwargs)
+        res = ensure_installer(python, upgrade=True, **kwargs)
     return res
+
+
+def ensure_installer(python=sys.executable, **kwargs):
+    reqs = [
+        f'setuptools>={OLD_SETUPTOOLS}',
+        # install wheel so pip can cache binary wheel packages locally,
+        # and install prebuilt wheel packages from PyPI.
+        'wheel',
+    ]
+    return install_requirements(*reqs, python=python, **kwargs)
 
 
 def install_requirements(reqs, *extra,
