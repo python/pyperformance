@@ -176,8 +176,7 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
     def install_pyperformance(self):
         print("installing pyperformance in the venv at %s" % self.root)
         # Install pyperformance inside the virtual environment.
-        # XXX This isn't right...
-        if pyperformance.is_installed():
+        if pyperformance.is_dev():
             basereqs = Requirements.from_file(REQUIREMENTS_FILE, ['psutil'])
             self.ensure_reqs(basereqs)
 
