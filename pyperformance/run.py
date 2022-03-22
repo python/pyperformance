@@ -68,20 +68,20 @@ def run_benchmarks(should_run, python, options):
         assert bench_runid.name, (bench, bench_runid)
         name = bench_runid.name
         venv_root = _venv.get_venv_root(name, python=info)
-        venv = _venv.VirtualEnvironment(
-            python=info,
-            root=venv_root,
-            inherit_environ=options.inherit_environ,
-        )
         print()
         print('='*50)
         print(f'({i+1:>2}/{len(to_run)}) creating venv for benchmark ({bench.name})')
         print()
         alreadyseen = venv_root in venvs
-        venv.ensure(refresh=not alreadyseen)
+        venv = _venv.VenvForBenchmarks.ensure(
+            venv_root,
+            info,
+            inherit_environ=options.inherit_environ,
+            refresh=not alreadyseen,
+        )
         try:
             # XXX Do not override when there is a requirements collision.
-            venv.install_reqs(bench)
+            venv.ensure_reqs(bench)
         except _venv.RequirementsInstallationFailedError:
             print('(benchmark will be skipped)')
             print()
