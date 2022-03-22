@@ -197,7 +197,7 @@ class VirtualEnvironment:
             self._base = _pythoninfo.get_info(base_exe)
             return self._base
 
-    def ensure_pip(self, downloaddir=None, *, upgrade=True):
+    def ensure_pip(self, downloaddir=None, *, installer=True, upgrade=True):
         if not upgrade and _pip.is_pip_installed(self.python, env=self._env):
             return
         ec, _, _ = _pip.install_pip(
@@ -212,7 +212,13 @@ class VirtualEnvironment:
         elif not _pip.is_pip_installed(self.python, env=self._env):
             raise VenvPipInstallFailedError(root, 0, "pip doesn't work")
 
-    def upgrade_pip(self, *, installer=False):
+        if installer:
+            # Upgrade installer dependencies (setuptools, ...)
+            ec, _, _ = ensure_installer(python, upgrade=True, **kwargs)
+            if ec != 0:
+                raise RequirementsInstallationFailedError('wheel')
+
+    def upgrade_pip(self, *, installer=True):
         ec, _, _ = _pip.upgrade_pip(
             self.python,
             info=self.info,

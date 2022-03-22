@@ -111,14 +111,18 @@ def upgrade_pip(python=sys.executable, *,
 
     if installer:
         # Upgrade installer dependencies (setuptools, ...)
-        reqs = [
-            f'setuptools>={OLD_SETUPTOOLS}',
-            # install wheel so pip can cache binary wheel packages locally,
-            # and install prebuilt wheel packages from PyPI.
-            'wheel',
-        ]
-        res = install_requirements(*reqs, python=python, upgrade=True, **kwargs)
+        res = ensure_installer(python, upgrade=True, **kwargs)
     return res
+
+
+def ensure_installer(python=sys.executable, **kwargs):
+    reqs = [
+        f'setuptools>={OLD_SETUPTOOLS}',
+        # install wheel so pip can cache binary wheel packages locally,
+        # and install prebuilt wheel packages from PyPI.
+        'wheel',
+    ]
+    return install_requirements(*reqs, python=python, **kwargs)
 
 
 def install_requirements(reqs, *extra,

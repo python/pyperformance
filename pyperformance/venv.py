@@ -153,13 +153,12 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
         if _venv.venv_exists(root):
             self = super().ensure(root)
             if upgrade:
-                self.upgrade_pip(installer=True)
+                self.upgrade_pip()
             return self
         else:
             return cls.create(
                 root,
                 python,
-                install=install,
                 upgrade=upgrade,
                 **kwargs
             )
