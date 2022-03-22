@@ -87,6 +87,7 @@ def run_benchmarks(should_run, python, options):
             venv = None
         venvs.add(venv_root)
         benchmarks[bench] = (venv, bench_runid)
+    print()
 
     suite = None
     run_count = str(len(to_run))

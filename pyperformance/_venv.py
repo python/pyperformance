@@ -214,7 +214,11 @@ class VirtualEnvironment:
 
         if installer:
             # Upgrade installer dependencies (setuptools, ...)
-            ec, _, _ = ensure_installer(python, upgrade=True, **kwargs)
+            ec, _, _ = _pip.ensure_installer(
+                self.python,
+                env=self._env,
+                upgrade=True,
+            )
             if ec != 0:
                 raise RequirementsInstallationFailedError('wheel')
 

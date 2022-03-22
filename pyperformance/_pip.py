@@ -36,7 +36,13 @@ def run_pip(cmd, *args, **kwargs):
 
 def is_pip_installed(python, *, env=None):
     """Return True if pip is installed on the given Python executable."""
-    ec, _, _ = run_pip('--version', env=env, capture=True, verbose=False)
+    ec, _, _ = run_pip(
+        '--version',
+        python=python,
+        env=env,
+        capture=True,
+        verbose=False,
+    )
     return ec == 0
 
 
