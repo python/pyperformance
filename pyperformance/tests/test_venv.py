@@ -5,7 +5,7 @@ import types
 import unittest
 
 from pyperformance import tests
-import pyperformance.venv
+import pyperformance._venv
 
 
 def new_venv_config(root, home=None, version=None, prompt=None,
@@ -67,7 +67,7 @@ class VenvConfigTests(tests.Resources, unittest.TestCase):
     def test_read(self):
         expected, _, root = self.generate_config('spam')
 
-        cfg = pyperformance.venv.read_venv_config(root)
+        cfg = pyperformance._venv.read_venv_config(root)
 
         self.assertEqual(vars(cfg), vars(expected))
 
@@ -75,6 +75,6 @@ class VenvConfigTests(tests.Resources, unittest.TestCase):
         expected = new_venv_config('spam')
         text = render_venv_config(expected)
 
-        cfg = pyperformance.venv.parse_venv_config(text)
+        cfg = pyperformance._venv.parse_venv_config(text)
 
         self.assertEqual(vars(cfg), vars(expected))

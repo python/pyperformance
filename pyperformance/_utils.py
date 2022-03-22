@@ -23,7 +23,12 @@ import contextlib
 import errno
 import os
 import os.path
+import shlex
+import shutil
+import subprocess
+import sys
 import tempfile
+import urllib.request
 
 
 @contextlib.contextmanager
@@ -66,6 +71,16 @@ def resolve_file(filename, relroot=None):
     return resolved
 
 
+def safe_rmtree(path):
+    if not os.path.exists(path):
+        return False
+
+    print("Remove directory %s" % path)
+    # XXX Pass onerror to report on any files that could not be deleted?
+    shutil.rmtree(path)
+    return True
+
+
 #######################################
 # platform utils
 
@@ -77,43 +92,86 @@ import sys
 MS_WINDOWS = (sys.platform == 'win32')
 
 
-def run_command(command, env=None, *, hide_stderr=True):
-    if hide_stderr:
-        kw = {'stderr': subprocess.PIPE}
-    else:
-        kw = {}
+def run_cmd(argv, *, env=None, capture=None, verbose=True):
+    try:
+        cmdstr = ' '.join(shlex.quote(a) for a in argv)
+    except TypeError:
+        print(argv)
+        raise  # re-raise
 
-    logging.info("Running `%s`",
-                 " ".join(list(map(str, command))))
+    if capture is True:
+        capture = 'both'
+    kw = dict(
+        env=env,
+    )
+    if capture == 'both':
+        kw.update(dict(
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        ))
+    elif capture == 'combined':
+        kw.update(dict(
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        ))
+    elif capture == 'stdout':
+        kw.update(dict(
+            stdout=subprocess.PIPE,
+        ))
+    elif capture == 'stderr':
+        kw.update(dict(
+            stderr=subprocess.PIPE,
+        ))
+    elif capture:
+        raise NotImplementedError(repr(capture))
+    if capture:
+        kw.update(dict(
+            encoding='utf-8',
+        ))
+
+    # XXX Use a logger.
+    if verbose:
+        print('#', cmdstr)
 
     # Explicitly flush standard streams, required if streams are buffered
     # (not TTY) to write lines in the expected order
     sys.stdout.flush()
     sys.stderr.flush()
 
-    proc = subprocess.Popen(command,
-                            universal_newlines=True,
-                            env=env,
-                            **kw)
     try:
-        stderr = proc.communicate()[1]
-    except:   # noqa
-        if proc.stderr:
-            proc.stderr.close()
-        try:
-            proc.kill()
-        except OSError:
-            # process already exited
-            pass
-        proc.wait()
+        proc = subprocess.run(argv, **kw)
+    except OSError as exc:
+        if exc.errno == errno.ENOENT:
+            if verbose:
+                print('command failed (not found)')
+            return 127, None, None
         raise
+    if proc.returncode != 0 and verbose:
+        print(f'Command failed with exit code {proc.returncode}')
+    return proc.returncode, proc.stdout, proc.stderr
 
-    if proc.returncode != 0:
-        if hide_stderr:
-            sys.stderr.flush()
-            sys.stderr.write(stderr)
-            sys.stderr.flush()
-        raise RuntimeError("Benchmark died")
+
+def run_python(*args, python=sys.executable, **kwargs):
+    if not isinstance(python, str) and python is not None:
+        try:
+            # See _pythoninfo.get_info().
+            python = python.sys.executable
+        except AttributeError:
+            raise TypeError(f'expected python str, got {python!r}')
+    return run_cmd([python, *args], **kwargs)
+
+
+#######################################
+# network utils
+
+def download(url, filename):
+    response = urllib.request.urlopen(url)
+    with response:
+        content = response.read()
+
+    with open(filename, 'wb') as fp:
+        fp.write(content)
+        fp.flush()
 
 
 #######################################

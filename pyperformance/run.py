@@ -9,8 +9,9 @@ except ImportError:
     multiprocessing = None
 
 import pyperformance
-from . import _utils, _python
-from . import venv as _venv
+from . import _utils, _python, _pythoninfo
+from .venv import VenvForBenchmarks, REQUIREMENTS_FILE
+from . import _venv
 
 
 class BenchmarkException(Exception):
@@ -56,34 +57,37 @@ def get_run_id(python, bench=None):
 def run_benchmarks(should_run, python, options):
     to_run = sorted(should_run)
 
-    runid = get_run_id(python)
+    info = _pythoninfo.get_info(python)
+    runid = get_run_id(info)
 
     benchmarks = {}
     venvs = set()
     if sys.prefix != sys.base_prefix:
         venvs.add(sys.prefix)
-    common_venv = None  # XXX Add the ability to combine venvs.
     for i, bench in enumerate(to_run):
         bench_runid = runid._replace(bench=bench)
         assert bench_runid.name, (bench, bench_runid)
-        venv = _venv.VirtualEnvironment(
-            options.python,
-            common_venv,
-            inherit_environ=options.inherit_environ,
-            name=bench_runid.name,
-        )
+        name = bench_runid.name
+        venv_root = _venv.get_venv_root(name, python=info)
+        print()
+        print('='*50)
         print(f'({i+1:>2}/{len(to_run)}) creating venv for benchmark ({bench.name})')
-        venv_path = venv.get_path()
-        alreadyseen = venv_path in venvs
-        venv.ensure(refresh=not alreadyseen)
+        print()
+        alreadyseen = venv_root in venvs
+        venv = VenvForBenchmarks.ensure(
+            venv_root,
+            info,
+            inherit_environ=options.inherit_environ,
+            refresh=not alreadyseen,
+        )
         try:
             # XXX Do not override when there is a requirements collision.
-            venv.install_reqs(bench)
+            venv.ensure_reqs(bench)
         except _venv.RequirementsInstallationFailedError:
             print('(benchmark will be skipped)')
             print()
             venv = None
-        venvs.add(venv_path)
+        venvs.add(venv_root)
         benchmarks[bench] = (venv, bench_runid)
 
     suite = None
@@ -145,7 +149,7 @@ def run_benchmarks(should_run, python, options):
 
 def get_compatibility_id(bench=None):
     # XXX Do not include the pyperformance reqs if a benchmark was provided?
-    reqs = sorted(_utils.iter_clean_lines(_venv.REQUIREMENTS_FILE))
+    reqs = sorted(_utils.iter_clean_lines(REQUIREMENTS_FILE))
     if bench:
         lockfile = bench.requirements_lockfile
         if lockfile and os.path.exists(lockfile):

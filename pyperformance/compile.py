@@ -18,7 +18,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 import pyperformance
-from pyperformance._utils import MS_WINDOWS
+from pyperformance._utils import MS_WINDOWS, safe_rmtree
 from pyperformance.venv import (GET_PIP_URL, REQ_OLD_PIP, PERFORMANCE_ROOT,
                                 download, is_build_dir)
 
@@ -224,11 +224,6 @@ class Application(object):
 
         return stdout
 
-    def safe_rmdir(self, directory):
-        if os.path.exists(directory):
-            self.logger.error("Remove directory %s" % directory)
-            shutil.rmtree(directory)
-
     def safe_makedirs(self, directory):
         try:
             os.makedirs(directory)
@@ -283,7 +278,7 @@ class Python(Task):
     def compile(self):
         build_dir = self.conf.build_dir
 
-        self.app.safe_rmdir(build_dir)
+        safe_rmtree(build_dir)
         self.app.safe_makedirs(build_dir)
 
         config_args = []
@@ -317,7 +312,7 @@ class Python(Task):
         )
         if self.conf.install:
             program, _ = resolve_python(self.conf.prefix, self.conf.build_dir)
-            self.app.safe_rmdir(self.conf.prefix)
+            safe_rmtree(self.conf.prefix)
             self.app.safe_makedirs(self.conf.prefix)
             self.run('make', 'install')
         else:
@@ -504,8 +499,8 @@ class BenchmarkRevision(Application):
         self.repository.checkout(self.revision)
 
         # First: remove everything
-        self.safe_rmdir(self.conf.build_dir)
-        self.safe_rmdir(self.conf.prefix)
+        safe_rmtree(self.conf.build_dir)
+        safe_rmtree(self.conf.prefix)
 
         self.python.patch(self.patch)
         self.python.compile_install()
