@@ -198,8 +198,6 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
             sys.exit(ec)
 
     def ensure_reqs(self, requirements=None, *, exitonerror=False):
-        print("Installing requirements into the virtual environment %s" % self.root)
-
         # parse requirements
         bench = None
         if requirements is None:
