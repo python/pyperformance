@@ -73,7 +73,6 @@ def run_benchmarks(should_run, python, options):
         print('='*50)
         print(f'({i+1:>2}/{len(to_run)}) creating venv for benchmark ({bench.name})')
         print()
-        alreadyseen = venv_root in venvs
         venv = VenvForBenchmarks.ensure(
             venv_root,
             info,
