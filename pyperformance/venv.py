@@ -181,14 +181,10 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
 
         if not self._prepared:
             # Upgrade pip
-            ec, _, _ = _pip.upgrade_pip(
-                self.python,
-                info=self.info,
-                env=self._env,
-                installer=True,
-            )
-            if ec != 0:
-                sys.exit(ec)
+            try:
+                self.upgrade_pip(installer=True)
+            except _venv.RequirementsInstallationFailedError:
+                sys.exit(1)
 
         # XXX not for benchmark venvs
         if install:

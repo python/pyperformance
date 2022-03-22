@@ -209,6 +209,16 @@ class VirtualEnvironment:
         elif not _pip.is_pip_installed(self.python, env=self._env):
             raise VenvPipInstallFailedError(root, 0, "pip doesn't work")
 
+    def upgrade_pip(self, *, installer=False):
+        ec, _, _ = _pip.upgrade_pip(
+            self.python,
+            info=self.info,
+            env=self._env,
+            installer=installer,
+        )
+        if ec != 0:
+            raise RequirementsInstallationFailedError('pip')
+
     def ensure_reqs(self, *reqs, upgrade=True):
         print("Installing requirements into the virtual environment %s" % self.root)
         ec, _, _ = _pip.install_requirements(
