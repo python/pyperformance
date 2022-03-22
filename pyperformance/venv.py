@@ -179,13 +179,6 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
             print('(already installed)')
             return
 
-        if not self._prepared:
-            # Upgrade pip
-            try:
-                self.upgrade_pip(installer=True)
-            except _venv.RequirementsInstallationFailedError:
-                sys.exit(1)
-
         # XXX not for benchmark venvs
         if install:
             # install pyperformance inside the virtual environment

@@ -197,12 +197,13 @@ class VirtualEnvironment:
             self._base = _pythoninfo.get_info(base_exe)
             return self._base
 
-    def ensure_pip(self, downloaddir=None):
+    def ensure_pip(self, downloaddir=None, *, upgrade=True):
         ec, _, _ = _pip.install_pip(
             self.python,
             info=self.info,
             downloaddir=downloaddir or self.root,
             env=self._env,
+            upgrade=upgrade,
         )
         if ec != 0:
             raise VenvPipInstallFailedError(root, ec)

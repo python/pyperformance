@@ -44,6 +44,7 @@ def install_pip(python=sys.executable, *,
                 info=None,
                 downloaddir=None,
                 env=None,
+                upgrade=True,
                 **kwargs
                 ):
     """Install pip on the given Python executable."""
@@ -51,11 +52,10 @@ def install_pip(python=sys.executable, *,
         python = getattr(info, 'executable', None) or sys.executable
 
     # python -m ensurepip
-    res = _utils.run_python(
-        '-m', 'ensurepip', '--verbose',
-        python=python,
-        **kwargs
-    )
+    args = ['-m', 'ensurepip', '-v']  # --verbose
+    if upgrade:
+        args.append('-U')  # --upgrade
+    res = _utils.run_python(*args, python=python, **kwargs)
     ec, _, _ = res
     if ec == 0 and is_pip_installed(python, env=env):
         return res
