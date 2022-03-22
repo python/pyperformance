@@ -175,7 +175,7 @@ class Benchmark:
             verbose=False,
             ):
         if venv and python == sys.executable:
-            python = venv.get_python_program()
+            python = venv.python
 
         if not runid:
             from ..run import get_run_id

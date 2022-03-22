@@ -10,7 +10,8 @@ except ImportError:
 
 import pyperformance
 from . import _utils, _python, _pythoninfo
-from . import venv as _venv
+from .venv import VenvForBenchmarks, REQUIREMENTS_FILE
+from . import _venv
 
 
 class BenchmarkException(Exception):
@@ -73,7 +74,7 @@ def run_benchmarks(should_run, python, options):
         print(f'({i+1:>2}/{len(to_run)}) creating venv for benchmark ({bench.name})')
         print()
         alreadyseen = venv_root in venvs
-        venv = _venv.VenvForBenchmarks.ensure(
+        venv = VenvForBenchmarks.ensure(
             venv_root,
             info,
             inherit_environ=options.inherit_environ,
@@ -148,7 +149,7 @@ def run_benchmarks(should_run, python, options):
 
 def get_compatibility_id(bench=None):
     # XXX Do not include the pyperformance reqs if a benchmark was provided?
-    reqs = sorted(_utils.iter_clean_lines(_venv.REQUIREMENTS_FILE))
+    reqs = sorted(_utils.iter_clean_lines(REQUIREMENTS_FILE))
     if bench:
         lockfile = bench.requirements_lockfile
         if lockfile and os.path.exists(lockfile):
