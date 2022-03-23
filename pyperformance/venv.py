@@ -150,7 +150,15 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
                upgrade=False,
                **kwargs
                ):
-        if _venv.venv_exists(root):
+        exists = _venv.venv_exists(root)
+        if upgrade == 'oncreate':
+            upgrade = not exists
+        elif upgrade == 'onexists':
+            upgrade = exists
+        elif isinstance(upgrade, str):
+            raise NotImplementedError(upgrade)
+
+        if exists:
             self = super().ensure(root)
             if upgrade:
                 self.upgrade_pip()

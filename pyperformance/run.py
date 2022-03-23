@@ -65,6 +65,7 @@ def run_benchmarks(should_run, python, options):
         common = VenvForBenchmarks.ensure(
             _venv.get_venv_root(runid.name, python=info),
             info,
+            upgrade='oncreate',
             inherit_environ=options.inherit_environ,
         )
 
@@ -92,6 +93,7 @@ def run_benchmarks(should_run, python, options):
         venv = VenvForBenchmarks.ensure(
             venv_root,
             info,
+            upgrade='oncreate',
             inherit_environ=options.inherit_environ,
         )
         try:
