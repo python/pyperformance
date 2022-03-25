@@ -294,11 +294,6 @@ def display_benchmark_suite(suite):
         print()
 
 
-def cmd_show(options):
-    suite = pyperf.BenchmarkSuite.load(options.filename)
-    display_benchmark_suite(suite)
-
-
 def get_labels(filename1, filename2):
     # Find a short label to identify two filenames:
     # the two labels must be different
@@ -408,10 +403,3 @@ def write_csv(results, filename):
             changed = result.changed.mean()
             row = [name, format_csv(base), format_csv(changed)]
             writer.writerow(row)
-
-
-def cmd_compare(options):
-    results = compare_results(options)
-
-    if options.csv:
-        write_csv(results, options.csv)

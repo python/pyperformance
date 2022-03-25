@@ -4,11 +4,10 @@ import errno
 import json
 import logging
 import math
+import os
 import os.path
-import pyperf
 import re
 import shlex
-import shutil
 import statistics
 import subprocess
 import sys
@@ -16,6 +15,8 @@ import time
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import urlopen
+
+import pyperf
 
 import pyperformance
 from pyperformance._utils import MS_WINDOWS, safe_rmtree
@@ -982,36 +983,3 @@ class BenchmarkAll(Application):
 
         if self.failed:
             sys.exit(1)
-
-
-def cmd_compile(options):
-    conf = parse_config(options.config_file, "compile")
-    if options is not None:
-        if options.no_update:
-            conf.update = False
-        if options.no_tune:
-            conf.system_tune = False
-    bench = BenchmarkRevision(conf, options.revision, options.branch,
-                              patch=options.patch, options=options)
-    bench.main()
-
-
-def cmd_upload(options):
-    conf = parse_config(options.config_file, "upload")
-
-    filename = options.json_file
-    bench = pyperf.BenchmarkSuite.load(filename)
-    metadata = bench.get_metadata()
-    revision = metadata['commit_id']
-    branch = metadata['commit_branch']
-    commit_date = parse_date(metadata['commit_date'])
-
-    bench = BenchmarkRevision(conf, revision, branch,
-                              filename=filename, commit_date=commit_date,
-                              setup_log=False, options=options)
-    bench.upload()
-
-
-def cmd_compile_all(options):
-    bench = BenchmarkAll(options.config_file, options=options)
-    bench.main()

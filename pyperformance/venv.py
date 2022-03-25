@@ -3,7 +3,7 @@ import os.path
 import sys
 
 import pyperformance
-from . import _utils, _pythoninfo, _pip, _venv
+from . import _utils, _pip, _venv
 
 
 REQUIREMENTS_FILE = os.path.join(pyperformance.DATA_DIR, 'requirements.txt')
@@ -241,102 +241,3 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
         _pip.run_pip('freeze', python=self.python, env=self._env)
 
         return requirements
-
-
-def cmd_venv(options, benchmarks=None):
-    if not options.venv:
-        info = _pythoninfo.get_info(options.python)
-        root = _venv.get_venv_root(python=info)
-    else:
-        root = options.venv
-        venv_python = _venv.resolve_venv_python(root)
-        if os.path.exists(venv_python):
-            info = _pythoninfo.get_info(venv_python)
-        else:
-            info = None
-    exists = _venv.venv_exists(root)
-
-    def install(venv):
-        try:
-            venv.install_pyperformance()
-        except _venv.RequirementsInstallationFailedError:
-            sys.exit(1)
-
-    action = options.venv_action
-    if action == 'create':
-        requirements = Requirements.from_benchmarks(benchmarks)
-        if exists:
-            print("The virtual environment %s already exists" % root)
-        venv = VenvForBenchmarks.ensure(
-            root,
-            info,
-            inherit_environ=options.inherit_environ,
-        )
-        venv.ensure_pip()
-        install(venv)
-        venv.ensure_reqs(requirements, exitonerror=True)
-        if not exists:
-            print("The virtual environment %s has been created" % root)
-
-    elif action == 'recreate':
-        requirements = Requirements.from_benchmarks(benchmarks)
-        if exists:
-            venv_python = _venv.resolve_venv_python(root)
-            if venv_python == sys.executable:
-                print("The virtual environment %s already exists" % root)
-                print("(it matches the currently running Python executable)")
-                venv = VenvForBenchmarks.ensure(
-                    root,
-                    info,
-                    inherit_environ=options.inherit_environ,
-                )
-                venv.ensure_pip()
-                install(venv)
-                venv.ensure_reqs(requirements, exitonerror=True)
-            else:
-                print("The virtual environment %s already exists" % root)
-                _utils.safe_rmtree(root)
-                print("The old virtual environment %s has been removed" % root)
-                print()
-                venv = VenvForBenchmarks.ensure(
-                    root,
-                    info,
-                    inherit_environ=options.inherit_environ,
-                )
-                venv.ensure_pip()
-                install(venv)
-                venv.ensure_reqs(requirements, exitonerror=True)
-                print("The virtual environment %s has been recreated" % root)
-        else:
-            venv = VenvForBenchmarks.create(
-                root,
-                info,
-                inherit_environ=options.inherit_environ,
-            )
-            venv.ensure_pip()
-            install(venv)
-            venv.ensure_reqs(requirements, exitonerror=True)
-            print("The virtual environment %s has been created" % root)
-
-    elif action == 'remove':
-        if _utils.safe_rmtree(root):
-            print("The virtual environment %s has been removed" % root)
-        else:
-            print("The virtual environment %s does not exist" % root)
-
-    else:
-        # show command
-        text = "Virtual environment path: %s" % root
-        if exists:
-            text += " (already created)"
-        else:
-            text += " (not created yet)"
-        print(text)
-
-        if not exists:
-            print()
-            print("Command to create it:")
-            cmd = "%s -m pyperformance venv create" % options.python
-            if options.venv:
-                cmd += " --venv=%s" % options.venv
-            print(cmd)

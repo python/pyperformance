@@ -3,10 +3,6 @@ import hashlib
 import sys
 import time
 import traceback
-try:
-    import multiprocessing
-except ImportError:
-    multiprocessing = None
 
 import pyperformance
 from . import _utils, _python, _pythoninfo
