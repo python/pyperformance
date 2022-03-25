@@ -1,25 +1,74 @@
+import os
 import os.path
+import shutil
 import subprocess
 import sys
 import textwrap
 import unittest
 
+import pyperformance
 from pyperformance import tests
 
 
 class FullStackTests(tests.Functional, unittest.TestCase):
 
+    maxDiff = 80 * 100
+
+    @classmethod
+    def setUpClass(cls):
+        # pyperformance must be installed in order to run,
+        # so we make sure it is.
+        cls.ensure_venv()
+        cls.ensure_pyperformance()
+        super().setUpClass()
+
+    @classmethod
+    def ensure_pyperformance(cls):
+        _, stdout, _ = cls.run_python(
+            os.path.join(tests.DATA_DIR, 'find-pyperformance.py'),
+            capture='stdout',
+            onfail='raise',
+            verbose=False,
+        )
+        stdout = stdout.strip()
+        if stdout.strip():
+            # It is already installed.
+            return
+
+        print('#'*40)
+        print('# installing pyperformance into the venv')
+        print('#'*40)
+        print()
+
+        # Install it.
+        reporoot = os.path.dirname(pyperformance.PKG_ROOT)
+        # XXX Ignore the output (and optionally log it).
+        cls.run_pip('install', '--editable', reporoot)
+
+        # Clean up extraneous files.
+        egg_info = "pyperformance.egg-info"
+        print(f"(tests) Remove directory {egg_info}", flush=True)
+        try:
+            shutil.rmtree(egg_info)
+        except FileNotFoundError:
+            pass
+        print()
+
+        print('#'*40)
+        print('# DONE: installing pyperformance into the venv')
+        print('#'*40)
+        print()
+
     def run_pyperformance(self, cmd, *args,
                           exitcode=0,
                           capture='both',
                           ):
-        ec, stdout, stderr = tests.run_cmd(
-            sys.executable, '-u', '-m', 'pyperformance', cmd, *args,
+        ec, stdout, stderr = self.run_python(
+            'pyperformance', cmd, *args,
             capture=capture,
             onfail=None,
             verbose=False,
         )
-
         if exitcode is True:
             self.assertGreater(ec, 0, repr(stdout))
         else:
@@ -28,6 +77,9 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             stdout = stdout.rstrip()
         return stdout
 
+    ###################################
+    # info
+
     def test_list(self):
         # XXX Capture and check the output.
         self.run_pyperformance('list', capture=None)
@@ -35,6 +87,9 @@ class FullStackTests(tests.Functional, unittest.TestCase):
     def test_list_groups(self):
         # XXX Capture and check the output.
         self.run_pyperformance('list_groups', capture=None)
+
+    ###################################
+    # run
 
     def test_run_and_show(self):
         json = os.path.join(self._TMPDIR, 'bench.json')
@@ -55,11 +110,14 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         # Display slowest benchmarks
         # XXX Capture and check the output.
         tests.run_cmd(
-            self.venv_python, '-u',
+            self.python, '-u',
             '-m', 'pyperf',
             'slowest',
             json,
         )
+
+    ###################################
+    # show
 
     def test_show(self):
         for filename in (
