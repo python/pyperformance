@@ -13,23 +13,17 @@ class FullStackTests(tests.Functional, unittest.TestCase):
                           exitcode=0,
                           capture='both',
                           ):
-        argv = [sys.executable, '-u', '-m', 'pyperformance', cmd, *args]
-        kwargs = {}
-        if capture in ('both', 'combined', 'stdout'):
-            kwargs['stdout'] = subprocess.PIPE
-        if capture in ('both', 'stderr'):
-            kwargs['stderr'] = subprocess.PIPE
-        elif capture == 'combined':
-            kwargs['stderr'] = subprocess.STDOUT
-        if capture:
-            kwargs['encoding'] = 'utf-8'
-        proc = subprocess.run(argv, **kwargs)
+        ec, stdout, stderr = tests.run_cmd(
+            sys.executable, '-u', '-m', 'pyperformance', cmd, *args,
+            capture=capture,
+            onfail=None,
+            verbose=False,
+        )
 
         if exitcode is True:
-            self.assertGreater(proc.returncode, 0, repr(proc.stdout))
+            self.assertGreater(ec, 0, repr(stdout))
         else:
-            self.assertEqual(proc.returncode, exitcode, repr(proc.stdout))
-        stdout = proc.stdout
+            self.assertEqual(ec, exitcode, repr(stdout))
         if stdout:
             stdout = stdout.rstrip()
         return stdout

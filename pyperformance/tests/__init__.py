@@ -2,6 +2,7 @@ import contextlib
 import errno
 import os
 import os.path
+import shlex
 import shutil
 import subprocess
 import sys
@@ -26,20 +27,34 @@ def temporary_file(**kwargs):
                 raise
 
 
-def run_cmd(*argv):
-    print(f"(tests) Execute: {' '.join(argv)}", flush=True)
-    proc = subprocess.Popen(argv, cwd=REPO_ROOT)
-    try:
-        proc.wait()
-    except:   # noqa
-        proc.kill()
-        proc.wait()
-        raise
-    sys.stdout.flush()
+def run_cmd(*argv, capture=None, onfail='exit', verbose=True):
+    kwargs = dict(
+        cwd=REPO_ROOT,
+    )
+    if capture in ('both', 'combined', 'stdout'):
+        kwargs['stdout'] = subprocess.PIPE
+    if capture in ('both', 'stderr'):
+        kwargs['stderr'] = subprocess.PIPE
+    elif capture == 'combined':
+        kwargs['stderr'] = subprocess.STDOUT
+    if capture:
+        kwargs['encoding'] = 'utf-8'
+
+    if verbose:
+        argv_str = ' '.join(shlex.quote(a) for a in argv)
+        print(f"(tests) Execute: {argv_str}", flush=True)
+    proc = subprocess.run(argv, **kwargs)
+
     exitcode = proc.returncode
     if exitcode:
-        sys.exit(exitcode)
-    print("", flush=True)
+        if onfail == 'exit':
+            sys.exit(exitcode)
+        elif onfail is not None:
+            raise NotImplementedError(repr(onfail))
+    if 'stdout' not in kwargs or 'stderr' not in kwargs:
+        print("", flush=True)
+
+    return exitcode, proc.stdout, proc.stderr
 
 
 class Compat:
