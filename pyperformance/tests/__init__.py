@@ -144,9 +144,3 @@ class Functional:
     @property
     def venv_python(self):
         return resolve_venv_python(self._VENV)
-
-    def run_pyperformance(self, cmd, *args):
-        run_cmd(
-            sys.executable, '-u', '-m', 'pyperformance',
-            cmd, *args,
-        )

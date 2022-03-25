@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import os.path
 import subprocess
 import sys
@@ -8,32 +7,101 @@ import unittest
 from pyperformance import tests
 
 
-class FunctionalTests(tests.Functional, unittest.TestCase):
+class FullStackTests(tests.Functional, unittest.TestCase):
 
-    def compare(self, *args, **kw):
-        dataset = kw.get('dataset', 'py')
-        exitcode = kw.get('exitcode', 0)
+    def run_pyperformance(self, cmd, *args,
+                          exitcode=0,
+                          capture='both',
+                          ):
+        argv = [sys.executable, '-u', '-m', 'pyperformance', cmd, *args]
+        kwargs = {}
+        if capture in ('both', 'combined', 'stdout'):
+            kwargs['stdout'] = subprocess.PIPE
+        if capture in ('both', 'stderr'):
+            kwargs['stderr'] = subprocess.PIPE
+        elif capture == 'combined':
+            kwargs['stderr'] = subprocess.STDOUT
+        if capture:
+            kwargs['encoding'] = 'utf-8'
+        proc = subprocess.run(argv, **kwargs)
 
+        if exitcode is True:
+            self.assertGreater(proc.returncode, 0, repr(proc.stdout))
+        else:
+            self.assertEqual(proc.returncode, exitcode, repr(proc.stdout))
+        stdout = proc.stdout
+        if stdout:
+            stdout = stdout.rstrip()
+        return stdout
+
+    def test_list(self):
+        # XXX Capture and check the output.
+        self.run_pyperformance('list', capture=None)
+
+    def test_list_groups(self):
+        # XXX Capture and check the output.
+        self.run_pyperformance('list_groups', capture=None)
+
+    def test_run_and_show(self):
+        json = os.path.join(self._TMPDIR, 'bench.json')
+
+        # -b all: check that *all* benchmark work
+        #
+        # --debug-single-value: benchmark results don't matter, we only
+        # check that running benchmarks don't fail.
+        # XXX Capture and check the output.
+        self.run_pyperformance(
+            'run',
+            '-b', 'all',
+            '--debug-single-value',
+            '-o', json,
+            capture=None,
+        )
+
+        # Display slowest benchmarks
+        # XXX Capture and check the output.
+        tests.run_cmd(
+            self.venv_python, '-u',
+            '-m', 'pyperf',
+            'slowest',
+            json,
+        )
+
+    def test_show(self):
+        for filename in (
+            os.path.join(tests.DATA_DIR, 'py36.json'),
+            os.path.join(tests.DATA_DIR, 'mem1.json'),
+        ):
+            with self.subTest(filename):
+                # XXX Capture and check the output.
+                self.run_pyperformance('show', filename, capture=None)
+
+    ###################################
+    # compare
+
+    def compare(self, *args,
+                exitcode=0,
+                dataset='py',
+                file2='py38.json',
+                **kw
+                ):
         if dataset == 'mem':
             file1 = 'mem1.json'
             file2 = 'mem2.json'
         else:
             file1 = 'py36.json'
-            file2 = kw.get('file2', 'py38.json')
         marker = file1
 
-        cmd = [sys.executable, '-m', 'pyperformance', 'compare',
-               os.path.join(tests.DATA_DIR, file1),
-               os.path.join(tests.DATA_DIR, file2)]
-        cmd.extend(args)
-        proc = subprocess.Popen(cmd,
-                                stdout=subprocess.PIPE,
-                                universal_newlines=True)
-        stdout = proc.communicate()[0]
-        self.assertEqual(proc.returncode, exitcode, repr(stdout))
+        stdout = self.run_pyperformance(
+            'compare',
+            os.path.join(tests.DATA_DIR, file1),
+            os.path.join(tests.DATA_DIR, file2),
+            *args,
+            exitcode=exitcode,
+        )
         if marker in stdout:
             stdout = stdout[stdout.index(marker):]
-        return stdout.rstrip() + "\n"
+        return stdout + '\n'
 
     def test_compare(self):
         stdout = self.compare()
