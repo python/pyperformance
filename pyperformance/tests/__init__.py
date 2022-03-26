@@ -52,7 +52,7 @@ def run_cmd(cmd, *args, capture=None, onfail='exit', verbose=True):
     return exitcode, proc.stdout, proc.stderr
 
 
-def resolve_venv_python(venv):
+def _resolve_venv_python(venv):
     if os.name == "nt":
         basename = os.path.basename(sys.executable)
         venv_python = os.path.join(venv, 'Scripts', basename)
@@ -74,7 +74,7 @@ def create_venv(root=None, python=sys.executable, *, verbose=False):
         onfail='raise',
         verbose=verbose,
     )
-    return root, resolve_venv_python(root), cleanup
+    return root, _resolve_venv_python(root), cleanup
 
 
 class CleanupFile:
@@ -181,7 +181,7 @@ class Functional(Compat):
         cls._tests_venv = os.environ.get(cls.ENVVAR)
         if not cls._tests_venv:
             cls._tests_venv = cls.resolve_tmp('venv')
-        venv_python = resolve_venv_python(cls._tests_venv)
+        venv_python = _resolve_venv_python(cls._tests_venv)
         if os.path.exists(venv_python):
             return
 
