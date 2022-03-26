@@ -23,6 +23,8 @@ def run_cmd(cmd, *args, capture=None, onfail='exit', verbose=True):
     kwargs = dict(
         cwd=REPO_ROOT,
     )
+    if capture is True:
+        capture = 'both'
     if capture in ('both', 'combined', 'stdout'):
         kwargs['stdout'] = subprocess.PIPE
     if capture in ('both', 'stderr'):
@@ -57,6 +59,22 @@ def resolve_venv_python(venv):
     else:
         venv_python = os.path.join(venv, 'bin', 'python3')
     return venv_python
+
+
+def create_venv(root=None, python=sys.executable, *, verbose=False):
+    if not root:
+        tmpdir = tempfile.mkdtemp()
+        root = os.path.join(tmpdir, 'venv')
+        cleanup = (lambda: shutil.rmtree(tmpdir))
+    else:
+        cleanup = (lambda: None)
+    run_cmd(
+        python or sys.executable, '-m', 'venv', root,
+        capture=not verbose,
+        onfail='raise',
+        verbose=verbose,
+    )
+    return root, resolve_venv_python(root), cleanup
 
 
 class CleanupFile:
@@ -157,7 +175,7 @@ class Functional(Resources):
 
         # Create the venv and update it.
         # XXX Ignore the output (and optionally log it).
-        run_cmd(sys.executable, '-u', '-m', 'venv', cls._tests_venv)
+        create_venv(cls._tests_venv, verbose=True)
         cls._venv_python = venv_python
         cls.run_pip('install', '--upgrade', 'pip')
         cls.run_pip('install', '--upgrade', 'setuptools', 'wheel')
