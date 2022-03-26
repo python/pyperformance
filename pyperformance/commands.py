@@ -33,18 +33,13 @@ def cmd_venv_create(options, root, python, benchmarks):
     from . import _pythoninfo, _venv
     from .venv import Requirements, VenvForBenchmarks
 
-    exists = _venv.venv_exists(root)
-    if not python:
-        python = _venv.resolve_venv_python(root)
-        if os.path.exists(python):
-            python = _pythoninfo.get_info(python)
+    if _venv.venv_exists(root):
+        sys.exit(f'ERROR: the virtual environment already exists at {root}')
 
     requirements = Requirements.from_benchmarks(benchmarks)
-    if exists:
-        print("The virtual environment %s already exists" % root)
     venv = VenvForBenchmarks.ensure(
         root,
-        python,
+        python or sys.executable,
         inherit_environ=options.inherit_environ,
     )
     venv.ensure_pip()
@@ -53,29 +48,21 @@ def cmd_venv_create(options, root, python, benchmarks):
     except _venv.RequirementsInstallationFailedError:
         sys.exit(1)
     venv.ensure_reqs(requirements, exitonerror=True)
-    if not exists:
-        print("The virtual environment %s has been created" % root)
+    print("The virtual environment %s has been created" % root)
 
 
 def cmd_venv_recreate(options, root, python, benchmarks):
     from . import _pythoninfo, _venv, _utils
     from .venv import Requirements, VenvForBenchmarks
 
-    exists = _venv.venv_exists(root)
-    if not python:
-        python = _venv.resolve_venv_python(root)
-        if os.path.exists(python):
-            python = _pythoninfo.get_info(python)
-
     requirements = Requirements.from_benchmarks(benchmarks)
-    if exists:
+    if _venv.venv_exists(root):
         venv_python = _venv.resolve_venv_python(root)
         if venv_python == sys.executable:
             print("The virtual environment %s already exists" % root)
             print("(it matches the currently running Python executable)")
-            venv = VenvForBenchmarks.ensure(
+            venv = VenvForBenchmarks(
                 root,
-                python,
                 inherit_environ=options.inherit_environ,
             )
             venv.ensure_pip()
@@ -91,7 +78,7 @@ def cmd_venv_recreate(options, root, python, benchmarks):
             print()
             venv = VenvForBenchmarks.ensure(
                 root,
-                python,
+                python or sys.executable,
                 inherit_environ=options.inherit_environ,
             )
             venv.ensure_pip()
@@ -104,7 +91,7 @@ def cmd_venv_recreate(options, root, python, benchmarks):
     else:
         venv = VenvForBenchmarks.create(
             root,
-            python,
+            python or sys.executable,
             inherit_environ=options.inherit_environ,
         )
         venv.ensure_pip()
