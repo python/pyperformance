@@ -69,7 +69,7 @@ def ensure_venv_ready(venvroot=None, kind='dev', venvsdir=VENVS):
 
 
 def main(venvroot=None):
-    python = ensure_venv_ready(venvroot)
+    _, python = ensure_venv_ready(venvroot)
     if python != sys.executable:
         # Now re-run using the venv.
         os.execv(python, [python, *sys.argv])
