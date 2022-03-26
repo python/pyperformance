@@ -92,7 +92,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
     # run
 
     def test_run_and_show(self):
-        json = os.path.join(self._TMPDIR, 'bench.json')
+        filename = self.resolve_tmp('bench.json')
 
         # -b all: check that *all* benchmark work
         #
@@ -103,13 +103,13 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             'run',
             '-b', 'all',
             '--debug-single-value',
-            '-o', json,
+            '-o', filename,
             capture=None,
         )
 
         # Display slowest benchmarks
         # XXX Capture and check the output.
-        tests.run_module('pyperf', 'slowest', json)
+        self.run_module('pyperf', 'slowest', filename)
 
     ###################################
     # show
