@@ -119,8 +119,18 @@ class Compat:
             cls._cleanups.append(cleanup)
 
 
-class Resources(Compat):
-    """A mixin that can create resources."""
+#############################
+# functional tests
+
+class Functional(Compat):
+    """A mixin for functional tests.
+
+    In this context, "functional" means the test touches the filesystem,
+    uses the network, creates subprocesses, etc.  This contrasts with
+    true "unit" tests, which are constrained strictly to code execution.
+    """
+
+    ENVVAR = 'PYPERFORMANCE_TESTS_VENV'
 
     @classmethod
     def resolve_tmp(cls, *relpath, unique=False):
@@ -133,21 +143,23 @@ class Resources(Compat):
             tmpdir = tempfile.mkdtemp(dir=tmpdir)
         return os.path.join(tmpdir, *relpath)
 
-    def venv(self, python=sys.executable):
-        tmpdir = tempfile.mkdtemp()
-        venv = os.path.join(tmpdir, 'venv')
-        run_cmd(python or sys.executable, '-u', '-m', 'venv', venv)
-        self.addCleanup(lambda: shutil.rmtree(tmpdir))
-        return venv, resolve_venv_python(venv)
+    @classmethod
+    def run_python(cls, *args, require_venv=True, **kwargs):
+        python = getattr(cls, '_venv_python', None)
+        if not python:
+            if require_venv:
+                raise Exception('cls.ensure_venv() must be called first')
+            python = sys.executable
+        # We always use unbuffered stdout/stderr to simplify capture.
+        return run_cmd(python, '-u', *args, **kwargs)
 
+    @classmethod
+    def run_module(cls, module, *args, **kwargs):
+        return cls.run_python('-m', module, *args, **kwargs)
 
-#############################
-# functional tests
-
-class Functional(Resources):
-    """A mixin for functional tests."""
-
-    ENVVAR = 'PYPERFORMANCE_TESTS_VENV'
+    @classmethod
+    def run_pip(cls, *args, **kwargs):
+        return cls.run_module('pip', *args, **kwargs)
 
     @classmethod
     def ensure_venv(cls):
@@ -184,21 +196,3 @@ class Functional(Resources):
         print('# DONE: creating a venv')
         print('#'*40)
         print()
-
-    @classmethod
-    def run_python(cls, *args, require_venv=True, **kwargs):
-        python = getattr(cls, '_venv_python', None)
-        if not python:
-            if require_venv:
-                raise Exception('cls.ensure_venv() must be called first')
-            python = sys.executable
-        # We always use unbuffered stdout/stderr to simplify capture.
-        return run_cmd(python, '-u', *args, **kwargs)
-
-    @classmethod
-    def run_module(cls, module, *args, **kwargs):
-        return cls.run_python('-m', module, *args, **kwargs)
-
-    @classmethod
-    def run_pip(cls, *args, **kwargs):
-        return cls.run_module('pip', *args, **kwargs)
