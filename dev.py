@@ -8,7 +8,20 @@ REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 VENVS = os.path.join(REPO_ROOT, '.venvs')
 
 
-def ensure_venv_ready(venvroot=None, kind='dev'):
+def resolve_venv_root(kind='dev', venvsdir=VENVS):
+    import sysconfig
+    if sysconfig.is_python_build():
+        sys.exit('please install your built Python first (or pass it using --python)')
+    # XXX Handle other implementations too?
+    base = os.path.join(venvsdir, kind or 'dev')
+    major, minor = sys.version_info[:2]
+    pyloc = ((os.path.abspath(sys.executable)
+              ).partition(os.path.sep)[2].lstrip(os.path.sep)
+             ).replace(os.path.sep, '-')
+    return f'{base}-{major}.{minor}-{pyloc}'
+
+
+def ensure_venv_ready(venvroot=None, kind='dev', venvsdir=VENVS):
     if sys.prefix != sys.base_prefix:
         assert os.path.exists(os.path.join(sys.prefix, 'pyvenv.cfg'))
         venvroot = sys.prefix
@@ -18,16 +31,7 @@ def ensure_venv_ready(venvroot=None, kind='dev'):
     else:
         import venv
         if not venvroot:
-            import sysconfig
-            if sysconfig.is_python_build():
-                sys.exit('please install your built Python first (or pass it using --python)')
-            # XXX Handle other implementations too?
-            base = os.path.join(VENVS, kind or 'dev')
-            major, minor = sys.version_info[:2]
-            pyloc = ((os.path.abspath(sys.executable)
-                      ).partition(os.path.sep)[2].lstrip(os.path.sep)
-                     ).replace(os.path.sep, '-')
-            venvroot = f'{base}-{major}.{minor}-{pyloc}'
+            venvroot = resolve_venv_root(kind, venvsdir)
         # Make sure the venv exists.
         readyfile = os.path.join(venvroot, 'READY')
         isready = os.path.exists(readyfile)
@@ -61,11 +65,11 @@ def ensure_venv_ready(venvroot=None, kind='dev'):
             pass
         print('...venv {relroot} ready!')
 
-    return python
+    return venvroot, python
 
 
 def main(venvroot=None):
-    python = ensure_venv_ready(venvroot)
+    _, python = ensure_venv_ready(venvroot)
     if python != sys.executable:
         # Now re-run using the venv.
         os.execv(python, [python, *sys.argv])

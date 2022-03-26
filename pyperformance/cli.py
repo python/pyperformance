@@ -4,7 +4,20 @@ import os.path
 import sys
 
 from pyperformance import _utils, is_installed, is_dev
-from pyperformance.venv import cmd_venv
+from pyperformance.commands import (
+    cmd_list,
+    cmd_list_groups,
+    cmd_venv_create,
+    cmd_venv_recreate,
+    cmd_venv_remove,
+    cmd_venv_show,
+    cmd_run,
+    cmd_compile,
+    cmd_compile_all,
+    cmd_upload,
+    cmd_show,
+    cmd_compare,
+)
 
 
 def comma_separated(values):
@@ -243,41 +256,51 @@ def _main():
     parser, options = parse_args()
 
     if options.action == 'venv':
-        if options.venv_action in ('create', 'recreate'):
-            benchmarks = _benchmarks_from_options(options)
+        from . import _pythoninfo, _venv
+
+        if not options.venv:
+            info = _pythoninfo.get_info(options.python)
+            root = _venv.get_venv_root(python=info)
         else:
-            benchmarks = None
-        cmd_venv(options, benchmarks)
-        sys.exit()
+            root = options.venv
+            info = None
+
+        action = options.venv_action
+        if action == 'create':
+            benchmarks = _benchmarks_from_options(options)
+            cmd_venv_create(options, root, info, benchmarks)
+        elif action == 'recreate':
+            benchmarks = _benchmarks_from_options(options)
+            cmd_venv_recreate(options, root, info, benchmarks)
+        elif action == 'remove':
+            cmd_venv_remove(options, root)
+        elif action == 'show':
+            cmd_venv_show(options, root)
+        else:
+            print(f'ERROR: unsupported venv command action {action!r}')
+            parser.print_help()
+            sys.exit(1)
     elif options.action == 'compile':
-        from pyperformance.compile import cmd_compile
         cmd_compile(options)
         sys.exit()
     elif options.action == 'compile_all':
-        from pyperformance.compile import cmd_compile_all
         cmd_compile_all(options)
         sys.exit()
     elif options.action == 'upload':
-        from pyperformance.compile import cmd_upload
         cmd_upload(options)
         sys.exit()
     elif options.action == 'show':
-        from pyperformance.compare import cmd_show
         cmd_show(options)
         sys.exit()
     elif options.action == 'run':
-        from pyperformance.cli_run import cmd_run
         benchmarks = _benchmarks_from_options(options)
         cmd_run(options, benchmarks)
     elif options.action == 'compare':
-        from pyperformance.compare import cmd_compare
         cmd_compare(options)
     elif options.action == 'list':
-        from pyperformance.cli_run import cmd_list
         benchmarks = _benchmarks_from_options(options)
         cmd_list(options, benchmarks)
     elif options.action == 'list_groups':
-        from pyperformance.cli_run import cmd_list_groups
         manifest = _manifest_from_options(options)
         cmd_list_groups(manifest)
     else:

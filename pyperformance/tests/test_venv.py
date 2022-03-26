@@ -50,7 +50,9 @@ def render_venv_config(cfg):
     return ''.join(l + os.linesep for l in lines)
 
 
-class VenvConfigTests(tests.Resources, unittest.TestCase):
+class VenvConfigTests(tests.Functional, unittest.TestCase):
+
+    # Note that we do not call self.ensure_venv().
 
     def generate_config(self, root, **kwargs):
         if not os.path.isabs(root):

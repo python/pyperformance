@@ -125,8 +125,13 @@ class VirtualEnvironment:
 
     @classmethod
     def create(cls, root=None, python=sys.executable, **kwargs):
-        if not python or isinstance(python, str):
-            info = _pythoninfo.get_info(python)
+        if not python:
+            python = sys.executable
+        if isinstance(python, str):
+            try:
+                info = _pythoninfo.get_info(python)
+            except FileNotFoundError:
+                info = None
         else:
             info = python
         if not root:
@@ -139,12 +144,14 @@ class VirtualEnvironment:
         try:
             venv_python = create_venv(
                 root,
-                info,
+                info or python,
                 **kwargs
             )
         except BaseException:
             _utils.safe_rmtree(root)
             raise  # re-raise
+        if not info:
+            info = _pythoninfo.get_info(python)
         self = cls(root, base=info)
         self._python = venv_python
         return self

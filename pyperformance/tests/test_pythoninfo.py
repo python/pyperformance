@@ -39,7 +39,7 @@ if IS_VENV:
             CURRENT['base_executable'] = CURRENT['base_executable (sys)']
 
 
-class GetInfoTests(tests.Resources, unittest.TestCase):
+class GetInfoTests(tests.Functional, unittest.TestCase):
 
     maxDiff = 80 * 100
 
@@ -62,7 +62,8 @@ class GetInfoTests(tests.Resources, unittest.TestCase):
         if IS_VENV:
             python = sys.executable
         else:
-            venv, python = self.venv()
+            venv, python, cleanup = tests.create_venv()
+            self.addCleanup(cleanup)
             expected.sys.executable = python
             expected.sys._base_executable = os.path.normpath(sys.executable)
             expected.base_executable = os.path.normpath(sys.executable)

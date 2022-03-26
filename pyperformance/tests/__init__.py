@@ -1,7 +1,8 @@
-import contextlib
 import errno
+import importlib.util
 import os
 import os.path
+import shlex
 import shutil
 import subprocess
 import sys
@@ -11,36 +12,94 @@ import tempfile
 TESTS_ROOT = os.path.realpath(os.path.dirname(__file__))
 DATA_DIR = os.path.join(TESTS_ROOT, 'data')
 REPO_ROOT = os.path.dirname(os.path.dirname(TESTS_ROOT))
+DEV_SCRIPT = os.path.join(REPO_ROOT, 'dev.py')
 
 
-@contextlib.contextmanager
-def temporary_file(**kwargs):
-    tmp_filename = tempfile.mktemp(**kwargs)
-    try:
-        yield tmp_filename
-    finally:
+def run_cmd(cmd, *args, capture=None, onfail='exit', verbose=True):
+    # XXX Optionally write the output to a file.
+    argv = (cmd,) + args
+    if not all(a and isinstance(a, str) for a in argv):
+        raise TypeError(f'all args must be non-empty strings, got {argv}')
+    argv_str = ' '.join(shlex.quote(a) for a in argv)
+
+    kwargs = dict(
+        cwd=REPO_ROOT,
+    )
+    if capture is True:
+        capture = 'both'
+    if capture in ('both', 'combined', 'stdout'):
+        kwargs['stdout'] = subprocess.PIPE
+    if capture in ('both', 'stderr'):
+        kwargs['stderr'] = subprocess.PIPE
+    elif capture == 'combined':
+        kwargs['stderr'] = subprocess.STDOUT
+    if capture:
+        kwargs['encoding'] = 'utf-8'
+
+    if verbose:
+        print(f"(tests) Execute: {argv_str}", flush=True)
+    proc = subprocess.run(argv, **kwargs)
+
+    exitcode = proc.returncode
+    if exitcode:
+        if onfail == 'exit':
+            sys.exit(exitcode)
+        elif onfail == 'raise':
+            raise Exception(f'"{argv_str}" failed (exitcode {exitcode})')
+        elif onfail is not None:
+            raise NotImplementedError(repr(onfail))
+    if 'stdout' not in kwargs or 'stderr' not in kwargs:
+        print("", flush=True)
+
+    return exitcode, proc.stdout, proc.stderr
+
+
+def _resolve_venv_python(venv):
+    if os.name == "nt":
+        basename = os.path.basename(sys.executable)
+        venv_python = os.path.join(venv, 'Scripts', basename)
+    else:
+        venv_python = os.path.join(venv, 'bin', 'python3')
+    return venv_python
+
+
+def create_venv(root=None, python=sys.executable, *, verbose=False):
+    if not root:
+        tmpdir = tempfile.mkdtemp()
+        root = os.path.join(tmpdir, 'venv')
+        cleanup = (lambda: shutil.rmtree(tmpdir))
+    else:
+        cleanup = (lambda: None)
+    run_cmd(
+        python or sys.executable, '-m', 'venv', root,
+        capture=not verbose,
+        onfail='raise',
+        verbose=verbose,
+    )
+    return root, _resolve_venv_python(root), cleanup
+
+
+class CleanupFile:
+    def __init__(self, filename):
+        self.filename = filename
+    def __repr__(self):
+        return f'{type(self).__name__}({self.filename!r})'
+    def __str__(self):
+        return self.filename
+    def __enter__(self):
+        return self.filename
+    def __exit__(self, *args):
+        self.cleanup()
+    def cleanup(self):
         try:
-            os.unlink(tmp_filename)
+            os.unlink(self.filename)
         except OSError as exc:
             if exc.errno != errno.ENOENT:
                 raise
 
 
-def run_cmd(*argv):
-    print(f"(tests) Execute: {' '.join(argv)}", flush=True)
-    proc = subprocess.Popen(argv, cwd=REPO_ROOT)
-    try:
-        proc.wait()
-    except:   # noqa
-        proc.kill()
-        proc.wait()
-        raise
-    sys.stdout.flush()
-    exitcode = proc.returncode
-    if exitcode:
-        sys.exit(exitcode)
-    print("", flush=True)
-
+#############################
+# fixtures and mixins
 
 class Compat:
     """A mixin that lets older Pythons use newer unittest features."""
@@ -62,91 +121,114 @@ class Compat:
             cls._cleanups.append(cleanup)
 
 
-class Resources(Compat):
-    """A mixin that can create resources."""
+#############################
+# functional tests
+
+class Functional(Compat):
+    """A mixin for functional tests.
+
+    In this context, "functional" means the test touches the filesystem,
+    uses the network, creates subprocesses, etc.  This contrasts with
+    true "unit" tests, which are constrained strictly to code execution.
+    """
 
     @classmethod
-    def resolve_tmp(cls, *relpath):
+    def resolve_tmp(cls, *relpath, unique=False):
         try:
             tmpdir = cls._tmpdir
         except AttributeError:
             tmpdir = cls._tmpdir = tempfile.mkdtemp()
             cls.addClassCleanup(lambda: shutil.rmtree(tmpdir))
+        if unique:
+            tmpdir = tempfile.mkdtemp(dir=tmpdir)
         return os.path.join(tmpdir, *relpath)
 
-    def venv(self, python=sys.executable):
-        tmpdir = tempfile.mkdtemp()
-        venv = os.path.join(tmpdir, 'venv')
-        run_cmd(python or sys.executable, '-u', '-m', 'venv', venv)
-        self.addCleanup(lambda: shutil.rmtree(tmpdir))
-        return venv, resolve_venv_python(venv)
-
-
-def resolve_venv_python(venv):
-    if os.name == "nt":
-        basename = os.path.basename(sys.executable)
-        venv_python = os.path.join(venv, 'Scripts', basename)
-    else:
-        venv_python = os.path.join(venv, 'bin', 'python3')
-    return venv_python
-
-
-#############################
-# functional tests
-
-class Functional:
-    """A mixin for functional tests."""
-
-    # XXX Disallow multi-proc or threaded test runs?
-    _TMPDIR = None
-    _VENV = None
-    _COUNT = 0
-
-    maxDiff = 80 * 100
+    @classmethod
+    def run_python(cls, *args, require_venv=True, **kwargs):
+        python = getattr(cls, '_venv_python', None)
+        if not python:
+            if require_venv:
+                raise Exception('cls.ensure_venv() must be called first')
+            python = sys.executable
+        # We always use unbuffered stdout/stderr to simplify capture.
+        return run_cmd(python, '-u', *args, **kwargs)
 
     @classmethod
-    def setUpClass(cls):
-        tmpdir = Functional._TMPDIR
-        if tmpdir is None:
-            tmpdir = Functional._TMPDIR = tempfile.mkdtemp()
-            venv = Functional._VENV = os.path.join(tmpdir, 'venv')
-            run_cmd(
-                sys.executable, '-u', '-m', 'pyperformance',
-                'venv', 'create',
-                '-b', 'all',
-                '--venv', venv,
-            )
+    def run_module(cls, module, *args, **kwargs):
+        return cls.run_python('-m', module, *args, **kwargs)
 
-            egg_info = "pyperformance.egg-info"
-            print(f"(tests) Remove directory {egg_info}", flush=True)
+    @classmethod
+    def run_pip(cls, *args, **kwargs):
+        return cls.run_module('pip', *args, **kwargs)
+
+    @classmethod
+    def ensure_venv(cls):
+        if getattr(cls, '_tests_venv', None):
+            # ensure_venv() already ran.
+            return
+
+        if sys.prefix != sys.exec_prefix:
+            # We are already running in a venv and assume it is ready.
+            cls._tests_venv = sys.prefix
+            cls._venv_python = sys.executable
+            return
+
+        cls._tests_venv = cls._resolve_tests_venv()
+        venv_python = _resolve_venv_python(cls._tests_venv)
+        if os.path.exists(venv_python):
+            cls._venv_python = venv_python
+            return
+
+        print('#'*40)
+        print('# creating a venv')
+        print('#'*40)
+        print()
+
+        # Create the venv and update it.
+        # XXX Ignore the output (and optionally log it).
+        create_venv(cls._tests_venv, verbose=True)
+        cls._venv_python = venv_python
+        cls.run_pip('install', '--upgrade', 'pip')
+        cls.run_pip('install', '--upgrade', 'setuptools', 'wheel')
+
+        print('#'*40)
+        print('# DONE: creating a venv')
+        print('#'*40)
+        print()
+
+    @classmethod
+    def _resolve_tests_venv(cls):
+        root = os.environ.get('PYPERFORMANCE_TESTS_VENV')
+        if not root:
+            root = '<reuse>'
+        elif not root.startswith('<') and not root.endswith('>'):
+            # The user provided an actual root dir.
+            return root
+
+        if root == '<temp>':
+            # The user is forcing a temporary venv.
+            return cls.resolve_tmp('venv')
+        elif root == '<fresh>':
+            # The user is forcing a fresh venv.
+            fresh = True
+        elif root == '<reuse>':
+            # This is the default.
+            fresh = False
+        else:
+            raise NotImplementedError(repr(root))
+
+        # Resolve the venv root to re-use.
+        spec = importlib.util.spec_from_file_location('dev', DEV_SCRIPT)
+        dev = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(dev)
+        root = dev.resolve_venv_root('tests')
+
+        if fresh:
+            if os.path.exists(root):
+                print('(refreshing existing venv)')
+                print()
             try:
-                shutil.rmtree(egg_info)
+                shutil.rmtree(root)
             except FileNotFoundError:
                 pass
-        Functional._COUNT += 1
-        super().setUpClass()
-
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-        tmpdir = Functional._TMPDIR
-        venv = Functional._VENV
-        if Functional._COUNT == 1:
-            assert venv
-            run_cmd(
-                sys.executable, '-u', '-m', 'pyperformance',
-                'venv', 'remove',
-                '--venv', venv,
-            )
-            if os.path.exists(tmpdir):
-                shutil.rmtree(tmpdir)
-
-    @property
-    def venv_python(self):
-        return resolve_venv_python(self._VENV)
-
-    def run_pyperformance(self, cmd, *args):
-        run_cmd(
-            sys.executable, '-u', '-m', 'pyperformance',
-            cmd, *args,
-        )
+        return root
