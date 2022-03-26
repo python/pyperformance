@@ -1,4 +1,3 @@
-import contextlib
 import errno
 import os
 import os.path
@@ -12,19 +11,6 @@ import tempfile
 TESTS_ROOT = os.path.realpath(os.path.dirname(__file__))
 DATA_DIR = os.path.join(TESTS_ROOT, 'data')
 REPO_ROOT = os.path.dirname(os.path.dirname(TESTS_ROOT))
-
-
-@contextlib.contextmanager
-def temporary_file(**kwargs):
-    tmp_filename = tempfile.mktemp(**kwargs)
-    try:
-        yield tmp_filename
-    finally:
-        try:
-            os.unlink(tmp_filename)
-        except OSError as exc:
-            if exc.errno != errno.ENOENT:
-                raise
 
 
 def run_cmd(cmd, *args, capture=None, onfail='exit', verbose=True):
@@ -73,6 +59,25 @@ def resolve_venv_python(venv):
     return venv_python
 
 
+class CleanupFile:
+    def __init__(self, filename):
+        self.filename = filename
+    def __repr__(self):
+        return f'{type(self).__name__}({self.filename!r})'
+    def __str__(self):
+        return self.filename
+    def __enter__(self):
+        return self.filename
+    def __exit__(self, *args):
+        self.cleanup()
+    def cleanup(self):
+        try:
+            os.unlink(self.filename)
+        except OSError as exc:
+            if exc.errno != errno.ENOENT:
+                raise
+
+
 #############################
 # fixtures and mixins
 
@@ -100,12 +105,14 @@ class Resources(Compat):
     """A mixin that can create resources."""
 
     @classmethod
-    def resolve_tmp(cls, *relpath):
+    def resolve_tmp(cls, *relpath, unique=False):
         try:
             tmpdir = cls._tmpdir
         except AttributeError:
             tmpdir = cls._tmpdir = tempfile.mkdtemp()
             cls.addClassCleanup(lambda: shutil.rmtree(tmpdir))
+        if unique:
+            tmpdir = tempfile.mkdtemp(dir=tmpdir)
         return os.path.join(tmpdir, *relpath)
 
     def venv(self, python=sys.executable):

@@ -226,16 +226,18 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             7896.0 kB -> 7900.0 kB: 1.00x larger
         ''').lstrip())
 
-    def test_csv(self):
-        with tests.temporary_file() as tmp:
-            self.compare("--csv", tmp)
+    def test_compare_csv(self):
+        expected = textwrap.dedent('''
+            Benchmark,Base,Changed
+            telco,0.01073,0.00722
+            ''').lstrip()
+        filename = self.resolve_tmp('outfile.csv', unique=True)
+        with tests.CleanupFile(filename):
+            self.compare("--csv", filename)
+            with open(filename, "r", encoding="utf-8") as infile:
+                csv = infile.read()
 
-            with open(tmp, "r", encoding="utf-8") as fp:
-                csv = fp.read()
-
-            self.assertEqual(csv,
-                             "Benchmark,Base,Changed\n"
-                             "telco,0.01073,0.00722\n")
+        self.assertEqual(csv, expected)
 
     def test_compare_table(self):
         stdout = self.compare("-O", "table")
