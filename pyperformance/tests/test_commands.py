@@ -62,12 +62,13 @@ class FullStackTests(tests.Functional, unittest.TestCase):
     def run_pyperformance(self, cmd, *args,
                           exitcode=0,
                           capture='both',
+                          verbose=True,
                           ):
         ec, stdout, stderr = self.run_module(
             'pyperformance', cmd, *args,
             capture=capture,
             onfail=None,
-            verbose=False,
+            verbose=verbose,
         )
         if exitcode is True:
             self.assertGreater(ec, 0, repr(stdout))
@@ -87,6 +88,69 @@ class FullStackTests(tests.Functional, unittest.TestCase):
     def test_list_groups(self):
         # XXX Capture and check the output.
         self.run_pyperformance('list_groups', capture=None)
+
+    ###################################
+    # venv
+
+    def test_venv(self):
+        # XXX Capture and check the output.
+        root = self.resolve_tmp('venv', unique=True)
+
+        def div():
+            print()
+            print('---')
+            print()
+
+        # It doesn't exist yet.
+        self.run_pyperformance(
+            'venv', 'show', '--venv', root,
+            capture=None,
+        )
+        div()
+        # It gets created.
+        self.run_pyperformance(
+            'venv', 'create', '--venv', root,
+            capture=None,
+        )
+        div()
+        self.run_pyperformance(
+            'venv', 'show', '--venv', root,
+            capture=None,
+        )
+        div()
+        # It alraedy exists.
+        self.run_pyperformance(
+            'venv', 'create', '--venv', root,
+            capture=None,
+            exitcode=1,
+        )
+        div()
+        self.run_pyperformance(
+            'venv', 'show', '--venv', root,
+            capture=None,
+        )
+        div()
+        # It gets re-created.
+        self.run_pyperformance(
+            'venv', 'recreate', '--venv', root,
+            capture=None,
+        )
+        div()
+        self.run_pyperformance(
+            'venv', 'show', '--venv', root,
+            capture=None,
+        )
+        div()
+        # It get deleted.
+        self.run_pyperformance(
+            'venv', 'remove', '--venv', root,
+            capture=None,
+        )
+        div()
+        self.run_pyperformance(
+            'venv', 'show', '--venv', root,
+            capture=None,
+        )
 
     ###################################
     # run
@@ -145,6 +209,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             os.path.join(tests.DATA_DIR, file2),
             *args,
             exitcode=exitcode,
+            verbose=False,
         )
         if marker in stdout:
             stdout = stdout[stdout.index(marker):]
