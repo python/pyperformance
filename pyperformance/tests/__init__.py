@@ -178,5 +178,9 @@ class Functional(Resources):
         return run_cmd(python, '-u', *args, **kwargs)
 
     @classmethod
+    def run_module(cls, module, *args, **kwargs):
+        return cls.run_python('-m', module, *args, **kwargs)
+
+    @classmethod
     def run_pip(cls, *args, **kwargs):
-        return cls.run_python('-m', 'pip', *args, **kwargs)
+        return cls.run_module('pip', *args, **kwargs)

@@ -63,7 +63,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
                           exitcode=0,
                           capture='both',
                           ):
-        ec, stdout, stderr = self.run_python(
+        ec, stdout, stderr = self.run_module(
             'pyperformance', cmd, *args,
             capture=capture,
             onfail=None,
@@ -109,12 +109,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
 
         # Display slowest benchmarks
         # XXX Capture and check the output.
-        tests.run_cmd(
-            self.python, '-u',
-            '-m', 'pyperf',
-            'slowest',
-            json,
-        )
+        tests.run_module('pyperf', 'slowest', json)
 
     ###################################
     # show
