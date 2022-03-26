@@ -16,5 +16,8 @@ pyperformance.egg-info/
 venv/
 .venvs/
 
+# Create during tests
+pyperformance/tests/data/cpython/
+
 # Created by the tox program
 .tox/

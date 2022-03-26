@@ -176,6 +176,118 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         self.run_module('pyperf', 'slowest', filename)
 
     ###################################
+    # compile
+
+    def ensure_cpython_repo(self, reporoot=None):
+        if not reporoot:
+            reporoot = os.environ.get('PYPERFORMANCE_TESTS_CPYTHON')
+            if not reporoot:
+                reporoot = os.path.join(tests.DATA_DIR, 'cpython')
+        for markerfile in [
+            os.path.join(reporoot, '.git'),
+            os.path.join(reporoot, 'Python/ceval.c'),
+        ]:
+            if not os.path.exists(markerfile):
+                break
+        else:
+            return reporoot
+        # Clone the repo.
+        print('#'*40)
+        print('# cloning the cpython repo')
+        print('#'*40)
+        print()
+        tests.run_cmd(
+            shutil.which('git'),
+            'clone',
+            'https://github.com/python/cpython',
+            reporoot,
+        )
+        print('#'*40)
+        print('# DONE: cloning the cpython repo')
+        print('#'*40)
+        print()
+        return reporoot
+
+    def create_compile_config(self, *revisions,
+                              outdir=None,
+                              fast=True,
+                              upload=None,
+                              ):
+        if not outdir:
+            outdir = self.resolve_tmp('compile-cmd-outdir', unique=True)
+        cpython = self.ensure_cpython_repo()
+        text = textwrap.dedent(f'''
+            [config]
+            json_dir = {outdir}
+            debug = {fast}
+
+            [scm]
+            repo_dir = {cpython}
+            update = False
+            git_remote = remotes/origin
+
+            [compile]
+            bench_dir = {outdir}
+            lto = {not fast}
+            pgo = {not fast}
+            install = True
+
+            [run_benchmark]
+            system_tune = False
+            upload = False
+
+            [upload]
+            url = {upload}
+            ''')
+        if revisions:
+            text += ''.join(line + os.linesep for line in [
+                '',
+                '[compile_all_revisions]',
+                *(f'{r} =' for r in revisions),
+            ])
+        cfgfile = os.path.join(outdir, 'compile.ini')
+        print(f'(writing config file to {cfgfile})')
+        os.makedirs(outdir, exist_ok=True)
+        with open(cfgfile, 'w', encoding='utf-8') as outfile:
+            outfile.write(text)
+        return cfgfile
+
+    @unittest.skip('way too slow')
+    def test_compile(self):
+        cfgfile = self.create_compile_config()
+        revision = 'a58ebcc701dd'  # tag: v3.10.2
+
+        # XXX Capture and check the output.
+        self.run_pyperformance(
+            'compile', cfgfile, revision,
+            capture=None,
+        )
+
+    @unittest.skip('way too slow')
+    def test_compile_all(self):
+        rev1 = '2cd268a3a934'  # tag: v3.10.1
+        rev2 = 'a58ebcc701dd'  # tag: v3.10.2
+        cfgfile = self.create_compile_config(rev1, rev2)
+
+        # XXX Capture and check the output.
+        self.run_pyperformance(
+            'compile_all', cfgfile,
+            capture=None,
+        )
+
+    @unittest.expectedFailure
+    def test_upload(self):
+        url = '<bogus>'
+        cfgfile = self.create_compile_config(upload=url)
+        resfile = os.path.join(tests.DATA_DIR, 'py36.json')
+
+        # XXX Capture and check the output.
+        self.run_pyperformance(
+            'upload', cfgfile, resfile,
+            capture=None,
+        )
+
+    ###################################
     # show
 
     def test_show(self):
