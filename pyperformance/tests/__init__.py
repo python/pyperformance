@@ -1,4 +1,5 @@
 import errno
+import importlib.util
 import os
 import os.path
 import shlex
@@ -11,6 +12,7 @@ import tempfile
 TESTS_ROOT = os.path.realpath(os.path.dirname(__file__))
 DATA_DIR = os.path.join(TESTS_ROOT, 'data')
 REPO_ROOT = os.path.dirname(os.path.dirname(TESTS_ROOT))
+DEV_SCRIPT = os.path.join(REPO_ROOT, 'dev.py')
 
 
 def run_cmd(cmd, *args, capture=None, onfail='exit', verbose=True):
@@ -130,8 +132,6 @@ class Functional(Compat):
     true "unit" tests, which are constrained strictly to code execution.
     """
 
-    ENVVAR = 'PYPERFORMANCE_TESTS_VENV'
-
     @classmethod
     def resolve_tmp(cls, *relpath, unique=False):
         try:
@@ -173,17 +173,16 @@ class Functional(Compat):
             cls._venv_python = sys.executable
             return
 
+        cls._tests_venv = cls._resolve_tests_venv()
+        venv_python = _resolve_venv_python(cls._tests_venv)
+        if os.path.exists(venv_python):
+            cls._venv_python = venv_python
+            return
+
         print('#'*40)
         print('# creating a venv')
         print('#'*40)
         print()
-
-        cls._tests_venv = os.environ.get(cls.ENVVAR)
-        if not cls._tests_venv:
-            cls._tests_venv = cls.resolve_tmp('venv')
-        venv_python = _resolve_venv_python(cls._tests_venv)
-        if os.path.exists(venv_python):
-            return
 
         # Create the venv and update it.
         # XXX Ignore the output (and optionally log it).
@@ -196,3 +195,40 @@ class Functional(Compat):
         print('# DONE: creating a venv')
         print('#'*40)
         print()
+
+    @classmethod
+    def _resolve_tests_venv(cls):
+        root = os.environ.get('PYPERFORMANCE_TESTS_VENV')
+        if not root:
+            root = '<reuse>'
+        elif not root.startswith('<') and not root.endswith('>'):
+            # The user provided an actual root dir.
+            return root
+
+        if root == '<temp>':
+            # The user is forcing a temporary venv.
+            return cls.resolve_tmp('venv')
+        elif root == '<fresh>':
+            # The user is forcing a fresh venv.
+            fresh = True
+        elif root == '<reuse>':
+            # This is the default.
+            fresh = False
+        else:
+            raise NotImplementedError(repr(root))
+
+        # Resolve the venv root to re-use.
+        spec = importlib.util.spec_from_file_location('dev', DEV_SCRIPT)
+        dev = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(dev)
+        root = dev.resolve_venv_root('tests')
+
+        if fresh:
+            if os.path.exists(root):
+                print('(refreshing existing venv)')
+                print()
+            try:
+                shutil.rmtree(root)
+            except FileNotFoundError:
+                pass
+        return root
