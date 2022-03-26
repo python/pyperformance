@@ -19,9 +19,7 @@ from urllib.request import urlopen
 import pyperf
 
 import pyperformance
-from pyperformance._utils import MS_WINDOWS, safe_rmtree
-from pyperformance.venv import (GET_PIP_URL, REQ_OLD_PIP, PERFORMANCE_ROOT,
-                                download, is_build_dir)
+from pyperformance import _utils, _pip
 
 
 GIT = True
@@ -279,11 +277,11 @@ class Python(Task):
     def compile(self):
         build_dir = self.conf.build_dir
 
-        safe_rmtree(build_dir)
+        _utils.safe_rmtree(build_dir)
         self.app.safe_makedirs(build_dir)
 
         config_args = []
-        if self.branch.startswith("2.") and not MS_WINDOWS:
+        if self.branch.startswith("2.") and not _utils.MS_WINDOWS:
             # On Python 2, use UCS-4 for Unicode on all platforms, except
             # on Windows which uses UTF-16 because of its 16-bit wchar_t
             config_args.append('--enable-unicode=ucs4')
@@ -313,7 +311,7 @@ class Python(Task):
         )
         if self.conf.install:
             program, _ = resolve_python(self.conf.prefix, self.conf.build_dir)
-            safe_rmtree(self.conf.prefix)
+            _utils.safe_rmtree(self.conf.prefix)
             self.app.safe_makedirs(self.conf.prefix)
             self.run('make', 'install')
         else:
@@ -365,34 +363,28 @@ class Python(Task):
 
     def download(self, url, filename):
         self.logger.error("Download %s into %s" % (url, filename))
-        download(url, filename)
+        _utils.download(url, filename)
 
     def _install_pip(self):
         # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 7.1.2,
         # the last version working on Python 3.5a0:
         # https://sourceforge.net/p/pyparsing/bugs/100/
-        force_old_pip = (0x30500a0 <= self.hexversion < 0x30500f0)
+        assert self.hexversion > 0x3060000, self.hexversion
 
         # is pip already installed and working?
         exitcode = self.run_nocheck(self.program, '-u', '-m', 'pip', '--version')
         if not exitcode:
-            if force_old_pip:
-                self.run(self.program, '-u', '-m', 'pip', 'install', REQ_OLD_PIP)
-            else:
-                # Upgrade pip
-                self.run(self.program, '-u', '-m', 'pip', 'install', '-U', 'pip')
+            # Upgrade pip
+            self.run(self.program, '-u', '-m', 'pip', 'install', '-U', 'pip')
             return
 
         # pip is missing (or broken?): install it
         filename = os.path.join(self.conf.directory, 'get-pip.py')
         if not os.path.exists(filename):
-            self.download(GET_PIP_URL, filename)
+            self.download(_pip.GET_PIP_URL, filename)
 
-        if force_old_pip:
-            self.run(self.program, '-u', filename, REQ_OLD_PIP)
-        else:
-            # Install pip
-            self.run(self.program, '-u', filename)
+        # Install pip
+        self.run(self.program, '-u', filename)
 
     def install_pip(self):
         self._install_pip()
@@ -403,9 +395,8 @@ class Python(Task):
     def install_performance(self):
         cmd = [self.program, '-u', '-m', 'pip', 'install']
 
-        if is_build_dir():
-            root_dir = os.path.dirname(PERFORMANCE_ROOT)
-            cmd.extend(('-e', root_dir))
+        if pyperformance.is_dev():
+            cmd.extend(('-e', pyperformance.PKG_ROOT))
         else:
             version = pyperformance.__version__
             cmd.append('pyperformance==%s' % version)
@@ -500,8 +491,8 @@ class BenchmarkRevision(Application):
         self.repository.checkout(self.revision)
 
         # First: remove everything
-        safe_rmtree(self.conf.build_dir)
-        safe_rmtree(self.conf.prefix)
+        _utils.safe_rmtree(self.conf.build_dir)
+        _utils.safe_rmtree(self.conf.prefix)
 
         self.python.patch(self.patch)
         self.python.compile_install()
