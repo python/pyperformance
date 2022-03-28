@@ -1,7 +1,6 @@
 import os
 import os.path
 import shutil
-import subprocess
 import sys
 import textwrap
 import unittest
@@ -30,12 +29,13 @@ class FullStackTests(tests.Functional, unittest.TestCase):
 
     @classmethod
     def ensure_pyperformance(cls):
-        _, stdout, _ = cls.run_python(
+        ec, stdout, _ = cls.run_python(
             os.path.join(tests.DATA_DIR, 'find-pyperformance.py'),
             capture='stdout',
             onfail='raise',
             verbose=False,
         )
+        self.assertEqual(ec, 0)
         stdout = stdout.strip()
         if stdout.strip():
             # It is already installed.
@@ -49,7 +49,8 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         # Install it.
         reporoot = os.path.dirname(pyperformance.PKG_ROOT)
         # XXX Ignore the output (and optionally log it).
-        cls.run_pip('install', '--editable', reporoot)
+        ec, _, _ = cls.run_pip('install', '--editable', reporoot)
+        self.assertEqual(ec, 0)
 
         # Clean up extraneous files.
         egg_info = "pyperformance.egg-info"
