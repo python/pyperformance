@@ -107,13 +107,6 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             print('---')
             print()
 
-        from pyperformance import _venv
-        venv_python = _venv.resolve_venv_python(root)
-        try:
-            print('+++', os.listdir(os.path.dirname(venv_python)))
-        except FileNotFoundError:
-            print('+++ not found')
-
         # It doesn't exist yet.
         self.run_pyperformance(
             'venv', 'show', '--venv', root,
