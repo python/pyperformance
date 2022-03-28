@@ -35,7 +35,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             onfail='raise',
             verbose=False,
         )
-        self.assertEqual(ec, 0)
+        assert ec == 0, ec
         stdout = stdout.strip()
         if stdout.strip():
             # It is already installed.
@@ -50,7 +50,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         reporoot = os.path.dirname(pyperformance.PKG_ROOT)
         # XXX Ignore the output (and optionally log it).
         ec, _, _ = cls.run_pip('install', '--editable', reporoot)
-        self.assertEqual(ec, 0)
+        assert ec == 0, ec
 
         # Clean up extraneous files.
         egg_info = "pyperformance.egg-info"
