@@ -202,8 +202,10 @@ def get_pyperf_opts(options):
             try:
                 lib = env['LIBREADEN']
                 f = env['ENFILE']
+                ld = env['LD_LIBRARY_PATH']
                 options.inherit_environ.append('LIBREADEN')
                 options.inherit_environ.append('ENFILE')
+                options.inherit_environ.append('LD_LIBRARY_PATH')
             except:
                 raise OSError('--track-energy needs LIBREADEN, ENFILE environment variables to work.')
         opts.append('--inherit-environ=%s' % ','.join(options.inherit_environ))
