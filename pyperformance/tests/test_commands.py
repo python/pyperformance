@@ -10,6 +10,12 @@ import pyperformance
 from pyperformance import tests
 
 
+CPYTHON_ONLY = unittest.skipIf(
+    sys.implementation.name != 'cpython',
+    'CPython-only',
+)
+
+
 class FullStackTests(tests.Functional, unittest.TestCase):
 
     maxDiff = 80 * 100
@@ -252,6 +258,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             outfile.write(text)
         return cfgfile
 
+    @CPYTHON_ONLY
     @unittest.skip('way too slow')
     def test_compile(self):
         cfgfile = self.create_compile_config()
@@ -263,6 +270,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             capture=None,
         )
 
+    @CPYTHON_ONLY
     @unittest.skip('way too slow')
     def test_compile_all(self):
         rev1 = '2cd268a3a934'  # tag: v3.10.1
@@ -275,6 +283,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             capture=None,
         )
 
+    @CPYTHON_ONLY
     @unittest.expectedFailure
     def test_upload(self):
         url = '<bogus>'
