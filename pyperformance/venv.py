@@ -7,6 +7,7 @@ from . import _utils, _pip, _venv
 
 
 REQUIREMENTS_FILE = os.path.join(pyperformance.DATA_DIR, 'requirements.txt')
+PYPERF_OPTIONAL = ['psutil']
 
 
 class Requirements(object):
@@ -169,6 +170,8 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
         if pyperformance.is_dev():
             basereqs = Requirements.from_file(REQUIREMENTS_FILE)
             self.ensure_reqs(basereqs)
+            if basereqs.get('pyperf'):
+                self._install_pyperf_optional_dependencies()
 
             root_dir = os.path.dirname(pyperformance.PKG_ROOT)
             ec, _, _ = _pip.install_editable(
@@ -183,8 +186,17 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
                 python=self.info,
                 env=self._env,
             )
+            self._install_pyperf_optional_dependencies()
         if ec != 0:
             sys.exit(ec)
+
+    def _install_pyperf_optional_dependencies(self):
+        for req in PYPERF_OPTIONAL:
+            try:
+                self.ensure_reqs([req])
+            except _venv.RequirementsInstallationFailedError:
+                print("WARNING: failed to install %s" % req)
+                pass
 
     def ensure_reqs(self, requirements=None, *, exitonerror=False):
         # parse requirements
@@ -217,6 +229,9 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
                 if exitonerror:
                     sys.exit(1)
                 raise  # re-raise
+
+            if bench is not None:
+                self._install_pyperf_optional_dependencies()
 
         # Dump the package list and their versions: pip freeze
         _pip.run_pip('freeze', python=self.python, env=self._env)
