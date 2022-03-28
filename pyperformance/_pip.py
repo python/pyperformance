@@ -14,6 +14,16 @@ OLD_PIP = '7.1.2'
 OLD_SETUPTOOLS = '18.5'
 
 
+def get_pkg_name(req):
+    """Return the name of the package in the given requirement text."""
+    # strip env markers
+    req = req.partition(';')[0]
+    # strip version
+    req = req.partition('==')[0]
+    req = req.partition('>=')[0]
+    return req
+
+
 def get_best_pip_version(python):
     """Return the pip to install for the given Python executable."""
     if not python or isinstance(python, str):
