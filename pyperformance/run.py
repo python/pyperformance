@@ -140,7 +140,7 @@ def run_benchmarks(should_run, python, options):
             continue
         try:
             result = bench.run(
-                python,
+                bench_venv.python,
                 bench_runid,
                 pyperf_opts,
                 venv=bench_venv,
