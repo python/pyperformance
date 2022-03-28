@@ -1,13 +1,18 @@
 import os
 import os.path
 import shutil
-import subprocess
 import sys
 import textwrap
 import unittest
 
 import pyperformance
 from pyperformance import tests
+
+
+CPYTHON_ONLY = unittest.skipIf(
+    sys.implementation.name != 'cpython',
+    'CPython-only',
+)
 
 
 class FullStackTests(tests.Functional, unittest.TestCase):
@@ -24,12 +29,13 @@ class FullStackTests(tests.Functional, unittest.TestCase):
 
     @classmethod
     def ensure_pyperformance(cls):
-        _, stdout, _ = cls.run_python(
+        ec, stdout, _ = cls.run_python(
             os.path.join(tests.DATA_DIR, 'find-pyperformance.py'),
             capture='stdout',
             onfail='raise',
             verbose=False,
         )
+        assert ec == 0, ec
         stdout = stdout.strip()
         if stdout.strip():
             # It is already installed.
@@ -43,7 +49,8 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         # Install it.
         reporoot = os.path.dirname(pyperformance.PKG_ROOT)
         # XXX Ignore the output (and optionally log it).
-        cls.run_pip('install', '--editable', reporoot)
+        ec, _, _ = cls.run_pip('install', '--editable', reporoot)
+        assert ec == 0, ec
 
         # Clean up extraneous files.
         egg_info = "pyperformance.egg-info"
@@ -252,6 +259,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             outfile.write(text)
         return cfgfile
 
+    @CPYTHON_ONLY
     @unittest.skip('way too slow')
     def test_compile(self):
         cfgfile = self.create_compile_config()
@@ -263,6 +271,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             capture=None,
         )
 
+    @CPYTHON_ONLY
     @unittest.skip('way too slow')
     def test_compile_all(self):
         rev1 = '2cd268a3a934'  # tag: v3.10.1
@@ -275,6 +284,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             capture=None,
         )
 
+    @CPYTHON_ONLY
     @unittest.expectedFailure
     def test_upload(self):
         url = '<bogus>'

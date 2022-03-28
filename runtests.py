@@ -14,7 +14,7 @@ def main():
         # <unreachable>
 
     # Now run the tests.
-    subprocess.run(
+    proc = subprocess.run(
         [sys.executable, '-u', '-m', 'pyperformance.tests'],
         cwd=os.path.dirname(__file__) or None,
         env=dict(
@@ -22,6 +22,7 @@ def main():
             PYPERFORMANCE_TESTS_VENV=venvroot,
         )
     )
+    sys.exit(proc.returncode)
 
 
 if __name__ == "__main__":
