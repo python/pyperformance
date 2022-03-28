@@ -7,14 +7,15 @@ from . import _utils, _pip, _venv
 
 
 REQUIREMENTS_FILE = os.path.join(pyperformance.DATA_DIR, 'requirements.txt')
+PYPERF_OPTIONAL = ['psutil']
 
 
 class Requirements(object):
 
     @classmethod
-    def from_file(cls, filename, optional=None):
+    def from_file(cls, filename):
         self = cls()
-        self._add_from_file(filename, optional)
+        self._add_from_file(filename)
         return self
 
     @classmethod
@@ -32,44 +33,25 @@ class Requirements(object):
         # requirements
         self.specs = []
 
-        # optional requirements
-        self._optional = set()
-
     def __len__(self):
         return len(self.specs)
 
-    def iter_non_optional(self):
+    def __iter__(self):
         for spec in self.specs:
-            if spec in self._optional:
-                continue
             yield spec
 
-    def iter_optional(self):
-        for spec in self.specs:
-            if spec not in self._optional:
-                continue
-            yield spec
-
-    def _add_from_file(self, filename, optional=None):
+    def _add_from_file(self, filename):
         if not os.path.exists(filename):
             return
         for line in _utils.iter_clean_lines(filename):
-            self._add(line, optional)
+            self._add(line)
 
-    def _add(self, line, optional=None):
+    def _add(self, line):
         self.specs.append(line)
-        if optional:
-            # strip env markers
-            req = line.partition(';')[0]
-            # strip version
-            req = req.partition('==')[0]
-            req = req.partition('>=')[0]
-            if req in optional:
-                self._optional.add(line)
 
     def get(self, name):
         for req in self.specs:
-            if req.startswith(name):
+            if _pip.get_pkg_name(req) == name:
                 return req
         return None
 
@@ -186,8 +168,10 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
         print("installing pyperformance in the venv at %s" % self.root)
         # Install pyperformance inside the virtual environment.
         if pyperformance.is_dev():
-            basereqs = Requirements.from_file(REQUIREMENTS_FILE, ['psutil'])
+            basereqs = Requirements.from_file(REQUIREMENTS_FILE)
             self.ensure_reqs(basereqs)
+            if basereqs.get('pyperf'):
+                self._install_pyperf_optional_dependencies()
 
             root_dir = os.path.dirname(pyperformance.PKG_ROOT)
             ec, _, _ = _pip.install_editable(
@@ -202,8 +186,17 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
                 python=self.info,
                 env=self._env,
             )
+            self._install_pyperf_optional_dependencies()
         if ec != 0:
             sys.exit(ec)
+
+    def _install_pyperf_optional_dependencies(self):
+        for req in PYPERF_OPTIONAL:
+            try:
+                self.ensure_reqs([req])
+            except _venv.RequirementsInstallationFailedError:
+                print("WARNING: failed to install %s" % req)
+                pass
 
     def ensure_reqs(self, requirements=None, *, exitonerror=False):
         # parse requirements
@@ -216,7 +209,7 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
 
         # Every benchmark must depend on pyperf.
         if bench is not None and not requirements.get('pyperf'):
-            basereqs = Requirements.from_file(REQUIREMENTS_FILE, ['psutil'])
+            basereqs = Requirements.from_file(REQUIREMENTS_FILE)
             pyperf_req = basereqs.get('pyperf')
             if not pyperf_req:
                 raise NotImplementedError
@@ -229,7 +222,7 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
             # install requirements
             try:
                 super().ensure_reqs(
-                    *requirements.iter_non_optional(),
+                    *requirements,
                     upgrade=False,
                 )
             except _venv.RequirementsInstallationFailedError:
@@ -237,13 +230,8 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
                     sys.exit(1)
                 raise  # re-raise
 
-            # install optional requirements
-            for req in requirements.iter_optional():
-                try:
-                    super().ensure_reqs(req, upgrade=True)
-                except _venv.RequirementsInstallationFailedError:
-                    print("WARNING: failed to install %s" % req)
-                    print()
+            if bench is not None:
+                self._install_pyperf_optional_dependencies()
 
         # Dump the package list and their versions: pip freeze
         _pip.run_pip('freeze', python=self.python, env=self._env)
