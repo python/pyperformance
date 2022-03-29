@@ -225,9 +225,13 @@ def cmd_show(options):
 
 
 def cmd_compare(options):
-    from .compare import compare_results, write_csv
+    from .compare import compare_results, write_csv, VersionMismatchError
 
-    results = compare_results(options)
+    try:
+        results = compare_results(options)
+    except VersionMismatchError as exc:
+        print(f'ERROR: {exc}')
+        sys.exit(1)
 
     if options.csv:
         write_csv(results, options.csv)

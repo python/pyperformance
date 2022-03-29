@@ -10,6 +10,16 @@ import statistics
 NO_VERSION = "<not set>"
 
 
+class VersionMismatchError(Exception):
+
+    def __init__(self, version1, version2):
+        super().__init__(
+            f"Performance versions are different ({version1} != {version2})",
+        )
+        self.version1 = version1
+        self.version2 = version2
+
+
 def format_result(bench):
     mean = bench.mean()
     if bench.get_nvalue() >= 2:
@@ -372,10 +382,7 @@ def compare_results(options):
     version1 = base_suite.get_metadata().get('performance_version', NO_VERSION)
     version2 = changed_suite.get_metadata().get('performance_version', NO_VERSION)
     if version1 != version2 or (version1 == version2 == NO_VERSION):
-        print()
-        print("ERROR: Performance versions are different: %s != %s"
-              % (version1, version2))
-        sys.exit(1)
+        raise VersionMismatchError(version1, version2)
 
     return results
 
