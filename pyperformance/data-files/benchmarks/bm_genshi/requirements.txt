@@ -1,2 +1,2 @@
-genshi==0.7.6
+git+https://github.com/edgewall/genshi@605de3b#egg=genshi
 six==1.16.0
