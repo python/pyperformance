@@ -85,13 +85,58 @@ def get_venv_program(program):
     return path
 
 
-def _get_envvars(inherit=None):
+NECESSARY_ENV_VARS = {
+    'nt': [
+        "ALLUSERSPROFILE",
+        "APPDATA",
+        "COMPUTERNAME",
+        "ComSpec",
+        "CommonProgramFiles",
+        "CommonProgramFiles(x86)",
+        "CommonProgramW6432",
+        "HOMEDRIVE",
+        "HOMEPATH",
+        "LOCALAPPDATA",
+        "NUMBER_OF_PROCESSORS",
+        "OS",
+        "PATHEXT",
+        "PROCESSOR_ARCHITECTURE",
+        "PROCESSOR_IDENTIFIER",
+        "PROCESSOR_LEVEL",
+        "PROCESSOR_REVISION",
+        "Path",
+        "ProgramData",
+        "ProgramFiles",
+        "ProgramFiles(x86)",
+        "ProgramW6432",
+        "SystemDrive",
+        "SystemRoot",
+        "TEMP",
+        "TMP",
+        "USERDNSDOMAIN",
+        "USERDOMAIN",
+        "USERDOMAIN_ROAMINGPROFILE",
+        "USERNAME",
+        "USERPROFILE",
+        "windir",
+    ],
+}
+NECESSARY_ENV_VARS_DEFAULT = [
+    "HOME",
+    "PATH",
+]
+
+def _get_envvars(inherit=None, osname=None):
     # Restrict the env we use.
-    env = {}
-    copy_env = ["PATH", "HOME", "TEMP", "COMSPEC", "SystemRoot",
-        "ProgramFiles", "ProgramFiles(x86)"]
+    try:
+        necessary = NECESSARY_ENV_VARS[osname or os.name]
+    except KeyError:
+        necessary = NECESSARY_ENV_VARS_DEFAULT
+    copy_env = list(necessary)
     if inherit:
         copy_env.extend(inherit)
+
+    env = {}
     for name in copy_env:
         if name in os.environ:
             env[name] = os.environ[name]
