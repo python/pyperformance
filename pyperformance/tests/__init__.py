@@ -101,8 +101,32 @@ class CleanupFile:
 #############################
 # testing fixtures, mixins, and helpers
 
-# XXX Provide a way to run slow tests.
-SLOW = unittest.skip('way too slow')
+def apply_to_test_methods(cls, decorator):
+    for name, func in vars(cls).items():
+        if not name.startswith('test_'):
+            continue
+        func = decorator(func)
+        setattr(cls, name, func)
+
+
+def mark(label, func=None):
+    """Mark the function/class with the given label.
+
+    This may be used as a decorator.
+    """
+    if func is None:
+        def decorator(func):
+            return mark(label, func)
+        return decorator
+    if isisntance(func, type):
+        cls = func
+        apply_to_test_methods(cls, mark(label))
+        return cls
+    try:
+        func._pyperformance_test_labels.append(label)
+    except AttributeError:
+        func._pyperformance_test_labels = [label]
+    return func
 
 
 class Compat:
