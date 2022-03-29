@@ -28,6 +28,27 @@ extension. Commands on Fedora to install dependencies:
 * Python 3: ``sudo dnf install python3-devel``
 * PyPy: ``sudo dnf install pypy-devel``
 
+Windows notes
+-------------
+
+On Windows, to allow pyperformance to build dependencies from source
+like ``greenlet``, ``dulwich`` or ``psutil``, if you want to use a
+``python.exe`` built from source, you should not use the ``python.exe``
+directly. Instead, you must run the little-known command ``PC\layout``
+to create a filesystem layout that resembles an installed Python::
+
+    .\python.bat -m PC.layout --preset-default --copy installed -v
+
+(Use the ``--help`` flag for more info about ``PC\layout``.)
+
+Now you can use the "installed" Python executable::
+
+    installed\python.exe -m pip install pyperformance
+    installed\python.exe -m pyperformance run ...
+
+Using an *actually* installed Python executable (e.g. via ``py``)
+works fine too.
+
 
 Run benchmarks
 ==============
