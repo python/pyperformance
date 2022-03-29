@@ -102,56 +102,43 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             print('---')
             print()
 
+        def expect_success(*args):
+            text = self.run_pyperformance(
+                *args,
+                capture='combined',
+            )
+            print(text)
+
+        def expect_failure(*args):
+            text = self.run_pyperformance(
+                *args,
+                capture='combined',
+                exitcode=1,
+            )
+            print(text)
+
         # It doesn't exist yet.
-        self.run_pyperformance(
-            'venv', 'show', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'show', '--venv', root)
         div()
         # It gets created.
-        self.run_pyperformance(
-            'venv', 'create', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'create', '--venv', root)
         div()
-        self.run_pyperformance(
-            'venv', 'show', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'show', '--venv', root)
         div()
         # It alraedy exists.
-        self.run_pyperformance(
-            'venv', 'create', '--venv', root,
-            capture=None,
-            exitcode=1,
-        )
+        expect_failure('venv', 'create', '--venv', root)
         div()
-        self.run_pyperformance(
-            'venv', 'show', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'show', '--venv', root)
         div()
         # It gets re-created.
-        self.run_pyperformance(
-            'venv', 'recreate', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'recreate', '--venv', root)
         div()
-        self.run_pyperformance(
-            'venv', 'show', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'show', '--venv', root)
         div()
         # It get deleted.
-        self.run_pyperformance(
-            'venv', 'remove', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'remove', '--venv', root)
         div()
-        self.run_pyperformance(
-            'venv', 'show', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'show', '--venv', root)
 
     ###################################
     # run
