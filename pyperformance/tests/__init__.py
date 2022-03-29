@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import unittest
 
 
 TESTS_ROOT = os.path.realpath(os.path.dirname(__file__))
@@ -118,7 +119,7 @@ def mark(label, func=None):
         def decorator(func):
             return mark(label, func)
         return decorator
-    if isisntance(func, type):
+    if isinstance(func, type):
         cls = func
         apply_to_test_methods(cls, mark(label))
         return cls
@@ -161,7 +162,7 @@ NON_WINDOWS_ONLY = unittest.skipIf(os.name == 'nt', 'skipping Windows')
 # XXX Provide a way to run slow tests.
 SLOW = (lambda f:
             unittest.skip('way too slow')(
-                mark('slow', func)))
+                mark('slow', f)))
 
 
 class Functional(Compat):
