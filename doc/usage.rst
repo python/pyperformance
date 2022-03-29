@@ -44,7 +44,10 @@ to create a filesystem layout that resembles an installed Python::
 Now you can use the "installed" Python executable::
 
     installed\python.exe -m pip install pyperformance
-    installed\oythin.exe -m pyperformance run ...
+    installed\python.exe -m pyperformance run ...
+
+Using an *actually* installed Python executable (e.g. via ``py``)
+works fine too.
 
 
 Run benchmarks
