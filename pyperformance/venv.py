@@ -151,19 +151,11 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
                upgrade=False,
                ):
         env = _get_envvars(inherit_environ)
-        try:
-            self = super().create(root, python, env=env, withpip=False)
-        except _venv.VenvCreationFailedError as exc:
-            print(f'ERROR: {exc}')
-            sys.exit(1)
+        self = super().create(root, python, env=env, withpip=False)
         self.inherit_environ = inherit_environ
 
         try:
             self.ensure_pip(upgrade=upgrade)
-        except _venv.VenvPipInstallFailedError as exc:
-            print(f'ERROR: {exc}')
-            _utils.safe_rmtree(self.root)
-            sys.exit(1)
         except BaseException:
             _utils.safe_rmtree(self.root)
             raise
@@ -225,16 +217,12 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
                 python=self.info,
                 env=self._env,
             )
+            if ec != 0:
+                raise RequirementsInstallationFailedError(root_dir)
         else:
             version = pyperformance.__version__
-            ec, _, _ = _pip.install_requirements(
-                f'pyperformance=={version}',
-                python=self.info,
-                env=self._env,
-            )
+            self.ensure_reqs([f'pyperformance=={version}'])
             self._install_pyperf_optional_dependencies()
-        if ec != 0:
-            sys.exit(ec)
 
     def _install_pyperf_optional_dependencies(self):
         for req in PYPERF_OPTIONAL:
@@ -244,7 +232,7 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
                 print("WARNING: failed to install %s" % req)
                 pass
 
-    def ensure_reqs(self, requirements=None, *, exitonerror=False):
+    def ensure_reqs(self, requirements=None):
         # parse requirements
         bench = None
         if requirements is None:
@@ -266,15 +254,10 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
             print('(nothing to install)')
         else:
             # install requirements
-            try:
-                super().ensure_reqs(
-                    *requirements,
-                    upgrade=False,
-                )
-            except _venv.RequirementsInstallationFailedError:
-                if exitonerror:
-                    sys.exit(1)
-                raise  # re-raise
+            super().ensure_reqs(
+                *requirements,
+                upgrade=False,
+            )
 
             if bench is not None:
                 self._install_pyperf_optional_dependencies()

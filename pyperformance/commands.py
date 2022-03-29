@@ -45,9 +45,9 @@ def cmd_venv_create(options, root, python, benchmarks):
     venv.ensure_pip()
     try:
         venv.install_pyperformance()
+        venv.ensure_reqs(requirements)
     except _venv.RequirementsInstallationFailedError:
         sys.exit(1)
-    venv.ensure_reqs(requirements, exitonerror=True)
     print("The virtual environment %s has been created" % root)
 
 
@@ -67,10 +67,10 @@ def cmd_venv_recreate(options, root, python, benchmarks):
             )
             venv.ensure_pip()
             try:
-                venv.install_pyperformance()
+                venv.ensure_reqs(requirements)
+                venv.ensure_reqs(requirements)
             except _venv.RequirementsInstallationFailedError:
                 sys.exit(1)
-            venv.ensure_reqs(requirements, exitonerror=True)
         else:
             print("The virtual environment %s already exists" % root)
             _utils.safe_rmtree(root)
@@ -84,9 +84,9 @@ def cmd_venv_recreate(options, root, python, benchmarks):
             venv.ensure_pip()
             try:
                 venv.install_pyperformance()
+                venv.ensure_reqs(requirements)
             except _venv.RequirementsInstallationFailedError:
                 sys.exit(1)
-            venv.ensure_reqs(requirements, exitonerror=True)
             print("The virtual environment %s has been recreated" % root)
     else:
         venv = VenvForBenchmarks.create(
@@ -97,9 +97,9 @@ def cmd_venv_recreate(options, root, python, benchmarks):
         venv.ensure_pip()
         try:
             venv.install_pyperformance()
+            venv.ensure_reqs(requirements)
         except _venv.RequirementsInstallationFailedError:
             sys.exit(1)
-        venv.ensure_reqs(requirements, exitonerror=True)
         print("The virtual environment %s has been created" % root)
 
 
