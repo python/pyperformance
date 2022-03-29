@@ -156,7 +156,6 @@ class FullStackTests(tests.Functional, unittest.TestCase):
     ###################################
     # run
 
-    @NON_WINDOWS_ONLY
     def test_run_and_show(self):
         filename = self.resolve_tmp('bench.json')
 
