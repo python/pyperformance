@@ -200,14 +200,14 @@ def get_pyperf_opts(options):
             from os import environ as curr_env
             env = curr_env
             try:
-                lib = env['LIBREADEN']
+                lib = env['READEN']
                 f = env['ENFILE']
                 ld = env['LD_LIBRARY_PATH']
-                options.inherit_environ.append('LIBREADEN')
+                options.inherit_environ.append('READEN')
                 options.inherit_environ.append('ENFILE')
                 options.inherit_environ.append('LD_LIBRARY_PATH')
             except:
-                raise OSError('--track-energy needs LIBREADEN, ENFILE environment variables to work.')
+                raise OSError('--track-energy needs READEN, ENFILE environment variables to work.')
         opts.append('--inherit-environ=%s' % ','.join(options.inherit_environ))
     if options.track_energy:
         opts.append('--track-energy')
