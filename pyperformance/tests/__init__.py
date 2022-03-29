@@ -158,6 +158,11 @@ CPYTHON_ONLY = unittest.skipIf(
 )
 NON_WINDOWS_ONLY = unittest.skipIf(os.name == 'nt', 'skipping Windows')
 
+# XXX Provide a way to run slow tests.
+SLOW = (lambda f:
+            unittest.skip('way too slow')(
+                mark('slow', func)))
+
 
 class Functional(Compat):
     """A mixin for functional tests.
