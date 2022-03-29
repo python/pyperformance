@@ -93,7 +93,6 @@ class FullStackTests(tests.Functional, unittest.TestCase):
     ###################################
     # venv
 
-    @NON_WINDOWS_ONLY
     def test_venv(self):
         # XXX Capture and check the output.
         root = self.resolve_tmp('venv', unique=True)
