@@ -88,7 +88,8 @@ def get_venv_program(program):
 def _get_envvars(inherit=None):
     # Restrict the env we use.
     env = {}
-    copy_env = ["PATH", "HOME", "TEMP", "COMSPEC", "SystemRoot"]
+    copy_env = ["PATH", "HOME", "TEMP", "COMSPEC", "SystemRoot",
+        "ProgramFiles", "ProgramFiles(x86)"]
     if inherit:
         copy_env.extend(inherit)
     for name in copy_env:
