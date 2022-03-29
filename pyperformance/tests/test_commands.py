@@ -105,17 +105,15 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         def expect_success(*args):
             text = self.run_pyperformance(
                 *args,
-                capture='combined',
+                capture=None,
             )
-            print(text)
 
         def expect_failure(*args):
             text = self.run_pyperformance(
                 *args,
-                capture='combined',
+                capture=None,
                 exitcode=1,
             )
-            print(text)
 
         # It doesn't exist yet.
         expect_success('venv', 'show', '--venv', root)
@@ -156,9 +154,8 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             '-b', 'all',
             '--debug-single-value',
             '-o', filename,
-            capture='combined',
+            capture=None,
         )
-        print(text)
 
         # Display slowest benchmarks
         # XXX Capture and check the output.
