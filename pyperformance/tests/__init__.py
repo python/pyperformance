@@ -124,6 +124,13 @@ class Compat:
 #############################
 # functional tests
 
+CPYTHON_ONLY = unittest.skipIf(
+    sys.implementation.name != 'cpython',
+    'CPython-only',
+)
+NON_WINDOWS_ONLY = unittest.skipIf(os.name == 'nt', 'skipping Windows')
+
+
 class Functional(Compat):
     """A mixin for functional tests.
 
