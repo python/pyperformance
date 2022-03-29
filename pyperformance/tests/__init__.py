@@ -99,7 +99,11 @@ class CleanupFile:
 
 
 #############################
-# fixtures and mixins
+# testing fixtures, mixins, and helpers
+
+# XXX Provide a way to run slow tests.
+SLOW = unittest.skip('way too slow')
+
 
 class Compat:
     """A mixin that lets older Pythons use newer unittest features."""

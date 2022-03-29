@@ -255,7 +255,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
 
     @tests.CPYTHON_ONLY
     @tests.NON_WINDOWS_ONLY
-    @unittest.skip('way too slow')
+    @tests.SLOW
     def test_compile(self):
         cfgfile = self.create_compile_config()
         revision = 'a58ebcc701dd'  # tag: v3.10.2
@@ -268,7 +268,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
 
     @tests.CPYTHON_ONLY
     @tests.NON_WINDOWS_ONLY
-    @unittest.skip('way too slow')
+    @tests.SLOW
     def test_compile_all(self):
         rev1 = '2cd268a3a934'  # tag: v3.10.1
         rev2 = 'a58ebcc701dd'  # tag: v3.10.2
