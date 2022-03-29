@@ -151,13 +151,14 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         # --debug-single-value: benchmark results don't matter, we only
         # check that running benchmarks don't fail.
         # XXX Capture and check the output.
-        self.run_pyperformance(
+        text = self.run_pyperformance(
             'run',
             '-b', 'all',
             '--debug-single-value',
             '-o', filename,
-            capture=None,
+            capture='combined',
         )
+        print(text)
 
         # Display slowest benchmarks
         # XXX Capture and check the output.
