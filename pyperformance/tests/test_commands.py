@@ -13,6 +13,7 @@ CPYTHON_ONLY = unittest.skipIf(
     sys.implementation.name != 'cpython',
     'CPython-only',
 )
+NON_WINDOWS_ONLY = unittest.skipIf(os.name == 'nt', 'skipping Windows')
 
 
 class FullStackTests(tests.Functional, unittest.TestCase):
@@ -260,6 +261,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         return cfgfile
 
     @CPYTHON_ONLY
+    @NON_WINDOWS_ONLY
     @unittest.skip('way too slow')
     def test_compile(self):
         cfgfile = self.create_compile_config()
@@ -272,6 +274,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         )
 
     @CPYTHON_ONLY
+    @NON_WINDOWS_ONLY
     @unittest.skip('way too slow')
     def test_compile_all(self):
         rev1 = '2cd268a3a934'  # tag: v3.10.1
@@ -285,6 +288,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         )
 
     @CPYTHON_ONLY
+    @NON_WINDOWS_ONLY
     @unittest.expectedFailure
     def test_upload(self):
         url = '<bogus>'
