@@ -225,6 +225,12 @@ list_groups
 
 List benchmark groups of the running Python.
 
+Usage::
+
+  pyperformance list_groups [-h] [--manifest MANIFEST]
+                            [--inherit-environ VAR_LIST]
+                            [-p PYTHON]
+
 options::
 
   --manifest MANIFEST   benchmark manifest file to use
