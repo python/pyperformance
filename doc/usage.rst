@@ -16,11 +16,6 @@ If needed, ``pyperf`` and ``six`` dependencies are installed automatically.
 pyperformance works on Python 3.6 and newer, but it may work on Python 3.4 and
 3.5.
 
-Mercurial might need Python developement headers to build its C extensions. For
-example, on Fedora, use::
-
-    sudo dnf install pypy3-devel
-
 At runtime, Python development files (header files) may be needed to install
 some dependencies like ``dulwich_log`` or ``psutil``, to build their C
 extension. Commands on Fedora to install dependencies:
@@ -83,8 +78,14 @@ pyperformance actions::
     run                 Run benchmarks on the running python
     show                Display a benchmark file
     compare             Compare two benchmark files
-    list                List benchmarks which run command would run
-    list_groups         List all benchmark groups
+    list                List benchmarks of the running Python
+    list_groups         List benchmark groups of the running Python
+    compile             Compile and install CPython and run benchmarks on
+                        installed Python
+    compile_all         Compile and install CPython and run benchmarks on
+                        installed Python on all branches and revisions of
+                        CONFIG_FILE
+    upload              Upload JSON results to a Codespeed website
     venv                Actions on the virtual environment
 
 Common options
@@ -92,13 +93,7 @@ Common options
 
 Options available to all commands::
 
-  -p PYTHON, --python PYTHON
-                        Python executable (default: use running Python)
-  --venv VENV           Path to the virtual environment
-  --inherit-environ VAR_LIST
-                        Comma-separated list of environment variable names
-                        that are inherited from the parent environment when
-                        running benchmarking subprocesses.
+  -h, --help            show this help message and exit
 
 run
 ---
@@ -108,7 +103,19 @@ Options of the ``run`` command::
   -r, --rigorous        Spend longer running tests to get more accurate
                         results
   -f, --fast            Get rough answers quickly
+  --debug-single-value  Debug: fastest mode, only compute a single value
+  -v, --verbose         Print more output
   -m, --track-memory    Track memory usage. This only works on Linux.
+  --affinity CPU_LIST   Specify CPU affinity for benchmark runs. This way,
+                        benchmarks can be forced to run on a given CPU to
+                        minimize run to run variation.
+  -o FILENAME, --output FILENAME
+                        Run the benchmarks on only one interpreter and write
+                        benchmark into FILENAME. Provide only baseline_python,
+                        not changed_python.
+  --append FILENAME     Add runs to an existing file, or create it if it
+                        doesn't exist
+  --manifest MANIFEST   benchmark manifest file to use
   -b BM_LIST, --benchmarks BM_LIST
                         Comma-separated list of benchmarks to run. Can contain
                         both positive and negative arguments:
@@ -116,16 +123,12 @@ Options of the ``run`` command::
                         are no positive arguments, we'll run all benchmarks
                         except the negative arguments. Otherwise we run only
                         the positive arguments.
-  --affinity CPU_LIST   Specify CPU affinity for benchmark runs. This way,
-                        benchmarks can be forced to run on a given CPU to
-                        minimize run to run variation. This uses the taskset
-                        command.
-  -o FILENAME, --output FILENAME
-                        Run the benchmarks on only one interpreter and write
-                        benchmark into FILENAME. Provide only baseline_python,
-                        not changed_python.
-  --append FILENAME     Add runs to an existing file, or create it if it
-                        doesn't exist
+  --inherit-environ VAR_LIST
+                        Comma-separated list of environment variable names
+                        that are inherited from the parent environment when
+                        running benchmarking subprocesses.
+  -p PYTHON, --python PYTHON
+                        Python executable (default: use running Python)
 
 show
 ----
@@ -144,12 +147,22 @@ Options of the ``compare`` command::
   -O STYLE, --output_style STYLE
                         What style the benchmark output should take. Valid
                         options are 'normal' and 'table'. Default is normal.
+  --csv CSV_FILE        Name of a file the results will be written to, as a
+                        three-column CSV file containing minimum runtimes for
+                        each benchmark.
+  --inherit-environ VAR_LIST
+                        Comma-separated list of environment variable names
+                        that are inherited from the parent environment when
+                        running benchmarking subprocesses.
+  -p PYTHON, --python PYTHON
+                        Python executable (default: use running Python)
 
 list
 ----
 
 Options of the ``list`` command::
 
+  --manifest MANIFEST   benchmark manifest file to use
   -b BM_LIST, --benchmarks BM_LIST
                         Comma-separated list of benchmarks to run. Can contain
                         both positive and negative arguments:
@@ -157,6 +170,12 @@ Options of the ``list`` command::
                         are no positive arguments, we'll run all benchmarks
                         except the negative arguments. Otherwise we run only
                         the positive arguments.
+  --inherit-environ VAR_LIST
+                        Comma-separated list of environment variable names
+                        that are inherited from the parent environment when
+                        running benchmarking subprocesses.
+  -p PYTHON, --python PYTHON
+                        Python executable (default: use running Python)
 
 Use ``python3 -m pyperformance list -b all`` to list all benchmarks.
 
@@ -166,13 +185,12 @@ venv
 
 Options of the ``venv`` command::
 
-  -p PYTHON, --python PYTHON
-                        Python executable (default: use running Python)
   --venv VENV           Path to the virtual environment
 
 Actions of the ``venv`` command::
 
-  show      Display the path to the virtual environment and it's status (created or not)
+  show      Display the path to the virtual environment and its status
+            (created or not)
   create    Create the virtual environment
   recreate  Force the recreation of the the virtual environment
   remove    Remove the virtual environment
