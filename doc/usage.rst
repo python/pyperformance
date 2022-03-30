@@ -248,10 +248,6 @@ venv
 
 Actions on the virtual environment.
 
-options::
-
-  --venv VENV           Path to the virtual environment
-
 Actions::
 
   show      Display the path to the virtual environment and its status
@@ -259,6 +255,86 @@ Actions::
   create    Create the virtual environment
   recreate  Force the recreation of the the virtual environment
   remove    Remove the virtual environment
+
+Common options::
+
+  --venv VENV           Path to the virtual environment
+  --inherit-environ VAR_LIST
+                        Comma-separated list of environment variable
+                        names that are inherited from the parent
+                        environment when running benchmarking
+                        subprocesses.
+  -p PYTHON, --python PYTHON
+                        Python executable (default: use running
+                        Python)
+
+venv show
+~~~~~~~~~
+
+Display the path to the virtual environment and its status (created or not).
+
+Usage::
+
+  pyperformance venv show [-h] [--venv VENV]
+                          [--inherit-environ VAR_LIST] [-p PYTHON]
+
+venv create
+~~~~~~~~~~~
+
+Create the virtual environment.
+
+Usage::
+
+  pyperformance venv create [-h] [--venv VENV]
+                            [--manifest MANIFEST] [-b BM_LIST]
+                            [--inherit-environ VAR_LIST]
+                            [-p PYTHON]
+
+options::
+
+  --manifest MANIFEST   benchmark manifest file to use
+  -b BM_LIST, --benchmarks BM_LIST
+                        Comma-separated list of benchmarks to run. Can
+                        contain both positive and negative arguments:
+                        --benchmarks=run_this,also_this,-not_this. If
+                        there are no positive arguments, we'll run all
+                        benchmarks except the negative arguments.
+                        Otherwise we run only the positive arguments.
+
+venv recreate
+~~~~~~~~~~~~~
+
+Force the recreation of the the virtual environment.
+
+Usage::
+
+  pyperformance venv recreate [-h] [--venv VENV]
+                              [--manifest MANIFEST] [-b BM_LIST]
+                              [--inherit-environ VAR_LIST]
+                              [-p PYTHON]
+
+options::
+
+  --manifest MANIFEST   benchmark manifest file to use
+  -b BM_LIST, --benchmarks BM_LIST
+                        Comma-separated list of benchmarks to run. Can
+                        contain both positive and negative arguments:
+                        --benchmarks=run_this,also_this,-not_this. If
+                        there are no positive arguments, we'll run all
+                        benchmarks except the negative arguments.
+                        Otherwise we run only the positive arguments.
+
+venv remove
+~~~~~~~~~~~
+
+Remove the virtual environment.
+
+Usage::
+
+  pyperformance venv remove [-h] [--venv VENV]
+                            [--inherit-environ VAR_LIST]
+                            [-p PYTHON]
+
 
 
 Compile Python to run benchmarks
