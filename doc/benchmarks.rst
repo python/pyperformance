@@ -2,6 +2,9 @@
 Benchmarks
 ++++++++++
 
+Also see :doc:`custom_benchmarks` regarding how to create your own
+benchmarks or use someone else's.
+
 
 Available Groups
 ================

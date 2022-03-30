@@ -21,6 +21,7 @@ Documenation:
 
    usage
    benchmarks
+   custom_benchmarks
    cpython_results_2017
    changelog
 
