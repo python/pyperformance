@@ -65,8 +65,12 @@ class GetInfoTests(tests.Functional, unittest.TestCase):
             venv, python, cleanup = tests.create_venv()
             self.addCleanup(cleanup)
             expected.sys.executable = python
-            expected.sys._base_executable = os.path.normpath(sys.executable)
-            expected.base_executable = os.path.normpath(sys.executable)
+            realpath = os.path.realpath(os.path.normpath(sys.executable))
+            if os.name == 'nt':
+                # It isn't a symlink.
+                expected.executable_realpath = os.path.realpath(python)
+            expected.sys._base_executable = realpath
+            expected.base_executable = realpath
             expected.sys.prefix = venv
             expected.sys.exec_prefix = venv
             expected.sys.version_info = tuple(expected.sys.version_info)
