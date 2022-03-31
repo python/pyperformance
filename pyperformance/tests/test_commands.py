@@ -369,8 +369,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             Skipped 1 benchmarks only in py36.json: telco
 
             Skipped 1 benchmarks only in py3_performance03.json: call_simple
-
-            ERROR: Performance versions are different: 1.0.1 != 0.3
+            ERROR: Performance versions are different (1.0.1 != 0.3)
             ''').lstrip())
 
     def test_compare_single_value(self):
