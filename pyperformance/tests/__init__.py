@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import unittest
 
 
 TESTS_ROOT = os.path.realpath(os.path.dirname(__file__))
@@ -99,7 +100,35 @@ class CleanupFile:
 
 
 #############################
-# fixtures and mixins
+# testing fixtures, mixins, and helpers
+
+def apply_to_test_methods(cls, decorator):
+    for name, func in vars(cls).items():
+        if not name.startswith('test_'):
+            continue
+        func = decorator(func)
+        setattr(cls, name, func)
+
+
+def mark(label, func=None):
+    """Mark the function/class with the given label.
+
+    This may be used as a decorator.
+    """
+    if func is None:
+        def decorator(func):
+            return mark(label, func)
+        return decorator
+    if isinstance(func, type):
+        cls = func
+        apply_to_test_methods(cls, mark(label))
+        return cls
+    try:
+        func._pyperformance_test_labels.append(label)
+    except AttributeError:
+        func._pyperformance_test_labels = [label]
+    return func
+
 
 class Compat:
     """A mixin that lets older Pythons use newer unittest features."""
@@ -123,6 +152,18 @@ class Compat:
 
 #############################
 # functional tests
+
+CPYTHON_ONLY = unittest.skipIf(
+    sys.implementation.name != 'cpython',
+    'CPython-only',
+)
+NON_WINDOWS_ONLY = unittest.skipIf(os.name == 'nt', 'skipping Windows')
+
+# XXX Provide a way to run slow tests.
+SLOW = (lambda f:
+            unittest.skip('way too slow')(
+                mark('slow', f)))
+
 
 class Functional(Compat):
     """A mixin for functional tests.

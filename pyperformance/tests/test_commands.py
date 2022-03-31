@@ -9,12 +9,6 @@ import pyperformance
 from pyperformance import tests
 
 
-CPYTHON_ONLY = unittest.skipIf(
-    sys.implementation.name != 'cpython',
-    'CPython-only',
-)
-
-
 class FullStackTests(tests.Functional, unittest.TestCase):
 
     maxDiff = 80 * 100
@@ -108,56 +102,41 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             print('---')
             print()
 
+        def expect_success(*args):
+            text = self.run_pyperformance(
+                *args,
+                capture=None,
+            )
+
+        def expect_failure(*args):
+            text = self.run_pyperformance(
+                *args,
+                capture=None,
+                exitcode=1,
+            )
+
         # It doesn't exist yet.
-        self.run_pyperformance(
-            'venv', 'show', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'show', '--venv', root)
         div()
         # It gets created.
-        self.run_pyperformance(
-            'venv', 'create', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'create', '--venv', root)
         div()
-        self.run_pyperformance(
-            'venv', 'show', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'show', '--venv', root)
         div()
         # It alraedy exists.
-        self.run_pyperformance(
-            'venv', 'create', '--venv', root,
-            capture=None,
-            exitcode=1,
-        )
+        expect_failure('venv', 'create', '--venv', root)
         div()
-        self.run_pyperformance(
-            'venv', 'show', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'show', '--venv', root)
         div()
         # It gets re-created.
-        self.run_pyperformance(
-            'venv', 'recreate', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'recreate', '--venv', root)
         div()
-        self.run_pyperformance(
-            'venv', 'show', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'show', '--venv', root)
         div()
         # It get deleted.
-        self.run_pyperformance(
-            'venv', 'remove', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'remove', '--venv', root)
         div()
-        self.run_pyperformance(
-            'venv', 'show', '--venv', root,
-            capture=None,
-        )
+        expect_success('venv', 'show', '--venv', root)
 
     ###################################
     # run
@@ -170,7 +149,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         # --debug-single-value: benchmark results don't matter, we only
         # check that running benchmarks don't fail.
         # XXX Capture and check the output.
-        self.run_pyperformance(
+        text = self.run_pyperformance(
             'run',
             '-b', 'all',
             '--debug-single-value',
@@ -259,8 +238,9 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             outfile.write(text)
         return cfgfile
 
-    @CPYTHON_ONLY
-    @unittest.skip('way too slow')
+    @tests.CPYTHON_ONLY
+    @tests.NON_WINDOWS_ONLY
+    @tests.SLOW
     def test_compile(self):
         cfgfile = self.create_compile_config()
         revision = 'a58ebcc701dd'  # tag: v3.10.2
@@ -271,8 +251,9 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             capture=None,
         )
 
-    @CPYTHON_ONLY
-    @unittest.skip('way too slow')
+    @tests.CPYTHON_ONLY
+    @tests.NON_WINDOWS_ONLY
+    @tests.SLOW
     def test_compile_all(self):
         rev1 = '2cd268a3a934'  # tag: v3.10.1
         rev2 = 'a58ebcc701dd'  # tag: v3.10.2
@@ -284,7 +265,8 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             capture=None,
         )
 
-    @CPYTHON_ONLY
+    @tests.CPYTHON_ONLY
+    @tests.NON_WINDOWS_ONLY
     @unittest.expectedFailure
     def test_upload(self):
         url = '<bogus>'
@@ -387,8 +369,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             Skipped 1 benchmarks only in py36.json: telco
 
             Skipped 1 benchmarks only in py3_performance03.json: call_simple
-
-            ERROR: Performance versions are different: 1.0.1 != 0.3
+            ERROR: Performance versions are different (1.0.1 != 0.3)
             ''').lstrip())
 
     def test_compare_single_value(self):

@@ -45,9 +45,9 @@ def cmd_venv_create(options, root, python, benchmarks):
     venv.ensure_pip()
     try:
         venv.install_pyperformance()
+        venv.ensure_reqs(requirements)
     except _venv.RequirementsInstallationFailedError:
         sys.exit(1)
-    venv.ensure_reqs(requirements, exitonerror=True)
     print("The virtual environment %s has been created" % root)
 
 
@@ -67,10 +67,10 @@ def cmd_venv_recreate(options, root, python, benchmarks):
             )
             venv.ensure_pip()
             try:
-                venv.install_pyperformance()
+                venv.ensure_reqs(requirements)
+                venv.ensure_reqs(requirements)
             except _venv.RequirementsInstallationFailedError:
                 sys.exit(1)
-            venv.ensure_reqs(requirements, exitonerror=True)
         else:
             print("The virtual environment %s already exists" % root)
             _utils.safe_rmtree(root)
@@ -84,9 +84,9 @@ def cmd_venv_recreate(options, root, python, benchmarks):
             venv.ensure_pip()
             try:
                 venv.install_pyperformance()
+                venv.ensure_reqs(requirements)
             except _venv.RequirementsInstallationFailedError:
                 sys.exit(1)
-            venv.ensure_reqs(requirements, exitonerror=True)
             print("The virtual environment %s has been recreated" % root)
     else:
         venv = VenvForBenchmarks.create(
@@ -97,9 +97,9 @@ def cmd_venv_recreate(options, root, python, benchmarks):
         venv.ensure_pip()
         try:
             venv.install_pyperformance()
+            venv.ensure_reqs(requirements)
         except _venv.RequirementsInstallationFailedError:
             sys.exit(1)
-        venv.ensure_reqs(requirements, exitonerror=True)
         print("The virtual environment %s has been created" % root)
 
 
@@ -225,9 +225,13 @@ def cmd_show(options):
 
 
 def cmd_compare(options):
-    from .compare import compare_results, write_csv
+    from .compare import compare_results, write_csv, VersionMismatchError
 
-    results = compare_results(options)
+    try:
+        results = compare_results(options)
+    except VersionMismatchError as exc:
+        print(f'ERROR: {exc}')
+        sys.exit(1)
 
     if options.csv:
         write_csv(results, options.csv)
