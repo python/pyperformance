@@ -65,8 +65,9 @@ class GetInfoTests(tests.Functional, unittest.TestCase):
             venv, python, cleanup = tests.create_venv()
             self.addCleanup(cleanup)
             expected.sys.executable = python
-            expected.sys._base_executable = os.path.normpath(sys.executable)
-            expected.base_executable = os.path.normpath(sys.executable)
+            realpath = os.path.realpath(os.path.normpath(sys.executable))
+            expected.sys._base_executable = realpath
+            expected.base_executable = realpath
             expected.sys.prefix = venv
             expected.sys.exec_prefix = venv
             expected.sys.version_info = tuple(expected.sys.version_info)
