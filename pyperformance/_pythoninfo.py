@@ -2,165 +2,157 @@
 #
 # This may be used as a script.
 
-__all__ = [
-    'get_python_id',
-    'get_python_info',
-    'inspect_python_install',
-]
-
-
-import hashlib
+import importlib.util
 import json
 import os
-import subprocess
+import os.path
 import sys
+import sysconfig
 
 
-def get_python_id(python=sys.executable, *, prefix=None):
-    """Return a unique (str) identifier for the given Python executable."""
-    if not python or isinstance(python, str):
-        info = get_python_info(python or sys.executable)
+INFO = {
+    # sys
+    'executable (sys)': 'sys.executable',
+    'executable (sys;realpath)': 'executable_realpath',
+    'prefix (sys)': 'sys.prefix',
+    'exec_prefix (sys)': 'sys.exec_prefix',
+    'stdlib_dir (sys)': 'sys._stdlib_dir',
+    'base_executable (sys)': 'sys._base_executable',
+    'base_prefix (sys)': 'sys.base_prefix',
+    'base_exec_prefix (sys)': 'sys.base_exec_prefix',
+    'version_str (sys)': 'sys.version',
+    'version_info (sys)': 'sys.version_info',
+    'hexversion (sys)': 'sys.hexversion',
+    'api_version (sys)': 'sys.api_version',
+    'implementation_name (sys)': 'sys.implementation.name',
+    'implementation_version (sys)': 'sys.implementation.version',
+    'platform (sys)': 'sys.platform',
+    # sysconfig
+    'stdlib_dir (sysconfig)': 'sysconfig.paths.stdlib',
+    'is_dev (sysconfig)': 'sysconfig.is_python_build',
+    # other
+    'base_executable': 'base_executable',
+    'stdlib_dir': 'stdlib_dir',
+    'pyc_magic_number': 'pyc_magic_number',
+    'is_venv': 'is_venv',
+}
+
+
+def get_info(python=sys.executable):
+    """Return an object with details about the given Python executable.
+
+    Most of the details are grouped by their source.
+
+    By default the current Python is used.
+    """
+    if python and python != sys.executable:
+        # Run _pythoninfo.py to get the raw info.
+        import subprocess
+        argv = [python, __file__]
+        try:
+            text = subprocess.check_output(argv, encoding='utf-8')
+        except subprocess.CalledProcessError:
+            raise Exception(f'could not get info for {python or sys.executable}')
+        data = _unjsonify_info(text)
     else:
-        info = python
-        python = info['executable']
-
-    data = [
-        # "executable" represents the install location
-        # (and build, to an extent).
-        info['executable'],
-        # sys.version encodes version, git info, build_date, and build_tool.
-        info['version_str'],
-        info['implementation_name'],
-        '.'.join(str(v) for v in info['implementation_version']),
-        str(info['api_version']),
-        info['magic_number'],
-    ]
-    # XXX Add git info if a dev build.
-
-    h = hashlib.sha256()
-    for value in data:
-        h.update(value.encode('utf-8'))
-    # XXX Also include the sorted output of "python -m pip freeze"?
-    py_id = h.hexdigest()
-    # XXX Return the whole string?
-    py_id = py_id[:12]
-
-    if prefix:
-        if prefix is True:
-            major, minor = info['version_info'][:2]
-            py_id = f'{info["implementation_name"]}{major}.{minor}-{py_id}'
-        else:
-            py_id = prefix + py_id
-
-    return py_id
+        data = _get_current_info()
+    return _build_info(data)
 
 
-def get_python_info(python=sys.executable):
-    if not python or python == sys.executable:
-        return _get_raw_info()
-
-    try:
-        text = subprocess.check_output(
-            [python, __file__],
-            universal_newlines=True,
-        )
-    except subprocess.CalledProcessError:
-        raise Exception(f'could not get info for {python}')
-    return json.loads(text)
-
-
-def inspect_python_install(python=sys.executable):
-    if isinstance(python, str):
-        info = get_python_info(python)
-    else:
-        info = python
-    return _inspect_python_install(**info)
+def _build_info(data):
+    # Map the data into a new types.SimpleNamespace object.
+    info = type(sys.implementation)()
+    for key, value in data.items():
+        try:
+            field = INFO[key]
+        except KeyError:
+            raise NotImplementedError(repr(key))
+        parent = info
+        while '.' in field:
+            pname, _, field = field.partition('.')
+            try:
+                parent = getattr(parent, pname)
+            except AttributeError:
+                setattr(parent, pname, type(sys.implementation)())
+                parent = getattr(parent, pname)
+        setattr(parent, field, value)
+    return info
 
 
-#######################################
-# internal implementation
-
-try:
-    PLATLIBDIR = sys.platlibdir
-except AttributeError:
-    PLATLIBDIR = 'lib'
-STDLIB_DIR = os.path.dirname(os.__file__)
-try:
-    from importlib.util import MAGIC_NUMBER
-except ImportError:
-    import _imp
-    MAGIC_NUMBER = _imp.get_magic()
-
-
-def _inspect_python_install(executable, prefix, base_prefix,
-                            platlibdir, stdlib_dir,
-                            version_info, platform, implementation_name,
-                            **_ignored):
-    is_venv = prefix != base_prefix
-
-    if os.path.basename(stdlib_dir) == 'Lib':
-        base_executable = os.path.join(os.path.dirname(stdlib_dir), 'python')
-        if not os.path.exists(base_executable):
-            raise NotImplementedError(base_executable)
-        is_dev = True
-    else:
-        major, minor = version_info[:2]
-        python = f'python{major}.{minor}'
-        if is_venv:
-            if '.' in os.path.basename(executable):
-                ext = executable.rpartition('.')[2]
-                python_exe = f'{python}.{ext}'
-            else:
-                python_exe = python
-            expected = os.path.join(base_prefix, platlibdir, python)
-            if stdlib_dir == expected:
-                bindir = os.path.basename(os.path.dirname(executable))
-                base_executable = os.path.join(base_prefix, bindir, python_exe)
-            else:
-                # XXX This is good enough for now.
-                base_executable = executable
-                #raise NotImplementedError(stdlib_dir)
-        elif implementation_name == 'cpython':
-            if platform == 'win32':
-                expected = os.path.join(prefix, platlibdir)
-            else:
-                expected = os.path.join(prefix, platlibdir, python)
-            if stdlib_dir == expected:
-                base_executable = executable
-            else:
-                raise NotImplementedError(stdlib_dir)
-        else:
-            base_executable = executable
-        is_dev = False
-
-    return base_executable, is_dev, is_venv
-
-
-def _get_raw_info():
-    return {
-        'executable': sys.executable,
-        'version_str': sys.version,
-        'version_info': tuple(sys.version_info),
-        'hexversion': sys.hexversion,
-        'api_version': sys.api_version,
-        'magic_number': MAGIC_NUMBER.hex(),
-        'implementation_name': sys.implementation.name.lower(),
-        'implementation_version': tuple(sys.implementation.version),
-        'platform': sys.platform,
-        'prefix': sys.prefix,
-        'exec_prefix': sys.exec_prefix,
-        'base_prefix': sys.base_prefix,
-        'base_exec_prefix': sys.base_exec_prefix,
-        'platlibdir': PLATLIBDIR,
-        'stdlib_dir': STDLIB_DIR,
-        # XXX Also include the build options (e.g. configure flags)?
+def _get_current_info():
+    is_venv = (sys.prefix != sys.base_prefix)
+    base_executable = getattr(sys, '_base_executable', None)
+    if is_venv:
+        # XXX There is probably a bug related to venv, since
+        # sys._base_executable should be different.
+        if base_executable == sys.executable:
+            # Indicate that we don't know.
+            base_executable = None
+    elif not base_executable:
+        base_executable = sys.executable
+    info = {
+        # locations
+        'executable (sys)': sys.executable,
+        'executable (sys;realpath)': os.path.realpath(sys.executable),
+        'prefix (sys)': sys.prefix,
+        'exec_prefix (sys)': sys.exec_prefix,
+        'stdlib_dir': os.path.dirname(os.__file__),
+        'stdlib_dir (sys)': getattr(sys, '_stdlib_dir', None),
+        'stdlib_dir (sysconfig)': (sysconfig.get_path('stdlib')
+                                   if 'stdlib' in sysconfig.get_path_names()
+                                   else None),
+        # base locations
+        'base_executable': base_executable,
+        'base_executable (sys)': getattr(sys, '_base_executable', None),
+        'base_prefix (sys)': sys.base_prefix,
+        'base_exec_prefix (sys)': sys.base_exec_prefix,
+        # version
+        'version_str (sys)': sys.version,
+        'version_info (sys)': sys.version_info,
+        'hexversion (sys)': sys.hexversion,
+        'api_version (sys)': sys.api_version,
+        # implementation
+        'implementation_name (sys)': sys.implementation.name,
+        'implementation_version (sys)': sys.implementation.version,
+        # build
+        'is_dev (sysconfig)': sysconfig.is_python_build(),
+        # host
+        'platform (sys)': sys.platform,
+        # virtual envs
+        'is_venv': is_venv,
+        # import system
+        # importlib.util.MAGIC_NUMBER has been around since 3.5.
+        'pyc_magic_number': importlib.util.MAGIC_NUMBER,
     }
+    return info
+
+
+def _jsonify_info(info):
+    data = dict(info)
+    if isinstance(data['pyc_magic_number'], bytes):
+        data['pyc_magic_number'] = data['pyc_magic_number'].hex()
+    return data
+
+
+def _unjsonify_info(data):
+    if isinstance(data, str):
+        data = json.loads(data)
+    info = dict(data)
+    for key in ('version_info (sys)', 'implementation_version (sys)'):
+        if isinstance(info[key], list):
+            # We would use type(sys.version_info) if it allowed it.
+            info[key] = tuple(info[key])
+    for key in ('pyc_magic_number',):
+        if isinstance(info[key], str):
+            info[key] = bytes.fromhex(data[key])
+    return info
 
 
 #######################################
 # use as a script
 
 if __name__ == '__main__':
-    info = _get_raw_info()
-    json.dump(info, sys.stdout, indent=4)
+    info = _get_current_info()
+    data = _jsonify_info(info)
+    json.dump(data, sys.stdout, indent=4)
     print()

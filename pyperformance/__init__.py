@@ -2,7 +2,7 @@ import os.path
 import sys
 
 
-VERSION = (1, 0, 3)
+VERSION = (1, 0, 5)
 __version__ = '.'.join(map(str, VERSION))
 
 
@@ -11,12 +11,16 @@ DATA_DIR = os.path.join(PKG_ROOT, 'data-files')
 
 
 def is_installed():
-    parent = os.path.dirname(PKG_ROOT)
-    if not os.path.exists(os.path.join(parent, 'setup.py')):
+    if not is_dev():
         return True
     if _is_venv():
         return True
     return _is_devel_install()
+
+
+def is_dev():
+    parent = os.path.dirname(PKG_ROOT)
+    return os.path.exists(os.path.join(parent, 'setup.py'))
 
 
 def _is_venv():

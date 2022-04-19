@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Version 1.0.4 (2022-01-25)
+-------------
+
+* Re-release support for user-defined benchmark after fixing problem
+  with virtual environments.
+
 Version 1.0.3 (2021-12-20)
 -------------
 

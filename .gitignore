@@ -14,6 +14,10 @@ pyperformance.egg-info/
 
 # Created by the pyperformance script
 venv/
+.venvs/
+
+# Create during tests
+pyperformance/tests/data/cpython/
 
 # Created by the tox program
 .tox/

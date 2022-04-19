@@ -4,11 +4,10 @@ import errno
 import json
 import logging
 import math
+import os
 import os.path
-import pyperf
 import re
 import shlex
-import shutil
 import statistics
 import subprocess
 import sys
@@ -17,10 +16,10 @@ from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
+import pyperf
+
 import pyperformance
-from pyperformance._utils import MS_WINDOWS
-from pyperformance.venv import (GET_PIP_URL, REQ_OLD_PIP, PERFORMANCE_ROOT,
-                                download, is_build_dir)
+from pyperformance import _utils, _pip
 
 
 GIT = True
@@ -224,11 +223,6 @@ class Application(object):
 
         return stdout
 
-    def safe_rmdir(self, directory):
-        if os.path.exists(directory):
-            self.logger.error("Remove directory %s" % directory)
-            shutil.rmtree(directory)
-
     def safe_makedirs(self, directory):
         try:
             os.makedirs(directory)
@@ -283,11 +277,11 @@ class Python(Task):
     def compile(self):
         build_dir = self.conf.build_dir
 
-        self.app.safe_rmdir(build_dir)
+        _utils.safe_rmtree(build_dir)
         self.app.safe_makedirs(build_dir)
 
         config_args = []
-        if self.branch.startswith("2.") and not MS_WINDOWS:
+        if self.branch.startswith("2.") and not _utils.MS_WINDOWS:
             # On Python 2, use UCS-4 for Unicode on all platforms, except
             # on Windows which uses UTF-16 because of its 16-bit wchar_t
             config_args.append('--enable-unicode=ucs4')
@@ -317,7 +311,7 @@ class Python(Task):
         )
         if self.conf.install:
             program, _ = resolve_python(self.conf.prefix, self.conf.build_dir)
-            self.app.safe_rmdir(self.conf.prefix)
+            _utils.safe_rmtree(self.conf.prefix)
             self.app.safe_makedirs(self.conf.prefix)
             self.run('make', 'install')
         else:
@@ -369,34 +363,28 @@ class Python(Task):
 
     def download(self, url, filename):
         self.logger.error("Download %s into %s" % (url, filename))
-        download(url, filename)
+        _utils.download(url, filename)
 
     def _install_pip(self):
         # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 7.1.2,
         # the last version working on Python 3.5a0:
         # https://sourceforge.net/p/pyparsing/bugs/100/
-        force_old_pip = (0x30500a0 <= self.hexversion < 0x30500f0)
+        assert self.hexversion > 0x3060000, self.hexversion
 
         # is pip already installed and working?
         exitcode = self.run_nocheck(self.program, '-u', '-m', 'pip', '--version')
         if not exitcode:
-            if force_old_pip:
-                self.run(self.program, '-u', '-m', 'pip', 'install', REQ_OLD_PIP)
-            else:
-                # Upgrade pip
-                self.run(self.program, '-u', '-m', 'pip', 'install', '-U', 'pip')
+            # Upgrade pip
+            self.run(self.program, '-u', '-m', 'pip', 'install', '-U', 'pip')
             return
 
         # pip is missing (or broken?): install it
         filename = os.path.join(self.conf.directory, 'get-pip.py')
         if not os.path.exists(filename):
-            self.download(GET_PIP_URL, filename)
+            self.download(_pip.GET_PIP_URL, filename)
 
-        if force_old_pip:
-            self.run(self.program, '-u', filename, REQ_OLD_PIP)
-        else:
-            # Install pip
-            self.run(self.program, '-u', filename)
+        # Install pip
+        self.run(self.program, '-u', filename)
 
     def install_pip(self):
         self._install_pip()
@@ -407,9 +395,8 @@ class Python(Task):
     def install_performance(self):
         cmd = [self.program, '-u', '-m', 'pip', 'install']
 
-        if is_build_dir():
-            root_dir = os.path.dirname(PERFORMANCE_ROOT)
-            cmd.extend(('-e', root_dir))
+        if pyperformance.is_dev():
+            cmd.append(os.path.dirname(pyperformance.PKG_ROOT))
         else:
             version = pyperformance.__version__
             cmd.append('pyperformance==%s' % version)
@@ -504,9 +491,8 @@ class BenchmarkRevision(Application):
         self.repository.checkout(self.revision)
 
         # First: remove everything
-        self.safe_rmdir(self.conf.build_dir)
-        self.safe_rmdir(self.conf.prefix)
-        self.safe_rmdir(self.conf.venv)
+        _utils.safe_rmtree(self.conf.build_dir)
+        _utils.safe_rmtree(self.conf.prefix)
 
         self.python.patch(self.patch)
         self.python.compile_install()
@@ -522,18 +508,22 @@ class BenchmarkRevision(Application):
             if not python or not exists:
                 python = sys.executable
         cmd = [python, '-u', '-m', 'pyperformance', 'venv', 'recreate',
-               '--benchmarks', '<NONE>']
-        if self.conf.venv:
-            cmd.extend(('--venv', self.conf.venv))
+               '--venv', self.conf.venv,
+               '--benchmarks', '<NONE>',
+               ]
         if self.options.inherit_environ:
             cmd.append('--inherit-environ=%s' % ','.join(self.options.inherit_environ))
         exitcode = self.run_nocheck(*cmd)
         if exitcode:
             sys.exit(EXIT_VENV_ERROR)
+        binname = 'Scripts' if os.name == 'nt' else 'bin'
+        base = os.path.basename(python)
+        return os.path.join(self.conf.venv, binname, base)
 
-    def run_benchmark(self):
+    def run_benchmark(self, python=None):
         self.safe_makedirs(os.path.dirname(self.filename))
-        python = self.python.program
+        if not python:
+            python = self.python.program
         if self._dryrun:
             python = sys.executable
         cmd = [python, '-u',
@@ -549,8 +539,6 @@ class BenchmarkRevision(Application):
             cmd.append('--benchmarks=%s' % self.conf.benchmarks)
         if self.conf.affinity:
             cmd.extend(('--affinity', self.conf.affinity))
-        if self.conf.venv:
-            cmd.extend(('--venv', self.conf.venv))
         if self.conf.debug:
             cmd.append('--debug-single-value')
         exitcode = self.run_nocheck(*cmd)
@@ -709,9 +697,12 @@ class BenchmarkRevision(Application):
             except SystemExit:
                 sys.exit(EXIT_COMPILE_ERROR)
 
-        self.create_venv()
+        if self.conf.venv:
+            python = self.create_venv()
+        else:
+            python = None
 
-        failed = self.run_benchmark()
+        failed = self.run_benchmark(python)
         if not failed and self.conf.upload:
             self.upload()
         return failed
@@ -983,38 +974,3 @@ class BenchmarkAll(Application):
 
         if self.failed:
             sys.exit(1)
-
-
-def cmd_compile(options):
-    conf = parse_config(options.config_file, "compile")
-    if options is not None:
-        if options.no_update:
-            conf.update = False
-        if options.no_tune:
-            conf.system_tune = False
-        if options.venv:
-            conf.venv = options.venv
-    bench = BenchmarkRevision(conf, options.revision, options.branch,
-                              patch=options.patch, options=options)
-    bench.main()
-
-
-def cmd_upload(options):
-    conf = parse_config(options.config_file, "upload")
-
-    filename = options.json_file
-    bench = pyperf.BenchmarkSuite.load(filename)
-    metadata = bench.get_metadata()
-    revision = metadata['commit_id']
-    branch = metadata['commit_branch']
-    commit_date = parse_date(metadata['commit_date'])
-
-    bench = BenchmarkRevision(conf, revision, branch,
-                              filename=filename, commit_date=commit_date,
-                              setup_log=False, options=options)
-    bench.upload()
-
-
-def cmd_compile_all(options):
-    bench = BenchmarkAll(options.config_file, options=options)
-    bench.main()
