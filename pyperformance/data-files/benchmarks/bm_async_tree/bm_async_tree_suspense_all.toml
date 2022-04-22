@@ -1,0 +1,4 @@
+[tool.pyperformance]
+name = "async_tree_suspense_all"
+extra_opts = ["suspense_all"]
+
