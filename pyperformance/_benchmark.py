@@ -262,7 +262,7 @@ def _resolve_restricted_opts(opts):
         if opt.startswith(FLAG + '='):
             idx = i + 1
             resolved.append(FLAG)
-            resolved.append(opt.partition('=')[-2])
+            resolved.append(opt.partition('=')[-1])
             resolved.extend(opts[idx:])
             break
         elif opt == FLAG:
