@@ -72,6 +72,8 @@ def parse_args():
     cmd.add_argument("--append", metavar="FILENAME",
                      help="Add runs to an existing file, or create it "
                      "if it doesn't exist")
+    cmd.add_argument("--track-energy", action="store_true",
+                     help="Track energy instead of wall clock time.")
     filter_opts(cmd)
 
     # show

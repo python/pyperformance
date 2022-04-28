@@ -201,7 +201,26 @@ def get_pyperf_opts(options):
         opts.append('--affinity=%s' % options.affinity)
     if options.track_memory:
         opts.append('--track-memory')
-    if options.inherit_environ:
+    if options.inherit_environ or options.track_energy:
+        # In the track_energy case, pyperf will need
+        # a couple of env variables to work. We save
+        # the user from manual insertion of --inherit-environ.
+        if options.track_energy:
+            if options.inherit_environ is None:
+                options.inherit_environ = []
+            from os import environ as curr_env
+            env = curr_env
+            try:
+                lib = env['READEN']
+                f = env['ENFILE']
+                ld = env['LD_LIBRARY_PATH']
+                options.inherit_environ.append('READEN')
+                options.inherit_environ.append('ENFILE')
+                options.inherit_environ.append('LD_LIBRARY_PATH')
+            except:
+                raise OSError('--track-energy needs READEN, ENFILE environment variables to work.')
         opts.append('--inherit-environ=%s' % ','.join(options.inherit_environ))
-
+    if options.track_energy:
+        opts.append('--track-energy')
+            
     return opts
