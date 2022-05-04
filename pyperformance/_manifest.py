@@ -117,13 +117,17 @@ class BenchmarksManifest:
                     _resolve = resolve_default_benchmark
             lastfile = filename
 
+            section_key = section
+            if section == "group":
+                section_key = (section, data[0])
+
             if filename not in sections_seen:
-                sections_seen[filename] = {section}
-            elif section in sections_seen[filename]:
-                # For now each section can only show up once.
-                raise NotImplementedError((section, data))
+                sections_seen[filename] = {section_key}
+            elif section_key in sections_seen[filename]:
+                # For now each section_key can only show up once.
+                raise NotImplementedError((section_key, data))
             else:
-                sections_seen[filename].add(section)
+                sections_seen[filename].add(section_key)
 
             if section == 'includes':
                 pass
