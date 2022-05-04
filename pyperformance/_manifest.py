@@ -419,20 +419,20 @@ def _resolve_groups(rawgroups, byname):
     while unresolved:
         for groupname, names in list(unresolved.items()):
             benchmarks = set()
-            for name in names:
+
+            q = list(names)
+            while q:
+                name = q.pop()
+
                 if name in byname:
                     benchmarks.add(byname[name])
                 elif name in groups:
                     benchmarks.update(groups[name])
-                    names.remove(name)
                 elif name == groupname:
-                    names.remove(name)
-                    break
+                    pass
                 else:  # name in unresolved
-                    names.remove(name)
-                    names.extend(unresolved[name])
-                    break
-            else:
-                groups[groupname] = benchmarks
-                del unresolved[groupname]
+                    q.extend(unresolved[name])
+
+            groups[groupname] = benchmarks
+            del unresolved[groupname]
     return groups
