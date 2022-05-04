@@ -360,6 +360,7 @@ def _parse_group_section(lines):
             op = '+'
             name = line[1:]
         else:
+            op = '+'
             name = line
         _benchmark.check_name(name)
         yield op, name
