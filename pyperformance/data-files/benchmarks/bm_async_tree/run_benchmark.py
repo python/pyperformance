@@ -1,15 +1,16 @@
 """
-Benchmark for async tree workload, which calls asyncio.gather on a tree
+Benchmark for async tree workload, which calls asyncio.gather() on a tree
 (6 levels deep, 6 branches per level) with the leaf nodes simulating some
-(potentially) async work (depending on the benchmark scenario). Benchmark
-scenarios include:
+(potentially) async work (depending on the benchmark variant). Benchmark
+variants include:
 
-1) "no_suspension": No suspension in the async tree.
-2) "suspense_all": Suspension (simulating IO) at all leaf nodes in the async tree.
-3) "memoization": Simulated IO calls at all leaf nodes, but with memoization. Only
-                  un-memoized IO calls will result in suspensions.
-4) "cpu_io_mixed": A mix of CPU-bound workload and IO-bound workload (with
-                   memoization) at the leaf nodes.
+1) "none": No actual async work in the async tree.
+2) "io": All leaf nodes simulate async IO workload (async sleep 50ms).
+3) "memoization": All leaf nodes simulate async IO workload with 90% of 
+                  the data memoized
+4) "cpu_io_mixed": Half of the leaf nodes simulate CPU-bound workload and 
+                   the other half simulate the same workload as the 
+                   "memoization" variant.
 """
 
 
@@ -38,14 +39,14 @@ class AsyncTree:
     async def mock_io_call(self):
         await asyncio.sleep(IO_SLEEP_TIME)
 
-    async def suspense_func(self):
+    async def workload_func(self):
         raise NotImplementedError(
-            "To be implemented by each microbenchmark's derived class."
+            "To be implemented by each variant's derived class."
         )
 
     async def recurse(self, recurse_level):
         if recurse_level == 0:
-            await self.suspense_func()
+            await self.workload_func()
             return
 
         await asyncio.gather(
@@ -56,18 +57,18 @@ class AsyncTree:
         await self.recurse(NUM_RECURSE_LEVELS)
 
 
-class NoSuspensionAsyncTree(AsyncTree):
-    async def suspense_func(self):
+class NoneAsyncTree(AsyncTree):
+    async def workload_func(self):
         return
 
 
-class SuspenseAllAsyncTree(AsyncTree):
-    async def suspense_func(self):
+class IOAsyncTree(AsyncTree):
+    async def workload_func(self):
         await self.mock_io_call()
 
 
 class MemoizationAsyncTree(AsyncTree):
-    async def suspense_func(self):
+    async def workload_func(self):
         data = random.randint(1, 100)
 
         if data <= MEMOIZABLE_PERCENTAGE:
@@ -81,12 +82,12 @@ class MemoizationAsyncTree(AsyncTree):
 
 
 class CpuIoMixedAsyncTree(MemoizationAsyncTree):
-    async def suspense_func(self):
+    async def workload_func(self):
         if random.random() < CPU_PROBABILITY:
             # mock cpu-bound call
             return math.factorial(FACTORIAL_N)
         else:
-            return await MemoizationAsyncTree.suspense_func(self)
+            return await MemoizationAsyncTree.workload_func(self)
 
 
 def add_metadata(runner):
@@ -110,19 +111,20 @@ def add_parser_args(parser):
         choices=BENCHMARKS,
         help="""\
 Determines which benchmark to run. Options:
-1) "no_suspension": No suspension in the async tree.
-2) "suspense_all": Suspension (simulating IO) at all leaf nodes in the async tree.
-3) "memoization": Simulated IO calls at all leaf nodes, but with memoization. Only
-                  un-memoized IO calls will result in suspensions.
-4) "cpu_io_mixed": A mix of CPU-bound workload and IO-bound workload (with
-                   memoization) at the leaf nodes.
+1) "none": No actual async work in the async tree.
+2) "io": All leaf nodes simulate async IO workload (async sleep 50ms).
+3) "memoization": All leaf nodes simulate async IO workload with 90% of 
+                  the data memoized
+4) "cpu_io_mixed": Half of the leaf nodes simulate CPU-bound workload and 
+                   the other half simulate the same workload as the 
+                   "memoization" variant.
 """,
     )
 
 
 BENCHMARKS = {
-    "no_suspension": NoSuspensionAsyncTree,
-    "suspense_all": SuspenseAllAsyncTree,
+    "none": NoneAsyncTree,
+    "io": IOAsyncTree,
     "memoization": MemoizationAsyncTree,
     "cpu_io_mixed": CpuIoMixedAsyncTree,
 }

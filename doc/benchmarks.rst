@@ -60,14 +60,12 @@ depending on the Python version.
 async_tree
 ----------
 
-Async workload benchmark, which calls asyncio.gather() on a tree (6 levels deep, 6
-branches per level) with the leaf nodes simulating some [potentially] async work
+Async workload benchmark, which calls ``asyncio.gather()`` on a tree (6 levels deep,
+6 branches per level) with the leaf nodes simulating some [potentially] async work
 (depending on the benchmark variant). Available variants:
 
-* ``async_tree``: (also the ``async_tree_no_suspension`` variant) no actual async
-  work at any leaf node.
-* ``async_tree_suspense_all``: all leaf nodes simulate async IO workload (async 
-  sleep 50ms).
+* ``async_tree``: no actual async work at any leaf node.
+* ``async_tree_io``: all leaf nodes simulate async IO workload (async sleep 50ms).
 * ``async_tree_memoization``: all leaf nodes simulate async IO workload with 90% of 
   the data memoized.
 * ``async_tree_cpu_io_mixed``: half of the leaf nodes simulate CPU-bound workload (
