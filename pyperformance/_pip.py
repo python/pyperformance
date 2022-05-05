@@ -153,6 +153,11 @@ def install_requirements(reqs, *extra,
         if os.path.exists(reqs):
             args.append('-r')  # --requirement
         args.append(reqs)
+
+    if "USE_BINARY_PACKAGES" not in os.environ:
+        # Force recompilation:
+        args.extend(["--no-binary", ":all:"])
+
     return run_pip('install', *args, **kwargs)
 
 
