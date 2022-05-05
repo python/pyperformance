@@ -23,11 +23,15 @@ jobs:
         include:
           # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
-            python: pypy3
+            python: pypy-3.9
+          - os: ubuntu-latest
+            python: pypy-3.8
+          - os: ubuntu-latest
+            python: pypy-3.7
           - os: macos-latest
             python: "3.10"
           # XXX: We should be testing 3.10, but for some reason setuptools can't
-          # seem to find the runner's C compiler for new wheel builds... 
+          # seem to find the runner's C compiler for new wheel builds...
           - os: windows-latest
             python: "3.9"
     steps:
