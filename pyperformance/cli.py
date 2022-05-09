@@ -29,7 +29,7 @@ def filter_opts(cmd, *, allow_no_benchmarks=False):
     cmd.add_argument("--manifest", help="benchmark manifest file to use")
 
     cmd.add_argument("-b", "--benchmarks", metavar="BM_LIST", default='<default>',
-                     help=("Comma-separated list of benchmarks to run.  Can"
+                     help=("Comma-separated list of benchmarks or groups to run.  Can"
                            " contain both positive and negative arguments:"
                            "  --benchmarks=run_this,also_this,-not_this.  If"
                            " there are no positive arguments, we'll run all"

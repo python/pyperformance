@@ -117,13 +117,17 @@ class BenchmarksManifest:
                     _resolve = resolve_default_benchmark
             lastfile = filename
 
+            section_key = section
+            if section == "group":
+                section_key = (section, data[0])
+
             if filename not in sections_seen:
-                sections_seen[filename] = {section}
-            elif section in sections_seen[filename]:
-                # For now each section can only show up once.
-                raise NotImplementedError((section, data))
+                sections_seen[filename] = {section_key}
+            elif section_key in sections_seen[filename]:
+                # For now each section_key can only show up once.
+                raise NotImplementedError((section_key, data))
             else:
-                sections_seen[filename].add(section)
+                sections_seen[filename].add(section_key)
 
             if section == 'includes':
                 pass
@@ -416,20 +420,20 @@ def _resolve_groups(rawgroups, byname):
     while unresolved:
         for groupname, names in list(unresolved.items()):
             benchmarks = set()
-            for name in names:
+
+            q = list(names)
+            while q:
+                name = q.pop()
+
                 if name in byname:
                     benchmarks.add(byname[name])
                 elif name in groups:
                     benchmarks.update(groups[name])
-                    names.remove(name)
                 elif name == groupname:
-                    names.remove(name)
-                    break
+                    pass
                 else:  # name in unresolved
-                    names.remove(name)
-                    names.extend(unresolved[name])
-                    break
-            else:
-                groups[groupname] = benchmarks
-                del unresolved[groupname]
+                    q.extend(unresolved[name])
+
+            groups[groupname] = benchmarks
+            del unresolved[groupname]
     return groups
