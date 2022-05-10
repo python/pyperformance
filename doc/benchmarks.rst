@@ -130,6 +130,16 @@ deepcopy
 Benchmark the Python `copy.deepcopy` method. The `deepcopy` method is
 performed on a nested dictionary and a dataclass.
 
+ctypes
+------
+
+Benchmark to measure the function call overhead of calling C functions using ctypes.
+
+The ``ctypes`` benchmark lets ``ctypes`` infer the argument types from the passed in
+values. The ``ctypes_argtypes`` benchmark `explicitly specifies the argument types
+<https://docs.python.org/3.10/library/ctypes.html?highlight=ctypes#specifying-the-required-argument-types-function-prototypes>`_,
+which is slower than inferred argument types.
+
 deltablue
 ---------
 

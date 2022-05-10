@@ -32,6 +32,7 @@ TOOL_FIELDS = {
     'datadir': None,
     'runscript': None,
     'extra_opts': None,
+    'install_setup': None,
 }
 
 
@@ -228,6 +229,9 @@ def _resolve_value(field, value, rootdir):
         for opt in value:
             if not opt or not isinstance(opt, str):
                 raise TypeError(f'extra_opts should be a list of strings, got {value!r}')
+    elif field == 'install_setup':
+        if not isinstance(value, bool):
+            raise TypeError(f'install_setup should be a bool, got {value!r}')
     else:
         raise NotImplementedError(field)
     return value

@@ -324,16 +324,17 @@ All other PEP 621 fields are optional (e.g. ``requires-python = ">=3.8"``,
 The ``[tool.pyperformance]`` Section
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-=============== ===== === === ===
-field           type  R   B   F 
-=============== ===== === === ===
-tool.name       str   X       X
-tool.tags       [str]     X    
-tool.extra_opts [str]     X    
-tool.inherits   file           
-tool.runscript  file      X    
-tool.datadir    file      X    
-=============== ===== === === ===
+================== ===== === === ===
+field              type  R   B   F
+================== ===== === === ===
+tool.name          str   X       X
+tool.tags          [str]     X
+tool.extra_opts    [str]     X
+tool.inherits      file
+tool.runscript     file      X
+tool.datadir       file      X
+tool.install_setup bool
+================== ===== === === ===
 
 "R": required
 "B": inferred from the inherited metadata
@@ -342,3 +343,6 @@ tool.datadir    file      X
 * tags: optional list of names to group benchmarks
 * extra_opts: optional list of args to pass to ``tool.runscript``
 * runscript: the benchmark script to use instead of run_benchmark.py.
+* install_setup: when ``true``, run ``pip install -e .`` in the
+  benchmark directory to install it in the virtual environment. This has the
+  effect of running a ``setup.py`` file, if present.
