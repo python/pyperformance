@@ -24,6 +24,7 @@ BENCH_HEADER = '\t'.join(BENCH_COLUMNS)
 def load_manifest(filename, *, resolve=None):
     if not filename:
         filename = DEFAULT_MANIFEST
+    filename = _utils.resolve_file(filename)
     sections = _parse_manifest_file(filename)
     return BenchmarksManifest._from_sections(sections, resolve, filename)
 
@@ -279,8 +280,6 @@ def _iter_sections(lines):
 
 
 def _parse_manifest_file(filename):
-    relroot = os.path.dirname(filename)
-    filename = _utils.resolve_file(filename, relroot)
     with open(filename, encoding="utf-8") as infile:
         yield from _parse_manifest(infile, filename)
 
