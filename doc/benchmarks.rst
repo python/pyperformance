@@ -20,7 +20,7 @@ Available benchmark groups:
 * ``default``: Group of benchmarks run by default by the ``run`` command
 * ``math``: Float and integers
 * ``regex``: Collection of regular expression benchmarks
-* ``serialize``: Benchmarks on ``pickle`` and ``json`` modules
+* ``serialize``: Benchmarks on ``pickle``, ``json`` and ``tomllib`` modules
 * ``startup``: Collection of microbenchmarks focused on Python interpreter
   start-up time.
 * ``template``: Templating libraries
@@ -644,6 +644,13 @@ The Python benchmark is implemented with the ``decimal`` module.
 
 See the `Python decimal module (stdlib)
 <https://docs.python.org/dev/library/decimal.html>`_.
+
+
+tomllib_loads
+-------------
+
+Benchmark ``loads()`` function of the ``tomllib`` stdlib module
+on a large TOML file of GitHub's data.
 
 
 tornado_http

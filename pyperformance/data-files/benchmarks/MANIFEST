@@ -51,6 +51,7 @@ sqlalchemy_imperative	<local>
 sqlite_synth	<local>
 sympy	<local>
 telco	<local>
+tomllib_loads	<local>
 tornado_http	<local>
 unpack_sequence	<local>
 unpickle	<local:pickle>
