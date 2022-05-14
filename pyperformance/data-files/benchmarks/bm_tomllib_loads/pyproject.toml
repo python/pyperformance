@@ -1,10 +1,10 @@
 [project]
-name = "pyperformance_bm_toml_loads"
+name = "pyperformance_bm_tomllib_loads"
 requires-python = ">=3.11"
 dependencies = ["pyperf"]
 urls = {repository = "https://github.com/python/pyperformance"}
 dynamic = ["version"]
 
 [tool.pyperformance]
-name = "toml_loads"
+name = "tomllib_loads"
 tags = "serialize"

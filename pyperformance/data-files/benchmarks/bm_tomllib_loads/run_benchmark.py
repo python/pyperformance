@@ -1,6 +1,8 @@
-import tomllib
-import pyperf
 from pathlib import Path
+
+import pyperf
+import tomllib
+
 DATA_FILE = Path(__file__).parent / "data" / "data.toml"
 
 def bench_tomllib_loads(data: str, loops: int) -> float:
