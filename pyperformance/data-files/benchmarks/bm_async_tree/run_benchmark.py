@@ -69,6 +69,7 @@ class IOAsyncTree(AsyncTree):
 
 class MemoizationAsyncTree(AsyncTree):
     async def workload_func(self):
+        # deterministic random, seed set in AsyncTree.__init__()
         data = random.randint(1, 100)
 
         if data <= MEMOIZABLE_PERCENTAGE:
@@ -83,6 +84,7 @@ class MemoizationAsyncTree(AsyncTree):
 
 class CpuIoMixedAsyncTree(MemoizationAsyncTree):
     async def workload_func(self):
+        # deterministic random, seed set in AsyncTree.__init__()
         if random.random() < CPU_PROBABILITY:
             # mock cpu-bound call
             return math.factorial(FACTORIAL_N)
