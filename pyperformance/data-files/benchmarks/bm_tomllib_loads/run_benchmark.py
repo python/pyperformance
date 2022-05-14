@@ -3,7 +3,7 @@ from pathlib import Path
 import pyperf
 import tomllib
 
-DATA_FILE = Path(__file__).parent / "data" / "data.toml"
+DATA_FILE = Path(__file__).parent / "data" / "tomllib-bench-data.toml"
 
 def bench_tomllib_loads(loops: int) -> None:
     data = DATA_FILE.read_text('utf-8')
