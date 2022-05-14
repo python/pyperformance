@@ -1,3 +1,12 @@
+"""
+Benchmark ``loads()`` function of the ``tomllib`` stdlib module
+on a large TOML file of GitHub's real world data.
+It heavily exercises string operations such as concatenation,
+subscripting and iteration of a real world application.
+
+Author: Kumar Aditya
+"""
+
 from pathlib import Path
 
 import pyperf
