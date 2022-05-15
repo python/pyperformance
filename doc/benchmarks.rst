@@ -111,8 +111,8 @@ CTR, ECB and OFB).
 deepcopy
 --------
 
-benchmark the pytython `copy.deepcopy` method. The `deepcopy` method is
-performed on a nestest dictionary and a dataclass.
+Benchmark the Python `copy.deepcopy` method. The `deepcopy` method is
+performed on a nested dictionary and a dataclass.
 
 deltablue
 ---------
