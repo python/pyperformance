@@ -5,6 +5,7 @@ name	metafile
 chameleon	<local>
 chaos	<local>
 crypto_pyaes	<local>
+deepcopy	<local>
 deltablue	<local>
 django_template	<local>
 dulwich_log	<local>

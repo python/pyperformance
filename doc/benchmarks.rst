@@ -108,6 +108,11 @@ See `pyaes <https://github.com/ricmoo/pyaes>`_: A pure-Python implementation of
 the AES block cipher algorithm and the common modes of operation (CBC, CFB,
 CTR, ECB and OFB).
 
+deepcopy
+--------
+
+benchmark the pytython `copy.deepcopy` method. The `deepcopy` method is
+performed on a nestest dictionary and a dataclass.
 
 deltablue
 ---------
