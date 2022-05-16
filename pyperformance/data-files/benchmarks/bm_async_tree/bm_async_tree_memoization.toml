@@ -1,0 +1,4 @@
+[tool.pyperformance]
+name = "async_tree_memoization"
+extra_opts = ["memoization"]
+
