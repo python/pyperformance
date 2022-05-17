@@ -137,6 +137,12 @@ def _get_envvars(inherit=None, osname=None):
         copy_env.extend(inherit)
 
     env = {}
+    # Recent setuptools versions have a bug that prevents being
+    # used to compile from a source build virtual environment.
+    # [BUG](https://github.com/pypa/setuptools/issues/3325)
+    # The stdlib distutils does not have this problem.
+    if os.name == 'nt':
+        env['SETUPTOOLS_USE_DISTUTILS'] = 'stdlib'
     for name in copy_env:
         if name in os.environ:
             env[name] = os.environ[name]
