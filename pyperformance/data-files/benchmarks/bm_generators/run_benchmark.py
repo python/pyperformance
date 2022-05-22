@@ -34,6 +34,7 @@ def tree(input: range) -> Tree | None:
     return Tree(input[i], tree(input[:i]), tree(input[i + 1:]))
 
 def bench_generators(loops: int) -> None:
+    assert list(tree(range(10))) == list(range(10))
     range_it = range(loops)
     t0 = pyperf.perf_counter()
     for _ in range_it:
