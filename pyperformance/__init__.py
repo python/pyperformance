@@ -30,14 +30,14 @@ def _is_venv():
 
 
 def _is_devel_install():
-    # pip install <path-to-git-checkout> will do a "devel" install.
+    # pip install -e <path-to-git-checkout> will do a "devel" install.
     # This means it creates a link back to the checkout instead
     # of copying the files.
     try:
         import toml
     except ModuleNotFoundError:
         return False
-    sitepackages = os.path.dirname(toml.__file__)
+    sitepackages = os.path.dirname(os.path.dirname(toml.__file__))
     if os.path.isdir(os.path.join(sitepackages, 'pyperformance')):
         return False
     if not os.path.exists(os.path.join(sitepackages, 'pyperformance.egg-link')):

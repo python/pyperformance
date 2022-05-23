@@ -396,6 +396,7 @@ class Python(Task):
         cmd = [self.program, '-u', '-m', 'pip', 'install']
 
         if pyperformance.is_dev():
+            cmd.append('-e')
             cmd.append(os.path.dirname(pyperformance.PKG_ROOT))
         else:
             version = pyperformance.__version__
