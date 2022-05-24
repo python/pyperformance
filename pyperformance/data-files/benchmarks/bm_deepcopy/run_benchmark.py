@@ -25,8 +25,8 @@ def benchmark(n):
             _ = copy.deepcopy(a)
         for s in ['red', 'blue', 'green']:
             dc.string = s
-            for ii in range(10):
-                dc.lst[0] = ii
+            for kk in range(10):
+                dc.lst[0] = kk
                 for b in [True, False]:
                     dc.boolean = b
                     _ = copy.deepcopy(dc)
