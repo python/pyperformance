@@ -13,9 +13,9 @@ import pyperf
 
 
 class Tree:
-    def __init__(self, value: int, left: Tree | None, right: Tree | None) -> None:
-        self.value = value
+    def __init__(self, left: Tree | None, value: int, right: Tree | None) -> None:
         self.left = left
+        self.value = value
         self.right = right
 
     def __iter__(self) -> Iterator[int]:
@@ -31,7 +31,7 @@ def tree(input: range) -> Tree | None:
     if n == 0:
         return None
     i = n // 2
-    return Tree(input[i], tree(input[:i]), tree(input[i + 1:]))
+    return Tree(tree(input[:i]), input[i], tree(input[i + 1:]))
 
 def bench_generators(loops: int) -> None:
     assert list(tree(range(10))) == list(range(10))
