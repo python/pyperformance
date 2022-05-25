@@ -216,6 +216,8 @@ def _resolve_value(field, value, rootdir):
             _utils.check_name(tag)
             if tag == 'all':
                 raise ValueError("Invalid tag 'all'")
+            elif tag == '':
+                raise ValueError("Invalid empty tag")
     elif field == 'datadir':
         if not os.path.isabs(value):
             value = os.path.join(rootdir, value)
