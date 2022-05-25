@@ -126,7 +126,7 @@ def run_benchmarks(should_run, python, options):
             for res in results:
                 res.update_metadata({
                     'performance_version': version,
-                    'tags': bench._metadata.get('tags', [])
+                    'tags': bench.tags
                 })
 
                 if dest_suite is not None:
