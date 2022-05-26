@@ -30,16 +30,19 @@ jobs:
             python: pypy-3.7
           - os: macos-latest
             python: "3.10"
-          # XXX: We should be testing 3.10, but for some reason setuptools can't
-          # seem to find the runner's C compiler for new wheel builds...
           - os: windows-latest
-            python: "3.9"
+            python: "3.10"
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python }}
       uses: actions/setup-python@v2
+      if: "!endsWith(matrix.python-version, '-dev')"
       with:
         python-version: ${{ matrix.python }}
+    - uses: deadsnakes/action@v2.1.1
+      if: endsWith(matrix.python-version, '-dev')
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Install
       # pyperformance must be installed:
       # pyperformance/tests/test_compare.py imports it
