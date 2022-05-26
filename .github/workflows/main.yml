@@ -36,13 +36,13 @@ jobs:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python }}
       uses: actions/setup-python@v2
-      if: "!endsWith(matrix.python-version, '-dev')"
+      if: "!endsWith(matrix.python, '-dev')"
       with:
         python-version: ${{ matrix.python }}
     - uses: deadsnakes/action@v2.1.1
-      if: endsWith(matrix.python-version, '-dev')
+      if: "endsWith(matrix.python, '-dev')"
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ matrix.python }}
     - name: Install
       # pyperformance must be installed:
       # pyperformance/tests/test_compare.py imports it
