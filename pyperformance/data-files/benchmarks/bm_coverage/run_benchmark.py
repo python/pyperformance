@@ -1,3 +1,7 @@
+"""
+Benchmark coverage performance with a recursive fibonacci function.
+"""
+
 import coverage
 import pyperf
 
@@ -17,6 +21,7 @@ def bench_coverage(loops: int) -> None:
         fibonacci(25)
     cov.stop()
     return pyperf.perf_counter() - t0
+
 
 if __name__ == "__main__":
     runner = pyperf.Runner()
