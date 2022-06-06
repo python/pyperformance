@@ -21,3 +21,6 @@ pyperformance/tests/data/cpython/
 
 # Created by the tox program
 .tox/
+
+# coverage
+.coverage
