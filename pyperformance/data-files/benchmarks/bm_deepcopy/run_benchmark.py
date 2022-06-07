@@ -61,18 +61,21 @@ def benchmark(n):
     }
     dc = A('hello', [1, 2, 3], True)
 
-    t0 = pyperf.perf_counter()
+    dt = 0
     for ii in range(n):
         for jj in range(30):
+            t0 = pyperf.perf_counter()
             _ = copy.deepcopy(a)
+            dt += pyperf.perf_counter() - t0
         for s in ['red', 'blue', 'green']:
             dc.string = s
             for kk in range(5):
                 dc.lst[0] = kk
                 for b in [True, False]:
                     dc.boolean = b
+                    t0 = pyperf.perf_counter()
                     _ = copy.deepcopy(dc)
-    dt = pyperf.perf_counter() - t0
+                    dt += pyperf.perf_counter() - t0
     return dt
 
 
