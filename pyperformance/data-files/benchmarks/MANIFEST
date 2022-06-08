@@ -18,6 +18,7 @@ django_template	<local>
 dulwich_log	<local>
 fannkuch	<local>
 float	<local>
+from_stdlib	<local>
 genshi	<local>
 go	<local>
 hexiom	<local>
