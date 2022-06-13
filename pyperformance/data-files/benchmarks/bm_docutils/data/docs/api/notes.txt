@@ -1,0 +1,42 @@
+https://sourceforge.net/p/docutils/feature-requests/89/
+
+At the very least I would suggest, docutils.nodes, the reader/writer/parser aliases, docutils.core, and the front end tools.
+
+--------------------
+
+https://sourceforge.net/p/docutils/feature-requests/89/#f2e1
+
+    any script.py
+    any css/dom-construct
+    any tex-macro
+
+might be API
+
+--------------------
+
+https://sourceforge.net/p/docutils/feature-requests/89/#a0ff
+
+
+>    At the very least I would suggest, docutils.nodes, the
+>   reader/writer/parser aliases, docutils.core, and the front end tools.
+
+The abstract base classes for reader, writer, parser, and transforms come to mind.
+Also docutils.__init__ and the "plug-in API" for the components.
+
+The modules and classes intended as part of the public API come with
+comprehensive docstrings which are a good guide to differentiate core objects from
+auxiliary, internal objects and ambiguous (non-core) cases
+(that may be useful for clients or may be used by existing applications).
+
+For the Docutils project version number, the document model (docutils.dtd, doctree.txt)
+and the rST specification are equally important (unless they get their own version identifier).
+
+Yes, the final document should be a collaborative effort and we may
+improve/clean the code base in the process.
+OTOH, Sphinx is so closely intertwined to Docutils that it, IMO,
+deserves a special handling ensuring synchronised changes.
+This may be extended to other projects that use non-core objects
+and are ready to follow the development, test, and report back.
+
+
+----------------
