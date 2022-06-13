@@ -9,17 +9,28 @@ import docutils
 from docutils import core
 import pyperf
 
+try:
+    from docutils.utils.math.math2html import Trace
+except ImportError:
+    pass
+else:
+    Trace.show = lambda message, channel: ...  # don't print to console
+
 
 def build_html(doc_root, out_root):
     for file in doc_root.rglob("*.txt"):
         try:
             dest = out_root / file.relative_to(doc_root).with_suffix(".html")
-            dest.mkdir(parents=True, exist_ok=True)
+            dest.parent.mkdir(parents=True, exist_ok=True)
             core.publish_file(source_path=str(file),
                               destination_path=str(dest),
                               reader_name="standalone",
                               parser_name="restructuredtext",
-                              writer_name="html5")
+                              writer_name="html5",
+                              settings_overrides={
+                                  "input_encoding": "utf-8",
+                                  "report_level": 5,
+                              })
         except docutils.ApplicationError:
             ...
 
