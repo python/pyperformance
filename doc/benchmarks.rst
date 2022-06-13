@@ -174,6 +174,15 @@ Pseudo-code of the benchmark::
 See the `Dulwich project <https://www.dulwich.io/>`_.
 
 
+
+docutils
+--------
+
+Use Docutils_ to convert Docutils' documentation to HTML.
+Representative of building a medium-sized documentation set.
+
+.. _Docutils: https://docutils.sourceforge.io/
+
 fannkuch
 --------
 
