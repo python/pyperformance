@@ -33,13 +33,12 @@ def tree(input: range) -> Tree | None:
     i = n // 2
     return Tree(tree(input[:i]), input[i], tree(input[i + 1:]))
 
-def bench_generators(loops: int) -> float:
+def bench_generators(loops: int) -> None:
     assert list(tree(range(10))) == list(range(10))
     range_it = range(loops)
-    iterable = tree(range(100000))
     t0 = pyperf.perf_counter()
     for _ in range_it:
-        for _ in iterable:
+        for _ in tree(range(100000)):
             pass
     return pyperf.perf_counter() - t0
 
