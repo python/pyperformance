@@ -6,7 +6,6 @@ async_tree	<local>
 async_tree_cpu_io_mixed	<local:async_tree>
 async_tree_io	<local:async_tree>
 async_tree_memoization	<local:async_tree>
-coroutines	<local>
 coverage	<local>
 generators	<local>
 chameleon	<local>
