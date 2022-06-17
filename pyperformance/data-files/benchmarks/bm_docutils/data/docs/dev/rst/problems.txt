@@ -1,5 +1,3 @@
-.. include:: ../../header2.txt
-
 ==============================
  Problems With StructuredText
 ==============================

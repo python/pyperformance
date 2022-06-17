@@ -1,5 +1,3 @@
-.. include:: ../header.txt
-
 ==============================================
  Writing HTML (CSS) Stylesheets for Docutils_
 ==============================================

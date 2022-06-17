@@ -1,5 +1,3 @@
-.. include:: ../../header2.txt
-
 ============================
 LaTeX syntax for mathematics
 ============================

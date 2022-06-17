@@ -1,7 +1,5 @@
 .. -*- coding: utf-8 -*-
 
-.. include:: ../../header2.txt
-
 =======================================
  reStructuredText Markup Specification
 =======================================

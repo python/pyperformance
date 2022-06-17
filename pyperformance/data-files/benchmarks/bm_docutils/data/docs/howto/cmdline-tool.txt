@@ -1,5 +1,3 @@
-.. include:: ../header.txt
-
 ===============================================
  Inside A Docutils Command-Line Front-End Tool
 ===============================================

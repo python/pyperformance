@@ -1,5 +1,3 @@
-.. include:: ../../header2.txt
-
 =====================================
  An Introduction to reStructuredText
 =====================================

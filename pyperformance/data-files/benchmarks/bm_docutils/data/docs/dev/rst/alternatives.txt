@@ -1,5 +1,3 @@
-.. include:: ../../header2.txt
-
 ==================================================
  A Record of reStructuredText Syntax Alternatives
 ==================================================
