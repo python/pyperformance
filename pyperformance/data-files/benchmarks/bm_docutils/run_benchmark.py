@@ -17,7 +17,7 @@ except ImportError:
 else:
     Trace.show = lambda message, channel: ...  # don't print to console
 
-DOC_ROOT = Path("data/docs").resolve()
+DOC_ROOT = (Path(__file__).parent / "data" / "docs").resolve()
 
 
 def build_html(doc_root):
