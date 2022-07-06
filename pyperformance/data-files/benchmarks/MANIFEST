@@ -52,6 +52,7 @@ scimark	<local>
 spectral_norm	<local>
 sqlalchemy_declarative	<local>
 sqlalchemy_imperative	<local>
+sqlglot	<local>
 sqlite_synth	<local>
 sympy	<local>
 telco	<local>
