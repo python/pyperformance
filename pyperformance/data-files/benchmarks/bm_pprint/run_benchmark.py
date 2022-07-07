@@ -1,14 +1,15 @@
-"""Various benchmarks previously stored inside the Python stdlib.
+"""Test the performance of pprint.PrettyPrinter.
 
-Ported here by Oleg Iarygin.
+This benchmark was available as `python -m pprint` until Python 3.12.
+
+Authors: Fred Drake (original), Oleg Iarygin (pyperformance port).
 """
 
+from pprint import PrettyPrinter
 import pyperf
 
 
 def benchmark_pprint(runner):
-    """Moved from `python -m pprint`."""
-    from pprint import PrettyPrinter
     printable = [("string", (1, 2), [3, 4], {5: 6, 7: 8})] * 100_000
     p = PrettyPrinter()
 
