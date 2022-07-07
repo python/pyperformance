@@ -16,8 +16,9 @@ p = PrettyPrinter()
 def benchmark_pprint(runner):
     # Support CPython before 3.10 and non-CPython implementations
     if hasattr(p, '_safe_repr'):
-        runner.bench_func('_safe_repr', p._safe_repr, printable, {}, None, 0)
-    runner.bench_func('pformat', p.pformat, printable)
+        runner.bench_func('pprint_safe_repr', p._safe_repr, printable,
+                          {}, None, 0)
+    runner.bench_func('pprint_pformat', p.pformat, printable)
 
 
 if __name__ == "__main__":
