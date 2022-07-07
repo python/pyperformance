@@ -21,7 +21,6 @@ def benchmark_pprint(runner):
 
 if __name__ == "__main__":
     runner = pyperf.Runner()
-    cmd = runner.argparser
 
     args = runner.parse_args()
     benchmark_pprint(runner)
