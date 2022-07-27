@@ -150,7 +150,7 @@ def install_requirements(reqs, *extra,
     if upgrade:
         args.append('-U')  # --upgrade
     for reqs in [reqs, *extra]:
-        if os.path.exists(reqs):
+        if os.path.isfile(reqs) and reqs.endswith('.txt'):
             args.append('-r')  # --requirement
         args.append(reqs)
     return run_pip('install', *args, **kwargs)

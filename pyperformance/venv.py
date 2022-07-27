@@ -44,7 +44,11 @@ class Requirements(object):
         if not os.path.exists(filename):
             return
         for line in _utils.iter_clean_lines(filename):
-            self._add(line)
+            fullpath = os.path.join(os.path.dirname(filename), line.strip())
+            if os.path.isfile(fullpath):
+                self._add(fullpath)
+            else:
+                self._add(line)
 
     def _add(self, line):
         self.specs.append(line)

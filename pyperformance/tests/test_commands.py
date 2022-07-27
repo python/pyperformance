@@ -161,6 +161,19 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         # XXX Capture and check the output.
         self.run_module('pyperf', 'slowest', filename)
 
+    def test_run_test_benchmarks(self):
+        # Run the benchmarks that exist only for testing
+        # in pyperformance/tests/data
+        filename = self.resolve_tmp('bench-test.json')
+
+        self.run_pyperformance(
+            'run',
+            '--manifest', os.path.join(tests.DATA_DIR, 'MANIFEST'),
+            '-b', 'all',
+            '-o', filename,
+            capture=None,
+        )
+
     ###################################
     # compile
 

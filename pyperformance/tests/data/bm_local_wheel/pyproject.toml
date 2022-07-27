@@ -1,0 +1,9 @@
+[project]
+name = "pyperformance_bm_local_wheel"
+requires-python = ">=3.8"
+dependencies = ["pyperf"]
+urls = {repository = "https://github.com/python/pyperformance"}
+version = "1.0"
+
+[tool.pyperformance]
+name = "local_wheel"
