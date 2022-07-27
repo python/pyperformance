@@ -149,10 +149,16 @@ def install_requirements(reqs, *extra,
     args = []
     if upgrade:
         args.append('-U')  # --upgrade
-    for reqs in [reqs, *extra]:
-        if os.path.isfile(reqs) and reqs.endswith('.txt'):
-            args.append('-r')  # --requirement
-        args.append(reqs)
+    for req in [reqs, *extra]:
+        if os.path.isfile(req):
+            name = os.path.basename(req)
+            if name == "setup.py":
+                req = os.path.dirname(req)
+            elif name == "requirements.txt":
+                args.append('-r')  # --requirement
+            else:
+                raise ValueError(f"pip doesn't know how to install {req}")
+        args.append(req)
     return run_pip('install', *args, **kwargs)
 
 

@@ -27,7 +27,7 @@ class Requirements(object):
             if bench.setup_py:
                 # pip doesn't support installing a setup.py,
                 # but it does support installing from the directory it is in.
-                self._add(os.path.dirname(bench.setup_py))
+                self._add(bench.setup_py)
         return self
 
     def __init__(self):
