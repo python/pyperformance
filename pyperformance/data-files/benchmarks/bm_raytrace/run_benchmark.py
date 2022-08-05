@@ -207,7 +207,7 @@ class Canvas(object):
         header = 'P6 %d %d 255\n' % (self.width, self.height)
         with open(filename, "wb") as fp:
             fp.write(header.encode('ascii'))
-            fp.write(self.bytes.tostring())
+            fp.write(self.bytes.tobytes())
 
 
 def firstIntersection(intersections):
