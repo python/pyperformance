@@ -145,7 +145,7 @@ def bench_transpile(loops):
     return elapsed
 
 
-def bench_optimize():
+def bench_optimize(loops):
     elapsed = 0
     for _ in range(loops):
         t0 = pyperf.perf_counter()
@@ -154,7 +154,7 @@ def bench_optimize():
     return elapsed
 
 
-def bench_normalize():
+def bench_normalize(loops):
     elapsed = 0
     conjunction = parse_one("(A AND B) OR (C AND D) OR (E AND F) OR (G AND H)")
     for _ in range(loops):
@@ -167,7 +167,7 @@ def bench_normalize():
 if __name__ == "__main__":
     runner = pyperf.Runner()
     runner.metadata['description'] = "SQLGlot benchmark"
-    runner.bench_time_func("sqlglot_parse", bench_sqlglot, bench_parse)
-    runner.bench_time_func("sqlglot_transpile", bench_sqlglot, bench_transpile)
-    runner.bench_time_func("sqlglot_optimize", bench_sqlglot, bench_optimize)
-    runner.bench_time_func("sqlglot_normalize", bench_sqlglot, bench_normalize)
+    runner.bench_time_func("sqlglot_parse", bench_parse)
+    runner.bench_time_func("sqlglot_transpile", bench_transpile)
+    runner.bench_time_func("sqlglot_optimize", bench_optimize)
+    runner.bench_time_func("sqlglot_normalize", bench_normalize)
