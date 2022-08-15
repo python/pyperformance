@@ -156,7 +156,7 @@ def bench_sqlglot(loops, func):
 if __name__ == "__main__":
     runner = pyperf.Runner()
     runner.metadata['description'] = "SQLGlot benchmark"
-    runner.bench_time_func("parse", bench_sqlglot, bench_parse)
-    runner.bench_time_func("transpile", bench_sqlglot, bench_transpile)
-    runner.bench_time_func("optimize", bench_sqlglot, bench_optimize)
-    runner.bench_time_func("normalize", bench_sqlglot, bench_normalize)
+    runner.bench_time_func("sqlglot_parse", bench_sqlglot, bench_parse)
+    runner.bench_time_func("sqlglot_transpile", bench_sqlglot, bench_transpile)
+    runner.bench_time_func("sqlglot_optimize", bench_sqlglot, bench_optimize)
+    runner.bench_time_func("sqlglot_normalize", bench_sqlglot, bench_normalize)
