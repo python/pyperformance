@@ -127,30 +127,42 @@ TPCH_SCHEMA = {
 }
 
 
-def bench_parse():
-    parse_one(SQL)
+def bench_parse(loops):
+    elapsed = 0
+    for _ in range(loops):
+        t0 = pyperf.perf_counter()
+        parse_one(SQL)
+        elapsed += pyperf.perf_counter() - t0
+    return elapsed
 
 
-def bench_transpile():
-    transpile(SQL, write="spark")
+def bench_transpile(loops):
+    elapsed = 0
+    for _ in range(loops):
+        t0 = pyperf.perf_counter()
+        transpile(SQL, write="spark")
+        elapsed += pyperf.perf_counter() - t0
+    return elapsed
 
 
 def bench_optimize():
-    optimize(parse_one(SQL), TPCH_SCHEMA)
+    elapsed = 0
+    for _ in range(loops):
+        t0 = pyperf.perf_counter()
+        optimize(parse_one(SQL), TPCH_SCHEMA)
+        elapsed += pyperf.perf_counter() - t0
+    return elapsed
 
 
 def bench_normalize():
-    conjunction = parse_one("(A AND B) OR (C AND D) OR (E AND F) OR (G AND H)")
-    normalize.normalize(conjunction)
-
-
-def bench_sqlglot(loops, func):
-    timer = pyperf.perf_counter()
-
+    elapsed = 0
     for _ in range(loops):
-        func()
-
-    return pyperf.perf_counter() - timer
+        t0 = pyperf.perf_counter()
+        # XXX or perhaps conjuction should be outside the timed section?
+        conjunction = parse_one("(A AND B) OR (C AND D) OR (E AND F) OR (G AND H)")
+        normalize.normalize(conjunction)
+        elapsed += pyperf.perf_counter() - t0
+    return elapsed
 
 
 if __name__ == "__main__":
