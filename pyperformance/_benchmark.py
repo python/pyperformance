@@ -137,7 +137,7 @@ class Benchmark:
 
     @property
     def tags(self):
-        return self._get_metadata_value('tags', ())
+        return self._get_metadata_value('tags', [])
 
     @property
     def datadir(self):
