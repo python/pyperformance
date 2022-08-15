@@ -156,10 +156,9 @@ def bench_optimize():
 
 def bench_normalize():
     elapsed = 0
+    conjunction = parse_one("(A AND B) OR (C AND D) OR (E AND F) OR (G AND H)")
     for _ in range(loops):
         t0 = pyperf.perf_counter()
-        # XXX or perhaps conjuction should be outside the timed section?
-        conjunction = parse_one("(A AND B) OR (C AND D) OR (E AND F) OR (G AND H)")
         normalize.normalize(conjunction)
         elapsed += pyperf.perf_counter() - t0
     return elapsed
