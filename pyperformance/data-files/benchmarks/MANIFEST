@@ -39,6 +39,7 @@ pickle_dict	<local:pickle>
 pickle_list	<local:pickle>
 pickle_pure_python	<local:pickle>
 pidigits	<local>
+pingpong	<local>
 pprint	<local>
 pyflate	<local>
 python_startup	<local>
