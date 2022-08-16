@@ -17,7 +17,7 @@ def ping(in_p, out_p, n):
     out_p.close()
 
 
-def pong(in_p, out_p, n):
+def pong(in_p, out_p):
     while True:
         got = in_p.recv()
         if got < 0:
@@ -32,7 +32,7 @@ def pingpong(n):
     in_p0, out_p0 = Pipe()
     in_p1, out_p1 = Pipe()
     p0 = Process(target=ping, args=(in_p1, out_p0, n))
-    p1 = Process(target=pong, args=(in_p0, out_p1, n))
+    p1 = Process(target=pong, args=(in_p0, out_p1))
     p0.start()
     p1.start()
     p0.join()
