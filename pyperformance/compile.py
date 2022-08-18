@@ -703,7 +703,7 @@ class BenchmarkRevision(Application):
             python = None
 
         failed = self.run_benchmark(python)
-        if not failed and self.conf.upload:
+        if self.conf.upload:
             self.upload()
         return failed
 
@@ -867,7 +867,6 @@ class BenchmarkAll(Application):
         self.setup_log('compile_all')
         self.outputs = []
         self.skipped = []
-        self.uploaded = []
         self.failed = []
         self.timings = []
         self.logger = logging.getLogger()
@@ -908,11 +907,8 @@ class BenchmarkAll(Application):
                 # Ony update the repository once
                 self.conf.update = False
 
-        if exitcode == 0:
-            if self.conf.upload:
-                self.uploaded.append(key)
-            else:
-                self.outputs.append(key)
+        if exitcode == 0 or exitcode == EXIT_BENCH_ERROR:
+            self.outputs.append((key, exitcode == EXIT_BENCH_ERROR))
             self.timings.append(dt)
         else:
             self.failed.append(key)
@@ -921,11 +917,12 @@ class BenchmarkAll(Application):
         for key in self.skipped:
             self.logger.error("Skipped: %s" % key)
 
-        for key in self.outputs:
-            self.logger.error("Tested: %s" % key)
-
-        for key in self.uploaded:
-            self.logger.error("Tested and uploaded: %s" % key)
+        for key, success in self.outputs:
+            if success:
+                success_message = "All benchmarks succeeded"
+            else:
+                success_message = "Some benchmarks failed"
+            self.logger.error("Tested: %s (%s)" % (key, success_message))
 
         for key in self.failed:
             text = "FAILED: %s" % key
