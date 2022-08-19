@@ -105,44 +105,37 @@ class BenchmarksManifest:
         return self._raw_filename
 
     def _add_sections(self, sections, resolve):
-        filename = self._raw_filename
-        _resolve = resolve
-        if resolve is None and filename == DEFAULT_MANIFEST:
-            _resolve = default_resolve = resolve_default_benchmark
-        sections_seen = {filename: set()}
-        lastfile = None
+        seen_by_file = {}
         for filename, section, data in sections:
-            if filename != lastfile:
-                _resolve = resolve
-                if _resolve is None and filename == DEFAULT_MANIFEST:
-                    _resolve = resolve_default_benchmark
-            lastfile = filename
+            try:
+                seen = seen_by_file[filename]
+            except KeyError:
+                seen = seen_by_file[filename] = set()
+            self._add_section_for_file(filename, section, data, resolve, seen)
 
-            section_key = section
-            if section == "group":
-                section_key = (section, data[0])
+    def _add_section_for_file(self, filename, section, data, resolve, seen):
+        if resolve is None and filename == DEFAULT_MANIFEST:
+            resolve = resolve_default_benchmark
 
-            if filename not in sections_seen:
-                sections_seen[filename] = {section_key}
-            elif section_key in sections_seen[filename]:
-                # For now each section_key can only show up once.
-                raise NotImplementedError((section_key, data))
-            else:
-                sections_seen[filename].add(section_key)
+        seen_key = (section, data[0]) if section == "group" else section
+        if seen_key in seen:
+            # For now each section_key can only show up once.
+            raise NotImplementedError((seen_key, data))
+        seen.add(seen_key)
 
-            if section == 'includes':
-                pass
-            elif section == 'benchmarks':
-                entries = ((s, m, filename) for s, m in data)
-                self._add_benchmarks(entries, _resolve)
-            elif section == 'groups':
-                for name in data:
-                    self._add_group(name, None)
-            elif section == 'group':
-                name, entries = data
-                self._add_group(name, entries)
-            else:
-                raise NotImplementedError((section, data))
+        if section == 'includes':
+            pass
+        elif section == 'benchmarks':
+            entries = ((s, m, filename) for s, m in data)
+            self._add_benchmarks(entries, resolve)
+        elif section == 'groups':
+            for name in data:
+                self._add_group(name, None)
+        elif section == 'group':
+            name, entries = data
+            self._add_group(name, entries)
+        else:
+            raise NotImplementedError((section, data))
 
     def _add_benchmarks(self, entries, resolve):
         for spec, metafile, filename in entries:
