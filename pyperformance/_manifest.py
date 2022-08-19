@@ -220,7 +220,7 @@ class BenchmarksManifest:
             groups = self._resolve_groups()
             benchmarks = groups.get(name)
             if not benchmarks:
-                if name in (set(self._raw_groups) - {'default'}):
+                if name not in self._raw_groups:
                     benchmarks = self._get_tags().get(name, ())
                 elif fail:
                     raise KeyError(name)
