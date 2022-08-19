@@ -6,6 +6,7 @@ async_tree	<local>
 async_tree_cpu_io_mixed	<local:async_tree>
 async_tree_io	<local:async_tree>
 async_tree_memoization	<local:async_tree>
+concurrent_imap	<local>
 coroutines	<local>
 coverage	<local>
 generators	<local>
@@ -39,7 +40,6 @@ pickle_dict	<local:pickle>
 pickle_list	<local:pickle>
 pickle_pure_python	<local:pickle>
 pidigits	<local>
-pingpong	<local>
 pprint	<local>
 pyflate	<local>
 python_startup	<local>
