@@ -145,6 +145,8 @@ class BenchmarksManifest:
     def _add_benchmark(self, spec, metafile, resolve, filename):
         if spec.name in self._raw_groups:
             raise ValueError(f'a group and a benchmark have the same name ({spec.name})')
+        if spec.name == 'all':
+            raise ValueError('a benchmark named "all" is not allowed ("all" is reserved for selecting the full set of declared benchmarks)')
         if metafile:
             if filename:
                 localdir = os.path.dirname(filename)
@@ -164,8 +166,7 @@ class BenchmarksManifest:
         if name in self._byname:
             raise ValueError(f'a group and a benchmark have the same name ({name})')
         if name == 'all':
-            # XXX Emit a warning?
-            return
+            raise ValueError('a group named "all" is not allowed ("all" is reserved for selecting the full set of declared benchmarks)')
         if entries:
             raw = self._raw_groups.get(name)
             if raw is None:
