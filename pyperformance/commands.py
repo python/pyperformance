@@ -28,6 +28,26 @@ def cmd_list_groups(manifest):
             print("- %s" % spec.name)
         print()
 
+    print("=============================")
+    print()
+    print("tags:")
+    print()
+    tags = sorted(manifest.tags or ())
+    if not tags:
+        print("(no tags)")
+    else:
+        for tag in tags:
+            specs = list(manifest.resolve_group(tag))
+            known = set(specs) & all_benchmarks
+            if not known:
+                # skip empty groups
+                continue
+
+            print("%s (%s):" % (tag, len(specs)))
+            for spec in sorted(specs):
+                print("- %s" % spec.name)
+            print()
+
 
 def cmd_venv_create(options, root, python, benchmarks):
     from . import _pythoninfo, _venv
