@@ -117,25 +117,26 @@ class BenchmarksManifest:
         if resolve is None and filename == DEFAULT_MANIFEST:
             resolve = resolve_default_benchmark
 
-        seen_key = (section, data[0]) if section == "group" else section
-        if seen_key in seen:
-            # For now each section_key can only show up once.
-            raise NotImplementedError((seen_key, data))
-        seen.add(seen_key)
-
-        if section == 'includes':
-            pass
-        elif section == 'benchmarks':
-            entries = ((s, m, filename) for s, m in data)
-            self._add_benchmarks(entries, resolve)
-        elif section == 'groups':
-            for name in data:
-                self._add_group(name, None)
-        elif section == 'group':
+        if section == 'group':
             name, entries = data
             self._add_group(name, entries)
         else:
-            raise NotImplementedError((section, data))
+            # All sections with an identifier have already been handled.
+            if section in seen:
+                # For now each section_key can only show up once.
+                raise NotImplementedError((section, data))
+            seen.add(section)
+
+            if section == 'includes':
+                pass
+            elif section == 'benchmarks':
+                entries = ((s, m, filename) for s, m in data)
+                self._add_benchmarks(entries, resolve)
+            elif section == 'groups':
+                for name in data:
+                    self._add_group(name, None)
+            else:
+                raise NotImplementedError((section, data))
 
     def _add_benchmarks(self, entries, resolve):
         for spec, metafile, filename in entries:
@@ -158,6 +159,8 @@ class BenchmarksManifest:
         self._raw_benchmarks.append((spec, metafile, filename))
         if resolve is not None:
             bench = resolve(bench)
+        if bench.name in self._byname:
+            raise ValueError(f'a benchmark named {bench.name} was already declared')
         self._byname[bench.name] = bench
         self._groups = None  # Force re-resolution.
         self._tags = None  # Force re-resolution.
@@ -167,16 +170,14 @@ class BenchmarksManifest:
             raise ValueError(f'a group and a benchmark have the same name ({name})')
         if name == 'all':
             raise ValueError('a group named "all" is not allowed ("all" is reserved for selecting the full set of declared benchmarks)')
-        if entries:
-            raw = self._raw_groups.get(name)
-            if raw is None:
-                raw = self._raw_groups[name] = list(entries) if entries else None
-            elif entries is not None:
-                raw.extend(entries)
-        elif name in self._raw_groups:
-            return
-        else:
+        if entries is None:
+            if name in self._raw_groups:
+                return
             self._raw_groups[name] = None
+        elif name in self._raw_groups and self._raw_groups[name] is not None:
+            raise ValueError(f'a group named {name} was already defined')
+        else:
+            self._raw_groups[name] = list(entries) if entries else []
         self._groups = None  # Force re-resolution.
 
     def _custom_groups(self):
