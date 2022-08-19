@@ -95,9 +95,16 @@ class BenchmarksManifest:
 
     @property
     def groups(self):
+        tags = set(self._get_tags())
         names = self._custom_groups()
         if not names:
-            names = set(self._get_tags())
+            names = tags
+        else:
+            overwritten = tags & names
+            if overwritten:
+                # XXX
+                raise NotImplementedError(overwritten)
+            names |= tags
         return names | {'all', 'default'}
 
     @property
