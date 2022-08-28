@@ -24,7 +24,7 @@ def build_html(doc_root):
     elapsed = 0
     for file in doc_root.rglob("*.txt"):
         file_contents = file.read_text(encoding="utf-8")
-        t0 = time.perf_counter_ns()
+        t0 = pyperf.perf_counter()
         with contextlib.suppress(docutils.ApplicationError):
             core.publish_string(source=file_contents,
                                 reader_name="standalone",
@@ -35,17 +35,15 @@ def build_html(doc_root):
                                     "output_encoding": "unicode",
                                     "report_level": 5,
                                 })
-        elapsed += time.perf_counter_ns() - t0
+        elapsed += pyperf.perf_counter() - t0
     return elapsed
 
 
 def bench_docutils(loops, doc_root):
-    runs_total_ns = 0
-
+    runs_total = 0
     for _ in range(loops):
-        runs_total_ns += build_html(doc_root)
-
-    return runs_total_ns / 10**9
+        runs_total += build_html(doc_root)
+    return runs_total
 
 
 if __name__ == "__main__":
