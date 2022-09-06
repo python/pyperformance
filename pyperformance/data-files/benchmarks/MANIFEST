@@ -18,6 +18,7 @@ deepcopy	<local>
 deltablue	<local>
 django_template	<local>
 dulwich_log	<local>
+docutils	<local>
 fannkuch	<local>
 float	<local>
 genshi	<local>
