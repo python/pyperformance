@@ -79,6 +79,9 @@ affinity =
 # disabled.
 upload = False
 
+# Specify '-j' parameter in 'make' command
+jobs = 8
+
 
 # Configuration to upload results to a Codespeed website
 [upload]
