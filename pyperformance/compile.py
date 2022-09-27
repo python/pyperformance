@@ -801,7 +801,10 @@ def parse_config(filename, command):
         conf.pgo = getboolean('compile', 'pgo', True)
         conf.install = getboolean('compile', 'install', True)
         conf.pkg_only = getstr('compile', 'pkg_only', '').split()
-        conf.jobs = getint('compile', 'jobs', 1)
+        try:
+            conf.jobs = getint('compile', 'jobs')
+        except KeyError:
+            conf.jobs = None
 
         # [run_benchmark]
         conf.system_tune = getboolean('run_benchmark', 'system_tune', True)
