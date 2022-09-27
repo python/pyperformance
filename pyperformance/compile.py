@@ -298,11 +298,13 @@ class Python(Task):
         configure = os.path.join(self.conf.repo_dir, 'configure')
         self.run(configure, *config_args)
 
+        argv = ['make']
         if self.conf.pgo:
             # FIXME: use taskset (isolated CPUs) for PGO?
-            self.run('make', 'profile-opt')
-        else:
-            self.run('make')
+            argv.append('profile-opt')
+        if self.conf.jobs:
+            argv.append('-j%d' % self.conf.jobs)
+        self.run(*argv)
 
     def install_python(self):
         program, _ = resolve_python(
@@ -778,6 +780,9 @@ def parse_config(filename, command):
         except KeyError:
             return default
 
+    def getint(section, key, default=None):
+        return int(getstr(section, key, default))
+
     # [config]
     conf.json_dir = getfile('config', 'json_dir')
     conf.json_patch_dir = os.path.join(conf.json_dir, 'patch')
@@ -796,6 +801,10 @@ def parse_config(filename, command):
         conf.pgo = getboolean('compile', 'pgo', True)
         conf.install = getboolean('compile', 'install', True)
         conf.pkg_only = getstr('compile', 'pkg_only', '').split()
+        try:
+            conf.jobs = getint('compile', 'jobs')
+        except KeyError:
+            conf.jobs = None
 
         # [run_benchmark]
         conf.system_tune = getboolean('run_benchmark', 'system_tune', True)
