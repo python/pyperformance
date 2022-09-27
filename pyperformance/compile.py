@@ -780,7 +780,7 @@ def parse_config(filename, command):
         except KeyError:
             return default
 
-    def getint(section, key, default):
+    def getint(section, key, default=None):
         return int(getstr(section, key, default))
 
     # [config]
