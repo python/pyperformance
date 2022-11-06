@@ -1,6 +1,8 @@
 Changelog
 =========
 
+* Upgrade pyperf from 2.4.1 to 2.5.0
+
 Version 1.0.4 (2022-01-25)
 -------------
 
