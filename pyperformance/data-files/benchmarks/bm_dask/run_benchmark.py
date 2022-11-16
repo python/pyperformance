@@ -27,5 +27,5 @@ async def benchmark():
 
 if __name__ == "__main__":
     runner = pyperf.Runner()
-    runner.metadata['description'] = "Benchmark async generators"
+    runner.metadata['description'] = "Benchmark dask"
     runner.bench_async_func('dask', benchmark)
