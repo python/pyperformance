@@ -24,6 +24,10 @@ class Requirements(object):
         for bench in benchmarks or ():
             filename = bench.requirements_lockfile
             self._add_from_file(filename)
+            if bench.setup_py:
+                # pip doesn't support installing a setup.py,
+                # but it does support installing from the directory it is in.
+                self._add(bench.setup_py)
         return self
 
     def __init__(self):

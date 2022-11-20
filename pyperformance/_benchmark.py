@@ -164,6 +164,13 @@ class Benchmark:
     def extra_opts(self):
         return self._get_metadata_value('extra_opts', ())
 
+    @property
+    def setup_py(self):
+        if not self._get_metadata_value('install_setup', False):
+            return None
+        filename = os.path.join(os.path.dirname(self.metafile), 'setup.py')
+        return filename if os.path.exists(filename) else None
+
     # Other metadata keys:
     # * base
     # * python

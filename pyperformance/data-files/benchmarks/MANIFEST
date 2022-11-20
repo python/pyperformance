@@ -14,6 +14,8 @@ generators	<local>
 chameleon	<local>
 chaos	<local>
 crypto_pyaes	<local>
+ctypes	<local>
+ctypes_argtypes	<local:ctypes>
 deepcopy	<local>
 deltablue	<local>
 django_template	<local>
@@ -75,6 +77,7 @@ xml_etree	<local>
 #apps
 #math
 #template
+#extension
 
 
 [group default]

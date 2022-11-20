@@ -15,5 +15,6 @@ include pyperformance/data-files/benchmarks/MANIFEST
 include pyperformance/data-files/benchmarks/bm_*/*.toml
 include pyperformance/data-files/benchmarks/bm_*/*.py
 include pyperformance/data-files/benchmarks/bm_*/requirements.txt
+include pyperformance/data-files/benchmarks/bm_*/*.c
 recursive-include pyperformance/data-files/benchmarks/bm_*/data *
 recursive-exclude pyperformance/tests *
