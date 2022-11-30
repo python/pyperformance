@@ -1,3 +1,11 @@
+# Update dependencies:
+#
+#  - python3 -m pip install --user --upgrade pip-tools
+#  - git clean -fdx  # remove all untracked files!
+#  - (pip-compile --upgrade -o requirements.txt requirements.in)
+#
+# Prepare a release:
+#
 #  - git pull --rebase
 #  - Remove untracked files/dirs: git clean -fdx
 #  - maybe update version in pyperformance/__init__.py and doc/conf.py
