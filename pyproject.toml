@@ -62,6 +62,9 @@ dev = [
 [project.scripts]
 pyperformance = "pyperformance.cli:main"
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.packages]
 find = {}  # Scanning implicit namespaces is active by default
 
