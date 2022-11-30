@@ -1,6 +1,6 @@
 # Update dependencies:
 #
-#  - python3 -m pip install --user --upgrade pip-tools
+#  - python3 -m pip install --user --upgrade pip-tools build
 #  - git clean -fdx  # remove all untracked files!
 #  - (pip-compile --upgrade -o requirements.txt requirements.in)
 #
