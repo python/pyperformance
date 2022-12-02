@@ -170,14 +170,12 @@ class BenchmarksManifest:
     def _add_group(self, name, entries):
         if name in self._byname:
             raise ValueError(f'a group and a benchmark have the same name ({name})')
-        if name == 'all':
-            raise ValueError('a group named "all" is not allowed ("all" is reserved for selecting the full set of declared benchmarks)')
         if entries is None:
             if name in self._raw_groups:
                 return
             self._raw_groups[name] = None
         elif name in self._raw_groups and self._raw_groups[name] is not None:
-            raise ValueError(f'a group named {name} was already defined')
+            self._raw_groups[name].extend(list(entries) if entries else [])
         else:
             self._raw_groups[name] = list(entries) if entries else []
         self._groups = None  # Force re-resolution.
