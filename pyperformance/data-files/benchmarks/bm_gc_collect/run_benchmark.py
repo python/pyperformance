@@ -53,7 +53,7 @@ def benchamark_collection(loops, cycles, links):
         collected = gc.collect()
         total_time += pyperf.perf_counter() - t0
 
-        assert collected >= cycles * (links + 1)
+        assert collected is None or collected >= cycles * (links + 1)
 
     return total_time
 

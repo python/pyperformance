@@ -10,6 +10,8 @@ async_tree_memoization	<local:async_tree>
 concurrent_imap	<local>
 coroutines	<local>
 coverage	<local>
+gc_traversal	<local>
+gc_collect	<local>
 generators	<local>
 chameleon	<local>
 chaos	<local>
