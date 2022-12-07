@@ -20,7 +20,7 @@
 #
 #  - go to the GitHub release tab: https://github.com/python/pyperformance/releases
 #  - click "Draft a new release" and fill the contents
-#  - finally click the "Publish release" button! Done!
+#  - finally click the "Publish release" button! Done!  (see .github/workflows/publish.yml for what gets run)
 #  - monitor the publish status: https://github.com/python/pyperformance/actions/workflows/publish.yml
 #
 # After the release:
