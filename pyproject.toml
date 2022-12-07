@@ -16,12 +16,20 @@
 #  - check the CI status:
 #    https://github.com/python/pyperformance/actions
 #
-# Release a new version:
+# Release a new version with GitHub (preferred):
 #
 #  - go to the GitHub release tab: https://github.com/python/pyperformance/releases
 #  - click "Draft a new release" and fill the contents
-#  - finally click the "Publish release" button! Done!  (see .github/workflows/publish.yml for what gets run)
+#  - finally click the "Publish release" button! Done!
 #  - monitor the publish status: https://github.com/python/pyperformance/actions/workflows/publish.yml
+#
+# Release a new version manually:
+#
+#  - git tag VERSION
+#  - git push --tags
+#  - Remove untracked files/dirs: git clean -fdx
+#  - python -m build
+#  - twine upload dist/*
 #
 # After the release:
 #
