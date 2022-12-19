@@ -29,10 +29,13 @@ async def main() -> None:
     async with server:
         asyncio.create_task(server.start_serving())
         reader, writer = await asyncio.open_connection('127.0.0.1', 8882)
+        received = 0
         while True:
             data = await reader.read(CHUNK_SIZE)
             if not data:
                 break
+            received += len(data)
+        assert received == CHUNK_SIZE * 100
         writer.close()
         await writer.wait_closed()
 
