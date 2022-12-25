@@ -8,9 +8,14 @@ Author: Kumar Aditya
 
 import asyncio
 from pyperf import Runner
+from pathlib import Path
+import ssl
 
 
 CHUNK_SIZE = 1024 ** 2 * 10
+# Taken from CPython's test suite
+SSL_CERT = Path(__file__).parent / 'ssl_cert.pem'
+SSL_KEY = Path(__file__).parent / 'ssl_key.pem'
 
 
 async def handle_echo(reader: asyncio.StreamReader,
@@ -23,12 +28,26 @@ async def handle_echo(reader: asyncio.StreamReader,
     await writer.wait_closed()
 
 
-async def main() -> None:
-    server = await asyncio.start_server(handle_echo, '127.0.0.1', 8882)
+async def main(use_ssl: bool) -> None:
+    if use_ssl:
+        server_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        server_context.load_cert_chain(SSL_CERT, SSL_KEY)
+        server_context.check_hostname = False
+        server_context.verify_mode = ssl.CERT_NONE
+
+        client_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        client_context.load_cert_chain(SSL_CERT, SSL_KEY)
+        client_context.check_hostname = False
+        client_context.verify_mode = ssl.CERT_NONE
+    else:
+        server_context = None
+        client_context = None
+
+    server = await asyncio.start_server(handle_echo, '127.0.0.1', 8882, ssl=server_context)
 
     async with server:
         asyncio.create_task(server.start_serving())
-        reader, writer = await asyncio.open_connection('127.0.0.1', 8882)
+        reader, writer = await asyncio.open_connection('127.0.0.1', 8882, ssl=client_context)
         data_len = 0
         while True:
             data = await reader.read(CHUNK_SIZE)
@@ -39,6 +58,16 @@ async def main() -> None:
         writer.close()
         await writer.wait_closed()
 
+
+def add_cmdline_args(cmd, args):
+    if args.ssl:
+        cmd.append("--ssl")
+
+
 if __name__ == '__main__':
-    runner = Runner()
-    runner.bench_async_func('asyncio_tcp', main)
+    runner = Runner(add_cmdline_args=add_cmdline_args)
+    parser = runner.argparser
+    parser.add_argument('--ssl', action='store_true', default=False)
+    args = runner.parse_args()
+    name = 'asyncio_tcp' + ('_ssl' if args.ssl else '')
+    runner.bench_async_func(name, main, args.ssl)
