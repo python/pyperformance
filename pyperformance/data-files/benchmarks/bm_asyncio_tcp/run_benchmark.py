@@ -8,14 +8,13 @@ Author: Kumar Aditya
 
 import asyncio
 from pyperf import Runner
-from pathlib import Path
 import ssl
-
+import os
 
 CHUNK_SIZE = 1024 ** 2 * 10
 # Taken from CPython's test suite
-SSL_CERT = Path(__file__).parent / 'ssl_cert.pem'
-SSL_KEY = Path(__file__).parent / 'ssl_key.pem'
+SSL_CERT = os.path.join(os.path.dirname(__file__), 'ssl_cert.pem')
+SSL_KEY = os.path.join(os.path.dirname(__file__), 'ssl_key.pem')
 
 
 async def handle_echo(reader: asyncio.StreamReader,
