@@ -1,7 +1,5 @@
 import os
 import os.path
-import shlex
-import subprocess
 import sys
 
 from . import _utils, _pythoninfo

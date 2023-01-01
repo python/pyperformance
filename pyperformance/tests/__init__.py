@@ -68,9 +68,11 @@ def create_venv(root=None, python=sys.executable, *, verbose=False):
     if not root:
         tmpdir = tempfile.mkdtemp()
         root = os.path.join(tmpdir, 'venv')
-        cleanup = (lambda: shutil.rmtree(tmpdir))
+        def cleanup():
+            return shutil.rmtree(tmpdir)
     else:
-        cleanup = (lambda: None)
+        def cleanup():
+            return None
     run_cmd(
         python or sys.executable, '-m', 'venv', root,
         capture=not verbose,
@@ -160,9 +162,8 @@ CPYTHON_ONLY = unittest.skipIf(
 NON_WINDOWS_ONLY = unittest.skipIf(os.name == 'nt', 'skipping Windows')
 
 # XXX Provide a way to run slow tests.
-SLOW = (lambda f:
-            unittest.skip('way too slow')(
-                mark('slow', f)))
+def SLOW(f):
+    return unittest.skip('way too slow')(mark('slow', f))
 
 
 class Functional(Compat):

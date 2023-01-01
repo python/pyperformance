@@ -5,7 +5,7 @@ __all__ = [
 ]
 
 
-from . import _utils, _manifest, _benchmark
+from . import _utils, _benchmark
 
 
 def parse_selection(selection, *, op=None):
