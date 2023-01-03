@@ -6,7 +6,6 @@ __all__ = [
 ]
 
 
-from collections import namedtuple
 import os.path
 
 

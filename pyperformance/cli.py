@@ -226,7 +226,8 @@ def _select_benchmarks(raw, manifest):
 
     # Get the raw list of benchmarks.
     entries = raw.lower()
-    parse_entry = (lambda o, s: _benchmark_selections.parse_selection(s, op=o))
+    def parse_entry(o, s):
+        return _benchmark_selections.parse_selection(s, op=o)
     parsed = _utils.parse_selections(entries, parse_entry)
     parsed_infos = list(parsed)
 

@@ -51,7 +51,7 @@ def cmd_list_groups(manifest, *, showtags=True):
 
 
 def cmd_venv_create(options, root, python, benchmarks):
-    from . import _pythoninfo, _venv
+    from . import _venv
     from .venv import Requirements, VenvForBenchmarks
 
     if _venv.venv_exists(root):
@@ -73,7 +73,7 @@ def cmd_venv_create(options, root, python, benchmarks):
 
 
 def cmd_venv_recreate(options, root, python, benchmarks):
-    from . import _pythoninfo, _venv, _utils
+    from . import _venv, _utils
     from .venv import Requirements, VenvForBenchmarks
 
     requirements = Requirements.from_benchmarks(benchmarks)
