@@ -19,15 +19,9 @@ jobs:
       matrix:
         # Test all supported versions on Ubuntu:
         os: [ubuntu-latest]
-        python: ["3.7", "3.8", "3.9", "3.10", 3.11-dev, 3.12-dev]
+        python: [pypy3.7, pypy3.8, pypy3.9, "3.7", "3.8", "3.9", "3.10", 3.11-dev, 3.12-dev]
         include:
-          # Also test PyPy, macOS, and Windows:
-          - os: ubuntu-latest
-            python: pypy-3.9
-          - os: ubuntu-latest
-            python: pypy-3.8
-          - os: ubuntu-latest
-            python: pypy-3.7
+          # Also test macOS and Windows:
           - os: macos-latest
             python: "3.10"
           - os: windows-latest
