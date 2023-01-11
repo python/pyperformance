@@ -2,12 +2,11 @@ name: test
 
 on:
   push:
-    branches: [main]
   pull_request:
-    branches: [main]
   schedule:
     # Midnight UTC:
     - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
 
@@ -33,14 +32,14 @@ jobs:
           - os: windows-latest
             python: "3.10"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       if: "!endsWith(matrix.python, '-dev')"
       with:
         python-version: ${{ matrix.python }}
     - name: Set up Python ${{ matrix.python }} using deadsnakes
-      uses: deadsnakes/action@v2.1.1
+      uses: deadsnakes/action@v3.0.0
       if: "endsWith(matrix.python, '-dev')"
       with:
         python-version: ${{ matrix.python }}
