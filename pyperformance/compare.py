@@ -1,7 +1,6 @@
 import csv
 import os.path
 import math
-import sys
 
 import pyperf
 import statistics

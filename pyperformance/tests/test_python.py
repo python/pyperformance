@@ -1,8 +1,7 @@
-import sys
 import types
 import unittest
 
-from pyperformance import tests, _python
+from pyperformance import _python
 
 
 class GetIDTests(unittest.TestCase):

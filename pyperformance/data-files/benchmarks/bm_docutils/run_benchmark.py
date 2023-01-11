@@ -4,7 +4,6 @@ Convert Docutils' documentation from reStructuredText to <format>.
 
 import contextlib
 from pathlib import Path
-import time
 
 import docutils
 from docutils import core

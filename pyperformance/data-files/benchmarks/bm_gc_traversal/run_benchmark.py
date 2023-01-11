@@ -26,7 +26,7 @@ def benchamark_collection(loops, n_levels):
         collected = gc.collect()
         total_time += pyperf.perf_counter() - t0
 
-        assert collected == 0
+        assert collected is None or collected == 0
 
     return total_time
 

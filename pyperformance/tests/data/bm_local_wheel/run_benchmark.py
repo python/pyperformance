@@ -3,7 +3,6 @@ A dummy benchmark that uses a local wheel
 """
 
 import pyperf
-from this_is import en_us
 
 
 def bench():

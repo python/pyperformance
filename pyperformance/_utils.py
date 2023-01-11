@@ -25,8 +25,6 @@ import os
 import os.path
 import shlex
 import shutil
-import subprocess
-import sys
 import tempfile
 import urllib.request
 
@@ -84,7 +82,6 @@ def safe_rmtree(path):
 #######################################
 # platform utils
 
-import logging
 import subprocess
 import sys
 
@@ -216,7 +213,8 @@ def parse_selections(selections, parse_entry=None):
     if isinstance(selections, str):
         selections = selections.split(',')
     if parse_entry is None:
-        parse_entry = (lambda o, e: (o, e, None, e))
+        def parse_entry(o, e):
+            return (o, e, None, e)
 
     for entry in selections:
         entry = entry.strip()
