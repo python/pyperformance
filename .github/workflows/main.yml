@@ -19,7 +19,7 @@ jobs:
         # Test all supported versions on Ubuntu:
         os: [ubuntu-latest]
         # Skip 3.12-dev, pending https://github.com/python-greenlet/greenlet/issues/323
-        python: [pypy3.7, pypy3.8, pypy3.9, "3.7", "3.8", "3.9", "3.10", 3.11-dev]
+        python: [pypy3.8, pypy3.9, "3.7", "3.8", "3.9", "3.10", 3.11-dev]
         include:
           # Also test macOS and Windows:
           - os: macos-latest
