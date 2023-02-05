@@ -7,6 +7,13 @@ import unittest
 import pyperformance
 from pyperformance import tests
 
+# Skip tests failing on Python 3.12
+# pending https://github.com/python-greenlet/greenlet/issues/323
+try:
+    import greenlet
+except ImportError:
+    greenlet = None
+
 
 class FullStackTests(tests.Functional, unittest.TestCase):
 
@@ -92,6 +99,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
     ###################################
     # venv
 
+    @unittest.skipUnless(greenlet, "requires greenlet")
     def test_venv(self):
         # XXX Capture and check the output.
         root = self.resolve_tmp('venv', unique=True)
@@ -140,6 +148,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
     ###################################
     # run
 
+    @unittest.skipUnless(greenlet, "requires greenlet")
     def test_run_and_show(self):
         filename = self.resolve_tmp('bench.json')
 
