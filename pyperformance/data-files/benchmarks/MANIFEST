@@ -17,6 +17,7 @@ gc_collect	<local>
 generators	<local>
 chameleon	<local>
 chaos	<local>
+comprehensions	<local>
 crypto_pyaes	<local>
 dask	<local>
 deepcopy	<local>
