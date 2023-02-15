@@ -6,7 +6,7 @@ Author: Carl Meyer
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Iterable
+from typing import Iterable, List, Optional
 
 import pyperf
 
@@ -20,25 +20,25 @@ class WidgetKind(Enum):
 class Widget:
     widget_id: int
     creator_id: int
-    derived_widget_ids: list[int]
+    derived_widget_ids: List[int]
     kind: WidgetKind
     has_knob: bool
     has_spinner: bool
 
 
 class WidgetTray:
-    def __init__(self, owner_id: int, widgets: list[Widget]) -> None:
+    def __init__(self, owner_id: int, widgets: List[Widget]) -> None:
         self.owner_id = owner_id
-        self.sorted_widgets: list[Widget] = []
+        self.sorted_widgets: List[Widget] = []
         self._add_widgets(widgets)
 
-    def _any_knobby(self, widgets: Iterable[Widget | None]) -> bool:
+    def _any_knobby(self, widgets: Iterable[Optional[Widget]]) -> bool:
         return any(w.has_knob for w in widgets if w)
 
     def _is_big_spinny(self, widget: Widget) -> bool:
         return widget.kind == WidgetKind.BIG and widget.has_spinner
 
-    def _add_widgets(self, widgets: list[Widget]) -> None:
+    def _add_widgets(self, widgets: List[Widget]) -> None:
         # sort order: mine first, then any widgets with derived knobby widgets in order of
         # number derived, then other widgets in order of number derived, and we exclude
         # big spinny widgets entirely
@@ -61,7 +61,7 @@ class WidgetTray:
         self.sorted_widgets = [id_to_widget[sw[-1]] for sw in sortable_widgets]
 
 
-def make_some_widgets() -> list[Widget]:
+def make_some_widgets() -> List[Widget]:
     widget_id = 0
     widgets = []
     for creator_id in range(3):
