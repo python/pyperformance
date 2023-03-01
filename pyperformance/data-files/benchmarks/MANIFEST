@@ -66,6 +66,7 @@ sqlite_synth	<local>
 sympy	<local>
 telco	<local>
 tornado_http	<local>
+typeshed_stats	<local>
 unpack_sequence	<local>
 unpickle	<local:pickle>
 unpickle_list	<local:pickle>

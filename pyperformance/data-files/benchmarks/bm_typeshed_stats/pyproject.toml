@@ -1,0 +1,12 @@
+[project]
+name = "performance_bm_typeshed_stats"
+requires-python = ">=3.11"
+dependencies = [
+    "pyperf",
+]
+urls.repository = "https://github.com/python/pyperformance"
+dynamic = ["version"]
+
+[tool.pyperformance]
+name = "typeshed_stats"
+tags = "apps"
