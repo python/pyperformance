@@ -8,6 +8,7 @@ on:
   schedule:
     # Midnight UTC:
     - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
 
