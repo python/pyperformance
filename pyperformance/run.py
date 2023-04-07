@@ -124,7 +124,10 @@ def run_benchmarks(should_run, python, options):
 
             version = pyperformance.__version__
             for res in results:
-                res.update_metadata({'performance_version': version})
+                res.update_metadata({
+                    'performance_version': version,
+                    'tags': bench.tags
+                })
 
                 if dest_suite is not None:
                     dest_suite.add_benchmark(res)

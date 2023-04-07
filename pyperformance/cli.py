@@ -108,6 +108,9 @@ def parse_args():
         'list_groups', help='List benchmark groups of the running Python')
     cmds.append(cmd)
     cmd.add_argument("--manifest", help="benchmark manifest file to use")
+    cmd.add_argument("--tags", action="store_true")
+    cmd.add_argument("--no-tags", dest="tags", action="store_false")
+    cmd.set_defaults(tags=True)
 
     # compile
     cmd = subparsers.add_parser(
@@ -223,7 +226,8 @@ def _select_benchmarks(raw, manifest):
 
     # Get the raw list of benchmarks.
     entries = raw.lower()
-    parse_entry = (lambda o, s: _benchmark_selections.parse_selection(s, op=o))
+    def parse_entry(o, s):
+        return _benchmark_selections.parse_selection(s, op=o)
     parsed = _utils.parse_selections(entries, parse_entry)
     parsed_infos = list(parsed)
 
@@ -302,7 +306,7 @@ def _main():
         cmd_list(options, benchmarks)
     elif options.action == 'list_groups':
         manifest = _manifest_from_options(options)
-        cmd_list_groups(manifest)
+        cmd_list_groups(manifest, showtags=options.tags)
     else:
         parser.print_help()
         sys.exit(1)

@@ -2,16 +2,29 @@
 
 name	metafile
 2to3	<local>
+async_generators	<local>
 async_tree	<local>
 async_tree_cpu_io_mixed	<local:async_tree>
 async_tree_io	<local:async_tree>
 async_tree_memoization	<local:async_tree>
+asyncio_tcp	<local>
+asyncio_tcp_ssl	<local:asyncio_tcp>
+concurrent_imap	<local>
+coroutines	<local>
+coverage	<local>
+gc_traversal	<local>
+gc_collect	<local>
+generators	<local>
 chameleon	<local>
 chaos	<local>
+comprehensions	<local>
 crypto_pyaes	<local>
+dask	<local>
+deepcopy	<local>
 deltablue	<local>
 django_template	<local>
 dulwich_log	<local>
+docutils	<local>
 fannkuch	<local>
 float	<local>
 genshi	<local>
@@ -35,6 +48,7 @@ pickle_dict	<local:pickle>
 pickle_list	<local:pickle>
 pickle_pure_python	<local:pickle>
 pidigits	<local>
+pprint	<local>
 pyflate	<local>
 python_startup	<local>
 python_startup_no_site	<local:python_startup>
@@ -48,6 +62,7 @@ scimark	<local>
 spectral_norm	<local>
 sqlalchemy_declarative	<local>
 sqlalchemy_imperative	<local>
+sqlglot	<local>
 sqlite_synth	<local>
 sympy	<local>
 telco	<local>
@@ -70,4 +85,3 @@ xml_etree	<local>
 
 
 [group default]
--mdp

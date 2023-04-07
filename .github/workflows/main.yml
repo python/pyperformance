@@ -8,6 +8,7 @@ on:
   schedule:
     # Midnight UTC:
     - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
 
@@ -19,7 +20,7 @@ jobs:
       matrix:
         # Test all supported versions on Ubuntu:
         os: [ubuntu-latest]
-        python: ["3.7", "3.8", "3.9", "3.10", 3.11-dev]
+        python: ["3.7", "3.8", "3.9", "3.10", 3.11-dev, 3.12-dev]
         include:
           # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
@@ -30,14 +31,18 @@ jobs:
             python: pypy-3.7
           - os: macos-latest
             python: "3.10"
-          # XXX: We should be testing 3.10, but for some reason setuptools can't
-          # seem to find the runner's C compiler for new wheel builds...
           - os: windows-latest
-            python: "3.9"
+            python: "3.10"
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python }}
       uses: actions/setup-python@v2
+      if: "!endsWith(matrix.python, '-dev')"
+      with:
+        python-version: ${{ matrix.python }}
+    - name: Set up Python ${{ matrix.python }} using deadsnakes
+      uses: deadsnakes/action@v2.1.1
+      if: "endsWith(matrix.python, '-dev')"
       with:
         python-version: ${{ matrix.python }}
     - name: Install

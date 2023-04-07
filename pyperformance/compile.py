@@ -298,11 +298,13 @@ class Python(Task):
         configure = os.path.join(self.conf.repo_dir, 'configure')
         self.run(configure, *config_args)
 
+        argv = ['make']
         if self.conf.pgo:
             # FIXME: use taskset (isolated CPUs) for PGO?
-            self.run('make', 'profile-opt')
-        else:
-            self.run('make')
+            argv.append('profile-opt')
+        if self.conf.jobs:
+            argv.append('-j%d' % self.conf.jobs)
+        self.run(*argv)
 
     def install_python(self):
         program, _ = resolve_python(
@@ -396,7 +398,7 @@ class Python(Task):
         cmd = [self.program, '-u', '-m', 'pip', 'install']
 
         if pyperformance.is_dev():
-            cmd.append(os.path.dirname(pyperformance.PKG_ROOT))
+            cmd.extend(['-e', os.path.dirname(pyperformance.PKG_ROOT)])
         else:
             version = pyperformance.__version__
             cmd.append('pyperformance==%s' % version)
@@ -703,7 +705,7 @@ class BenchmarkRevision(Application):
             python = None
 
         failed = self.run_benchmark(python)
-        if not failed and self.conf.upload:
+        if self.conf.upload:
             self.upload()
         return failed
 
@@ -778,6 +780,9 @@ def parse_config(filename, command):
         except KeyError:
             return default
 
+    def getint(section, key, default=None):
+        return int(getstr(section, key, default))
+
     # [config]
     conf.json_dir = getfile('config', 'json_dir')
     conf.json_patch_dir = os.path.join(conf.json_dir, 'patch')
@@ -796,6 +801,10 @@ def parse_config(filename, command):
         conf.pgo = getboolean('compile', 'pgo', True)
         conf.install = getboolean('compile', 'install', True)
         conf.pkg_only = getstr('compile', 'pkg_only', '').split()
+        try:
+            conf.jobs = getint('compile', 'jobs')
+        except KeyError:
+            conf.jobs = None
 
         # [run_benchmark]
         conf.system_tune = getboolean('run_benchmark', 'system_tune', True)
@@ -867,7 +876,6 @@ class BenchmarkAll(Application):
         self.setup_log('compile_all')
         self.outputs = []
         self.skipped = []
-        self.uploaded = []
         self.failed = []
         self.timings = []
         self.logger = logging.getLogger()
@@ -908,11 +916,8 @@ class BenchmarkAll(Application):
                 # Ony update the repository once
                 self.conf.update = False
 
-        if exitcode == 0:
-            if self.conf.upload:
-                self.uploaded.append(key)
-            else:
-                self.outputs.append(key)
+        if exitcode == 0 or exitcode == EXIT_BENCH_ERROR:
+            self.outputs.append((key, exitcode == EXIT_BENCH_ERROR))
             self.timings.append(dt)
         else:
             self.failed.append(key)
@@ -921,11 +926,12 @@ class BenchmarkAll(Application):
         for key in self.skipped:
             self.logger.error("Skipped: %s" % key)
 
-        for key in self.outputs:
-            self.logger.error("Tested: %s" % key)
-
-        for key in self.uploaded:
-            self.logger.error("Tested and uploaded: %s" % key)
+        for key, success in self.outputs:
+            if success:
+                success_message = "All benchmarks succeeded"
+            else:
+                success_message = "Some benchmarks failed"
+            self.logger.error("Tested: %s (%s)" % (key, success_message))
 
         for key in self.failed:
             text = "FAILED: %s" % key

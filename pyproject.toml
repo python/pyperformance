@@ -1,0 +1,79 @@
+# Update dependencies:
+#
+#  - python3 -m pip install --user --upgrade pip-tools build
+#  - git clean -fdx  # remove all untracked files!
+#  - (pip-compile --upgrade -o requirements.txt requirements.in)
+#
+# Prepare a release:
+#
+#  - git pull --rebase
+#  - Remove untracked files/dirs: git clean -fdx
+#  - maybe update version in pyperformance/__init__.py and doc/conf.py
+#  - set release date in doc/changelog.rst
+#  - git commit -a -m "prepare release x.y"
+#  - run tests: tox --parallel auto
+#  - git push
+#  - check the CI status:
+#    https://github.com/python/pyperformance/actions
+#
+# Release a new version with GitHub (preferred):
+#
+#  - go to the GitHub release tab: https://github.com/python/pyperformance/releases
+#  - click "Draft a new release" and fill the contents
+#  - finally click the "Publish release" button! Done!
+#  - monitor the publish status: https://github.com/python/pyperformance/actions/workflows/publish.yml
+#
+# Release a new version manually:
+#
+#  - git tag VERSION
+#  - git push --tags
+#  - Remove untracked files/dirs: git clean -fdx
+#  - python -m build
+#  - twine upload dist/*
+#
+# After the release:
+#
+#  - set version to n+1: pyperformance/__init__.py and doc/conf.py
+#  - git commit -a -m "post-release"
+#  - git push
+
+[build-system]
+requires = ["setuptools >= 61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyperformance"
+dynamic = ["version"]
+license = {text = "MIT"}
+description = "Python benchmark suite"
+readme = "README.rst"
+urls = {Homepage = "https://github.com/python/pyperformance"}
+authors= [{name = "Collin Winter"}, {name= "Jeffrey Yasskin"}]
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: MIT License',
+    'Natural Language :: English',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python',
+]
+requires-python = ">=3.7"
+dependencies = ["pyperf", "toml", "packaging"]
+
+[project.optional-dependencies]
+dev = [
+    'tox',
+]
+
+[project.scripts]
+pyperformance = "pyperformance.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages]
+find = {}  # Scanning implicit namespaces is active by default
+
+[tool.setuptools.dynamic]
+version = {attr = "pyperformance.__version__"}
