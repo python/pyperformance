@@ -16,7 +16,7 @@ import tomli
 
 DATA_FILE = Path(__file__).parent / "data" / "tomli-bench-data.toml"
 
-def bench_tomli_loads(loops: int) -> None:
+def bench_tomli_loads(loops: int) -> float:
     data = DATA_FILE.read_text('utf-8')
     range_it = range(loops)
     t0 = pyperf.perf_counter()
