@@ -424,7 +424,7 @@ class Richards(object):
 
 if __name__ == "__main__":
     runner = pyperf.Runner()
-    runner.metadata['description'] = "The Richards benchmark"
+    runner.metadata['description'] = "The Richards benchmark, with super()"
 
     richard = Richards()
-    runner.bench_func('richards', richard.run, 1)
+    runner.bench_func('richards_super', richard.run, 1)
