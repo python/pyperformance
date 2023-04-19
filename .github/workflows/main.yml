@@ -67,17 +67,18 @@ jobs:
     - name: Display Python version
       run: python -c "import sys; print(sys.version)"
     - name: Run Tests
+      id: pyperformance
       run: python -u -m pyperformance.tests
       continue-on-error: ${{ matrix.experimental }}
     - name: Notify result for experimental tasks (Failure)
       uses: thollander/actions-comment-pull-request@v2
-      if: ${{ failure() && matrix.experimental }}
+      if: ${{ steps.pyperformance.outcome != 'success'  && matrix.experimental }}
       with:
         message: |
           '${{ matrix.os }} - ${{ matrix.python }} is failed, but allowed as the experimental task.'
     - name: Notify result for experimental tasks (Success)
       uses: thollander/actions-comment-pull-request@v2
-      if: ${{ success() && matrix.experimental }}
+      if: ${{ steps.pyperformance.outcome == 'success' && matrix.experimental }}
       with:
         message: |
           '${{ matrix.os }} - ${{ matrix.python }} is passed, now we can disable experimental flag.'
