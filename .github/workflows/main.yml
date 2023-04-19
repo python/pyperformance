@@ -10,13 +10,12 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 
-# test
-permissions: write-all
-
 jobs:
 
   test:
     runs-on: ${{ matrix.os }}
+    permissions:
+      pull-requests: write
     name: ${{ matrix.os }} - ${{ matrix.python }}
     strategy:
       fail-fast: false
