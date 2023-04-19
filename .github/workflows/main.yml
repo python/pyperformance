@@ -71,13 +71,13 @@ jobs:
       continue-on-error: ${{ matrix.experimental }}
     - name: Notify result for experimental tasks (Failure)
       uses: thollander/actions-comment-pull-request@v2
-      if: failure() && ${{ matrix.experimental }} == true
+      if: ${{ failure() && matrix.experimental }}
       with:
         message: |
           '${{ matrix.os }} - ${{ matrix.python }} is failed, but allowed as the experimental task.'
     - name: Notify result for experimental tasks (Success)
       uses: thollander/actions-comment-pull-request@v2
-      if: success() && ${{ matrix.experimental }} == true
+      if: ${{ success() && matrix.experimental }}
       with:
         message: |
           '${{ matrix.os }} - ${{ matrix.python }} is passed, now we can disable experimental flag.'
