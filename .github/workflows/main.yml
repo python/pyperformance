@@ -74,7 +74,7 @@ jobs:
       if: ${{ steps.pyperformance.outcome != 'success'  && matrix.experimental }}
       with:
         message: |
-          ❌: ${{ matrix.os }} - ${{ matrix.python }} is failed, but allowed as the experimental task.
+          ❌: ${{ matrix.os }} - ${{ matrix.python }} has failed, but allowed as the experimental task.
     - name: Notify result for experimental tasks (Success)
       uses: marocchino/sticky-pull-request-comment@v2
       if: ${{ steps.pyperformance.outcome == 'success' && matrix.experimental }}
