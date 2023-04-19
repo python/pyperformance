@@ -20,8 +20,12 @@ jobs:
       matrix:
         # Test all supported versions on Ubuntu:
         os: [ubuntu-latest]
-        python: ["3.7", "3.8", "3.9", "3.10", 3.11-dev, 3.12-dev]
+        python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
         include:
+          # Handling as the experimental job
+          - os: ubuntu-latest
+            python: "3.12-dev"
+            experimental: true
           # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
             python: pypy-3.9
