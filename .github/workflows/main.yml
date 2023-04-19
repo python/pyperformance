@@ -1,9 +1,8 @@
 name: test
 
 on:
-  push:
-    branches: [main]
   pull_request:
+  push:
     branches: [main]
   schedule:
     # Midnight UTC:
@@ -73,11 +72,15 @@ jobs:
       uses: marocchino/sticky-pull-request-comment@v2
       if: ${{ steps.pyperformance.outcome != 'success' && matrix.experimental }}
       with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        number: ${{ github.event.pull_request.number }}
         message: |
           ❌: ${{ matrix.os }} - ${{ matrix.python }} has failed, but allowed as the experimental task.
     - name: Notify result for experimental tasks (Success)
       uses: marocchino/sticky-pull-request-comment@v2
       if: ${{ steps.pyperformance.outcome == 'success' && matrix.experimental }}
       with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        number: ${{ github.event.pull_request.number }}
         message: |
           ✅: ${{ matrix.os }} - ${{ matrix.python }} has passed, now we can disable the experimental flag.
