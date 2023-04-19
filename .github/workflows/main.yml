@@ -24,7 +24,7 @@ jobs:
         python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
         experimental: [false]
         include:
-          # Handling as the experimental job
+          # As the experimental task for the dev version.
           - os: ubuntu-latest
             python: "3.12-dev"
             experimental: true
@@ -66,3 +66,9 @@ jobs:
       run: python -c "import sys; print(sys.version)"
     - name: Run Tests
       run: python -u -m pyperformance.tests
+    - name: Notify result for experimental tasks
+      uses: thollander/actions-comment-pull-request@v2
+      if: failure() && ${{ matrix.experimental }} == true
+      with:
+        message: |
+          '${{ matrix.os }} - ${{ matrix.python }} is failed, but allowed as the experimental task.'
