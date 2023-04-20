@@ -1,7 +1,7 @@
 name: test
 
 on:
-  pull_request:
+  pull_request_target:
   push:
     branches: [main]
   schedule:
@@ -13,7 +13,8 @@ jobs:
 
   test:
     runs-on: ${{ matrix.os }}
-    permissions: write-all
+    permissions:
+      pull-requests: write
     name: ${{ matrix.os }} - ${{ matrix.python }}
     strategy:
       fail-fast: false
@@ -71,15 +72,11 @@ jobs:
       uses: marocchino/sticky-pull-request-comment@v2
       if: ${{ steps.pyperformance.outcome != 'success' && matrix.experimental }}
       with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        number: ${{ github.event.pull_request.number }}
         message: |
           ❌: ${{ matrix.os }} - ${{ matrix.python }} has failed, but allowed as the experimental task.
     - name: Notify result for experimental tasks (Success)
       uses: marocchino/sticky-pull-request-comment@v2
       if: ${{ steps.pyperformance.outcome == 'success' && matrix.experimental }}
       with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        number: ${{ github.event.pull_request.number }}
         message: |
           ✅: ${{ matrix.os }} - ${{ matrix.python }} has passed, now we can disable the experimental flag.
