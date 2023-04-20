@@ -14,34 +14,46 @@ jobs:
 
   test:
     runs-on: ${{ matrix.os }}
+    permissions:
+      pull-requests: write
     name: ${{ matrix.os }} - ${{ matrix.python }}
     strategy:
       fail-fast: false
       matrix:
         # Test all supported versions on Ubuntu:
         os: [ubuntu-latest]
-        python: ["3.7", "3.8", "3.9", "3.10", 3.11-dev, 3.12-dev]
+        python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        experimental: [false]
         include:
+          # As the experimental task for the dev version.
+          - os: ubuntu-latest
+            python: "3.12-dev"
+            experimental: true
           # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
             python: pypy-3.9
+            experimental: false
           - os: ubuntu-latest
             python: pypy-3.8
+            experimental: false
           - os: ubuntu-latest
             python: pypy-3.7
+            experimental: false
           - os: macos-latest
             python: "3.10"
+            experimental: false
           - os: windows-latest
             python: "3.10"
+            experimental: false
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       if: "!endsWith(matrix.python, '-dev')"
       with:
         python-version: ${{ matrix.python }}
     - name: Set up Python ${{ matrix.python }} using deadsnakes
-      uses: deadsnakes/action@v2.1.1
+      uses: deadsnakes/action@v3.0.0
       if: "endsWith(matrix.python, '-dev')"
       with:
         python-version: ${{ matrix.python }}
@@ -54,4 +66,6 @@ jobs:
     - name: Display Python version
       run: python -c "import sys; print(sys.version)"
     - name: Run Tests
+      id: pyperformance
       run: python -u -m pyperformance.tests
+      continue-on-error: ${{ matrix.experimental }}
