@@ -2,4 +2,4 @@ asgiref==3.3.4
 django==3.2.4
 pytz==2021.1
 setuptools==65.6.3
-sqlparse==0.4.1
+sqlparse==0.4.4
