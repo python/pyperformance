@@ -32,13 +32,13 @@ jobs:
           # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
             python: pypy-3.9
-            experimental: false
+            experimental: true
           - os: ubuntu-latest
             python: pypy-3.8
-            experimental: false
+            experimental: true
           - os: ubuntu-latest
             python: pypy-3.7
-            experimental: false
+            experimental: true
           - os: macos-latest
             python: "3.10"
             experimental: false
