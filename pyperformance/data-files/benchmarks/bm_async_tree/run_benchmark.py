@@ -6,11 +6,14 @@ variants include:
 
 1) "none": No actual async work in the async tree.
 2) "io": All leaf nodes simulate async IO workload (async sleep 50ms).
-3) "memoization": All leaf nodes simulate async IO workload with 90% of 
+3) "memoization": All leaf nodes simulate async IO workload with 90% of
                   the data memoized
-4) "cpu_io_mixed": Half of the leaf nodes simulate CPU-bound workload and 
-                   the other half simulate the same workload as the 
+4) "cpu_io_mixed": Half of the leaf nodes simulate CPU-bound workload and
+                   the other half simulate the same workload as the
                    "memoization" variant.
+
+All variants also have an "eager" flavor that uses
+the asyncio eager task factory (if available).
 """
 
 
@@ -57,14 +60,30 @@ class AsyncTree:
         await self.recurse(NUM_RECURSE_LEVELS)
 
 
+class EagerMixin:
+    async def run(self):
+        loop = asyncio.get_event_loop()
+        if hasattr(asyncio, 'eager_task_factory'):
+            loop.set_task_factory(asyncio.eager_task_factory)
+        return await super().run()
+
+
 class NoneAsyncTree(AsyncTree):
     async def workload_func(self):
         return
 
 
+class EagerAsyncTree(EagerMixin, NoneAsyncTree):
+    pass
+
+
 class IOAsyncTree(AsyncTree):
     async def workload_func(self):
         await self.mock_io_call()
+
+
+class EagerIOAsyncTree(EagerMixin, IOAsyncTree):
+    pass
 
 
 class MemoizationAsyncTree(AsyncTree):
@@ -82,6 +101,10 @@ class MemoizationAsyncTree(AsyncTree):
         return data
 
 
+class EagerMemoizationAsyncTree(EagerMixin, MemoizationAsyncTree):
+    pass
+
+
 class CpuIoMixedAsyncTree(MemoizationAsyncTree):
     async def workload_func(self):
         # deterministic random, seed set in AsyncTree.__init__()
@@ -90,6 +113,10 @@ class CpuIoMixedAsyncTree(MemoizationAsyncTree):
             return math.factorial(FACTORIAL_N)
         else:
             return await MemoizationAsyncTree.workload_func(self)
+
+
+class EagerCpuIoMixedAsyncTree(EagerMixin, CpuIoMixedAsyncTree):
+    pass
 
 
 def add_metadata(runner):
@@ -115,10 +142,10 @@ def add_parser_args(parser):
 Determines which benchmark to run. Options:
 1) "none": No actual async work in the async tree.
 2) "io": All leaf nodes simulate async IO workload (async sleep 50ms).
-3) "memoization": All leaf nodes simulate async IO workload with 90% of 
+3) "memoization": All leaf nodes simulate async IO workload with 90% of
                   the data memoized
-4) "cpu_io_mixed": Half of the leaf nodes simulate CPU-bound workload and 
-                   the other half simulate the same workload as the 
+4) "cpu_io_mixed": Half of the leaf nodes simulate CPU-bound workload and
+                   the other half simulate the same workload as the
                    "memoization" variant.
 """,
     )
@@ -126,9 +153,13 @@ Determines which benchmark to run. Options:
 
 BENCHMARKS = {
     "none": NoneAsyncTree,
+    "eager": EagerAsyncTree,
     "io": IOAsyncTree,
+    "eager_io": EagerIOAsyncTree,
     "memoization": MemoizationAsyncTree,
+    "eager_memoization": EagerMemoizationAsyncTree,
     "cpu_io_mixed": CpuIoMixedAsyncTree,
+    "eager_cpu_io_mixed": EagerCpuIoMixedAsyncTree,
 }
 
 
@@ -142,4 +173,3 @@ if __name__ == "__main__":
     async_tree_class = BENCHMARKS[benchmark]
     async_tree = async_tree_class()
     runner.bench_async_func(f"async_tree_{benchmark}", async_tree.run)
-

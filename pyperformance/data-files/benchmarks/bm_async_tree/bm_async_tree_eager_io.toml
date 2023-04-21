@@ -1,0 +1,3 @@
+[tool.pyperformance]
+name = "async_tree_eager_io"
+extra_opts = ["eager_io"]
