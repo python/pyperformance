@@ -452,10 +452,6 @@ def versus_cpu():
 
 
 if __name__ == "__main__":
-    kw = {}
-    if pyperf.python_has_jit():
-        # PyPy needs to compute more warmup values to warmup its JIT
-        kw['warmups'] = 50
-    runner = pyperf.Runner(**kw)
+    runner = pyperf.Runner()
     runner.metadata['description'] = "Test the performance of the Go benchmark"
     runner.bench_func('go', versus_cpu)
