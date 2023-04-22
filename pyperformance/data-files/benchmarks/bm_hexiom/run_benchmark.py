@@ -651,11 +651,7 @@ def add_cmdline_args(cmd, args):
 
 
 if __name__ == "__main__":
-    kw = {'add_cmdline_args': add_cmdline_args}
-    if pyperf.python_has_jit():
-        # PyPy needs to compute more warmup values to warmup its JIT
-        kw['warmups'] = 15
-    runner = pyperf.Runner(**kw)
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     levels = sorted(LEVELS)
     runner.argparser.add_argument("--level", type=int,
                                   choices=levels,
