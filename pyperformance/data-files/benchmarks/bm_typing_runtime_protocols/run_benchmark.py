@@ -149,38 +149,24 @@ class NominalXWithInt(SupportsIntAndX):
 
 
 def bench_protocols(loops: int) -> float:
-    instances = {
-        obj: obj()
-        for obj in globals().values()
-        if isinstance(obj, type) and not getattr(obj, "_is_protocol", False)
-    }
+    protocols = [
+        HasX, HasManyAttributes, SupportsInt, SupportsManyMethods, SupportsIntAndX
+    ]
+    instances = [
+        cls()
+        for cls in (
+            Empty, PropertyX, HasIntMethod, HasManyMethods, PropertyXWithInt,
+            ClassVarX, ClassVarXWithInt, InstanceVarX, ManyInstanceVars,
+            InstanceVarXWithInt, NominalX, NominalSupportsInt, NominalXWithInt
+        )
+    ]
 
     t0 = time.perf_counter()
 
-    for cls in Empty, PropertyX, InstanceVarX, NominalX:
-        instance = instances[cls]
-        for _ in range(loops):
-            isinstance(instance, HasX)
-
-    for cls in Empty, ManyInstanceVars:
-        instance = instances[cls]
-        for _ in range(loops):
-            isinstance(instance, HasManyAttributes)
-
-    for cls in Empty, HasIntMethod, NominalSupportsInt:
-        instance = instances[cls]
-        for _ in range(loops):
-            isinstance(instance, SupportsInt)
-
-    for cls in Empty, HasManyMethods:
-        instance = instances[cls]
-        for _ in range(loops):
-            isinstance(instance, SupportsManyMethods)
-
-    for cls in Empty, PropertyXWithInt, InstanceVarXWithInt, NominalXWithInt:
-        instance = instances[cls]
-        for _ in range(loops):
-            isinstance(instance, SupportsIntAndX)
+    for _ in range(loops):
+        for protocol in protocols:
+            for instance in instances:
+                isinstance(instance, protocol)
 
     return time.perf_counter() - t0
 
