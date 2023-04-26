@@ -241,11 +241,15 @@ def _select_benchmarks(raw, manifest):
 
     # Get the selections.
     selected = []
+    this_python_version = ".".join(map(str, sys.version_info[:3]))
     for bench in _benchmark_selections.iter_selections(manifest, parsed_infos):
         if isinstance(bench, str):
             logging.warning(f"no benchmark named {bench!r}")
             continue
-        selected.append(bench)
+        # Filter out any benchmarks that can't be run on the Python version we're running
+        if bench.python is not None and this_python_version in bench.python:
+            selected.append(bench)
+
     return selected
 
 

@@ -13,6 +13,7 @@ import os.path
 import sys
 
 import pyperf
+from packaging.specifiers import SpecifierSet
 
 from . import _utils, _benchmark_metadata
 
@@ -164,9 +165,13 @@ class Benchmark:
     def extra_opts(self):
         return self._get_metadata_value('extra_opts', ())
 
+    @property
+    def python(self):
+        req = self._get_metadata_value("python", None)
+        return None if req is None else SpecifierSet(req)
+
     # Other metadata keys:
     # * base
-    # * python
     # * dependencies
     # * requirements
 
