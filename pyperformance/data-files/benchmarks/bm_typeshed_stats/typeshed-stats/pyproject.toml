@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "typeshed_stats"
+dynamic = ["version"]
+authors = [
+    { name="Alex Waygood", email="alex.waygood@gmail.com" },
+]
+description = "Library and command-line tool to gather stats on typeshed packages"
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.11"
+keywords = [
+    "typeshed",
+    "typing",
+    "stubs",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development",
+    "Typing :: Typed",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/AlexWaygood/typeshed-stats"
+"Bug Tracker" = "https://github.com/AlexWaygood/typeshed-stats/issues"
+
+[project.scripts]
+typeshed-stats = "typeshed_stats._cli:main"
+
+[tool.hatch.version]
+path = "src/typeshed_stats/__init__.py"
