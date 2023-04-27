@@ -167,8 +167,7 @@ class Benchmark:
 
     @property
     def python(self):
-        req = self._get_metadata_value("python", None)
-        return None if req is None else SpecifierSet(req)
+        return SpecifierSet(self._get_metadata_value("python", ""))
 
     # Other metadata keys:
     # * base

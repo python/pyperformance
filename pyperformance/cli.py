@@ -247,7 +247,7 @@ def _select_benchmarks(raw, manifest):
             logging.warning(f"no benchmark named {bench!r}")
             continue
         # Filter out any benchmarks that can't be run on the Python version we're running
-        if bench.python is not None and this_python_version in bench.python:
+        if this_python_version in bench.python:
             selected.append(bench)
 
     return selected
