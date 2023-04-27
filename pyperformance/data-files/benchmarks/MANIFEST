@@ -17,6 +17,7 @@ gc_collect	<local>
 generators	<local>
 chameleon	<local>
 chaos	<local>
+comprehensions	<local>
 crypto_pyaes	<local>
 dask	<local>
 deepcopy	<local>
@@ -57,6 +58,7 @@ regex_dna	<local>
 regex_effbot	<local>
 regex_v8	<local>
 richards	<local>
+richards_super	<local>
 scimark	<local>
 spectral_norm	<local>
 sqlalchemy_declarative	<local>
@@ -65,6 +67,7 @@ sqlglot	<local>
 sqlite_synth	<local>
 sympy	<local>
 telco	<local>
+tomli_loads	<local>
 tornado_http	<local>
 typeshed_stats	<local>
 unpack_sequence	<local>

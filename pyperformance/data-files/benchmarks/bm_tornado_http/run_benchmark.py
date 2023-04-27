@@ -96,11 +96,7 @@ if __name__ == "__main__":
         import asyncio
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-    kw = {}
-    if pyperf.python_has_jit():
-        # PyPy needs to compute more warmup values to warmup its JIT
-        kw['warmups'] = 30
-    runner = pyperf.Runner(**kw)
+    runner = pyperf.Runner()
     runner.metadata['description'] = ("Test the performance of HTTP requests "
                                       "with Tornado.")
     runner.bench_time_func('tornado_http', bench_tornado)

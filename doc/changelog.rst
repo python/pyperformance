@@ -1,6 +1,20 @@
 Changelog
 =========
 
+Version 1.0.7 (2023-04-22)
+-------------
+
+* Upgrade pyperf from 2.5.0 to 2.6.0
+* Clean unused imports and other small code details
+* Migrage to the pyproject.toml based project
+* Fix the django_template benchmark due to lack of distutils
+* Add benchmark for toml
+* Add benchmark for comprehensions
+* Add benchmark for asyncio_tcp_ssl
+* Add benchmark for asyncio_tcp
+* Add benchmark for Dask scheduler
+* Add the gc benchmarks to the MANIFEST file
+
 Version 1.0.6 (2022-11-20)
 -------------
 
