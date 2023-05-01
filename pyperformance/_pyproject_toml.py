@@ -18,7 +18,11 @@ import packaging.requirements
 import packaging.specifiers
 import packaging.utils
 import packaging.version
-import toml
+
+try:
+    import tomllib
+except ImportError:
+    import tomli as tomllib
 
 from ._utils import check_name
 
@@ -52,7 +56,7 @@ def parse_pyproject_toml(text, rootdir, name=None, *,
                          tools=None,
                          requirefiles=True,
                          ):
-    data = toml.loads(text)
+    data = tomllib.loads(text)
     unused = list(data)
 
     for section, normalize in SECTIONS.items():
