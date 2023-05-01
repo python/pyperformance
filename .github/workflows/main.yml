@@ -17,7 +17,7 @@ jobs:
     permissions:
       pull-requests: write
     name: ${{ matrix.os }} - ${{ matrix.python }}
-    if: ${{ github.event_name != 'schedule' || (github.repository == 'python/pyperformance' || && github.event_name == 'schedule') }}
+    if: ${{ github.event_name != 'schedule' || (github.repository == 'python/pyperformance' && github.event_name == 'schedule') }}
     strategy:
       fail-fast: false
       matrix:
