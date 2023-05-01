@@ -12,7 +12,6 @@ __all__ = [
 
 import os.path
 import re
-import sys
 import urllib.parse
 
 import packaging.requirements
@@ -20,9 +19,9 @@ import packaging.specifiers
 import packaging.utils
 import packaging.version
 
-if sys.version_info >= (3, 11):
+try:
     import tomllib
-else:
+except ImportError:
     import tomli as tomllib
 
 from ._utils import check_name
