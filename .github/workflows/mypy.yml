@@ -1,0 +1,29 @@
+name: mypy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_COLOR: 1
+  TERM: xterm-256color # needed for FORCE_COLOR to work on mypy on Ubuntu, see https://github.com/python/mypy/issues/13817
+
+jobs:
+  mypy:
+    name: Check code with mypy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          cache: "pip"
+          cache-dependency-path: "pyproject.toml"
+          python-version: "3.11"
+      - run: pip install -e .[dev]
+      - run: pip freeze --all
+      - run: mypy

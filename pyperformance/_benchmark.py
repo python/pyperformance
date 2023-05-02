@@ -182,7 +182,7 @@ class Benchmark:
             python = venv.python
 
         if not runid:
-            from ..run import get_run_id
+            from .run import get_run_id
             runid = get_run_id(python, self)
 
         runscript = self.runscript
