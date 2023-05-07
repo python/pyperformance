@@ -171,6 +171,7 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
 
     @classmethod
     def ensure(cls, root, python=None, *,
+               inherit_environ=None,
                upgrade=False,
                **kwargs
                ):
@@ -184,6 +185,7 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
 
         if exists:
             self = super().ensure(root)
+            self.inherit_environ = inherit_environ
             if upgrade:
                 self.upgrade_pip()
             else:
@@ -193,6 +195,7 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
             return cls.create(
                 root,
                 python,
+                inherit_environ=inherit_environ,
                 upgrade=upgrade,
                 **kwargs
             )
