@@ -215,9 +215,9 @@ class VirtualEnvironment:
             upgrade=upgrade,
         )
         if ec != 0:
-            raise VenvPipInstallFailedError(root, ec)
+            raise VenvPipInstallFailedError(self.root, ec)
         elif not _pip.is_pip_installed(self.python, env=self._env):
-            raise VenvPipInstallFailedError(root, 0, "pip doesn't work")
+            raise VenvPipInstallFailedError(self.root, 0, "pip doesn't work")
 
         if installer:
             # Upgrade installer dependencies (setuptools, ...)
