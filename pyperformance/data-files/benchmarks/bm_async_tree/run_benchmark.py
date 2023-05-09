@@ -62,7 +62,7 @@ class AsyncTree:
 
 class EagerMixin:
     async def run(self):
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         if hasattr(asyncio, 'eager_task_factory'):
             loop.set_task_factory(asyncio.eager_task_factory)
         return await super().run()
