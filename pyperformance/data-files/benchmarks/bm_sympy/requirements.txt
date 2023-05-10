@@ -1,3 +1,2 @@
 mpmath==1.2.1
-setuptools==65.6.3
 sympy==1.8
