@@ -66,11 +66,14 @@ Async workload benchmark, which calls ``asyncio.gather()`` on a tree (6 levels d
 
 * ``async_tree``: no actual async work at any leaf node.
 * ``async_tree_io``: all leaf nodes simulate async IO workload (async sleep 50ms).
-* ``async_tree_memoization``: all leaf nodes simulate async IO workload with 90% of 
+* ``async_tree_memoization``: all leaf nodes simulate async IO workload with 90% of
   the data memoized.
 * ``async_tree_cpu_io_mixed``: half of the leaf nodes simulate CPU-bound workload
-  (``math.factorial(500)``) and the other half simulate the same workload as the 
+  (``math.factorial(500)``) and the other half simulate the same workload as the
   ``async_tree_memoization`` variant.
+
+These benchmarks also have an "eager" flavor that uses asyncio eager task factory,
+if available.
 
 
 chameleon

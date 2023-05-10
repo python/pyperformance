@@ -7,6 +7,10 @@ async_tree	<local>
 async_tree_cpu_io_mixed	<local:async_tree>
 async_tree_io	<local:async_tree>
 async_tree_memoization	<local:async_tree>
+async_tree_eager	<local:async_tree>
+async_tree_eager_cpu_io_mixed	<local:async_tree>
+async_tree_eager_io	<local:async_tree>
+async_tree_eager_memoization	<local:async_tree>
 asyncio_tcp	<local>
 asyncio_tcp_ssl	<local:asyncio_tcp>
 concurrent_imap	<local>
