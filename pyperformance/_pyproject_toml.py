@@ -20,7 +20,7 @@ import packaging.utils
 import packaging.version
 
 try:
-    import tomllib
+    import tomllib  # type: ignore[import] # tomllib doesn't exist on 3.7-3.10
 except ImportError:
     import tomli as tomllib
 

@@ -68,6 +68,8 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     'tox',
+    'mypy==1.2.0',
+    'tomli',  # Needed even on 3.11+ for typechecking with mypy
 ]
 
 [project.scripts]
@@ -81,3 +83,24 @@ find = {}  # Scanning implicit namespaces is active by default
 
 [tool.setuptools.dynamic]
 version = {attr = "pyperformance.__version__"}
+
+[tool.mypy]
+python_version = "3.7"
+pretty = true
+enable_error_code = "ignore-without-code"
+disallow_any_generics = true
+strict_concatenate = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unused_configs = true
+files = [
+    'pyperformance/',
+]
+exclude = [
+    'pyperformance/data-files/',
+    'pyperformance/tests/'
+]
+
+[[tool.mypy.overrides]]
+module = "pyperf"
+ignore_missing_imports = true
