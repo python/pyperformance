@@ -7,4 +7,5 @@ dynamic = ["version"]
 
 [tool.pyperformance]
 name = "async_tree"
+tags = "asyncio"
 extra_opts = ["none"]
