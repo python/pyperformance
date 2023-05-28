@@ -195,4 +195,7 @@ if __name__ == "__main__":
 
     async_tree_class = BENCHMARKS[benchmark]
     async_tree = async_tree_class(use_task_groups=args.task_groups)
-    runner.bench_async_func(f"async_tree_{benchmark}", async_tree.run)
+    bench_name = f"async_tree_{benchmark}"
+    if args.task_groups:
+        bench_name += "_tg"
+    runner.bench_async_func(bench_name, async_tree.run)
