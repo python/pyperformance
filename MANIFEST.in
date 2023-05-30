@@ -10,7 +10,7 @@ include doc/*.rst doc/images/*.png doc/images/*.jpg
 include doc/conf.py doc/Makefile doc/make.bat
 
 include pyperformance/*.py
-include pyperformance/data-files/requirements.txt
+include pyperformance/requirements/requirements.txt
 include pyperformance/data-files/benchmarks/MANIFEST
 include pyperformance/data-files/benchmarks/bm_*/*.toml
 include pyperformance/data-files/benchmarks/bm_*/*.py
