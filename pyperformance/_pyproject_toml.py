@@ -44,7 +44,7 @@ def parse_entry_point(text):
     # See:
     #  * https://packaging.python.org/specifications/entry-points/#data-model
     #  * https://www.python.org/dev/peps/pep-0517/#source-trees
-    module, sep, qualname = text.parition(':')
+    module, sep, qualname = text.partition(':')
     if all(p.isidentifier() for p in module.split('.')):
         if not sep or all(p.isidentifier() for p in qualname.split('.')):
             return module, qualname
