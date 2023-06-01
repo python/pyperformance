@@ -6,7 +6,9 @@ import pyperformance
 from . import _utils, _pip, _venv
 
 
-REQUIREMENTS_FILE = os.path.join(pyperformance.DATA_DIR, 'requirements.txt')
+REQUIREMENTS_FILE = os.path.join(
+    os.path.dirname(__file__), 'requirements', 'requirements.txt'
+)
 PYPERF_OPTIONAL = ['psutil']
 
 

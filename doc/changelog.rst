@@ -1,6 +1,9 @@
 Changelog
 =========
 
+* Move the main requirements.txt file to pyperformance/requirements
+  so that dependabot can only run on that one file.
+
 Version 1.0.7 (2023-04-22)
 -------------
 
