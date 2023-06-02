@@ -1,8 +1,23 @@
 Changelog
 =========
 
+Version 1.0.8 (2023-06-02)
+-------------
+
 * Move the main requirements.txt file to pyperformance/requirements
-  so that dependabot can only run on that one file.
+  so that dependabot can only run on that one file
+* Update dependencies of benchmarks not to specify setuptools
+* On older versions of Python, skip benchmarks that use features
+  introduced in newer Python versions
+* Support ``--inherit-environ`` when reusing a venv
+* Use tomllib/tomli over toml
+* Update MANIFEST.in to include cert files for asyncio_tcp_ssl benchmark
+* Fix undefined variable issue when raising VenvPipInstallFailedError
+* Add mypy config; run mypy in CI
+* Fix typo of str.partition from _pyproject_toml.py
+* Add  version of Richards benchmark that uses super()
+* Add a benchmark for runtime-checkable protocols
+* Extend async tree benchmarks to cover eager task execution
 
 Version 1.0.7 (2023-04-22)
 -------------
