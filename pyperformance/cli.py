@@ -72,6 +72,9 @@ def parse_args():
     cmd.add_argument("--append", metavar="FILENAME",
                      help="Add runs to an existing file, or create it "
                      "if it doesn't exist")
+    cmd.add_argument("--min-time", metavar="MIN_TIME",
+                     help="Minimum duration in seconds of a single "
+                     "value, used to calibrate the number of loops")
     filter_opts(cmd)
 
     # show
