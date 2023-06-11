@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lib2to3"
+version = "3.12"
+description = "lib2to3 for Python 3.13+"
+
+[tool.setuptools.package-data]
+"*" = ["*.txt"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -20,6 +20,6 @@ if __name__ == "__main__":
         import lib2to3
     except ModuleNotFoundError:
         vendor = os.path.join(os.path.dirname(__file__), 'vendor')
-        subprocess.run([sys.executable, "-m", "pip", "install", vendor])
+        subprocess.run([sys.executable, "-m", "pip", "install", vendor], check=True)
 
     runner.bench_command('2to3', command)
