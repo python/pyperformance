@@ -12,8 +12,8 @@ variants include:
                    the other half simulate the same workload as the
                    "memoization" variant.
 
-All variants also have an "eager" flavor that uses
-the asyncio eager task factory (if available).
+All variants also have an "eager" flavor that uses the asyncio eager task
+factory (if available), and a "tg" variant that uses TaskGroups.
 """
 
 
@@ -34,8 +34,9 @@ FACTORIAL_N = 500
 
 
 class AsyncTree:
-    def __init__(self):
+    def __init__(self, use_task_groups=False):
         self.cache = {}
+        self.use_task_groups = use_task_groups
         # set to deterministic random, so that the results are reproducible
         random.seed(RANDOM_SEED)
 
@@ -47,17 +48,31 @@ class AsyncTree:
             "To be implemented by each variant's derived class."
         )
 
-    async def recurse(self, recurse_level):
+    async def recurse_with_gather(self, recurse_level):
         if recurse_level == 0:
             await self.workload_func()
             return
 
         await asyncio.gather(
-            *[self.recurse(recurse_level - 1) for _ in range(NUM_RECURSE_BRANCHES)]
+            *[self.recurse_with_gather(recurse_level - 1)
+              for _ in range(NUM_RECURSE_BRANCHES)]
         )
 
+    async def recurse_with_task_group(self, recurse_level):
+        if recurse_level == 0:
+            await self.workload_func()
+            return
+
+        async with asyncio.TaskGroup() as tg:
+            for _ in range(NUM_RECURSE_BRANCHES):
+                tg.create_task(
+                    self.recurse_with_task_group(recurse_level - 1))
+
     async def run(self):
-        await self.recurse(NUM_RECURSE_LEVELS)
+        if self.use_task_groups:
+            await self.recurse_with_task_group(NUM_RECURSE_LEVELS)
+        else:
+            await self.recurse_with_gather(NUM_RECURSE_LEVELS)
 
 
 class EagerMixin:
@@ -132,6 +147,8 @@ def add_metadata(runner):
 
 def add_cmdline_args(cmd, args):
     cmd.append(args.benchmark)
+    if args.task_groups:
+        cmd.append("--task-groups")
 
 
 def add_parser_args(parser):
@@ -148,6 +165,12 @@ Determines which benchmark to run. Options:
                    the other half simulate the same workload as the
                    "memoization" variant.
 """,
+    )
+    parser.add_argument(
+        "--task-groups",
+        action="store_true",
+        default=False,
+        help="Use TaskGroups instead of gather.",
     )
 
 
@@ -171,5 +194,8 @@ if __name__ == "__main__":
     benchmark = args.benchmark
 
     async_tree_class = BENCHMARKS[benchmark]
-    async_tree = async_tree_class()
-    runner.bench_async_func(f"async_tree_{benchmark}", async_tree.run)
+    async_tree = async_tree_class(use_task_groups=args.task_groups)
+    bench_name = f"async_tree_{benchmark}"
+    if args.task_groups:
+        bench_name += "_tg"
+    runner.bench_async_func(bench_name, async_tree.run)
