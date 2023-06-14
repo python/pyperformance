@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 1.0.9 (2023-06-14)
+-------------
+* Vendor lib2to3 for Python 3.13+
+* Add TaskGroups variants to async_tree benchmarks
+
 Version 1.0.8 (2023-06-02)
 -------------
 
