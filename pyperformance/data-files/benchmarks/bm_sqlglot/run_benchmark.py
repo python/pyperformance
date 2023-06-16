@@ -1,6 +1,7 @@
 import pyperf
 
 from sqlglot import parse_one, transpile
+from sqlglot.executor import execute
 from sqlglot.optimizer import optimize, normalize
 
 
@@ -48,79 +49,79 @@ order by
 
 TPCH_SCHEMA = {
     "lineitem": {
-        "l_orderkey": "uint64",
-        "l_partkey": "uint64",
-        "l_suppkey": "uint64",
-        "l_linenumber": "uint64",
-        "l_quantity": "float64",
-        "l_extendedprice": "float64",
-        "l_discount": "float64",
-        "l_tax": "float64",
+        "l_orderkey": "int",
+        "l_partkey": "int",
+        "l_suppkey": "int",
+        "l_linenumber": "int",
+        "l_quantity": "double",
+        "l_extendedprice": "double",
+        "l_discount": "double",
+        "l_tax": "double",
         "l_returnflag": "string",
         "l_linestatus": "string",
-        "l_shipdate": "date32",
-        "l_commitdate": "date32",
-        "l_receiptdate": "date32",
+        "l_shipdate": "date",
+        "l_commitdate": "date",
+        "l_receiptdate": "date",
         "l_shipinstruct": "string",
         "l_shipmode": "string",
         "l_comment": "string",
     },
     "orders": {
-        "o_orderkey": "uint64",
-        "o_custkey": "uint64",
+        "o_orderkey": "int",
+        "o_custkey": "int",
         "o_orderstatus": "string",
-        "o_totalprice": "float64",
-        "o_orderdate": "date32",
+        "o_totalprice": "double",
+        "o_orderdate": "date",
         "o_orderpriority": "string",
         "o_clerk": "string",
-        "o_shippriority": "int32",
+        "o_shippriority": "int",
         "o_comment": "string",
     },
     "customer": {
-        "c_custkey": "uint64",
+        "c_custkey": "int",
         "c_name": "string",
         "c_address": "string",
-        "c_nationkey": "uint64",
+        "c_nationkey": "int",
         "c_phone": "string",
-        "c_acctbal": "float64",
+        "c_acctbal": "double",
         "c_mktsegment": "string",
         "c_comment": "string",
     },
     "part": {
-        "p_partkey": "uint64",
+        "p_partkey": "int",
         "p_name": "string",
         "p_mfgr": "string",
         "p_brand": "string",
         "p_type": "string",
-        "p_size": "int32",
+        "p_size": "int",
         "p_container": "string",
-        "p_retailprice": "float64",
+        "p_retailprice": "double",
         "p_comment": "string",
     },
     "supplier": {
-        "s_suppkey": "uint64",
+        "s_suppkey": "int",
         "s_name": "string",
         "s_address": "string",
-        "s_nationkey": "uint64",
+        "s_nationkey": "int",
         "s_phone": "string",
-        "s_acctbal": "float64",
+        "s_acctbal": "double",
         "s_comment": "string",
     },
     "partsupp": {
-        "ps_partkey": "uint64",
-        "ps_suppkey": "uint64",
-        "ps_availqty": "int32",
-        "ps_supplycost": "float64",
+        "ps_partkey": "int",
+        "ps_suppkey": "int",
+        "ps_availqty": "int",
+        "ps_supplycost": "double",
         "ps_comment": "string",
     },
     "nation": {
-        "n_nationkey": "uint64",
+        "n_nationkey": "int",
         "n_name": "string",
-        "n_regionkey": "uint64",
+        "n_regionkey": "int",
         "n_comment": "string",
     },
     "region": {
-        "r_regionkey": "uint64",
+        "r_regionkey": "int",
         "r_name": "string",
         "r_comment": "string",
     },
@@ -164,6 +165,41 @@ def bench_normalize(loops):
     return elapsed
 
 
+def bench_execute(loops):
+    tables = {
+        "sushi": [],
+        "order_items": [],
+        "orders": [],
+    }
+
+    for i in range(10000):
+        tables["sushi"].append({"id": i, "price": i})
+        tables["order_items"].append({"sushi_id": i, "order_id": i})
+        tables["orders"].append({"id": i, "user_id": i})
+
+    elapsed = 0
+    for _ in range(loops):
+        t0 = pyperf.perf_counter()
+        execute(
+            """
+            SELECT
+              o.user_id,
+              s.price / 2 AS half_price,
+              AVG(s.price) AS avg_price,
+              SUM(s.price) AS price
+            FROM orders o
+            JOIN order_items i
+              ON o.id = i.order_id
+            JOIN sushi s
+              ON i.sushi_id = s.id
+            GROUP BY o.user_id
+            """,
+            tables=tables,
+        )
+        elapsed += pyperf.perf_counter() - t0
+    return elapsed
+
+
 if __name__ == "__main__":
     runner = pyperf.Runner()
     runner.metadata['description'] = "SQLGlot benchmark"
@@ -171,3 +207,4 @@ if __name__ == "__main__":
     runner.bench_time_func("sqlglot_transpile", bench_transpile)
     runner.bench_time_func("sqlglot_optimize", bench_optimize)
     runner.bench_time_func("sqlglot_normalize", bench_normalize)
+    runner.bench_time_func("sqlglot_execute", bench_execute)
