@@ -10,5 +10,5 @@ psutil==5.9.5
     # via
     #   -r requirements.in
     #   pyperf
-pyperf==2.6.0
+pyperf==2.6.1
     # via -r requirements.in
