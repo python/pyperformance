@@ -54,6 +54,9 @@ mdp	<local>
 meteor_contest	<local>
 nbody	<local>
 nqueens	<local>
+numpy_laplace_inplace <local:numpy>
+numpy_laplace_normal <local:numpy>
+numpy_maxes_of_dots <local:numpy>
 pathlib	<local>
 pickle	<local>
 pickle_dict	<local:pickle>
