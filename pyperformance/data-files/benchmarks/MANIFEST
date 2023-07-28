@@ -53,6 +53,7 @@ mako	<local>
 mdp	<local>
 meteor_contest	<local>
 nbody	<local>
+networkx	<local>
 nqueens	<local>
 pathlib	<local>
 pickle	<local>
