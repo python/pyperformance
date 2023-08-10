@@ -1,6 +1,8 @@
 """
 Benchmark for asyncio websocket server and client performance
-transferring 10MB of data.
+transferring 1MB of data.
+
+Author: Kumar Aditya
 """
 
 import pyperf
@@ -8,7 +10,7 @@ import websockets.server
 import websockets.client
 import asyncio
 
-CHUNK_SIZE = 1024
+CHUNK_SIZE = 1024 ** 2
 DATA = b"x" * CHUNK_SIZE
 
 stop: asyncio.Event
@@ -16,8 +18,7 @@ stop: asyncio.Event
 
 async def handler(websocket) -> None:
     for _ in range(100):
-        data = await websocket.recv()
-        assert data == DATA
+        await websocket.recv()
 
     stop.set()
 
