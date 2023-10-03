@@ -453,7 +453,7 @@ Copyright Callum and Tony Garnock-Jones, 2008.
 This file may be freely redistributed under the MIT license,
 http://www.opensource.org/licenses/mit-license.php
 
-From http://www.lshift.net/blog/2008/10/29/toy-raytracer-in-python
+From https://leastfixedpoint.com/tonyg/kcbbs/lshift_archive/toy-raytracer-in-python-20081029.html
 
 .. image:: images/bm_raytrace.jpg
    :alt: Pure Python raytracer
