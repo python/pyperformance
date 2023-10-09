@@ -252,6 +252,11 @@ def _select_benchmarks(raw, manifest):
         # Filter out any benchmarks that can't be run on the Python version we're running
         if this_python_version in bench.python:
             selected.append(bench)
+        else:
+            message = (f"Benchmark: {bench.spec.name} is being skipped because "
+                       f"python version required is {bench.python} "
+                       f"but found {this_python_version}")
+            logging.info(message)
 
     return selected
 
