@@ -253,10 +253,8 @@ def _select_benchmarks(raw, manifest):
         if this_python_version in bench.python:
             selected.append(bench)
         else:
-            message = (f"Benchmark: {bench.spec.name} is being skipped because "
-                       f"python version required is {bench.python} "
-                       f"but found {this_python_version}")
-            logging.info(message)
+            logging.warning("Benchmark: %s is being skipped because Python version required is %s but found %s",
+                            bench.spec.name, bench.python, this_python_version)
 
     return selected
 
