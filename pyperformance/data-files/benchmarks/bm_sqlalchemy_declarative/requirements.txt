@@ -1,2 +1,2 @@
-greenlet==2.0.0a2
+greenlet==3.0.0rc3
 sqlalchemy==1.4.19
