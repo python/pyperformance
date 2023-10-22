@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Version 1.10.0 (2023-10-22)
+--------------
+* Add benchmark for asyncio_webockets
+* Expose --min-time from pyperf to pyperformance CLI
+* Bump coverage to 7.3.2 for compatibilty with 3.13
+* Bump greenlet to 3.0.0rc3 for compatibilty with 3.13
+
 Version 1.0.9 (2023-06-14)
 -------------
 * Vendor lib2to3 for Python 3.13+
