@@ -41,10 +41,10 @@ jobs:
             python: pypy-3.8
             experimental: false
           - os: macos-latest
-            python: "3.11"
+            python: "3.12"
             experimental: false
           - os: windows-latest
-            python: "3.11"
+            python: "3.12"
             experimental: false
     steps:
     - uses: actions/checkout@v3
