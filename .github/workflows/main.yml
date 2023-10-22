@@ -23,12 +23,12 @@ jobs:
       matrix:
         # Test all supported versions on Ubuntu:
         os: [ubuntu-latest]
-        python: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
         experimental: [false]
         include:
           # As the experimental task for the dev version.
           - os: ubuntu-latest
-            python: "3.12-dev"
+            python: "3.13-dev"
             experimental: true
           # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
