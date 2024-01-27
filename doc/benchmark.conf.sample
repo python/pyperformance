@@ -59,6 +59,9 @@ pkg_only =
 # really understand what you are doing!
 install = True
 
+# Specify '-j' parameter in 'make' command
+jobs = 8
+
 
 [run_benchmark]
 # Run "sudo python3 -m pyperf system tune" before running benchmarks?
@@ -78,9 +81,6 @@ affinity =
 # Upload is disabled on patched Python, in debug mode or if install is
 # disabled.
 upload = False
-
-# Specify '-j' parameter in 'make' command
-jobs = 8
 
 
 # Configuration to upload results to a Codespeed website
