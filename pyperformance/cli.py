@@ -75,6 +75,10 @@ def parse_args():
     cmd.add_argument("--min-time", metavar="MIN_TIME",
                      help="Minimum duration in seconds of a single "
                      "value, used to calibrate the number of loops")
+    cmd.add_argument("--same-loops",
+                     help="Use the same number of loops as a previous run "
+                     "(i.e., don't recalibrate). Should be a path to a "
+                     ".json file from a previous run.")
     filter_opts(cmd)
 
     # show
