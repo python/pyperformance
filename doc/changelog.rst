@@ -1,6 +1,9 @@
 Changelog
 =========
 
+* Add a --same-loops option to the run command to use the exact same number of
+  loops as a previous run (without recalibrating).
+
 Version 1.10.0 (2023-10-22)
 --------------
 * Add benchmark for asyncio_webockets
