@@ -68,7 +68,7 @@ def get_loops_from_file(filename):
 
 
 def run_benchmarks(should_run, python, options):
-    if hasattr(options, "same_loops"):
+    if options.same_loops is not None:
         loops = get_loops_from_file(options.same_loops)
     else:
         loops = {}

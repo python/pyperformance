@@ -172,6 +172,10 @@ BENCHMARKS = {
 }
 
 
+def add_cmdline_args(cmd, args):
+    cmd.append(args.benchmark)
+
+
 def add_parser_args(parser):
     parser.add_argument(
         "benchmark",
@@ -181,7 +185,7 @@ def add_parser_args(parser):
 
 
 if __name__ == "__main__":
-    runner = pyperf.Runner()
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "SQLGlot benchmark"
     add_parser_args(runner.argparser)
     args = runner.parse_args()

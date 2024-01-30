@@ -10,4 +10,4 @@ dynamic = ["version"]
 
 [tool.pyperformance]
 name = "sqlglot_normalize"
-extra_args = ["normalize"]
+extra_opts = ["normalize"]

@@ -77,6 +77,10 @@ spectral_norm	<local>
 sqlalchemy_declarative	<local>
 sqlalchemy_imperative	<local>
 sqlglot	<local>
+sqlglot_parse	<local:sqlglot>
+sqlglot_transpile	<local:sqlglot>
+sqlglot_optimize	<local:sqlglot>
+sqlglot_normalize	<local:sqlglot>
 sqlite_synth	<local>
 sympy	<local>
 telco	<local>
