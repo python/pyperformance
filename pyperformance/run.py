@@ -160,7 +160,6 @@ def run_benchmarks(should_run, python, options):
 
         if name in loops:
             pyperf_opts.append(f"--loops={loops[name]}")
-            pyperf_opts.append("--warmups=1")
 
         bench_venv, bench_runid = benchmarks.get(bench)
         if bench_venv is None:
