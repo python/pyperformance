@@ -24,6 +24,7 @@ Available benchmark groups:
 * ``startup``: Collection of microbenchmarks focused on Python interpreter
   start-up time.
 * ``template``: Templating libraries
+* ``sorting``: Different sorting algorithms
 
 Use the ``python3 -m pyperformance list_groups`` command to list groups and their
 benchmarks.

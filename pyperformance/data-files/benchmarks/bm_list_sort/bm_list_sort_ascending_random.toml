@@ -1,0 +1,4 @@
+[tool.pyperformance]
+name = "list_sort_ascending_random"
+tags = "sorting"
+extra_opts = ["list_sort_ascending_random"]

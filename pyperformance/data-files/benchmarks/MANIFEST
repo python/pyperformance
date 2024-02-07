@@ -49,6 +49,15 @@ hexiom	<local>
 html5lib	<local>
 json_dumps	<local>
 json_loads	<local>
+list_sort	<local>
+list_sort_descending	<local:list_sort>
+list_sort_ascending	<local:list_sort>
+list_sort_ascending_exchanged	<local:list_sort>
+list_sort_ascending_random	<local:list_sort>
+list_sort_ascending_one_percent	<local:list_sort>
+list_sort_duplicates	<local:list_sort>
+list_sort_equal	<local:list_sort>
+list_sort_worst_case	<local:list_sort>
 logging	<local>
 mako	<local>
 mdp	<local>
@@ -98,6 +107,7 @@ xml_etree	<local>
 #apps
 #math
 #template
+#sorting
 
 
 [group default]
