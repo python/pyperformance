@@ -35,7 +35,7 @@ def list_sort(size: int, rand: random.Random) -> list[float]:
 
 
 def list_sort_descending(size: int, rand: random.Random) -> list[float]:
-    return reversed(list_sort_ascending(size, rand))
+    return list(reversed(list_sort_ascending(size, rand)))
 
 
 def list_sort_ascending(size: int, rand: random.Random) -> list[float]:
@@ -150,7 +150,7 @@ def add_parser_args(parser) -> None:
     )
 
 
-DEFAULT_SIZE = 32768  # 1 << 15
+DEFAULT_SIZE = 65536  # 1 << 16
 DEFAULT_RANDOM_SEED = 0
 BENCHMARKS = {
     "list_sort": list_sort,
