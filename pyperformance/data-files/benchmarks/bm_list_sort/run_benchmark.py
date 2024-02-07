@@ -150,7 +150,7 @@ def add_parser_args(parser) -> None:
     )
 
 
-DEFAULT_SIZE = 65536  # 1 << 16
+DEFAULT_SIZE = 262144  # 1 << 18
 DEFAULT_RANDOM_SEED = 0
 BENCHMARKS = {
     "list_sort": list_sort,
