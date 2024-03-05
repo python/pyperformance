@@ -1,6 +1,6 @@
 [project]
 name = "pyperformance_bm_django_template"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
     "pyperf",
     "django",
