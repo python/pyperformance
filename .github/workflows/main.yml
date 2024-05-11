@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     permissions:
       pull-requests: write
-    name: ${{ matrix.os }} - ${{ matrix.python }}
+    name: ${{ matrix.os }} - ${{ matrix.python }} ${{matrix.build}}
     if: ${{ github.event_name != 'schedule' || (github.repository == 'python/pyperformance' && github.event_name == 'schedule') }}
     strategy:
       fail-fast: false
@@ -25,36 +25,46 @@ jobs:
         os: [ubuntu-latest]
         python: ["3.8", "3.9", "3.10", "3.11", "3.12"]
         experimental: [false]
+        build: ['']
         include:
           # As the experimental task for the dev version.
           - os: ubuntu-latest
             python: "3.13-dev"
             experimental: true
+            build: ''
+          - os: ubuntu-latest
+            python: "3.13-dev"
+            experimental: true
+            build: 'free_threading'
           # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
             python: pypy-3.10
             experimental: false
+            build: ''
           - os: ubuntu-latest
             python: pypy-3.9
             experimental: false
+            build: ''
           - os: macos-latest
             python: "3.12"
             experimental: true
           - os: windows-latest
             python: "3.12"
             experimental: true
+            build: ''
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       if: "!endsWith(matrix.python, '-dev')"
       with:
         python-version: ${{ matrix.python }}
     - name: Set up Python ${{ matrix.python }} using deadsnakes
-      uses: deadsnakes/action@v3.0.0
-      if: "endsWith(matrix.python, '-dev')"
+      uses: deadsnakes/action@v3.1.0
+      if: ${{ endsWith(matrix.python, '-dev') }}
       with:
         python-version: ${{ matrix.python }}
+        nogil: ${{ matrix.build == 'free-threading' }}
     - name: Install
       # pyperformance must be installed:
       # pyperformance/tests/test_compare.py imports it
@@ -62,7 +72,7 @@ jobs:
         python -m pip install --upgrade pip setuptools
         python -m pip install -e .
     - name: Display Python version
-      run: python -c "import sys; print(sys.version)"
+      run: python --version --version
     - name: Run Tests
       id: pyperformance
       run: python -u -m pyperformance.tests
