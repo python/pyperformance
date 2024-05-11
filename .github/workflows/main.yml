@@ -35,7 +35,7 @@ jobs:
           - os: ubuntu-latest
             python: "3.13-dev"
             experimental: true
-            build: 'free_threading'
+            build: 'free-threading'
           # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
             python: pypy-3.10
