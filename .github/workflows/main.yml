@@ -61,7 +61,7 @@ jobs:
         python-version: ${{ matrix.python }}
     - name: Set up Python ${{ matrix.python }} using deadsnakes
       uses: deadsnakes/action@v3.1.0
-      if: ${{ endsWith(matrix.python, '-dev') }}
+      if: !endsWith(matrix.python, '-dev')"
       with:
         python-version: ${{ matrix.python }}
         nogil: ${{ matrix.build == 'free-threading' }}
