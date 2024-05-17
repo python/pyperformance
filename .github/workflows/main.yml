@@ -31,7 +31,6 @@ jobs:
           - os: ubuntu-latest
             python: "3.13-dev"
             experimental: true
-            build: ''
           - os: ubuntu-latest
             python: "3.13-dev"
             experimental: true
@@ -40,18 +39,15 @@ jobs:
           - os: ubuntu-latest
             python: pypy-3.10
             experimental: false
-            build: ''
           - os: ubuntu-latest
             python: pypy-3.9
             experimental: false
-            build: ''
           - os: macos-latest
             python: "3.12"
             experimental: true
           - os: windows-latest
             python: "3.12"
             experimental: true
-            build: ''
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python }}
@@ -72,7 +68,9 @@ jobs:
         python -m pip install --upgrade pip setuptools
         python -m pip install -e .
     - name: Display Python version
-      run: python --version --version
+      run: |
+        python -VV
+        python -c 'import sysconfig; print("Free threading?", "Yes" if sysconfig.get_config_var("Py_GIL_DISABLED") else "No")'
     - name: Run Tests
       id: pyperformance
       run: python -u -m pyperformance.tests
