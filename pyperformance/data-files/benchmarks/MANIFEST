@@ -22,6 +22,7 @@ async_tree_eager_memoization_tg	<local:async_tree>
 asyncio_tcp	<local>
 asyncio_tcp_ssl	<local:asyncio_tcp>
 asyncio_websockets	<local>
+bpe_tokeniser	<local>
 concurrent_imap	<local>
 coroutines	<local>
 coverage	<local>
