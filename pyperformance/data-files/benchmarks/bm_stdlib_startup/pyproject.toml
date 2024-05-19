@@ -1,0 +1,10 @@
+[project]
+name = "pyperformance_stdlib_startup"
+requires-python = ">=3.8"
+dependencies = []
+urls = {repository = "https://github.com/python/pyperformance"}
+dynamic = ["version"]
+
+[tool.pyperformance]
+name = "stdlib_startup"
+tags = "startup"

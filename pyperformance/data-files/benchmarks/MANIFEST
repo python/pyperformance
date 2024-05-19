@@ -81,6 +81,7 @@ sqlglot_parse	<local:sqlglot>
 sqlglot_transpile	<local:sqlglot>
 sqlglot_optimize	<local:sqlglot>
 sqlite_synth	<local>
+stdlib_startup	<local>
 sympy	<local>
 telco	<local>
 tomli_loads	<local>
