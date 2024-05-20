@@ -4,6 +4,7 @@ Benchmark a BPE tokeniser.
 Author: Shantanu Jain
 
 Based on code from tiktoken.
+https://github.com/openai/tiktoken
 """
 from __future__ import annotations
 
