@@ -1,6 +1,6 @@
 [project]
 name = "pyperformance_stdlib_startup"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = []
 urls = {repository = "https://github.com/python/pyperformance"}
 dynamic = ["version"]
