@@ -81,7 +81,7 @@ def bench_yaml(objs):
 
 if __name__ == "__main__":
     runner = pyperf.Runner()
-    runner.metadata['description'] = "Benchmark json.loads()"
+    runner.metadata['description'] = "Benchmark yaml.load()"
 
     yaml_dict = yaml.dump(DICT)
     yaml_tuple = yaml.dump(TUPLE)
