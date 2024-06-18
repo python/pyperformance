@@ -3,7 +3,7 @@ import logging
 import os.path
 import sys
 
-from pyperformance import _utils, is_installed, is_dev
+from pyperformance import _utils, is_installed, is_dev, __version__
 from pyperformance.commands import (
     cmd_list,
     cmd_list_groups,
@@ -40,8 +40,11 @@ def filter_opts(cmd, *, allow_no_benchmarks=False):
 
 def parse_args():
     parser = argparse.ArgumentParser(
+        prog='pyperformance',
         description=("Compares the performance of baseline_python with"
                      " changed_python and prints a report."))
+    parser.add_argument('-V', '--version', action='version',
+                        version=f'%(prog)s {__version__}')
 
     subparsers = parser.add_subparsers(dest='action')
     cmds = []
