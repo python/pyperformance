@@ -7,3 +7,4 @@ dynamic = ["version"]
 
 [tool.pyperformance]
 name = "asyncio_websockets"
+tags = "asyncio"
