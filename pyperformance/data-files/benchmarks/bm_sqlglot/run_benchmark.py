@@ -164,10 +164,31 @@ def bench_normalize(loops):
     return elapsed
 
 
+BENCHMARKS = {
+    "parse": bench_parse,
+    "transpile": bench_transpile,
+    "optimize": bench_optimize,
+    "normalize": bench_normalize
+}
+
+
+def add_cmdline_args(cmd, args):
+    cmd.append(args.benchmark)
+
+
+def add_parser_args(parser):
+    parser.add_argument(
+        "benchmark",
+        choices=BENCHMARKS,
+        help="Which benchmark to run."
+    )
+
+
 if __name__ == "__main__":
-    runner = pyperf.Runner()
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata['description'] = "SQLGlot benchmark"
-    runner.bench_time_func("sqlglot_parse", bench_parse)
-    runner.bench_time_func("sqlglot_transpile", bench_transpile)
-    runner.bench_time_func("sqlglot_optimize", bench_optimize)
-    runner.bench_time_func("sqlglot_normalize", bench_normalize)
+    add_parser_args(runner.argparser)
+    args = runner.parse_args()
+    benchmark = args.benchmark
+
+    runner.bench_time_func(f"sqlglot_{benchmark}", BENCHMARKS[benchmark])

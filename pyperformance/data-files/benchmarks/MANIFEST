@@ -21,6 +21,8 @@ async_tree_eager_io_tg	<local:async_tree>
 async_tree_eager_memoization_tg	<local:async_tree>
 asyncio_tcp	<local>
 asyncio_tcp_ssl	<local:asyncio_tcp>
+asyncio_websockets	<local>
+bpe_tokeniser	<local>
 concurrent_imap	<local>
 coroutines	<local>
 coverage	<local>
@@ -76,6 +78,9 @@ spectral_norm	<local>
 sqlalchemy_declarative	<local>
 sqlalchemy_imperative	<local>
 sqlglot	<local>
+sqlglot_parse	<local:sqlglot>
+sqlglot_transpile	<local:sqlglot>
+sqlglot_optimize	<local:sqlglot>
 sqlite_synth	<local>
 sympy	<local>
 telco	<local>

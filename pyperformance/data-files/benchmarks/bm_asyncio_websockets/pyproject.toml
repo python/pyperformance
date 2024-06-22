@@ -1,10 +1,10 @@
 [project]
-name = "pyperformance_bm_coroutines"
+name = "pyperformance_bm_asyncio_websockets"
 requires-python = ">=3.8"
-dependencies = ["pyperf"]
+dependencies = ["pyperf", "websockets"]
 urls = {repository = "https://github.com/python/pyperformance"}
 dynamic = ["version"]
 
 [tool.pyperformance]
-name = "coroutines"
+name = "asyncio_websockets"
 tags = "asyncio"

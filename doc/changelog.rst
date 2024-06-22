@@ -1,6 +1,21 @@
 Changelog
 =========
 
+Version 1.11.0 (2024-03-09)
+--------------
+* Add a --same-loops option to the run command to use the exact same number of
+  loops as a previous run (without recalibrating).
+* Bump pyperf to 2.6.3
+* Fix the django_template benchmark for compatibilty with 3.13
+* Fix benchmark.conf.sample
+
+Version 1.10.0 (2023-10-22)
+--------------
+* Add benchmark for asyncio_webockets
+* Expose --min-time from pyperf to pyperformance CLI
+* Bump coverage to 7.3.2 for compatibilty with 3.13
+* Bump greenlet to 3.0.0rc3 for compatibilty with 3.13
+
 Version 1.0.9 (2023-06-14)
 -------------
 * Vendor lib2to3 for Python 3.13+

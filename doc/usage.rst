@@ -51,11 +51,11 @@ Run benchmarks
 Commands to compare Python 3.6 and Python 3.7 performance::
 
     pyperformance run --python=python3.6 -o py36.json
-    pyperformance run --python=python3.7 -o py38.json
-    pyperformance compare py36.json py38.json
+    pyperformance run --python=python3.7 -o py37.json
+    pyperformance compare py36.json py37.json
 
 Note: ``python3 -m pyperformance ...`` syntax works as well (ex: ``python3 -m
-pyperformance run -o py38.json``), but requires to install pyperformance on each
+pyperformance run -o py37.json``), but requires to install pyperformance on each
 tested Python version.
 
 JSON files are produced by the pyperf module and so can be analyzed using pyperf
@@ -71,7 +71,7 @@ commands::
 
 It's also possible to use pyperf to compare results of two JSON files::
 
-    python3 -m pyperf compare_to py36.json py38.json --table
+    python3 -m pyperf compare_to py36.json py37.json --table
 
 Basic commands
 --------------
@@ -140,6 +140,10 @@ options::
   -p PYTHON, --python PYTHON
                         Python executable (default: use running
                         Python)
+  --same-loops SAME_LOOPS
+                        Use the same number of loops as a previous run
+                        (i.e., don't recalibrate). Should be a path to a
+                        .json file from a previous run.
 
 show
 ----

@@ -4,10 +4,10 @@
 # - results of patched Python are written into json_dir/patch/
 json_dir = ~/json
 
-# If True, compile CPython is debug mode (LTO and PGO disabled),
+# If True, compile CPython in debug mode (LTO and PGO disabled),
 # run benchmarks with --debug-single-sample, and disable upload.
 #
-# Use this option used to quickly test a configuration.
+# Use this option to quickly test a configuration.
 debug = False
 
 
@@ -59,6 +59,9 @@ pkg_only =
 # really understand what you are doing!
 install = True
 
+# Specify '-j' parameter in 'make' command
+jobs = 8
+
 
 [run_benchmark]
 # Run "sudo python3 -m pyperf system tune" before running benchmarks?
@@ -78,9 +81,6 @@ affinity =
 # Upload is disabled on patched Python, in debug mode or if install is
 # disabled.
 upload = False
-
-# Specify '-j' parameter in 'make' command
-jobs = 8
 
 
 # Configuration to upload results to a Codespeed website

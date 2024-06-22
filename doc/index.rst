@@ -14,7 +14,7 @@ possible.
 
 pyperformance is distributed under the MIT license.
 
-Documenation:
+Documentation:
 
 .. toctree::
    :maxdepth: 2

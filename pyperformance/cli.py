@@ -3,7 +3,7 @@ import logging
 import os.path
 import sys
 
-from pyperformance import _utils, is_installed, is_dev
+from pyperformance import _utils, is_installed, is_dev, __version__
 from pyperformance.commands import (
     cmd_list,
     cmd_list_groups,
@@ -40,8 +40,11 @@ def filter_opts(cmd, *, allow_no_benchmarks=False):
 
 def parse_args():
     parser = argparse.ArgumentParser(
+        prog='pyperformance',
         description=("Compares the performance of baseline_python with"
                      " changed_python and prints a report."))
+    parser.add_argument('-V', '--version', action='version',
+                        version=f'%(prog)s {__version__}')
 
     subparsers = parser.add_subparsers(dest='action')
     cmds = []
@@ -72,6 +75,13 @@ def parse_args():
     cmd.add_argument("--append", metavar="FILENAME",
                      help="Add runs to an existing file, or create it "
                      "if it doesn't exist")
+    cmd.add_argument("--min-time", metavar="MIN_TIME",
+                     help="Minimum duration in seconds of a single "
+                     "value, used to calibrate the number of loops")
+    cmd.add_argument("--same-loops",
+                     help="Use the same number of loops as a previous run "
+                     "(i.e., don't recalibrate). Should be a path to a "
+                     ".json file from a previous run.")
     filter_opts(cmd)
 
     # show

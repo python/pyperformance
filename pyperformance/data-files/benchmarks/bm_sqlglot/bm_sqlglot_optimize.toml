@@ -1,0 +1,3 @@
+[tool.pyperformance]
+name = "sqlglot_optimize"
+extra_opts = ["optimize"]
