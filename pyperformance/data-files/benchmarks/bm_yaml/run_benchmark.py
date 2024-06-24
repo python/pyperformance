@@ -2,7 +2,7 @@
 Script for testing the performance of YAML parsing, using yaml.
 
 This will dump/load several real world-representative objects a few thousand
-times. The methodology below was chosen for was chosen to be similar to
+times. The methodology below was chosen  to be similar to
 real-world scenarios which operate on single objects at a time.
 
 This explicitly tests the pure Python implementation in pyyaml, not its C
