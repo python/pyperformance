@@ -108,13 +108,13 @@ def run_benchmarks(should_run, python, options):
             else:
                 benchmarks[bench] = (common, bench_runid)
                 continue
-        venv = VenvForBenchmarks.ensure(
-            venv_root,
-            info,
-            upgrade='oncreate',
-            inherit_environ=options.inherit_environ,
-        )
         try:
+            venv = VenvForBenchmarks.ensure(
+                venv_root,
+                info,
+                upgrade='oncreate',
+                inherit_environ=options.inherit_environ,
+            )
             # XXX Do not override when there is a requirements collision.
             venv.ensure_reqs(bench)
         except _venv.RequirementsInstallationFailedError:
