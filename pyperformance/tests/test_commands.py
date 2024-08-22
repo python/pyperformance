@@ -228,6 +228,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             bench_dir = {outdir}
             lto = {not fast}
             pgo = {not fast}
+            jit = no
             install = True
 
             [run_benchmark]
