@@ -291,7 +291,7 @@ class Python(Task):
             config_args.append('--with-pydebug')
         elif self.conf.lto:
             config_args.append('--with-lto')
-        if self.conf.jit and self.conf.jit in ("yes", "yes-off", "interpreter"):
+        if self.conf.jit:
             config_args.append(f'--enable-experimental-jit={self.conf.jit}')
         if self.conf.pkg_only:
             config_args.extend(self.get_package_only_flags())
