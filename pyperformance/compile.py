@@ -803,7 +803,7 @@ def parse_config(filename, command):
         conf.directory = getfile('compile', 'bench_dir')
         conf.lto = getboolean('compile', 'lto', True)
         conf.pgo = getboolean('compile', 'pgo', True)
-        conf.jit = getstr('compile', 'jit', 'no')
+        conf.jit = getstr('compile', 'jit', '')
         conf.install = getboolean('compile', 'install', True)
         conf.pkg_only = getstr('compile', 'pkg_only', '').split()
         try:
