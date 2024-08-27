@@ -47,8 +47,7 @@ pgo = True
 #   be used to enable it at runtime.
 # - interpreter: do not build the JIT, but do build and enable the micro-op
 #   interpreter. This is useful for those of us who find ourselves developing
-#   or debugging micro-ops (but don’t want to deal with the JIT), and is
-#   equivalent to using the -X uops or PYTHON_UOPS=1 options today.
+#   or debugging micro-ops (but don’t want to deal with the JIT).
 #   PYTHON_JIT=0 can be used to disable the micro-op interpreter at runtime.
 jit = no
 
