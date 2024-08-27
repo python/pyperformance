@@ -13,7 +13,7 @@ datadir = os.path.dirname(os.path.abspath(__file__))
 testsroot = os.path.dirname(datadir)
 pkgroot = os.path.dirname(testsroot)
 reporoot = os.path.realpath(os.path.dirname(pkgroot))
-marker = os.path.join(reporoot, 'pyproject.toml')
+marker = os.path.join(reporoot, 'setup.py')
 if not os.path.exists(marker):
     sys.exit(f'ERROR: pyperformance is not an editable install ({reporoot})')
 actual = os.path.realpath(os.path.abspath(pyperformance.PKG_ROOT))
