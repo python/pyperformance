@@ -89,7 +89,7 @@ import sys
 MS_WINDOWS = (sys.platform == 'win32')
 
 
-def run_cmd(argv, *, env=None, capture=None, verbose=True):
+def run_cmd(argv, *, env=None, capture=None, verbose=True, timeout=None):
     try:
         cmdstr = ' '.join(shlex.quote(a) for a in argv)
     except TypeError:
@@ -130,6 +130,9 @@ def run_cmd(argv, *, env=None, capture=None, verbose=True):
     if verbose:
         print('#', cmdstr)
 
+    if timeout:
+        kw.update(timeout=timeout)
+
     # Explicitly flush standard streams, required if streams are buffered
     # (not TTY) to write lines in the expected order
     sys.stdout.flush()
@@ -137,6 +140,10 @@ def run_cmd(argv, *, env=None, capture=None, verbose=True):
 
     try:
         proc = subprocess.run(argv, **kw)
+    except subprocess.TimeoutExpired as exc:
+        if verbose:
+            print('command timed out (%s)' % exc)
+        raise
     except OSError as exc:
         if exc.errno == errno.ENOENT:
             if verbose:

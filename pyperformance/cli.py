@@ -25,6 +25,13 @@ def comma_separated(values):
     return list(filter(None, values))
 
 
+def check_positive(value):
+    value = int(value)
+    if value <= 0:
+        raise argparse.ArgumentTypeError("Argument must a be positive integer.")
+    return value
+
+
 def filter_opts(cmd, *, allow_no_benchmarks=False):
     cmd.add_argument("--manifest", help="benchmark manifest file to use")
 
@@ -82,6 +89,9 @@ def parse_args():
                      help="Use the same number of loops as a previous run "
                      "(i.e., don't recalibrate). Should be a path to a "
                      ".json file from a previous run.")
+    cmd.add_argument("--timeout",
+                     help="Timeout for a benchmark run (default: disabled)",
+                     type=check_positive)
     filter_opts(cmd)
 
     # show

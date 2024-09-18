@@ -101,9 +101,10 @@ Usage::
 
   pyperformance run [-h] [-r] [-f] [--debug-single-value] [-v] [-m]
                        [--affinity CPU_LIST] [-o FILENAME]
-                       [--append FILENAME] [--manifest MANIFEST]
-                       [-b BM_LIST] [--inherit-environ VAR_LIST]
-                       [-p PYTHON]
+                       [--append FILENAME] [--min-time MIN_TIME]
+                       [--same-loops SAME_LOOPS] [--timeout TIMEOUT]
+                       [--manifest MANIFEST] [-b BM_LIST]
+                       [--inherit-environ VAR_LIST] [-p PYTHON]
 
 options::
 
@@ -124,10 +125,17 @@ options::
                         baseline_python, not changed_python.
   --append FILENAME     Add runs to an existing file, or create it if
                         it doesn't exist
+  --min-time MIN_TIME   Minimum duration in seconds of a single value, used
+                        to calibrate the number of loops
+  --same-loops SAME_LOOPS
+                        Use the same number of loops as a previous run
+                        (i.e., don't recalibrate). Should be a path to a
+                        .json file from a previous run.
+  --timeout TIMEOUT     Timeout for a benchmark run (default: disabled)
   --manifest MANIFEST   benchmark manifest file to use
   -b BM_LIST, --benchmarks BM_LIST
-                        Comma-separated list of benchmarks to run. Can
-                        contain both positive and negative arguments:
+                        Comma-separated list of benchmarks or groups to run.
+                        Can contain both positive and negative arguments:
                         --benchmarks=run_this,also_this,-not_this. If
                         there are no positive arguments, we'll run all
                         benchmarks except the negative arguments.
@@ -140,10 +148,6 @@ options::
   -p PYTHON, --python PYTHON
                         Python executable (default: use running
                         Python)
-  --same-loops SAME_LOOPS
-                        Use the same number of loops as a previous run
-                        (i.e., don't recalibrate). Should be a path to a
-                        .json file from a previous run.
 
 show
 ----

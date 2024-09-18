@@ -1,6 +1,7 @@
 from collections import namedtuple
 import hashlib
 import json
+import subprocess
 import sys
 import time
 import traceback
@@ -164,7 +165,7 @@ def run_benchmarks(should_run, python, options):
         bench_venv, bench_runid = benchmarks.get(bench)
         if bench_venv is None:
             print("ERROR: Benchmark %s failed: could not install requirements" % name)
-            errors.append(name)
+            errors.append((name, "Install requirements error"))
             continue
         try:
             result = bench.run(
@@ -173,11 +174,20 @@ def run_benchmarks(should_run, python, options):
                 pyperf_opts,
                 venv=bench_venv,
                 verbose=options.verbose,
+                timeout=options.timeout,
             )
+        except subprocess.TimeoutExpired as exc:
+            timeout = round(exc.timeout)
+            print("ERROR: Benchmark %s timed out after %s seconds" % (name, timeout))
+            errors.append((name, "Timed out after %s seconds" % timeout))
+        except RuntimeError as exc:
+            print("ERROR: Benchmark %s failed: %s" % (name, exc))
+            traceback.print_exc()
+            errors.append((name, exc))
         except Exception as exc:
             print("ERROR: Benchmark %s failed: %s" % (name, exc))
             traceback.print_exc()
-            errors.append(name)
+            errors.append((name, exc))
         else:
             suite = add_bench(suite, result)
 

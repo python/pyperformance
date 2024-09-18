@@ -177,6 +177,7 @@ class Benchmark:
     def run(self, python, runid=None, pyperf_opts=None, *,
             venv=None,
             verbose=False,
+            timeout=None,
             ):
         if venv and python == sys.executable:
             python = venv.python
@@ -193,6 +194,7 @@ class Benchmark:
             extra_opts=self.extra_opts,
             pyperf_opts=pyperf_opts,
             verbose=verbose,
+            timeout=timeout,
         )
 
         return bench
@@ -205,6 +207,7 @@ def _run_perf_script(python, runscript, runid, *,
                     extra_opts=None,
                     pyperf_opts=None,
                     verbose=False,
+                    timeout=None,
                     ):
     if not runscript:
         raise ValueError('missing runscript')
@@ -227,6 +230,7 @@ def _run_perf_script(python, runscript, runid, *,
             argv,
             env=env,
             capture='stderr' if hide_stderr else None,
+            timeout=timeout,
         )
         if ec != 0:
             if hide_stderr:
