@@ -58,7 +58,7 @@ classifiers = [
     'Programming Language :: Python :: 3',
     'Programming Language :: Python',
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 dependencies = [
     "pyperf",
     "tomli; python_version < '3.11'",
@@ -85,7 +85,7 @@ find = {}  # Scanning implicit namespaces is active by default
 version = {attr = "pyperformance.__version__"}
 
 [tool.mypy]
-python_version = "3.7"
+python_version = "3.9"
 pretty = true
 enable_error_code = "ignore-without-code"
 disallow_any_generics = true
