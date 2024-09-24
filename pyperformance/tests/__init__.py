@@ -16,7 +16,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(TESTS_ROOT))
 DEV_SCRIPT = os.path.join(REPO_ROOT, 'dev.py')
 
 
-def run_cmd(cmd, *args, capture=None, onfail='exit', verbose=True, timeout=None):
+def run_cmd(cmd, *args, capture=None, onfail='exit', verbose=True):
     # XXX Optionally write the output to a file.
     argv = (cmd,) + args
     if not all(a and isinstance(a, str) for a in argv):
@@ -39,10 +39,6 @@ def run_cmd(cmd, *args, capture=None, onfail='exit', verbose=True, timeout=None)
 
     if verbose:
         print(f"(tests) Execute: {argv_str}", flush=True)
-
-    if timeout:
-        kwargs['timeout'] = 60
-
     proc = subprocess.run(argv, **kwargs)
 
     exitcode = proc.returncode

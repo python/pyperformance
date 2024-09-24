@@ -1,7 +1,6 @@
 from collections import namedtuple
 import hashlib
 import json
-import subprocess
 import sys
 import time
 import traceback
@@ -174,12 +173,10 @@ def run_benchmarks(should_run, python, options):
                 pyperf_opts,
                 venv=bench_venv,
                 verbose=options.verbose,
-                timeout=options.timeout,
             )
-        except subprocess.TimeoutExpired as exc:
-            timeout = round(exc.timeout)
-            print("ERROR: Benchmark %s timed out after %s seconds" % (name, timeout))
-            errors.append((name, "Timed out after %s seconds" % timeout))
+        except TimeoutError as exc:
+            print("ERROR: Benchmark %s timed out" % name)
+            errors.append((name, exc))
         except RuntimeError as exc:
             print("ERROR: Benchmark %s failed: %s" % (name, exc))
             traceback.print_exc()
@@ -243,5 +240,7 @@ def get_pyperf_opts(options):
         opts.append('--inherit-environ=%s' % ','.join(options.inherit_environ))
     if options.min_time:
         opts.append('--min-time=%s' % options.min_time)
+    if options.timeout:
+        opts.append('--timeout=%s' % options.timeout)
 
     return opts

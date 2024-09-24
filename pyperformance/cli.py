@@ -90,7 +90,8 @@ def parse_args():
                      "(i.e., don't recalibrate). Should be a path to a "
                      ".json file from a previous run.")
     cmd.add_argument("--timeout",
-                     help="Timeout for a benchmark run (default: disabled)",
+                     help="Specify a timeout in seconds for a single "
+                     "benchmark run (default: disabled)",
                      type=check_positive)
     filter_opts(cmd)
 

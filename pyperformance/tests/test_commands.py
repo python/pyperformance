@@ -63,14 +63,12 @@ class FullStackTests(tests.Functional, unittest.TestCase):
                           exitcode=0,
                           capture='both',
                           verbose=True,
-                          timeout=None,
                           ):
         ec, stdout, stderr = self.run_module(
             'pyperformance', cmd, *args,
             capture=capture,
             onfail=None,
             verbose=verbose,
-            timeout=timeout,
         )
         if exitcode is True:
             self.assertGreater(ec, 0, repr(stdout))
@@ -156,7 +154,6 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             '--debug-single-value',
             '-o', filename,
             capture=None,
-            timeout=None,
         )
 
         # Display slowest benchmarks
