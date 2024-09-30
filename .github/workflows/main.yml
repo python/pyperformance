@@ -2,9 +2,7 @@ name: test
 
 on:
   push:
-    branches: [main]
   pull_request:
-    branches: [main]
   schedule:
     # Midnight UTC:
     - cron: "0 0 * * *"
@@ -23,7 +21,7 @@ jobs:
       matrix:
         # Test all supported versions on Ubuntu:
         os: [ubuntu-latest]
-        python: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python: ["3.9", "3.10", "3.11", "3.12"]
         experimental: [false]
         build: ['']
         include:
@@ -56,7 +54,7 @@ jobs:
       with:
         python-version: ${{ matrix.python }}
     - name: Set up Python ${{ matrix.python }} using deadsnakes
-      uses: deadsnakes/action@v3.1.0
+      uses: deadsnakes/action@v3.2.0
       if: "endsWith(matrix.python, '-dev')"
       with:
         python-version: ${{ matrix.python }}
