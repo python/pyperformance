@@ -75,6 +75,7 @@ richards	<local>
 richards_super	<local>
 scimark	<local>
 spectral_norm	<local>
+sphinx  <local>
 sqlalchemy_declarative	<local>
 sqlalchemy_imperative	<local>
 sqlglot	<local>

@@ -1,0 +1,2 @@
+sphinx==8.0.2
+python-docs-theme==2024.6
