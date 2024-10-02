@@ -356,23 +356,6 @@ html_last_updated_fmt = time.strftime(
     '%b %d, %Y (%H:%M UTC)', time.gmtime(html_time)
 )
 
-# Path to find HTML templates.
-templates_path = ['tools/templates']
-
-# Custom sidebar templates, filenames relative to this file.
-html_sidebars = {
-    # Defaults taken from https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-html_sidebars
-    # Removes the quick search block
-    '**': ['localtoc.html', 'relations.html', 'customsourcelink.html'],
-    'index': ['indexsidebar.html'],
-}
-
-# Additional templates that should be rendered to pages.
-html_additional_pages = {
-    'download': 'download.html',
-    'index': 'indexcontent.html',
-}
-
 # Output an OpenSearch description file.
 html_use_opensearch = 'https://docs.python.org/' + version
 
