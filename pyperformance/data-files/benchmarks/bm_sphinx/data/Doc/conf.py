@@ -593,13 +593,6 @@ extlinks = {
 }
 extlinks_detect_hardcoded_links = True
 
-# Options for c_annotations
-# -------------------------
-
-# Relative filename of the data files
-refcount_file = 'data/refcounts.dat'
-stable_abi_file = 'data/stable_abi.dat'
-
 # Options for sphinxext-opengraph
 # -------------------------------
 
