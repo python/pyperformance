@@ -26,7 +26,6 @@ _orig_open = open
 
 
 preloaded_files = {}
-real_io = set()
 
 
 def read_all_files():
@@ -61,10 +60,6 @@ def open(
             preloaded_files[file] = newfile
             return newfile
 
-    if isinstance(file, str):
-        if DOC_ROOT in Path(file).parents:
-            real_io.add(file)
-
     return _orig_open(
         file,
         mode=mode,
@@ -88,8 +83,11 @@ os.replace = replace
 
 
 def build_html(doc_root):
-    sys.argv = [
-        "sphinx-build",
+    # Make sure there is no caching going on
+    if (DOC_ROOT / "build").is_dir():
+        shutil.rmtree(DOC_ROOT / "build")
+
+    args = [
         "-b",
         "html",
         "-d",
@@ -97,28 +95,19 @@ def build_html(doc_root):
         "-j",
         "1",
         "-Q",
-        "--fresh-env",
-        "--write-all",
         str(doc_root),
         str(doc_root / "build" / "html"),
     ]
+
     t0 = pyperf.perf_counter()
-    sphinx_main()
-    elapsed = pyperf.perf_counter() - t0
-
-    for file in real_io:
-        print(f"Did real I/O for {file}")
-
-    return elapsed
+    sphinx_main(args)
+    return pyperf.perf_counter() - t0
 
 
 def bench_sphinx(loops, doc_root):
     runs_total = 0
     for _ in range(loops):
         runs_total += build_html(doc_root)
-
-    print(gc.get_stats())
-
     return runs_total
 
 
@@ -134,4 +123,4 @@ if __name__ == "__main__":
         shutil.rmtree(DOC_ROOT / "build")
     read_all_files()
 
-    runner.bench_time_func("docutils", bench_sphinx, DOC_ROOT, inner_loops=1)
+    runner.bench_time_func("sphinx", bench_sphinx, DOC_ROOT, inner_loops=1)
