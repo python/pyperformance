@@ -102,8 +102,8 @@ Usage::
   pyperformance run [-h] [-r] [-f] [--debug-single-value] [-v] [-m]
                        [--affinity CPU_LIST] [-o FILENAME]
                        [--append FILENAME] [--manifest MANIFEST]
-                       [-b BM_LIST] [--inherit-environ VAR_LIST]
-                       [-p PYTHON]
+                       [--timeout TIMEOUT] [-b BM_LIST]
+                       [--inherit-environ VAR_LIST] [-p PYTHON]
 
 options::
 
@@ -124,6 +124,8 @@ options::
                         baseline_python, not changed_python.
   --append FILENAME     Add runs to an existing file, or create it if
                         it doesn't exist
+  --timeout TIMEOUT     Specify a timeout in seconds for a single
+                        benchmark run (default: disabled)
   --manifest MANIFEST   benchmark manifest file to use
   -b BM_LIST, --benchmarks BM_LIST
                         Comma-separated list of benchmarks to run. Can

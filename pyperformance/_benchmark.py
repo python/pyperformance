@@ -233,7 +233,11 @@ def _run_perf_script(python, runscript, runid, *,
                 sys.stderr.flush()
                 sys.stderr.write(stderr)
                 sys.stderr.flush()
-            raise RuntimeError("Benchmark died")
+            # pyperf returns exit code 124 if the benchmark execution times out
+            if ec == 124:
+                raise TimeoutError("Benchmark timed out")
+            else:
+                raise RuntimeError("Benchmark died")
         return pyperf.BenchmarkSuite.load(tmp)
 
 

@@ -191,8 +191,8 @@ def cmd_run(options, benchmarks):
 
     if errors:
         print("%s benchmarks failed:" % len(errors))
-        for name in errors:
-            print("- %s" % name)
+        for name, reason in errors:
+            print("- %s (%s)" % (name, reason))
         print()
         sys.exit(1)
 

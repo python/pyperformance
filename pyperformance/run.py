@@ -164,7 +164,7 @@ def run_benchmarks(should_run, python, options):
         bench_venv, bench_runid = benchmarks.get(bench)
         if bench_venv is None:
             print("ERROR: Benchmark %s failed: could not install requirements" % name)
-            errors.append(name)
+            errors.append((name, "Install requirements error"))
             continue
         try:
             result = bench.run(
@@ -174,10 +174,17 @@ def run_benchmarks(should_run, python, options):
                 venv=bench_venv,
                 verbose=options.verbose,
             )
+        except TimeoutError as exc:
+            print("ERROR: Benchmark %s timed out" % name)
+            errors.append((name, exc))
+        except RuntimeError as exc:
+            print("ERROR: Benchmark %s failed: %s" % (name, exc))
+            traceback.print_exc()
+            errors.append((name, exc))
         except Exception as exc:
             print("ERROR: Benchmark %s failed: %s" % (name, exc))
             traceback.print_exc()
-            errors.append(name)
+            errors.append((name, exc))
         else:
             suite = add_bench(suite, result)
 
@@ -233,5 +240,7 @@ def get_pyperf_opts(options):
         opts.append('--inherit-environ=%s' % ','.join(options.inherit_environ))
     if options.min_time:
         opts.append('--min-time=%s' % options.min_time)
+    if options.timeout:
+        opts.append('--timeout=%s' % options.timeout)
 
     return opts
