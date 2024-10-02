@@ -1,33 +1,13 @@
-# -*- coding: utf-8 -*-
-"""
-    pyspecific.py
-    ~~~~~~~~~~~~~
-
-    Sphinx extension with Python doc-specific markup.
-
-    :copyright: 2008-2014 by Georg Brandl.
-    :license: Python license.
-"""
-
 import re
-import io
-from os import getenv, path
-from time import asctime
-from pprint import pformat
 
 from docutils import nodes
-from docutils.io import StringOutput
 from docutils.parsers.rst import directives
-from docutils.utils import new_document, unescape
+from docutils.utils import unescape
 from sphinx import addnodes
-from sphinx.builders import Builder
 from sphinx.domains.changeset import VersionChange, versionlabels, versionlabel_classes
 from sphinx.domains.python import PyFunction, PyMethod, PyModule
 from sphinx.locale import _ as sphinx_gettext
-from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
-from sphinx.writers.text import TextWriter, TextTranslator
-from sphinx.util.display import status_iterator
 
 
 ISSUE_URI = 'https://bugs.python.org/issue?@action=redirect&bpo=%s'
@@ -106,80 +86,6 @@ class ImplementationDetail(SphinxDirective):
         pnode[0].replace_self(nodes.paragraph(
             '', '', add_text, nodes.Text(' '), content, translatable=False))
         return [pnode]
-
-
-# Support for documenting platform availability
-
-class Availability(SphinxDirective):
-
-    has_content = True
-    required_arguments = 1
-    optional_arguments = 0
-    final_argument_whitespace = True
-
-    # known platform, libc, and threading implementations
-    known_platforms = frozenset({
-        "AIX", "Android", "BSD", "DragonFlyBSD", "Emscripten", "FreeBSD",
-        "GNU/kFreeBSD", "Linux", "NetBSD", "OpenBSD", "POSIX", "Solaris",
-        "Unix", "VxWorks", "WASI", "Windows", "macOS", "iOS",
-        # libc
-        "BSD libc", "glibc", "musl",
-        # POSIX platforms with pthreads
-        "pthreads",
-    })
-
-    def run(self):
-        availability_ref = ':ref:`Availability <availability>`: '
-        avail_nodes, avail_msgs = self.state.inline_text(
-            availability_ref + self.arguments[0],
-            self.lineno)
-        pnode = nodes.paragraph(availability_ref + self.arguments[0],
-                                '', *avail_nodes, *avail_msgs)
-        self.set_source_info(pnode)
-        cnode = nodes.container("", pnode, classes=["availability"])
-        self.set_source_info(cnode)
-        if self.content:
-            self.state.nested_parse(self.content, self.content_offset, cnode)
-        self.parse_platforms()
-
-        return [cnode]
-
-    def parse_platforms(self):
-        """Parse platform information from arguments
-
-        Arguments is a comma-separated string of platforms. A platform may
-        be prefixed with "not " to indicate that a feature is not available.
-
-        Example::
-
-           .. availability:: Windows, Linux >= 4.2, not WASI
-
-        Arguments like "Linux >= 3.17 with glibc >= 2.27" are currently not
-        parsed into separate tokens.
-        """
-        platforms = {}
-        for arg in self.arguments[0].rstrip(".").split(","):
-            arg = arg.strip()
-            platform, _, version = arg.partition(" >= ")
-            if platform.startswith("not "):
-                version = False
-                platform = platform[4:]
-            elif not version:
-                version = True
-            platforms[platform] = version
-
-        unknown = set(platforms).difference(self.known_platforms)
-        if unknown:
-            cls = type(self)
-            logger = logging.getLogger(cls.__qualname__)
-            logger.warning(
-                f"Unknown platform(s) or syntax '{' '.join(sorted(unknown))}' "
-                f"in '.. availability:: {self.arguments[0]}', see "
-                f"{__file__}:{cls.__qualname__}.known_platforms for a set "
-                "known platforms."
-            )
-
-        return platforms
 
 
 # Support for documenting decorators
@@ -291,194 +197,11 @@ class DeprecatedRemoved(VersionChange):
             versionlabel_classes[self.name] = ''
 
 
-# Support for including Misc/NEWS
-
-issue_re = re.compile('(?:[Ii]ssue #|bpo-)([0-9]+)', re.I)
-gh_issue_re = re.compile('(?:gh-issue-|gh-)([0-9]+)', re.I)
-whatsnew_re = re.compile(r"(?im)^what's new in (.*?)\??$")
-
-
-class MiscNews(SphinxDirective):
-    has_content = False
-    required_arguments = 1
-    optional_arguments = 0
-    final_argument_whitespace = False
-    option_spec = {}
-
-    def run(self):
-        fname = self.arguments[0]
-        source = self.state_machine.input_lines.source(
-            self.lineno - self.state_machine.input_offset - 1)
-        source_dir = getenv('PY_MISC_NEWS_DIR')
-        if not source_dir:
-            source_dir = path.dirname(path.abspath(source))
-        fpath = path.join(source_dir, fname)
-        self.env.note_dependency(path.abspath(fpath))
-        try:
-            with io.open(fpath, encoding='utf-8') as fp:
-                content = fp.read()
-        except Exception:
-            text = 'The NEWS file is not available.'
-            node = nodes.strong(text, text)
-            return [node]
-        content = issue_re.sub(r':issue:`\1`', content)
-        # Fallback handling for the GitHub issue
-        content = gh_issue_re.sub(r':gh:`\1`', content)
-        content = whatsnew_re.sub(r'\1', content)
-        # remove first 3 lines as they are the main heading
-        lines = ['.. default-role:: obj', ''] + content.splitlines()[3:]
-        self.state_machine.insert_input(lines, fname)
-        return []
-
-
-# Support for building "topic help" for pydoc
-
-pydoc_topic_labels = [
-    'assert', 'assignment', 'async', 'atom-identifiers', 'atom-literals',
-    'attribute-access', 'attribute-references', 'augassign', 'await',
-    'binary', 'bitwise', 'bltin-code-objects', 'bltin-ellipsis-object',
-    'bltin-null-object', 'bltin-type-objects', 'booleans',
-    'break', 'callable-types', 'calls', 'class', 'comparisons', 'compound',
-    'context-managers', 'continue', 'conversions', 'customization', 'debugger',
-    'del', 'dict', 'dynamic-features', 'else', 'exceptions', 'execmodel',
-    'exprlists', 'floating', 'for', 'formatstrings', 'function', 'global',
-    'id-classes', 'identifiers', 'if', 'imaginary', 'import', 'in', 'integers',
-    'lambda', 'lists', 'naming', 'nonlocal', 'numbers', 'numeric-types',
-    'objects', 'operator-summary', 'pass', 'power', 'raise', 'return',
-    'sequence-types', 'shifting', 'slicings', 'specialattrs', 'specialnames',
-    'string-methods', 'strings', 'subscriptions', 'truth', 'try', 'types',
-    'typesfunctions', 'typesmapping', 'typesmethods', 'typesmodules',
-    'typesseq', 'typesseq-mutable', 'unary', 'while', 'with', 'yield'
-]
-
-
-class PydocTopicsBuilder(Builder):
-    name = 'pydoc-topics'
-
-    default_translator_class = TextTranslator
-
-    def init(self):
-        self.topics = {}
-        self.secnumbers = {}
-
-    def get_outdated_docs(self):
-        return 'all pydoc topics'
-
-    def get_target_uri(self, docname, typ=None):
-        return ''  # no URIs
-
-    def write(self, *ignored):
-        writer = TextWriter(self)
-        for label in status_iterator(pydoc_topic_labels,
-                                     'building topics... ',
-                                     length=len(pydoc_topic_labels)):
-            if label not in self.env.domaindata['std']['labels']:
-                self.env.logger.warning(f'label {label!r} not in documentation')
-                continue
-            docname, labelid, sectname = self.env.domaindata['std']['labels'][label]
-            doctree = self.env.get_and_resolve_doctree(docname, self)
-            document = new_document('<section node>')
-            document.append(doctree.ids[labelid])
-            destination = StringOutput(encoding='utf-8')
-            writer.write(document, destination)
-            self.topics[label] = writer.output
-
-    def finish(self):
-        f = open(path.join(self.outdir, 'topics.py'), 'wb')
-        try:
-            f.write('# -*- coding: utf-8 -*-\n'.encode('utf-8'))
-            f.write(('# Autogenerated by Sphinx on %s\n' % asctime()).encode('utf-8'))
-            f.write('# as part of the release process.\n'.encode('utf-8'))
-            f.write(('topics = ' + pformat(self.topics) + '\n').encode('utf-8'))
-        finally:
-            f.close()
-
-
-# Support for documenting Opcodes
-
-opcode_sig_re = re.compile(r'(\w+(?:\+\d)?)(?:\s*\((.*)\))?')
-
-
-def parse_opcode_signature(env, sig, signode):
-    """Transform an opcode signature into RST nodes."""
-    m = opcode_sig_re.match(sig)
-    if m is None:
-        raise ValueError
-    opname, arglist = m.groups()
-    signode += addnodes.desc_name(opname, opname)
-    if arglist is not None:
-        paramlist = addnodes.desc_parameterlist()
-        signode += paramlist
-        paramlist += addnodes.desc_parameter(arglist, arglist)
-    return opname.strip()
-
-
-# Support for documenting pdb commands
-
-pdbcmd_sig_re = re.compile(r'([a-z()!]+)\s*(.*)')
-
-# later...
-# pdbargs_tokens_re = re.compile(r'''[a-zA-Z]+  |  # identifiers
-#                                   [.,:]+     |  # punctuation
-#                                   [\[\]()]   |  # parens
-#                                   \s+           # whitespace
-#                                   ''', re.X)
-
-
-def parse_pdb_command(env, sig, signode):
-    """Transform a pdb command signature into RST nodes."""
-    m = pdbcmd_sig_re.match(sig)
-    if m is None:
-        raise ValueError
-    name, args = m.groups()
-    fullname = name.replace('(', '').replace(')', '')
-    signode += addnodes.desc_name(name, name)
-    if args:
-        signode += addnodes.desc_addname(' '+args, ' '+args)
-    return fullname
-
-
-def parse_monitoring_event(env, sig, signode):
-    """Transform a monitoring event signature into RST nodes."""
-    signode += addnodes.desc_addname('sys.monitoring.events.', 'sys.monitoring.events.')
-    signode += addnodes.desc_name(sig, sig)
-    return sig
-
-
-def patch_pairindextypes(app, _env) -> None:
-    """Remove all entries from ``pairindextypes`` before writing POT files.
-
-    We want to run this just before writing output files, as the check to
-    circumvent is in ``I18nBuilder.write_doc()``.
-    As such, we link this to ``env-check-consistency``, even though it has
-    nothing to do with the environment consistency check.
-    """
-    if app.builder.name != 'gettext':
-        return
-
-    # allow translating deprecated index entries
-    try:
-        from sphinx.domains.python import pairindextypes
-    except ImportError:
-        pass
-    else:
-        # Sphinx checks if a 'pair' type entry on an index directive is one of
-        # the Sphinx-translated pairindextypes values. As we intend to move
-        # away from this, we need Sphinx to believe that these values don't
-        # exist, by deleting them when using the gettext builder.
-        pairindextypes.clear()
-
-
 def setup(app):
     app.add_role('issue', issue_role)
     app.add_role('gh', gh_issue_role)
     app.add_directive('impl-detail', ImplementationDetail)
-    app.add_directive('availability', Availability)
     app.add_directive('deprecated-removed', DeprecatedRemoved)
-    app.add_builder(PydocTopicsBuilder)
-    app.add_object_type('opcode', 'opcode', '%s (opcode)', parse_opcode_signature)
-    app.add_object_type('pdbcommand', 'pdbcmd', '%s (pdb command)', parse_pdb_command)
-    app.add_object_type('monitoring-event', 'monitoring-event', '%s (monitoring event)', parse_monitoring_event)
     app.add_directive_to_domain('py', 'decorator', PyDecoratorFunction)
     app.add_directive_to_domain('py', 'decoratormethod', PyDecoratorMethod)
     app.add_directive_to_domain('py', 'coroutinefunction', PyCoroutineFunction)
@@ -486,6 +209,4 @@ def setup(app):
     app.add_directive_to_domain('py', 'awaitablefunction', PyAwaitableFunction)
     app.add_directive_to_domain('py', 'awaitablemethod', PyAwaitableMethod)
     app.add_directive_to_domain('py', 'abstractmethod', PyAbstractMethod)
-    app.add_directive('miscnews', MiscNews)
-    app.connect('env-check-consistency', patch_pairindextypes)
     return {'version': '1.0', 'parallel_read_safe': True}
