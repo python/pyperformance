@@ -93,6 +93,8 @@ def build_doc(doc_root):
             "-j",
             "1",
             "-Q",
+            "--fresh-env",
+            "--write-all",
             str(doc_root),
             str(doc_root / "build" / "html"),
         ]
