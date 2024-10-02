@@ -57,13 +57,7 @@ manpages_url = 'https://manpages.debian.org/{path}'
 project = 'Python'
 copyright = f"2001-{time.strftime('%Y')}, Python Software Foundation"
 
-# We look for the Include/patchlevel.h file in the current Python source tree
-# and replace the values accordingly.
-# See Doc/tools/extensions/patchlevel.py
-#
-# version, release = importlib.import_module('patchlevel').get_version_info()
-
-version, release = sys.version.split()[0], ""
+version = release = sys.version.split(" ", 1)[0]
 
 rst_epilog = f"""
 .. |python_version_literal| replace:: ``Python {version}``
