@@ -86,13 +86,13 @@ def build_doc(doc_root):
     t0 = pyperf.perf_counter()
     sphinx_main(
         [
-            "-b",
+            "--builder",
             "dummy",
-            "-d",
+            "--doctree-dir",
             str(doc_root / "build" / "doctrees"),
-            "-j",
+            "--jobs",
             "1",
-            "-Q",
+            "--silent",
             "--fresh-env",
             "--write-all",
             str(doc_root),
