@@ -2,12 +2,10 @@
 Build a subset of Python's documentation using Sphinx
 """
 
-import gc
 import io
 import os
 from pathlib import Path
 import shutil
-import sys
 
 import pyperf
 from sphinx.cmd.build import main as sphinx_main
@@ -46,13 +44,14 @@ def open(
 ):
     if isinstance(file, Path):
         file = str(file)
+
     if isinstance(file, str):
         if "r" in mode and file in preloaded_files:
             if "b" in mode:
                 return io.BytesIO(preloaded_files[file])
             else:
                 return io.StringIO(preloaded_files[file].decode(encoding or "utf-8"))
-        elif "w" in mode:
+        elif "w" in mode and DOC_ROOT in Path(file).parents:
             if "b" in mode:
                 newfile = io.BytesIO()
             else:
@@ -82,32 +81,36 @@ def replace(src, dst):
 os.replace = replace
 
 
-def build_html(doc_root):
+def build_doc(doc_root):
     # Make sure there is no caching going on
-    if (DOC_ROOT / "build").is_dir():
-        shutil.rmtree(DOC_ROOT / "build")
-
-    args = [
-        "-b",
-        "html",
-        "-d",
-        str(doc_root / "build" / "doctrees"),
-        "-j",
-        "1",
-        "-Q",
-        str(doc_root),
-        str(doc_root / "build" / "html"),
-    ]
-
     t0 = pyperf.perf_counter()
-    sphinx_main(args)
+    sphinx_main(
+        [
+            "-b",
+            "dummy",
+            "-d",
+            str(doc_root / "build" / "doctrees"),
+            "-j",
+            "1",
+            "-Q",
+            str(doc_root),
+            str(doc_root / "build" / "html"),
+        ]
+    )
     return pyperf.perf_counter() - t0
 
 
 def bench_sphinx(loops, doc_root):
+    if (DOC_ROOT / "build").is_dir():
+        shutil.rmtree(DOC_ROOT / "build")
+    read_all_files()
+
     runs_total = 0
     for _ in range(loops):
-        runs_total += build_html(doc_root)
+        runs_total += build_doc(doc_root)
+        if (DOC_ROOT / "build").is_dir():
+            shutil.rmtree(DOC_ROOT / "build")
+
     return runs_total
 
 
@@ -119,8 +122,4 @@ if __name__ == "__main__":
     )
     args = runner.parse_args()
 
-    if (DOC_ROOT / "build").is_dir():
-        shutil.rmtree(DOC_ROOT / "build")
-    read_all_files()
-
-    runner.bench_time_func("sphinx", bench_sphinx, DOC_ROOT, inner_loops=1)
+    runner.bench_time_func("sphinx", bench_sphinx, DOC_ROOT)
