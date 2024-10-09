@@ -104,6 +104,7 @@ Usage::
                        [--append FILENAME] [--manifest MANIFEST]
                        [--timeout TIMEOUT] [-b BM_LIST]
                        [--inherit-environ VAR_LIST] [-p PYTHON]
+                       [--hook HOOK]
 
 options::
 
@@ -146,6 +147,9 @@ options::
                         Use the same number of loops as a previous run
                         (i.e., don't recalibrate). Should be a path to a
                         .json file from a previous run.
+  --hook HOOK
+                        Apply the given pyperf hook when running the
+                        benchmarks.
 
 show
 ----
