@@ -242,5 +242,8 @@ def get_pyperf_opts(options):
         opts.append('--min-time=%s' % options.min_time)
     if options.timeout:
         opts.append('--timeout=%s' % options.timeout)
+    if options.hook:
+        for hook in options.hook:
+            opts.append('--hook=%s' % hook)
 
     return opts
