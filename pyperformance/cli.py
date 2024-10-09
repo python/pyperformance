@@ -96,10 +96,11 @@ def parse_args():
                      "benchmark run (default: disabled)",
                      type=check_positive)
     hook_names = list(_hooks.get_hook_names())
-    cmd.add_argument(
-        '--hook', action="append", choices=hook_names,
-        metavar=f"{', '.join(x for x in hook_names if not x.startswith('_'))}",
-        help="Apply the given pyperf hook(s) when running each benchmark")
+    cmd.add_argument("--hook",
+                     action="append",
+                     choices=hook_names,
+                     metavar=f"{', '.join(x for x in hook_names if not x.startswith('_'))}",
+                     help="Apply the given pyperf hook(s) when running each benchmark")
     filter_opts(cmd)
 
     # show
