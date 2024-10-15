@@ -6,7 +6,7 @@ variants include:
 
 1) "none": No actual async work in the async tree.
 2) "io": All leaf nodes simulate async IO workload (async sleep 50ms).
-3) "memoization": All leaf nodes simulate async IO workload with 90%% of
+3) "memoization": All leaf nodes simulate async IO workload with 90% of
                   the data memoized
 4) "cpu_io_mixed": Half of the leaf nodes simulate CPU-bound workload and
                    the other half simulate the same workload as the
@@ -159,7 +159,7 @@ def add_parser_args(parser):
 Determines which benchmark to run. Options:
 1) "none": No actual async work in the async tree.
 2) "io": All leaf nodes simulate async IO workload (async sleep 50ms).
-3) "memoization": All leaf nodes simulate async IO workload with 90% of
+3) "memoization": All leaf nodes simulate async IO workload with 90%% of
                   the data memoized
 4) "cpu_io_mixed": Half of the leaf nodes simulate CPU-bound workload and
                    the other half simulate the same workload as the
