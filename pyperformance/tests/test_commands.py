@@ -173,6 +173,25 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             capture=None,
         )
 
+    def test_run_with_hook(self):
+        # We expect this to fail, since pystats requires a special build of Python
+        filename = self.resolve_tmp('bench-test-hook.json')
+
+        stdout = self.run_pyperformance(
+            'run',
+            '--manifest', os.path.join(tests.DATA_DIR, 'MANIFEST'),
+            '-b', 'all',
+            '-o', filename,
+            '--hook', 'pystats',
+            exitcode=1,
+            capture='combined'
+        )
+
+        self.assertIn(
+            "Can not collect pystats because python was not built with --enable-pystats",
+            stdout
+        )
+
     ###################################
     # compile
 
