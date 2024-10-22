@@ -7,3 +7,7 @@ dependencies = [
 ]
 urls.repository = "https://github.com/python/pyperformance"
 dynamic = ["version"]
+
+[tools.pyperformance]
+name = "networkx_shortest_path"
+extra_opts = ["shortest_path"]
