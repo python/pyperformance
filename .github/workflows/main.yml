@@ -46,10 +46,10 @@ jobs:
             experimental: false
           - os: macos-latest
             python: "3.13"
-            experimental: false
+            experimental: true
           - os: windows-latest
             python: "3.13"
-            experimental: false
+            experimental: true
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python }}
