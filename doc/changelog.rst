@@ -1,6 +1,8 @@
 Changelog
 =========
 
+* Bump greenlet to 3.1.0 for compatibility with 3.13
+
 Version 1.11.0 (2024-03-09)
 --------------
 * Add a --same-loops option to the run command to use the exact same number of
