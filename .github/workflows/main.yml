@@ -21,14 +21,11 @@ jobs:
       matrix:
         # Test all supported versions on Ubuntu:
         os: [ubuntu-latest]
-        python: ["3.9", "3.10", "3.11", "3.12"]
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         experimental: [false]
         build: ['']
         include:
           # As the experimental task for the dev version.
-          - os: ubuntu-latest
-            python: "3.13-dev"
-            experimental: true
           - os: ubuntu-latest
             python: "3.13-dev"
             experimental: true
@@ -41,10 +38,10 @@ jobs:
             python: pypy-3.9
             experimental: false
           - os: macos-latest
-            python: "3.12"
+            python: "3.13"
             experimental: true
           - os: windows-latest
-            python: "3.12"
+            python: "3.13"
             experimental: true
     steps:
     - uses: actions/checkout@v4
