@@ -30,6 +30,10 @@ jobs:
             python: "3.13-dev"
             experimental: true
             build: 'free-threading'
+          - os: ubuntu-latest
+            python: "3.14-dev"
+            experimental: true
+            build: 'free-threading'
           # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
             python: pypy-3.10
@@ -39,10 +43,10 @@ jobs:
             experimental: false
           - os: macos-latest
             python: "3.13"
-            experimental: true
+            experimental: false
           - os: windows-latest
             python: "3.13"
-            experimental: true
+            experimental: false
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python }}
