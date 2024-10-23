@@ -33,6 +33,9 @@ jobs:
           - os: ubuntu-latest
             python: "3.14-dev"
             experimental: true
+          - os: ubuntu-latest
+            python: "3.14-dev"
+            experimental: true
             build: 'free-threading'
           # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
