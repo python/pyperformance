@@ -54,7 +54,7 @@ logging	<local>
 mako	<local>
 mdp	<local>
 meteor_contest	<local>
-networkx_shortest_path	<local:networkx>
+networkx	<local>
 networkx_connected_components	<local:networkx>
 networkx_k_core	<local:networkx>
 nbody	<local>
