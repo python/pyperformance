@@ -49,7 +49,7 @@ jobs:
             experimental: true
           - os: windows-latest
             python: "3.13"
-            experimental: true
+            experimental: false
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python }}
