@@ -29,9 +29,6 @@ async def benchmark():
 
 
 if __name__ == "__main__":
-    if distributed.__version__ <= "2024.5.0" and sys.version_info >= (3, 13) and sys.platform == "win32":
-        raise RuntimeError("Benchmark doesn't work with Python 3.13 on Windows")
-
     runner = pyperf.Runner()
     runner.metadata['description'] = "Benchmark dask"
     runner.bench_async_func('dask', benchmark)
