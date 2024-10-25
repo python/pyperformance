@@ -4,12 +4,19 @@ Benchmark the Dask scheduler running a large number of simple jobs.
 Author: Matt Rocklin, Michael Droettboom
 """
 
-import sys
-
 from dask.distributed import Client, Worker, Scheduler, wait
 from dask import distributed
 
 import pyperf
+
+
+IS_PYPY = (pyperf.python_implementation() == 'pypy')
+
+
+if IS_PYPY:
+    # PyPy 3.10 doesn't have gc.callbacks, so monkey-patch it in
+    import gc
+    gc.callbacks = []
 
 
 def inc(x):
