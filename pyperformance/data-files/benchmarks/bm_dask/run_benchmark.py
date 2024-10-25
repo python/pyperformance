@@ -10,15 +10,6 @@ from dask import distributed
 import pyperf
 
 
-IS_PYPY = (pyperf.python_implementation() == 'pypy')
-
-
-if IS_PYPY:
-    # PyPy 3.10 doesn't have gc.callbacks, so monkey-patch it in
-    import gc
-    gc.callbacks = []
-
-
 def inc(x):
     return x + 1
 
