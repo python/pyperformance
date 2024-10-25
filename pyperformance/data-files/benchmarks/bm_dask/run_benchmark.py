@@ -12,9 +12,6 @@ from dask import distributed
 import pyperf
 
 
-IS_PYPY = (pyperf.python_implementation() == 'pypy')
-
-
 def inc(x):
     return x + 1
 
@@ -34,5 +31,4 @@ async def benchmark():
 if __name__ == "__main__":
     runner = pyperf.Runner()
     runner.metadata['description'] = "Benchmark dask"
-    if not IS_PYPY:
-        runner.bench_async_func('dask', benchmark)
+    runner.bench_async_func('dask', benchmark)
