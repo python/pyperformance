@@ -19,10 +19,19 @@ from pyperformance.commands import (
     cmd_compare,
 )
 
+from pyperf import _hooks
+
 
 def comma_separated(values):
     values = [value.strip() for value in values.split(',')]
     return list(filter(None, values))
+
+
+def check_positive(value):
+    value = int(value)
+    if value <= 0:
+        raise argparse.ArgumentTypeError("Argument must a be positive integer.")
+    return value
 
 
 def filter_opts(cmd, *, allow_no_benchmarks=False):
@@ -82,6 +91,16 @@ def parse_args():
                      help="Use the same number of loops as a previous run "
                      "(i.e., don't recalibrate). Should be a path to a "
                      ".json file from a previous run.")
+    cmd.add_argument("--timeout",
+                     help="Specify a timeout in seconds for a single "
+                     "benchmark run (default: disabled)",
+                     type=check_positive)
+    hook_names = list(_hooks.get_hook_names())
+    cmd.add_argument("--hook",
+                     action="append",
+                     choices=hook_names,
+                     metavar=f"{', '.join(x for x in hook_names if not x.startswith('_'))}",
+                     help="Apply the given pyperf hook(s) when running each benchmark")
     filter_opts(cmd)
 
     # show

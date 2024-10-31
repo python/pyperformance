@@ -173,6 +173,25 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             capture=None,
         )
 
+    def test_run_with_hook(self):
+        # We expect this to fail, since pystats requires a special build of Python
+        filename = self.resolve_tmp('bench-test-hook.json')
+
+        stdout = self.run_pyperformance(
+            'run',
+            '--manifest', os.path.join(tests.DATA_DIR, 'MANIFEST'),
+            '-b', 'all',
+            '-o', filename,
+            '--hook', 'pystats',
+            exitcode=1,
+            capture='combined'
+        )
+
+        self.assertIn(
+            "Can not collect pystats because python was not built with --enable-pystats",
+            stdout
+        )
+
     ###################################
     # compile
 
@@ -399,7 +418,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             Performance version: 0.2
 
             ### call_simple ###
-            7896.0 kB -> 7900.0 kB: 1.00x larger
+            7896.0 KiB -> 7900.0 KiB: 1.00x larger
         ''').lstrip())
 
     def test_compare_csv(self):
@@ -458,11 +477,11 @@ class FullStackTests(tests.Functional, unittest.TestCase):
 
             Performance version: 0.2
 
-            +-------------+-----------+-----------+--------------+------------------------------------------+
-            | Benchmark   | mem1.json | mem2.json | Change       | Significance                             |
-            +=============+===========+===========+==============+==========================================+
-            | call_simple | 7896.0 kB | 7900.0 kB | 1.00x larger | (benchmark only contains a single value) |
-            +-------------+-----------+-----------+--------------+------------------------------------------+
+            +-------------+------------+------------+--------------+------------------------------------------+
+            | Benchmark   | mem1.json  | mem2.json  | Change       | Significance                             |
+            +=============+============+============+==============+==========================================+
+            | call_simple | 7896.0 KiB | 7900.0 KiB | 1.00x larger | (benchmark only contains a single value) |
+            +-------------+------------+------------+--------------+------------------------------------------+
         ''').lstrip())
 
 
