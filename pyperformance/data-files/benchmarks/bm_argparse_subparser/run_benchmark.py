@@ -69,4 +69,3 @@ if __name__ == "__main__":
     runner.metadata['description'] = "Benchmark the argparse program with subparsers" 
     
     runner.bench_time_func("argparse", bench_argparse)
-
