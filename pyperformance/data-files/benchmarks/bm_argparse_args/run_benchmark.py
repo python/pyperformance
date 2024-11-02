@@ -7,6 +7,7 @@ Author: Savannah Ostrowski
 import pyperf
 import argparse
 
+
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="A CLI tool with many optional and positional arguments"
@@ -20,11 +21,13 @@ def create_parser() -> argparse.ArgumentParser:
 
     return parser
 
+
 def generate_arguments(i: int) -> list:
     arguments = ["input.txt", "output.txt"]
     for i in range(i):
         arguments.extend([f"--option{i}", f"value{i}"])
     return arguments
+
 
 def bench_argparse(loops: int) -> None:
     argument_lists = [
@@ -42,9 +45,11 @@ def bench_argparse(loops: int) -> None:
 
     return pyperf.perf_counter() - t0
 
+
 if __name__ == "__main__":
     runner = pyperf.Runner()
-    runner.metadata['description'] = "Benchmark the argparse program with many optional arguments"
+    runner.metadata["description"] = (
+        "Benchmark the argparse program with many optional arguments"
+    )
 
     runner.bench_time_func("argparse", bench_argparse)
-    
