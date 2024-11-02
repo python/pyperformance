@@ -1,6 +1,6 @@
 """
 Benchmark the argparse module with multiple subparsers, each with their own 
-options, and then parse a series of command-line arguments.
+subcommands, and then parse a series of command-line arguments.
 
 Author: Savannah Ostrowski
 """
