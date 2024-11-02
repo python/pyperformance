@@ -2,7 +2,8 @@
 
 name	metafile
 2to3	<local>
-argparse	<local>
+argparse_subparser	<local>
+argparse_args	<local>
 async_generators	<local>
 async_tree	<local>
 async_tree_cpu_io_mixed	<local:async_tree>
@@ -100,6 +101,7 @@ xml_etree	<local>
 
 
 #[groups]
+#argparse
 #asyncio
 #startup
 #regex

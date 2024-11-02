@@ -1,8 +1,7 @@
-"""Benchmark the argparse module.
-
-This is a benchmark that simulates a command-line application with 
-multiple subparsers, each with their own options, and then
-parses a series of command-line arguments. 
+"""
+Benchmark the argparse module with multiple subparsers, 
+each with their own options, and then parses a series of 
+command-line arguments. 
 
 Author: Savannah Ostrowski
 """

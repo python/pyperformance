@@ -6,4 +6,5 @@ urls = {repository = "https://github.com/python/pyperformance"}
 dynamic = ["version"]
 
 [tool.pyperformance]
-name = "argparse"
+name = "argparse_args"
+tag = "argparse"
