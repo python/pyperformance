@@ -46,4 +46,4 @@ if __name__ == "__main__":
     runner = pyperf.Runner()
     runner.metadata['description'] = "Benchmark the argparse program with many optional arguments"
 
-    runner.bench_time_func('argparse', bench_argparse)
+    runner.bench_time_func("argparse", bench_argparse)
