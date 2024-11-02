@@ -9,9 +9,7 @@ import argparse
 
 
 def create_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        description="A CLI tool with many optional and positional arguments"
-    )
+    parser = argparse.ArgumentParser()
 
     parser.add_argument("input_file", type=str, help="The input file")
     parser.add_argument("output_file", type=str, help="The output file")
@@ -49,7 +47,7 @@ def bench_argparse(loops: int) -> None:
 if __name__ == "__main__":
     runner = pyperf.Runner()
     runner.metadata["description"] = (
-        "Benchmark the argparse program with many optional arguments"
+        "Benchmark an argparse program with many optional arguments"
     )
 
     runner.bench_time_func("argparse", bench_argparse)

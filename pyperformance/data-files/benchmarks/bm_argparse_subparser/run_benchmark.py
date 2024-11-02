@@ -1,5 +1,5 @@
 """
-Benchmark the argparse module with multiple subparsers, each with their own 
+Benchmark the argparse module with multiple subparsers, each with their own
 subcommands, and then parse a series of command-line arguments.
 
 Author: Savannah Ostrowski
@@ -38,7 +38,7 @@ def create_parser() -> argparse.ArgumentParser:
 
     network_group = push_parser.add_argument_group("Network options")
     network_group.add_argument(
-        "--dryrun", action="store_true", help="Do not push changes, only simulate"
+        "--dryrun", action="store_true", help="Simulate changes"
     )
     network_group.add_argument(
         "--timeout", type=int, default=30, help="Timeout in seconds"
@@ -90,6 +90,6 @@ def bench_argparse(loops: int) -> None:
 
 if __name__ == "__main__":
     runner = pyperf.Runner()
-    runner.metadata["description"] = "Benchmark the argparse program with subparsers"
+    runner.metadata["description"] = "Benchmark an argparse program with subparsers"
 
     runner.bench_time_func("argparse", bench_argparse)
