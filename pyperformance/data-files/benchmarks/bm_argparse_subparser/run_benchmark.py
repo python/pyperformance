@@ -1,5 +1,5 @@
 """
-Benchmark the argparse module with multiple subparsers, each with their own
+Benchmark an argparse program with multiple subparsers, each with their own
 subcommands, and then parse a series of command-line arguments.
 
 Author: Savannah Ostrowski

@@ -1,5 +1,5 @@
 """
-Benchmark argparse program with many optional arguments.
+Benchmark an argparse program with many optional arguments.
 
 Author: Savannah Ostrowski
 """
