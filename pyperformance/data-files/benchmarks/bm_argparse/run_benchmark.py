@@ -114,6 +114,7 @@ def add_cmdline_args(cmd, args):
 def add_parser_args(parser):
     parser.add_argument("benchmark", choices=BENCHMARKS, help="Which benchmark to run.")
 
+
 if __name__ == "__main__":
     runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     runner.metadata["description"] = "Argparse benchmark"
