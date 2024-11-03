@@ -101,7 +101,6 @@ xml_etree	<local>
 
 
 #[groups]
-#argparse
 #asyncio
 #startup
 #regex
