@@ -2,8 +2,8 @@
 
 name	metafile
 2to3	<local>
-argparse_args	<local:argparse>
-argparse_subparser	<local:argparse>
+argparse	<local>
+argparse_subparsers	<local:argparse>
 async_generators	<local>
 async_tree	<local>
 async_tree_cpu_io_mixed	<local:async_tree>

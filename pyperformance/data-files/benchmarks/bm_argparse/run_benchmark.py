@@ -1,6 +1,7 @@
 """
-Benchmark an argparse program with multiple subparsers, each with their own
-subcommands, and then parse a series of command-line arguments.
+Benchmark argparse programs with:
+1) multiple subparsers, each with their own subcommands, and then parse a series of command-line arguments.
+2) a large number of optional arguments, and then parse a series of command-line arguments.
 
 Author: Savannah Ostrowski
 """
@@ -9,7 +10,14 @@ import argparse
 import pyperf
 
 
-def create_parser() -> argparse.ArgumentParser:
+def generate_arguments(i: int) -> list:
+    arguments = ["input.txt", "output.txt"]
+    for i in range(i):
+        arguments.extend([f"--option{i}", f"value{i}"])
+    return arguments
+
+
+def bm_many_optionals() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="A version control system CLI")
 
     parser.add_argument("--version", action="version", version="1.0")
@@ -37,9 +45,7 @@ def create_parser() -> argparse.ArgumentParser:
     )
 
     network_group = push_parser.add_argument_group("Network options")
-    network_group.add_argument(
-        "--dryrun", action="store_true", help="Simulate changes"
-    )
+    network_group.add_argument("--dryrun", action="store_true", help="Simulate changes")
     network_group.add_argument(
         "--timeout", type=int, default=30, help="Timeout in seconds"
     )
@@ -56,10 +62,6 @@ def create_parser() -> argparse.ArgumentParser:
     global_group.add_argument("--verbose", action="store_true", help="Verbose output")
     global_group.add_argument("--quiet", action="store_true", help="Quiet output")
 
-    return parser
-
-
-def bench_argparse(loops: int) -> None:
     argument_lists = [
         ["--verbose", "add", "file1.txt", "file2.txt"],
         ["add", "file1.txt", "file2.txt"],
@@ -77,19 +79,46 @@ def bench_argparse(loops: int) -> None:
         ],
     ]
 
-    parser = create_parser()
-    range_it = range(loops)
-    t0 = pyperf.perf_counter()
+    for arguments in argument_lists:
+        parser.parse_args(arguments)
 
-    for _ in range_it:
-        for args in argument_lists:
-            parser.parse_args(args)
 
-    return pyperf.perf_counter() - t0
+def bm_subparsers() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser()
 
+    parser.add_argument("input_file", type=str, help="The input file")
+    parser.add_argument("output_file", type=str, help="The output file")
+
+    for i in range(1000):
+        parser.add_argument(f"--option{i}", type=str, help=f"Optional argument {i}")
+
+    argument_lists = [
+        generate_arguments(500),
+        generate_arguments(1000),
+    ]
+
+    for args in argument_lists:
+        parser.parse_args(args)
+
+
+BENCHMARKS = {
+    "many_optionals": bm_many_optionals,
+    "subparsers": bm_subparsers,
+}
+
+
+def add_cmdline_args(cmd, args):
+    cmd.append(args.benchmark)
+
+
+def add_parser_args(parser):
+    parser.add_argument("benchmark", choices=BENCHMARKS, help="Which benchmark to run.")
 
 if __name__ == "__main__":
-    runner = pyperf.Runner()
-    runner.metadata["description"] = "Benchmark an argparse program with subparsers"
+    runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
+    runner.metadata["description"] = "Argparse benchmark"
+    add_parser_args(runner.argparser)
+    args = runner.parse_args()
+    benchmark = args.benchmark
 
-    runner.bench_time_func("argparse", bench_argparse)
+    runner.bench_func(args.benchmark, BENCHMARKS[args.benchmark])
