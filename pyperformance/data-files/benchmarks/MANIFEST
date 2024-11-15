@@ -100,14 +100,11 @@ unpickle_pure_python	<local:pickle>
 xml_etree	<local>
 
 
-#[groups]
-#asyncio
-#startup
-#regex
-#serialize
-#apps
-#math
-#template
-
-
 [group default]
+[group asyncio]
+[group startup]
+[group regex]
+[group serialize]
+[group apps]
+[group math]
+[group template]
