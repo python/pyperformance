@@ -20,7 +20,7 @@ def is_installed():
 
 def is_dev():
     parent = os.path.dirname(PKG_ROOT)
-    return os.path.exists(os.path.join(parent, 'setup.py'))
+    return os.path.exists(os.path.join(parent, 'pyproject.toml'))
 
 
 def _is_venv():
