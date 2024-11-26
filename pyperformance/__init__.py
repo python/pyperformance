@@ -1,5 +1,7 @@
+import json
 import os.path
 import sys
+from importlib.metadata import distribution
 
 
 VERSION = (1, 11, 0)
@@ -33,14 +35,8 @@ def _is_devel_install():
     # pip install -e <path-to-git-checkout> will do a "devel" install.
     # This means it creates a link back to the checkout instead
     # of copying the files.
-    try:
-        import packaging
-    except ModuleNotFoundError:
-        return False
-    sitepackages = os.path.dirname(os.path.dirname(packaging.__file__))
-    if os.path.isdir(os.path.join(sitepackages, 'pyperformance')):
-        return False
-    if not os.path.exists(os.path.join(sitepackages, 'pyperformance.egg-link')):
-        # XXX Check the contents?
-        return False
-    return True
+
+    direct_url = distribution("pyperformance").read_text("direct_url.json")
+    if direct_url:
+        return json.loads(direct_url).get("dir_info", {}).get("editable", False)
+    return False
