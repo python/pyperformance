@@ -142,7 +142,7 @@ def run_benchmarks(should_run, python, options):
     executor_input = [(i+1, len(to_run), python, options, bench)
                       for i, bench in enumerate(to_run[1:])]
     # It's fine to set a higher worker count, because this is IO-bound anyways.
-    with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, len(to_run))) as executor:
+    with concurrent.futures.ProcessPoolExecutor() as executor:
         for bench, venv_root, venv, bench_runid, cons_output in list(executor.map(setup_single_venv, executor_input)):
             if venv_root is not None:
                 venvs.add(venv_root)
