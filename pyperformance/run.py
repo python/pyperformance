@@ -4,6 +4,9 @@ import json
 import sys
 import time
 import traceback
+import concurrent.futures
+import io
+import contextlib
 
 import pyperformance
 from . import _utils, _python, _pythoninfo
@@ -67,47 +70,40 @@ def get_loops_from_file(filename):
     return loops
 
 
-def run_benchmarks(should_run, python, options):
-    if options.same_loops is not None:
-        loops = get_loops_from_file(options.same_loops)
-    else:
-        loops = {}
+def setup_single_venv(args):
+    (i, num_benchmarks, python, options, bench) = args
 
-    to_run = sorted(should_run)
+    stdout = io.StringIO()
+    with contextlib.redirect_stdout(stdout):
+        info = _pythoninfo.get_info(python)
+        runid = get_run_id(info)
 
-    info = _pythoninfo.get_info(python)
-    runid = get_run_id(info)
-
-    unique = getattr(options, 'unique_venvs', False)
-    if not unique:
-        common = VenvForBenchmarks.ensure(
-            _venv.get_venv_root(runid.name, python=info),
-            info,
-            upgrade='oncreate',
-            inherit_environ=options.inherit_environ,
-        )
-
-    benchmarks = {}
-    venvs = set()
-    for i, bench in enumerate(to_run):
+        unique = getattr(options, 'unique_venvs', False)
+        if not unique:
+            common = VenvForBenchmarks.ensure(
+                _venv.get_venv_root(runid.name, python=info),
+                info,
+                upgrade='oncreate',
+                inherit_environ=options.inherit_environ,
+            )    
         bench_runid = runid._replace(bench=bench)
         assert bench_runid.name, (bench, bench_runid)
         name = bench_runid.name
         venv_root = _venv.get_venv_root(name, python=info)
+        bench_status = f'({i+1:>2}/{num_benchmarks})'
         print()
         print('='*50)
-        print(f'({i+1:>2}/{len(to_run)}) creating venv for benchmark ({bench.name})')
+        print(f'{bench_status} creating venv for benchmark ({bench.name})')
         print()
         if not unique:
-            print('(trying common venv first)')
+            print(f'{bench_status} (trying common venv first)')
             # Try the common venv first.
             try:
                 common.ensure_reqs(bench)
             except _venv.RequirementsInstallationFailedError:
-                print('(falling back to unique venv)')
+                print(f'{bench_status} (falling back to unique venv)')
             else:
-                benchmarks[bench] = (common, bench_runid)
-                continue
+                return(bench, None, common, bench_runid, stdout.getvalue())
         try:
             venv = VenvForBenchmarks.ensure(
                 venv_root,
@@ -118,12 +114,43 @@ def run_benchmarks(should_run, python, options):
             # XXX Do not override when there is a requirements collision.
             venv.ensure_reqs(bench)
         except _venv.RequirementsInstallationFailedError:
-            print('(benchmark will be skipped)')
+            print(f'{bench_status} (benchmark will be skipped)')
             print()
             venv = None
+        print(f'{bench_status} done')
+        return (bench, venv_root, venv, bench_runid, stdout.getvalue())
+
+def run_benchmarks(should_run, python, options):
+    if options.same_loops is not None:
+        loops = get_loops_from_file(options.same_loops)
+    else:
+        loops = {}
+
+    to_run = sorted(should_run)
+    benchmarks = {}
+    venvs = set()
+
+    # Setup a first venv on its own first to create common
+    # requirements without threading issues.
+    bench, venv_root, venv, bench_runid, cons_output = setup_single_venv((0, len(to_run), python, options, to_run[0]))
+    if venv_root is not None:
         venvs.add(venv_root)
-        benchmarks[bench] = (venv, bench_runid)
-    print()
+    benchmarks[bench] = (venv, bench_runid)
+    print(cons_output)
+
+    # Parallelise the rest.
+    executor_input = [(i+1, len(to_run), python, options, bench)
+                      for i, bench in enumerate(to_run[1:])]
+    # It's fine to set a higher worker count, because this is IO-bound anyways.
+    with concurrent.futures.ProcessPoolExecutor(max_workers=len(to_run)-1) as executor:
+        for bench, venv_root, venv, bench_runid, cons_output in executor.map(setup_single_venv, executor_input):
+            if venv_root is not None:
+                venvs.add(venv_root)
+            benchmarks[bench] = (venv, bench_runid) 
+            print(cons_output)
+    
+    print("Completed venv installation. Now sleeping 15s to stabilize thermals.")
+    time.sleep(15)
 
     suite = None
     run_count = str(len(to_run))
