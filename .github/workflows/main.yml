@@ -37,14 +37,7 @@ jobs:
           - os: ubuntu-latest
             python: "3.14-dev"
             experimental: true
-          - os: ubuntu-24.04-arm
-            python: "3.14-dev"
-            experimental: true
           - os: ubuntu-latest
-            python: "3.14-dev"
-            experimental: true
-            build: 'free-threading'
-          - os: ubuntu-24.04-arm
             python: "3.14-dev"
             experimental: true
             build: 'free-threading'
