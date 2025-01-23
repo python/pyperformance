@@ -158,8 +158,9 @@ def bench_normalize(loops):
     elapsed = 0
     conjunction = parse_one("(A AND B) OR (C AND D) OR (E AND F) OR (G AND H)")
     for _ in range(loops):
+        conjunction_copy = conjunction[:]
         t0 = pyperf.perf_counter()
-        normalize.normalize(conjunction)
+        normalize.normalize(conjunction_copy)
         elapsed += pyperf.perf_counter() - t0
     return elapsed
 
