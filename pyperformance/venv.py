@@ -227,7 +227,7 @@ class VenvForBenchmarks(_venv.VirtualEnvironment):
                 env=self._env,
             )
             if ec != 0:
-                raise RequirementsInstallationFailedError(root_dir)
+                raise _venv.RequirementsInstallationFailedError(root_dir)
         else:
             version = pyperformance.__version__
             self.ensure_reqs([f'pyperformance=={version}'])
