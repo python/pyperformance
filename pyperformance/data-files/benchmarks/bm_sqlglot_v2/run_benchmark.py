@@ -156,8 +156,8 @@ def bench_optimize(loops):
 
 def bench_normalize(loops):
     elapsed = 0
-    conjunction = parse_one("(A AND B) OR (C AND D) OR (E AND F) OR (G AND H)")
     for _ in range(loops):
+        conjunction = parse_one("(A AND B) OR (C AND D) OR (E AND F) OR (G AND H)")
         t0 = pyperf.perf_counter()
         normalize.normalize(conjunction)
         elapsed += pyperf.perf_counter() - t0
@@ -186,9 +186,9 @@ def add_parser_args(parser):
 
 if __name__ == "__main__":
     runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
-    runner.metadata['description'] = "SQLGlot benchmark"
+    runner.metadata['description'] = "SQLGlot V2 benchmark"
     add_parser_args(runner.argparser)
     args = runner.parse_args()
     benchmark = args.benchmark
 
-    runner.bench_time_func(f"sqlglot_{benchmark}", BENCHMARKS[benchmark])
+    runner.bench_time_func(f"sqlglot_v2_{benchmark}", BENCHMARKS[benchmark])
