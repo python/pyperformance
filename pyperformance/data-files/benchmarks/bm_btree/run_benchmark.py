@@ -45,15 +45,12 @@ class BNode:
 
     def __iter__(self):
         if self.is_leaf():
-            for item in self.items:
-                yield item
+            yield from self.items
         else:
             for position, item in enumerate(self.items):
-                for it in self.nodes[position]:
-                    yield it
+                yield from self.nodes[position]
                 yield item
-            for it in self.nodes[-1]:
-                yield it
+            yield from self.nodes[-1]
 
     def is_full(self):
         return len(self.items) == 2 * self.minimum_degree - 1
@@ -241,16 +238,14 @@ class BTree:
         return bool(self.root.items)
 
     def iteritems(self):
-        for item in self.root:
-            yield item
+        yield from self.root
 
     def iterkeys(self):
         for item in self.root:
             yield item[0]
 
     def __iter__(self):
-        for key in self.iterkeys():
-            yield key
+        yield from self.iterkeys()
 
     def __contains__(self, key):
         return self.root.search(key) is not None
