@@ -4,7 +4,6 @@ garbage collector by presenting it with a large and interconnected
 object graph.
 """
 
-import collections.abc
 import gc
 import random
 import sys
@@ -127,15 +126,6 @@ class BNode:
             result += node.get_count()
         return result
 
-    def get_node_count(self):
-        """() -> int
-        How many nodes are here, including descendants?
-        """
-        result = 1
-        for node in self.nodes or []:
-            result += node.get_node_count()
-        return result
-
     def get_level(self):
         """() -> int
         How many levels of nodes are there between this node
@@ -236,7 +226,7 @@ class BNode:
                 self.nodes = self.nodes[0].nodes
 
 
-class BTree(collections.abc.MutableMapping):
+class BTree:
     """
     Instance attributes:
       root: BNode
@@ -244,14 +234,11 @@ class BTree(collections.abc.MutableMapping):
 
     __slots__ = ['root']
 
-    def __init__(self, node_constructor=BNode):
-        assert issubclass(node_constructor, BNode)
-        self.root = node_constructor()
+    def __init__(self):
+        self.root = BNode()
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.root.items)
-
-    __bool__ = __nonzero__
 
     def iteritems(self):
         for item in self.root:
@@ -261,19 +248,6 @@ class BTree(collections.abc.MutableMapping):
         for item in self.root:
             yield item[0]
 
-    def itervalues(self):
-        for item in self.root:
-            yield item[1]
-
-    def items(self):
-        return list(self.iteritems())
-
-    def keys(self):
-        return list(self.iterkeys())
-
-    def values(self):
-        return list(self.itervalues())
-
     def __iter__(self):
         for key in self.iterkeys():
             yield key
@@ -281,18 +255,8 @@ class BTree(collections.abc.MutableMapping):
     def __contains__(self, key):
         return self.root.search(key) is not None
 
-    def has_key(self, key):
-        return self.root.search(key) is not None
-
     def __setitem__(self, key, value):
         self.add(key, value)
-
-    def setdefault(self, key, value):
-        item = self.root.search(key)
-        if item is None:
-            self.add(key, value)
-            return value
-        return item[1]
 
     def __getitem__(self, key):
         item = self.root.search(key)
@@ -302,9 +266,6 @@ class BTree(collections.abc.MutableMapping):
 
     def __delitem__(self, key):
         self.root.delete(key)
-
-    def clear(self):
-        self.root = self.root.__class__()
 
     def get(self, key, default=None):
         """(key:anything, default:anything=None) -> anything"""
@@ -329,18 +290,6 @@ class BTree(collections.abc.MutableMapping):
         """() -> int
         Compute and return the total number of items."""
         return self.root.get_count()
-
-    def get_depth(self):
-        """() -> int
-        How many levels of nodes are used for this BTree?
-        """
-        return self.root.get_level() + 1
-
-    def get_node_count(self):
-        """() -> int
-        How many nodes are used for this BTree?
-        """
-        return self.root.get_node_count()
 
 
 class Record:
