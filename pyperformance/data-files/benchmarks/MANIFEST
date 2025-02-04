@@ -83,10 +83,10 @@ spectral_norm	<local>
 sphinx	<local>
 sqlalchemy_declarative	<local>
 sqlalchemy_imperative	<local>
-sqlglot	<local>
-sqlglot_parse	<local:sqlglot>
-sqlglot_transpile	<local:sqlglot>
-sqlglot_optimize	<local:sqlglot>
+sqlglot_v2	<local>
+sqlglot_v2_parse	<local:sqlglot_v2>
+sqlglot_v2_transpile	<local:sqlglot_v2>
+sqlglot_v2_optimize	<local:sqlglot_v2>
 sqlite_synth	<local>
 sympy	<local>
 telco	<local>
