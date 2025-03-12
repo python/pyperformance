@@ -71,6 +71,7 @@ pprint	<local>
 pyflate	<local>
 python_startup	<local>
 python_startup_no_site	<local:python_startup>
+random  <local>
 raytrace	<local>
 regex_compile	<local>
 regex_dna	<local>
