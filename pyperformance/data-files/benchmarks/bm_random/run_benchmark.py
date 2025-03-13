@@ -2,7 +2,7 @@
 
 This benchmark was available as `python -m random --test` in Python 3.13.
 
-Authors: Hugo van Kemenade (original), Semyon Moroz (pyperformance port).
+Authors: Guido van Rossum (original), Semyon Moroz (pyperformance port).
 """
 
 import random
