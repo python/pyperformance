@@ -129,7 +129,7 @@ def run_benchmarks(should_run, python, options):
     run_count = str(len(to_run))
     errors = []
 
-    pyperf_opts = get_pyperf_opts(options)
+    base_pyperf_opts = get_pyperf_opts(options)
 
     import pyperf
     for index, bench in enumerate(to_run):
@@ -159,7 +159,9 @@ def run_benchmarks(should_run, python, options):
             return dest_suite
 
         if name in loops:
-            pyperf_opts = [*pyperf_opts, f"--loops={loops[name]}"]
+            pyperf_opts = [*base_pyperf_opts, f"--loops={loops[name]}"]
+        else:
+            pyperf_opts = base_pyperf_opts
 
         bench_venv, bench_runid = benchmarks.get(bench)
         if bench_venv is None:
