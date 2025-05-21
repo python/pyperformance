@@ -4,3 +4,14 @@ updates:
     directory: "/pyperformance/requirements"
     schedule:
       interval: "monthly"
+  # Don't update test dependencies for reproducibility.
+  # Dependabot doesn't support excluding directories
+  # (https://github.com/dependabot/dependabot-core/issues/4364)
+  # however, we can ignore all dependencies in the data-files
+  # directory which is equivalent if a bit slower
+  - package-ecosystem: "pip"
+    directory: "/pyperformance/data-files"
+    schedule:
+      interval: "monthly"
+    ignore:
+      - dependency-name: "*"
