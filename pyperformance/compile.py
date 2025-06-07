@@ -797,7 +797,7 @@ def parse_config(filename, command):
         # [scm]
         conf.repo_dir = getfile('scm', 'repo_dir')
         conf.update = getboolean('scm', 'update', True)
-        conf.git_remote = getstr('config', 'git_remote', default='remotes/origin')
+        conf.git_remote = getstr('scm', 'git_remote', default='remotes/origin')
 
         # [compile]
         conf.directory = getfile('compile', 'bench_dir')
