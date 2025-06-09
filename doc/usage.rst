@@ -185,7 +185,7 @@ options::
   -v, --verbose         Print more output
   -O STYLE, --output_style STYLE
                         What style the benchmark output should take.
-                        Valid options are 'normal' and 'table'.
+                        Valid options are 'normal', 'table', and 'table_github'.
                         Default is normal.
   --csv CSV_FILE        Name of a file the results will be written to,
                         as a three-column CSV file containing minimum
