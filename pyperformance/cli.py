@@ -113,10 +113,10 @@ def parse_args():
     cmd.add_argument("-v", "--verbose", action="store_true",
                      help="Print more output")
     cmd.add_argument("-O", "--output_style", metavar="STYLE",
-                     choices=("normal", "table"),
+                     choices=("normal", "table", "table_github"),
                      default="normal",
                      help=("What style the benchmark output should take."
-                           " Valid options are 'normal' and 'table'."
+                           " Valid options are 'normal', 'table', and 'table_github'."
                            " Default is normal."))
     cmd.add_argument("--csv", metavar="CSV_FILE",
                      action="store", default=None,

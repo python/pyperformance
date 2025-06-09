@@ -202,6 +202,29 @@ def format_table(base_label, changed_label, results):
     output.insert(2, "".join(header_sep_line))
     return "\n".join(output)
 
+def _format_github_row(items):
+    return "| " + " | ".join(items) + " |"
+
+def format_github_table(base_label, changed_label, results):
+    columns = ("Benchmark", base_label, changed_label, "Change", "Significance")
+    output = [_format_github_row(columns), "| --- " * len(columns) + "|"]
+
+    for (bench_name, result) in results:
+        format_value = result.base.format_value
+        avg_base = result.base.mean()
+        avg_changed = result.changed.mean()
+        delta_avg = quantity_delta(result.base, result.changed)
+        msg = significant_msg(result.base, result.changed)
+        rows = (bench_name,
+                # Limit the precision for conciseness in the table.
+                format_value(avg_base),
+                format_value(avg_changed),
+                delta_avg,
+                msg)
+        output.append(_format_github_row(rows))
+
+    return "\n".join(output)
+
 
 class BenchmarkResult(object):
     """An object representing data from a succesful benchmark run."""
@@ -355,6 +378,9 @@ def compare_results(options):
     elif options.output_style == "table":
         if shown:
             print(format_table(base_label, changed_label, shown))
+    elif options.output_style == "table_github":
+        if shown:
+            print(format_github_table(base_label, changed_label, shown))
     else:
         raise ValueError("Invalid output_style: %r" % options.output_style)
 
