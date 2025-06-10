@@ -797,7 +797,12 @@ def parse_config(filename, command):
         # [scm]
         conf.repo_dir = getfile('scm', 'repo_dir')
         conf.update = getboolean('scm', 'update', True)
-        conf.git_remote = getstr('config', 'git_remote', default='remotes/origin')
+        try:
+            conf.git_remote = getstr('scm', 'git_remote')
+        except KeyError:
+            # This key used to live under `config`. Fall back there
+            # for backwards-compatibility.
+            conf.git_remote = getstr('config', 'git_remote', default='remotes/origin')
 
         # [compile]
         conf.directory = getfile('compile', 'bench_dir')
