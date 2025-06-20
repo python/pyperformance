@@ -101,6 +101,8 @@ def parse_args():
                      choices=hook_names,
                      metavar=f"{', '.join(x for x in hook_names if not x.startswith('_'))}",
                      help="Apply the given pyperf hook(s) when running each benchmark")
+    cmd.add_argument("--warmups",
+                     help="number of skipped values per run used to warmup the benchmark")
     filter_opts(cmd)
 
     # show
