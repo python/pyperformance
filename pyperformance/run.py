@@ -247,7 +247,7 @@ def get_pyperf_opts(options):
     if options.hook:
         for hook in options.hook:
             opts.append('--hook=%s' % hook)
-    if options.warmup:
-        opts.append('--warmup=%s' % options.warmup)
+    if options.warmups is not None:
+        opts.append('--warmups=%s' % options.warmups)
 
     return opts
