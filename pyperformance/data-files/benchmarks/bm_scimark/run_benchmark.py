@@ -343,12 +343,7 @@ def FFT_bitreverse(N, data):
         jj = j << 1
         k = n >> 1
         if i < j:
-            tmp_real = data[ii]
-            tmp_imag = data[ii + 1]
-            data[ii] = data[jj]
-            data[ii + 1] = data[jj + 1]
-            data[jj] = tmp_real
-            data[jj + 1] = tmp_imag
+            data[ii] , data[ii + 1] , data[jj] , data[jj + 1]  = data[jj], data[jj + 1], data[ii], data[ii + 1]
         while k <= j:
             j -= k
             k >>= 1
