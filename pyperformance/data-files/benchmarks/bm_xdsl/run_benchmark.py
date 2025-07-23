@@ -96,8 +96,12 @@ def add_cmdline_args(cmd, args):
 
 if __name__ == "__main__":
     runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
-    runner.metadata['description'] = "Benchmark xDSL constant folding integer addition"
-    runner.argparser.add_argument("--size", type=int, default=1000,
-                                  help="Number of integer additions (default: 100)")
+    runner.metadata["description"] = "Benchmark xDSL constant folding integer addition"
+    runner.argparser.add_argument(
+        "--size",
+        type=int,
+        default=1000,
+        help="Number of integer additions (default: 100)",
+    )
     args = runner.parse_args()
-    runner.bench_time_func('xdsl_constant_fold', bench_xdsl_constant_folding, args.size)
+    runner.bench_time_func("xdsl_constant_fold", bench_xdsl_constant_folding, args.size)
