@@ -101,7 +101,7 @@ if __name__ == "__main__":
         "--size",
         type=int,
         default=1000,
-        help="Number of integer additions (default: 100)",
+        help="Number of integer additions (default: 1000)",
     )
     args = runner.parse_args()
     runner.bench_time_func("xdsl_constant_fold", bench_xdsl_constant_folding, args.size)
