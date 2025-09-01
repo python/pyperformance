@@ -343,13 +343,12 @@ def _parse_metafile(metafile, name):
 
 
 def _parse_groups_section(lines):
-    for name in seclines:
+    for name in lines:
         _utils.check_name(name)
         yield name
 
 
 def _parse_group_section(lines):
-    yielded = False
     for line in lines:
         if line.startswith('-'):
             # Exclude a benchmark or group.
@@ -363,7 +362,6 @@ def _parse_group_section(lines):
             name = line
         _benchmark.check_name(name)
         yield op, name
-        yielded = True
 
 
 def _get_tags(benchmarks):
