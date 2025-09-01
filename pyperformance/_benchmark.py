@@ -218,7 +218,7 @@ def _run_perf_script(python, runscript, runid, *,
             '--output', tmp,
         ]
         if pyperf_opts and '--copy-env' in pyperf_opts:
-            argv, env = _prep_cmd(python, runscript, opts, runid, NOOP)
+            argv, env = _prep_cmd(python, runscript, opts, runid)
         else:
             opts, inherit_envvar = _resolve_restricted_opts(opts)
             argv, env = _prep_cmd(python, runscript, opts, runid, inherit_envvar)
