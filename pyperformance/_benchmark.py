@@ -1,7 +1,7 @@
 
 __all__ = [
     'BenchmarkSpec',
-    'Benchmark'
+    'Benchmark',
     'check_name',
     'parse_benchmark',
 ]
