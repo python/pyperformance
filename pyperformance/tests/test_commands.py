@@ -102,13 +102,13 @@ class FullStackTests(tests.Functional, unittest.TestCase):
             print()
 
         def expect_success(*args):
-            _text = self.run_pyperformance(
+            self.run_pyperformance(
                 *args,
                 capture=None,
             )
 
         def expect_failure(*args):
-            _text = self.run_pyperformance(
+            self.run_pyperformance(
                 *args,
                 capture=None,
                 exitcode=1,
@@ -148,7 +148,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         # --debug-single-value: benchmark results don't matter, we only
         # check that running benchmarks don't fail.
         # XXX Capture and check the output.
-        _text = self.run_pyperformance(
+        self.run_pyperformance(
             'run',
             '-b', 'all',
             '--debug-single-value',

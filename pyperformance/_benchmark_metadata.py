@@ -194,7 +194,6 @@ def _resolve(project, tool, filename):
         if target is None:
             target = field
         if field == 'url':
-            _repo = project.get('urls', {}).get('repository')
             raise NotImplementedError
         elif not resolved.get(target):
             value = project.get(field)

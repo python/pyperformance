@@ -125,9 +125,6 @@ def _check_file_or_text(table, rootdir, requirefiles, extra=None):
             raise ValueError('"file" and "text" are mutually exclusive')
         kind = 'file' if requirefiles else None
         _check_relfile(table['file'], rootdir, kind)
-    else:
-        _text = table['text']
-        # XXX Validate it?
 
 
 def _normalize_project(data, rootdir, name, requirefiles, **_ignored):
