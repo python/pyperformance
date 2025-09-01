@@ -5,3 +5,4 @@ repos:
       - id: ruff-check
         name: Run Ruff (lint)
         args: [--exit-non-zero-on-fix]
+        exclude: ^pyperformance/data-files/

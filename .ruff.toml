@@ -1,0 +1,18 @@
+target-version = "py310"
+
+exclude = ["pyperformance/data-files/"]
+
+[lint]
+select = [
+    "E",
+    "F",
+]
+
+ignore = [
+    "E402",  # module level import not at top of file
+    "E501",  # line too long
+    "E701",  # multiple statements on one line (colon)
+    "E722",  # do not use bare 'except'
+    "E741",  # ambiguous variable name
+    "F405"   # name may be undefined, or defined from star imports
+]

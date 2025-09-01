@@ -104,21 +104,3 @@ exclude = [
 [[tool.mypy.overrides]]
 module = "pyperf"
 ignore_missing_imports = true
-
-[tool.ruff]
-target-version = "py310"
-
-[tool.ruff.lint]
-ignore = [
-    "E402",  # module level import not at top of file
-    "E501",  # line too long
-    "E701",  # multiple statements on one line (colon)
-    "E722",  # do not use bare 'except'
-    "E741",  # ambiguous variable name
-    "F405"   # name may be undefined, or defined from star imports
-]
-
-select = [
-    "E",
-    "F",
-]
