@@ -114,8 +114,8 @@ exclude = [
 
 [tool.ruff.lint]
 select = [
-    "E",
-    "F",
+  "E", # pycodestyle errors
+  "F", # pyflakes errors
 ]
 
 ignore = [
