@@ -126,3 +126,6 @@ ignore = [
     "E741",  # ambiguous variable name
     "F405",  # name may be undefined, or defined from star imports
 ]
+
+[tool.pyproject-fmt]
+max_supported_python = "3.14"
