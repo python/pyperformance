@@ -38,51 +38,78 @@
 #  - git push
 
 [build-system]
-requires = ["setuptools >= 61"]
 build-backend = "setuptools.build_meta"
+
+requires = [ "setuptools>=61" ]
 
 [project]
 name = "pyperformance"
-dynamic = ["version"]
-license = {text = "MIT"}
 description = "Python benchmark suite"
 readme = "README.rst"
-urls = {Homepage = "https://github.com/python/pyperformance"}
-authors= [{name = "Collin Winter"}, {name= "Jeffrey Yasskin"}]
-classifiers = [
-    'Development Status :: 5 - Production/Stable',
-    'Intended Audience :: Developers',
-    'License :: OSI Approved :: MIT License',
-    'Natural Language :: English',
-    'Operating System :: OS Independent',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python',
-]
+license = { text = "MIT" }
+authors = [ { name = "Collin Winter" }, { name = "Jeffrey Yasskin" } ]
 requires-python = ">=3.9"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
+dynamic = [ "version" ]
 dependencies = [
-    "pyperf",
-    "tomli; python_version < '3.11'",
-    "packaging",
+  "packaging",
+  "pyperf",
+  "tomli; python_version<'3.11'",
 ]
 
-[project.optional-dependencies]
-dev = [
-    'tox',
-    'mypy==1.2.0',
-    'tomli',  # Needed even on 3.11+ for typechecking with mypy
+optional-dependencies.dev = [
+  "mypy==1.2",
+  "tomli",     # Needed even on 3.11+ for typechecking with mypy
+  "tox",
 ]
-
-[project.scripts]
-pyperformance = "pyperformance.cli:main"
+urls = { Homepage = "https://github.com/python/pyperformance" }
+scripts.pyperformance = "pyperformance.cli:main"
 
 [tool.setuptools]
 include-package-data = true
 
 [tool.setuptools.packages]
-find = {}  # Scanning implicit namespaces is active by default
+find = {} # Scanning implicit namespaces is active by default
 
 [tool.setuptools.dynamic]
-version = {attr = "pyperformance.__version__"}
+version = { attr = "pyperformance.__version__" }
+
+[tool.ruff]
+target-version = "py310"
+
+exclude = [
+  "pyperformance/data-files/",
+]
+
+lint.select = [
+  "E", # pycodestyle errors
+  "F", # pyflakes errors
+]
+lint.ignore = [
+  "E402", # module level import not at top of file
+  "E501", # line too long
+  "E701", # multiple statements on one line (colon)
+  "E722", # do not use bare 'except'
+  "E741", # ambiguous variable name
+  "F405", # name may be undefined, or defined from star imports
+]
+
+[tool.pyproject-fmt]
+max_supported_python = "3.14"
 
 [tool.mypy]
 python_version = "3.9"
@@ -94,38 +121,13 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
 files = [
-    'pyperformance/',
+  'pyperformance/',
 ]
 exclude = [
-    'pyperformance/data-files/',
-    'pyperformance/tests/'
+  'pyperformance/data-files/',
+  'pyperformance/tests/',
 ]
 
 [[tool.mypy.overrides]]
 module = "pyperf"
 ignore_missing_imports = true
-
-[tool.ruff]
-target-version = "py310"
-
-exclude = [
-    "pyperformance/data-files/",
-]
-
-[tool.ruff.lint]
-select = [
-  "E", # pycodestyle errors
-  "F", # pyflakes errors
-]
-
-ignore = [
-    "E402",  # module level import not at top of file
-    "E501",  # line too long
-    "E701",  # multiple statements on one line (colon)
-    "E722",  # do not use bare 'except'
-    "E741",  # ambiguous variable name
-    "F405",  # name may be undefined, or defined from star imports
-]
-
-[tool.pyproject-fmt]
-max_supported_python = "3.14"
