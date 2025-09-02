@@ -5,7 +5,7 @@ on: [push, pull_request, workflow_dispatch]
 permissions: {}
 
 jobs:
-  ruff:
+  lint:
     name: Check code with ruff
     runs-on: ubuntu-latest
     steps:
