@@ -10,6 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: astral-sh/ruff-action@v3
-        with:
-          args: "check"
+      - uses: tox-dev/action-pre-commit-uv@v1
