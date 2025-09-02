@@ -95,6 +95,8 @@ exclude = [
   "pyperformance/data-files/",
 ]
 
+fix = true
+
 lint.select = [
   "E", # pycodestyle errors
   "F", # pyflakes errors
