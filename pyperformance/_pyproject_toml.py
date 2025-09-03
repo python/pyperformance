@@ -100,7 +100,7 @@ def load_pyproject_toml(filename, *, name=None, tools=None, requirefiles=True):
 
 def _check_relfile(relname, rootdir, kind):
     if os.path.isabs(relname):
-        raise ValuError(f'{relname!r} is absolute, expected relative')
+        raise ValueError(f'{relname!r} is absolute, expected relative')
     actual = os.path.join(rootdir, relname)
     if kind == 'dir':
         if not os.path.isdir(actual):
@@ -122,12 +122,9 @@ def _check_file_or_text(table, rootdir, requirefiles, extra=None):
 
     if 'file' in table:
         if 'text' in table:
-            raise ValueError(f'"file" and "text" are mutually exclusive')
+            raise ValueError('"file" and "text" are mutually exclusive')
         kind = 'file' if requirefiles else None
         _check_relfile(table['file'], rootdir, kind)
-    else:
-        text = table['text']
-        # XXX Validate it?
 
 
 def _normalize_project(data, rootdir, name, requirefiles, **_ignored):

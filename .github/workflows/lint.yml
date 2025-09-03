@@ -1,0 +1,13 @@
+name: Lint
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions: {}
+
+jobs:
+  lint:
+    name: Check code with ruff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: tox-dev/action-pre-commit-uv@v1

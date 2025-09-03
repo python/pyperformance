@@ -6,7 +6,6 @@ __all__ = [
     'check_dir',
     # platform
     'MS_WINDOWS',
-    'run_command',
     # misc
     'check_name',
     'parse_name_pattern',
