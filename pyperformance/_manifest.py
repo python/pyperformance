@@ -313,8 +313,8 @@ def _parse_benchmarks_section(lines):
     version = origin = None
     for line in lines:
         try:
-            name, metafile = (None if l == '-' else l
-                              for l in line.split('\t'))
+            name, metafile = (None if field == '-' else field
+                              for field in line.split('\t'))
         except ValueError:
             raise ValueError(f'bad benchmark line {line!r}')
         spec = _benchmark.BenchmarkSpec(name or None, version, origin)

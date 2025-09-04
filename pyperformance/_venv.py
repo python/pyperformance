@@ -43,7 +43,7 @@ def parse_venv_config(lines, root=None):
     if isinstance(lines, str):
         lines = lines.splitlines()
     else:
-        lines = (l.rstrip(os.linesep) for l in lines)
+        lines = (line.rstrip(os.linesep) for line in lines)
 
     cfg = types.SimpleNamespace(
         home=None,
