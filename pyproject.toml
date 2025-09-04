@@ -102,12 +102,7 @@ lint.select = [
   "F", # pyflakes errors
 ]
 lint.ignore = [
-  "E402", # module level import not at top of file
   "E501", # line too long
-  "E701", # multiple statements on one line (colon)
-  "E722", # do not use bare 'except'
-  "E741", # ambiguous variable name
-  "F405", # name may be undefined, or defined from star imports
 ]
 
 [tool.pyproject-fmt]

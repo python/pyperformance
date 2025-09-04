@@ -24,6 +24,8 @@ import os
 import os.path
 import shlex
 import shutil
+import subprocess
+import sys
 import tempfile
 import urllib.request
 
@@ -80,9 +82,6 @@ def safe_rmtree(path):
 
 #######################################
 # platform utils
-
-import subprocess
-import sys
 
 
 MS_WINDOWS = (sys.platform == 'win32')

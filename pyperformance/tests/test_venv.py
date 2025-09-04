@@ -47,7 +47,7 @@ def render_venv_config(cfg):
         lines.append(f'executable = {cfg.executable}')
     if cfg.command is not None:
         lines.append(f'command = {cfg.command}')
-    return ''.join(l + os.linesep for l in lines)
+    return ''.join(line + os.linesep for line in lines)
 
 
 class VenvConfigTests(tests.Functional, unittest.TestCase):
