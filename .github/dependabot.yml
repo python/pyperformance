@@ -4,3 +4,5 @@ updates:
     directory: "/pyperformance/requirements"
     schedule:
       interval: "monthly"
+    exclude-paths:
+      - "pyperformance/data-files/"
