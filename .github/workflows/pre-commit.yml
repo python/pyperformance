@@ -1,4 +1,4 @@
-name: Pre-commit
+name: pre-commit
 
 on: [push, pull_request, workflow_dispatch]
 
