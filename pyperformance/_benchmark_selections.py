@@ -1,7 +1,6 @@
-
 __all__ = [
-    'parse_selection',
-    'iter_selections',
+    "parse_selection",
+    "iter_selections",
 ]
 
 
@@ -18,7 +17,7 @@ def parse_selection(selection, *, op=None):
     parsed = _benchmark.parse_benchmark(selection, fail=False)
     spec, metafile = parsed if parsed else (None, None)
     if parsed and spec.version:
-        kind = 'benchmark'
+        kind = "benchmark"
         spec, metafile = parsed
         if metafile:
             parsed = _benchmark.Benchmark(spec, metafile)
@@ -29,14 +28,14 @@ def parse_selection(selection, *, op=None):
     else:
         parsed = _utils.parse_tag_pattern(selection)
         if parsed:
-            kind = 'tag'
+            kind = "tag"
         else:
-            kind = 'name'
+            kind = "name"
             parsed = _utils.parse_name_pattern(selection, fail=True)
-#            parsed = _utils.parse_name_pattern(selection, fail=False)
+            #            parsed = _utils.parse_name_pattern(selection, fail=False)
             if not parsed:
-                raise ValueError(f'unsupported selection {selection!r}')
-    return op or '+', selection, kind, parsed
+                raise ValueError(f"unsupported selection {selection!r}")
+    return op or "+", selection, kind, parsed
 
 
 def iter_selections(manifest, selections, *, unique=True):
@@ -48,18 +47,18 @@ def iter_selections(manifest, selections, *, unique=True):
     excluded = set()
     for op, _, kind, parsed in selections:
         matches = _match_selection(manifest, kind, parsed, byname)
-        if op == '+':
+        if op == "+":
             for bench in matches:
                 if bench not in seen or not unique:
                     included.append(bench)
                     seen.add(bench)
-        elif op == '-':
+        elif op == "-":
             for bench in matches:
                 excluded.add(bench)
         else:
             raise NotImplementedError(op)
     if not included:
-        included = list(_match_selection(manifest, 'tag', 'default', byname))
+        included = list(_match_selection(manifest, "tag", "default", byname))
 
     for bench in included:
         if bench not in excluded:
@@ -69,11 +68,12 @@ def iter_selections(manifest, selections, *, unique=True):
 #######################################
 # internal implementation
 
+
 def _match_selection(manifest, kind, parsed, byname):
-    if kind == 'benchmark':
+    if kind == "benchmark":
         bench = parsed
         # XXX Match bench.metafile too?
-        spec = getattr(bench, 'spec', bench)
+        spec = getattr(bench, "spec", bench)
         # For now we only support selection by name.
         # XXX Support selection by version?
         # XXX Support selection by origin?
@@ -84,7 +84,7 @@ def _match_selection(manifest, kind, parsed, byname):
         else:
             # No match!  The caller can handle this as they like.
             yield str(bench)
-    elif kind == 'tag':
+    elif kind == "tag":
         groups = []
         if callable(parsed):
             match_tag = parsed
@@ -94,10 +94,10 @@ def _match_selection(manifest, kind, parsed, byname):
         elif parsed in manifest.groups:
             groups.append(parsed)
         else:
-            raise ValueError(f'unsupported selection {parsed!r}')
+            raise ValueError(f"unsupported selection {parsed!r}")
         for group in groups:
             yield from manifest.resolve_group(group)
-    elif kind == 'name':
+    elif kind == "name":
         if callable(parsed):
             match_bench = parsed
             for bench in manifest.benchmarks:
@@ -109,7 +109,7 @@ def _match_selection(manifest, kind, parsed, byname):
                 yield byname[name]
             # We also check the groups, for backward compatibility.
             elif name in manifest.groups:
-                yield from _match_selection(manifest, 'tag', name, byname)
+                yield from _match_selection(manifest, "tag", name, byname)
             else:
                 _utils.check_name(name)
                 # No match!  The caller can handle this as they like.

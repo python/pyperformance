@@ -23,8 +23,8 @@ from pyperformance import _utils, _pip
 
 
 GIT = True
-DEFAULT_BRANCH = 'master' if GIT else 'default'
-LOG_FORMAT = '%(asctime)-15s: %(message)s'
+DEFAULT_BRANCH = "master" if GIT else "default"
+LOG_FORMAT = "%(asctime)-15s: %(message)s"
 
 EXIT_ALREADY_EXIST = 10
 EXIT_COMPILE_ERROR = 11
@@ -38,7 +38,7 @@ def parse_date(text):
         return text[:2] + text[3:]
 
     # replace '+01:00' with '+0100'
-    text2 = re.sub(r'[0-9]{2}:[0-9]{2}$', replace_timezone, text)
+    text2 = re.sub(r"[0-9]{2}:[0-9]{2}$", replace_timezone, text)
 
     # ISO 8601 with timezone: '2017-03-30T19:12:18+00:00'
     return datetime.datetime.strptime(text2, "%Y-%m-%dT%H:%M:%S%z")
@@ -71,20 +71,22 @@ class Repository(Task):
 
     def fetch(self):
         if GIT:
-            self.run('git', 'fetch')
+            self.run("git", "fetch")
         else:
-            self.run('hg', 'pull')
+            self.run("hg", "pull")
 
     def parse_revision(self, revision):
-        branch_rev = '%s/%s' % (self.conf.git_remote, revision)
+        branch_rev = "%s/%s" % (self.conf.git_remote, revision)
 
-        exitcode, stdout = self.get_output_nocheck('git', 'rev-parse',
-                                                   '--verify', branch_rev)
+        exitcode, stdout = self.get_output_nocheck(
+            "git", "rev-parse", "--verify", branch_rev
+        )
         if not exitcode:
             return (True, branch_rev, stdout)
 
-        exitcode, stdout = self.get_output_nocheck('git', 'rev-parse',
-                                                   '--verify', revision)
+        exitcode, stdout = self.get_output_nocheck(
+            "git", "rev-parse", "--verify", revision
+        )
         if not exitcode and stdout.startswith(revision):
             revision = stdout
             return (False, revision, revision)
@@ -95,32 +97,32 @@ class Repository(Task):
     def checkout(self, revision):
         if GIT:
             # remove all untracked files
-            self.run('git', 'clean', '-fdx')
+            self.run("git", "clean", "-fdx")
 
             # checkout to requested revision
-            self.run('git', 'reset', '--hard', 'HEAD')
-            self.run('git', 'checkout', revision)
+            self.run("git", "reset", "--hard", "HEAD")
+            self.run("git", "checkout", revision)
 
             # remove all untracked files
-            self.run('git', 'clean', '-fdx')
+            self.run("git", "clean", "-fdx")
         else:
-            self.run('hg', 'up', '--clean', '-r', revision)
+            self.run("hg", "up", "--clean", "-r", revision)
             # FIXME: run hg purge?
 
     def get_revision_info(self, revision):
         if GIT:
-            cmd = ['git', 'show', '-s', '--pretty=format:%H|%ci', '%s^!' % revision]
+            cmd = ["git", "show", "-s", "--pretty=format:%H|%ci", "%s^!" % revision]
         else:
-            cmd = ['hg', 'log', '--template', '{node}|{date|isodate}', '-r', revision]
+            cmd = ["hg", "log", "--template", "{node}|{date|isodate}", "-r", revision]
         stdout = self.get_output(*cmd)
         if GIT:
-            node, date = stdout.split('|')
-            date = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S %z')
+            node, date = stdout.split("|")
+            date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S %z")
             # convert local date to UTC
             date = (date - date.utcoffset()).replace(tzinfo=datetime.timezone.utc)
         else:
-            node, date = stdout.split('|')
-            date = datetime.datetime.strptime(date[:16], '%Y-%m-%d %H:%M')
+            node, date = stdout.split("|")
+            date = datetime.datetime.strptime(date[:16], "%Y-%m-%d %H:%M")
         return (node, date)
 
 
@@ -133,12 +135,12 @@ class Application(object):
         self.log_filename = None
 
     def setup_log(self, prefix):
-        prefix = re.sub('[^A-Za-z0-9_-]+', '_', prefix)
-        prefix = re.sub('_+', '_', prefix)
+        prefix = re.sub("[^A-Za-z0-9_-]+", "_", prefix)
+        prefix = re.sub("_+", "_", prefix)
 
         date = datetime.datetime.now()
-        date = date.strftime('%Y-%m-%d_%H-%M-%S.log')
-        filename = '%s-%s' % (prefix, date)
+        date = date.strftime("%Y-%m-%d_%H-%M-%S.log")
+        filename = "%s-%s" % (prefix, date)
         self.log_filename = os.path.join(self.conf.directory, filename)
 
         log = self.log_filename
@@ -153,21 +155,21 @@ class Application(object):
         self.logger.addHandler(handler)
 
     def create_subprocess(self, cmd, **kwargs):
-        self.logger.error("+ %s" % ' '.join(map(shlex.quote, cmd)))
+        self.logger.error("+ %s" % " ".join(map(shlex.quote, cmd)))
         return subprocess.Popen(cmd, **kwargs)
 
     def run_nocheck(self, *cmd, stdin_filename=None, **kwargs):
         if stdin_filename:
             stdin_file = open(stdin_filename, "rb", 0)
-            kwargs['stdin'] = stdin_file.fileno()
+            kwargs["stdin"] = stdin_file.fileno()
         else:
             stdin_file = None
-        log_stdout = kwargs.pop('log_stdout', True)
+        log_stdout = kwargs.pop("log_stdout", True)
 
         if log_stdout:
-            kwargs['stdout'] = subprocess.PIPE
-            kwargs['stderr'] = subprocess.STDOUT
-            kwargs['universal_newlines'] = True
+            kwargs["stdout"] = subprocess.PIPE
+            kwargs["stderr"] = subprocess.STDOUT
+            kwargs["universal_newlines"] = True
 
         try:
             proc = self.create_subprocess(cmd, **kwargs)
@@ -184,9 +186,10 @@ class Application(object):
                 stdin_file.close()
 
         if exitcode:
-            cmd_str = ' '.join(map(shlex.quote, cmd))
-            self.logger.error("Command %s failed with exit code %s"
-                              % (cmd_str, exitcode))
+            cmd_str = " ".join(map(shlex.quote, cmd))
+            self.logger.error(
+                "Command %s failed with exit code %s" % (cmd_str, exitcode)
+            )
 
         return exitcode
 
@@ -196,10 +199,9 @@ class Application(object):
             sys.exit(exitcode)
 
     def get_output_nocheck(self, *cmd, **kwargs):
-        proc = self.create_subprocess(cmd,
-                                      stdout=subprocess.PIPE,
-                                      universal_newlines=True,
-                                      **kwargs)
+        proc = self.create_subprocess(
+            cmd, stdout=subprocess.PIPE, universal_newlines=True, **kwargs
+        )
         # FIXME: support Python 2?
         with proc:
             stdout = proc.communicate()[0]
@@ -208,9 +210,10 @@ class Application(object):
 
         exitcode = proc.wait()
         if exitcode:
-            cmd_str = ' '.join(map(shlex.quote, cmd))
-            self.logger.error("Command %s failed with exit code %s"
-                              % (cmd_str, exitcode))
+            cmd_str = " ".join(map(shlex.quote, cmd))
+            self.logger.error(
+                "Command %s failed with exit code %s" % (cmd_str, exitcode)
+            )
 
         return (exitcode, stdout)
 
@@ -232,14 +235,14 @@ class Application(object):
 
 
 def resolve_python(prefix, builddir, *, fallback=True):
-    if sys.platform in ('darwin', 'win32'):
-        program_ext = '.exe'
+    if sys.platform in ("darwin", "win32"):
+        program_ext = ".exe"
     else:
-        program_ext = ''
+        program_ext = ""
 
     if prefix:
-        if sys.platform == 'darwin':
-            program_ext = ''
+        if sys.platform == "darwin":
+            program_ext = ""
         program = os.path.join(prefix, "bin", "python3" + program_ext)
         exists = os.path.exists(program)
         if not exists and fallback:
@@ -268,11 +271,11 @@ class Python(Task):
         if not filename:
             return
 
-        self.logger.error('Apply patch %s in %s (revision %s)'
-                          % (filename, self.conf.repo_dir, self.app.revision))
-        self.app.run('patch', '-p1',
-                     cwd=self.conf.repo_dir,
-                     stdin_filename=filename)
+        self.logger.error(
+            "Apply patch %s in %s (revision %s)"
+            % (filename, self.conf.repo_dir, self.app.revision)
+        )
+        self.app.run("patch", "-p1", cwd=self.conf.repo_dir, stdin_filename=filename)
 
     def compile(self):
         build_dir = self.conf.build_dir
@@ -284,28 +287,28 @@ class Python(Task):
         if self.branch.startswith("2.") and not _utils.MS_WINDOWS:
             # On Python 2, use UCS-4 for Unicode on all platforms, except
             # on Windows which uses UTF-16 because of its 16-bit wchar_t
-            config_args.append('--enable-unicode=ucs4')
+            config_args.append("--enable-unicode=ucs4")
         if self.conf.prefix:
-            config_args.extend(('--prefix', self.conf.prefix))
+            config_args.extend(("--prefix", self.conf.prefix))
         if self.conf.debug:
-            config_args.append('--with-pydebug')
+            config_args.append("--with-pydebug")
         elif self.conf.lto:
-            config_args.append('--with-lto')
+            config_args.append("--with-lto")
         if self.conf.jit:
-            config_args.append(f'--enable-experimental-jit={self.conf.jit}')
+            config_args.append(f"--enable-experimental-jit={self.conf.jit}")
         if self.conf.pkg_only:
             config_args.extend(self.get_package_only_flags())
         if self.conf.debug:
-            config_args.append('CFLAGS=-O0')
-        configure = os.path.join(self.conf.repo_dir, 'configure')
+            config_args.append("CFLAGS=-O0")
+        configure = os.path.join(self.conf.repo_dir, "configure")
         self.run(configure, *config_args)
 
-        argv = ['make']
+        argv = ["make"]
         if self.conf.pgo:
             # FIXME: use taskset (isolated CPUs) for PGO?
-            argv.append('profile-opt')
+            argv.append("profile-opt")
         if self.conf.jobs:
-            argv.append('-j%d' % self.conf.jobs)
+            argv.append("-j%d" % self.conf.jobs)
         self.run(*argv)
 
     def install_python(self):
@@ -317,7 +320,7 @@ class Python(Task):
             program, _ = resolve_python(self.conf.prefix, self.conf.build_dir)
             _utils.safe_rmtree(self.conf.prefix)
             self.app.safe_makedirs(self.conf.prefix)
-            self.run('make', 'install')
+            self.run("make", "install")
         else:
             program, _ = resolve_python(None, self.conf.build_dir)
         # else don't install: run python from the compilation directory
@@ -326,11 +329,11 @@ class Python(Task):
     def get_version(self):
         # Dump the Python version
         self.logger.error("Installed Python version:")
-        self.run(self.program, '--version')
+        self.run(self.program, "--version")
 
         # Get the Python version
-        code = 'import sys; print(sys.hexversion)'
-        stdout = self.get_output(self.program, '-c', code)
+        code = "import sys; print(sys.hexversion)"
+        stdout = self.get_output(self.program, "-c", code)
         self.hexversion = int(stdout)
         self.logger.error("Python hexversion: %x" % self.hexversion)
 
@@ -340,25 +343,26 @@ class Python(Task):
 
         for pkg in self.conf.pkg_only:
             prefix = self.get_package_prefix(pkg)
-            if pkg == 'openssl':
-                arguments.append('--with-openssl=' + prefix)
+            if pkg == "openssl":
+                arguments.append("--with-openssl=" + prefix)
             else:
                 extra_paths.append(prefix)
 
         if extra_paths:
             # Flags are one CLI arg each and do not need quotes.
-            ps = ['-I%s/include' % p for p in extra_paths]
-            arguments.append('CFLAGS=%s' % ' '.join(ps))
-            ps = ['-L%s/lib' % p for p in extra_paths]
-            arguments.append('LDFLAGS=%s' % ' '.join(ps))
+            ps = ["-I%s/include" % p for p in extra_paths]
+            arguments.append("CFLAGS=%s" % " ".join(ps))
+            ps = ["-L%s/lib" % p for p in extra_paths]
+            arguments.append("LDFLAGS=%s" % " ".join(ps))
         return arguments
 
     def get_package_prefix(self, name):
-        if sys.platform == 'darwin':
-            cmd = ['brew', '--prefix', name]
+        if sys.platform == "darwin":
+            cmd = ["brew", "--prefix", name]
         else:
-            self.logger.error("ERROR: package-only libraries"
-                              " are not supported on %s" % sys.platform)
+            self.logger.error(
+                "ERROR: package-only libraries are not supported on %s" % sys.platform
+            )
             sys.exit(1)
 
         stdout = self.get_output(*cmd)
@@ -376,34 +380,34 @@ class Python(Task):
         assert self.hexversion > 0x3060000, self.hexversion
 
         # is pip already installed and working?
-        exitcode = self.run_nocheck(self.program, '-u', '-m', 'pip', '--version')
+        exitcode = self.run_nocheck(self.program, "-u", "-m", "pip", "--version")
         if not exitcode:
             # Upgrade pip
-            self.run(self.program, '-u', '-m', 'pip', 'install', '-U', 'pip')
+            self.run(self.program, "-u", "-m", "pip", "install", "-U", "pip")
             return
 
         # pip is missing (or broken?): install it
-        filename = os.path.join(self.conf.directory, 'get-pip.py')
+        filename = os.path.join(self.conf.directory, "get-pip.py")
         if not os.path.exists(filename):
             self.download(_pip.GET_PIP_URL, filename)
 
         # Install pip
-        self.run(self.program, '-u', filename)
+        self.run(self.program, "-u", filename)
 
     def install_pip(self):
         self._install_pip()
 
         # Dump the pip version
-        self.run(self.program, '-u', '-m', 'pip', '--version')
+        self.run(self.program, "-u", "-m", "pip", "--version")
 
     def install_performance(self):
-        cmd = [self.program, '-u', '-m', 'pip', 'install']
+        cmd = [self.program, "-u", "-m", "pip", "install"]
 
         if pyperformance.is_dev():
-            cmd.extend(['-e', os.path.dirname(pyperformance.PKG_ROOT)])
+            cmd.extend(["-e", os.path.dirname(pyperformance.PKG_ROOT)])
         else:
             version = pyperformance.__version__
-            cmd.append('pyperformance==%s' % version)
+            cmd.append("pyperformance==%s" % version)
 
         self.run(*cmd)
 
@@ -416,12 +420,19 @@ class Python(Task):
 
 
 class BenchmarkRevision(Application):
-
     _dryrun = False
 
-    def __init__(self, conf, revision, branch=None, patch=None,
-                 setup_log=True, filename=None, commit_date=None,
-                 options=None):
+    def __init__(
+        self,
+        conf,
+        revision,
+        branch=None,
+        patch=None,
+        setup_log=True,
+        filename=None,
+        commit_date=None,
+        options=None,
+    ):
         super().__init__(conf, options)
         self.patch = patch
         self.exitcode = 0
@@ -429,9 +440,9 @@ class BenchmarkRevision(Application):
 
         if setup_log:
             if branch:
-                prefix = 'compile-%s-%s' % (branch, revision)
+                prefix = "compile-%s-%s" % (branch, revision)
             else:
-                prefix = 'compile-%s' % revision
+                prefix = "compile-%s" % revision
             self.setup_log(prefix)
 
         if filename is None:
@@ -444,11 +455,13 @@ class BenchmarkRevision(Application):
             self.revision = revision
             self.branch = branch
             self.commit_date = commit_date
-            self.logger.error("Commit: branch=%s, revision=%s"
-                              % (self.branch, self.revision))
+            self.logger.error(
+                "Commit: branch=%s, revision=%s" % (self.branch, self.revision)
+            )
 
-        self.upload_filename = os.path.join(self.conf.uploaded_json_dir,
-                                            os.path.basename(self.filename))
+        self.upload_filename = os.path.join(
+            self.conf.uploaded_json_dir, os.path.basename(self.filename)
+        )
 
     def init_revision(self, revision, branch=None):
         if self.conf.update:
@@ -466,21 +479,24 @@ class BenchmarkRevision(Application):
         is_branch, rev_name, full_revision = self.repository.parse_revision(revision)
         if is_branch:
             if self.branch and revision != self.branch:
-                raise ValueError("inconsistenct branches: "
-                                 "revision=%r, branch=%r"
-                                 % (revision, branch))
+                raise ValueError(
+                    "inconsistenct branches: "
+                    "revision=%r, branch=%r" % (revision, branch)
+                )
             self.branch = revision
         elif not self.branch:
             self.branch = DEFAULT_BRANCH
 
         self.revision, date = self.repository.get_revision_info(rev_name)
-        self.logger.error("Commit: branch=%s, revision=%s, date=%s"
-                          % (self.branch, self.revision, date))
+        self.logger.error(
+            "Commit: branch=%s, revision=%s, date=%s"
+            % (self.branch, self.revision, date)
+        )
         self.commit_date = date
 
-        date = date.strftime('%Y-%m-%d_%H-%M')
+        date = date.strftime("%Y-%m-%d_%H-%M")
 
-        filename = '%s-%s-%s' % (date, self.branch, self.revision[:12])
+        filename = "%s-%s-%s" % (date, self.branch, self.revision[:12])
         if self.patch:
             patch = os.path.basename(self.patch)
             patch = os.path.splitext(patch)[0]
@@ -511,16 +527,24 @@ class BenchmarkRevision(Application):
             )
             if not python or not exists:
                 python = sys.executable
-        cmd = [python, '-u', '-m', 'pyperformance', 'venv', 'recreate',
-               '--venv', self.conf.venv,
-               '--benchmarks', '<NONE>',
-               ]
+        cmd = [
+            python,
+            "-u",
+            "-m",
+            "pyperformance",
+            "venv",
+            "recreate",
+            "--venv",
+            self.conf.venv,
+            "--benchmarks",
+            "<NONE>",
+        ]
         if self.options.inherit_environ:
-            cmd.append('--inherit-environ=%s' % ','.join(self.options.inherit_environ))
+            cmd.append("--inherit-environ=%s" % ",".join(self.options.inherit_environ))
         exitcode = self.run_nocheck(*cmd)
         if exitcode:
             sys.exit(EXIT_VENV_ERROR)
-        binname = 'Scripts' if os.name == 'nt' else 'bin'
+        binname = "Scripts" if os.name == "nt" else "bin"
         base = os.path.basename(python)
         return os.path.join(self.conf.venv, binname, base)
 
@@ -530,23 +554,28 @@ class BenchmarkRevision(Application):
             python = self.python.program
         if self._dryrun:
             python = sys.executable
-        cmd = [python, '-u',
-               '-m', 'pyperformance',
-               'run',
-               '--verbose',
-               '--output', self.filename]
+        cmd = [
+            python,
+            "-u",
+            "-m",
+            "pyperformance",
+            "run",
+            "--verbose",
+            "--output",
+            self.filename,
+        ]
         if self.options.inherit_environ:
-            cmd.append('--inherit-environ=%s' % ','.join(self.options.inherit_environ))
+            cmd.append("--inherit-environ=%s" % ",".join(self.options.inherit_environ))
         if self.conf.manifest:
-            cmd.extend(('--manifest', self.conf.manifest))
+            cmd.extend(("--manifest", self.conf.manifest))
         if self.conf.benchmarks:
-            cmd.append('--benchmarks=%s' % self.conf.benchmarks)
+            cmd.append("--benchmarks=%s" % self.conf.benchmarks)
         if self.conf.affinity:
-            cmd.extend(('--affinity', self.conf.affinity))
+            cmd.extend(("--affinity", self.conf.affinity))
         if self.conf.debug:
-            cmd.append('--debug-single-value')
+            cmd.append("--debug-single-value")
         if self.conf.same_loops:
-            cmd.append('--same_loops=%s' % self.conf.same_loops)
+            cmd.append("--same_loops=%s" % self.conf.same_loops)
         exitcode = self.run_nocheck(*cmd)
 
         if os.path.exists(self.filename):
@@ -556,12 +585,12 @@ class BenchmarkRevision(Application):
 
     def update_metadata(self):
         metadata = {
-            'commit_id': self.revision,
-            'commit_branch': self.branch,
-            'commit_date': self.commit_date.isoformat(),
+            "commit_id": self.revision,
+            "commit_branch": self.branch,
+            "commit_date": self.commit_date.isoformat(),
         }
         if self.patch:
-            metadata['patch_file'] = self.patch
+            metadata["patch_file"] = self.patch
 
         suite = pyperf.BenchmarkSuite.load(self.filename)
         for bench in suite:
@@ -570,25 +599,25 @@ class BenchmarkRevision(Application):
 
     def encode_benchmark(self, bench):
         data = {}
-        data['environment'] = self.conf.environment
-        data['project'] = self.conf.project
-        data['branch'] = self.branch
-        data['benchmark'] = bench.get_name()
+        data["environment"] = self.conf.environment
+        data["project"] = self.conf.project
+        data["branch"] = self.branch
+        data["benchmark"] = bench.get_name()
         # Other benchmark metadata:
         # - description
         # - units="seconds", units_title="Time", lessisbetter=True
-        data['commitid'] = self.revision
-        data['revision_date'] = self.commit_date.isoformat()
-        data['executable'] = self.conf.executable
-        data['result_value'] = bench.mean()
+        data["commitid"] = self.revision
+        data["revision_date"] = self.commit_date.isoformat()
+        data["executable"] = self.conf.executable
+        data["result_value"] = bench.mean()
         # Other result metadata: result_date
         if bench.get_nvalue() == 1:
-            data['std_dev'] = 0
+            data["std_dev"] = 0
         else:
-            data['std_dev'] = bench.stdev()
+            data["std_dev"] = bench.stdev()
         values = bench.get_values()
-        data['min'] = min(values)
-        data['max'] = max(values)
+        data["min"] = min(values)
+        data["max"] = max(values)
         # Other stats metadata: q1, q3
         return data
 
@@ -597,65 +626,66 @@ class BenchmarkRevision(Application):
             raise Exception("already uploaded")
 
         if self.filename == self.upload_filename:
-            self.logger.error("ERROR: %s was already uploaded!"
-                              % self.filename)
+            self.logger.error("ERROR: %s was already uploaded!" % self.filename)
             sys.exit(1)
 
         if os.path.exists(self.upload_filename):
-            self.logger.error("ERROR: cannot upload, %s file ready exists!"
-                              % self.upload_filename)
+            self.logger.error(
+                "ERROR: cannot upload, %s file ready exists!" % self.upload_filename
+            )
             sys.exit(1)
 
         self.safe_makedirs(self.conf.uploaded_json_dir)
 
         suite = pyperf.BenchmarkSuite.load(self.filename)
-        data = [self.encode_benchmark(bench)
-                for bench in suite]
+        data = [self.encode_benchmark(bench) for bench in suite]
         data = dict(json=json.dumps(data))
 
         url = self.conf.url
-        if not url.endswith('/'):
-            url += '/'
-        url += 'result/add/json/'
+        if not url.endswith("/"):
+            url += "/"
+        url += "result/add/json/"
         self.logger.error("Upload %s benchmarks to %s" % (len(suite), url))
 
         try:
-            response = urlopen(data=urlencode(data).encode('utf-8'), url=url)
+            response = urlopen(data=urlencode(data).encode("utf-8"), url=url)
             body = response.read()
             response.close()
         except HTTPError as err:
             self.logger.error("HTTP Error: %s" % err)
-            errmsg = err.read().decode('utf8')
+            errmsg = err.read().decode("utf8")
             self.logger.error(errmsg)
             err.close()
             return
 
-        self.logger.error('Response: "%s"' % body.decode('utf-8'))
+        self.logger.error('Response: "%s"' % body.decode("utf-8"))
 
-        self.logger.error("Move %s to %s"
-                          % (self.filename, self.upload_filename))
+        self.logger.error("Move %s to %s" % (self.filename, self.upload_filename))
         os.rename(self.filename, self.upload_filename)
 
         self.uploaded = True
 
     def perf_system_tune(self):
-        pythonpath = os.environ.get('PYTHONPATH')
-        args = ['-m', 'pyperf', 'system', 'tune']
+        pythonpath = os.environ.get("PYTHONPATH")
+        args = ["-m", "pyperf", "system", "tune"]
         if self.conf.affinity:
-            args.extend(('--affinity', self.conf.affinity))
+            args.extend(("--affinity", self.conf.affinity))
         if pythonpath:
-            cmd = ('PYTHONPATH=%s %s %s'
-                   % (shlex.quote(pythonpath),
-                      shlex.quote(sys.executable),
-                      ' '.join(args)))
-            self.run('sudo', 'bash', '-c', cmd)
+            cmd = "PYTHONPATH=%s %s %s" % (
+                shlex.quote(pythonpath),
+                shlex.quote(sys.executable),
+                " ".join(args),
+            )
+            self.run("sudo", "bash", "-c", cmd)
         else:
-            self.run('sudo', sys.executable, *args)
+            self.run("sudo", sys.executable, *args)
 
     def prepare(self):
-        self.logger.error("Compile and benchmarks Python rev %s (branch %s)"
-                          % (self.revision, self.branch))
-        self.logger.error('')
+        self.logger.error(
+            "Compile and benchmarks Python rev %s (branch %s)"
+            % (self.revision, self.branch)
+        )
+        self.logger.error("")
 
         if os.path.exists(self.filename):
             filename = self.filename
@@ -665,8 +695,7 @@ class BenchmarkRevision(Application):
             filename = False
         if filename:
             # Benchmark already uploaded
-            self.logger.error("JSON file %s already exists: do nothing"
-                              % filename)
+            self.logger.error("JSON file %s already exists: do nothing" % filename)
 
             # Remove the log file
             if self.log_filename:
@@ -724,14 +753,15 @@ class BenchmarkRevision(Application):
         self.logger.error("Benchmark completed in %s" % dt)
 
         if self.uploaded:
-            self.logger.error("Benchmark results uploaded and written into %s"
-                              % self.upload_filename)
+            self.logger.error(
+                "Benchmark results uploaded and written into %s" % self.upload_filename
+            )
         elif failed:
-            self.logger.error("Benchmark failed but results written into %s"
-                              % self.filename)
+            self.logger.error(
+                "Benchmark failed but results written into %s" % self.filename
+            )
         else:
-            self.logger.error("Benchmark result written into %s"
-                              % self.filename)
+            self.logger.error("Benchmark result written into %s" % self.filename)
 
         if failed:
             sys.exit(EXIT_BENCH_ERROR)
@@ -744,13 +774,13 @@ class Configuration:
 def parse_config(filename, command):
     parse_compile = False
     parse_compile_all = False
-    if command == 'compile_all':
+    if command == "compile_all":
         parse_compile = True
         parse_compile_all = True
-    elif command == 'compile':
+    elif command == "compile":
         parse_compile = True
     else:
-        assert command == 'upload'
+        assert command == "upload"
 
     conf = Configuration()
     cfgobj = configparser.ConfigParser()
@@ -766,7 +796,7 @@ def parse_config(filename, command):
             return default
 
         # strip comments
-        value = value.partition('#')[0]
+        value = value.partition("#")[0]
         # strip spaces
         return value.strip()
 
@@ -788,59 +818,60 @@ def parse_config(filename, command):
         return int(getstr(section, key, default))
 
     # [config]
-    conf.json_dir = getfile('config', 'json_dir')
-    conf.json_patch_dir = os.path.join(conf.json_dir, 'patch')
-    conf.uploaded_json_dir = os.path.join(conf.json_dir, 'uploaded')
-    conf.debug = getboolean('config', 'debug', False)
+    conf.json_dir = getfile("config", "json_dir")
+    conf.json_patch_dir = os.path.join(conf.json_dir, "patch")
+    conf.uploaded_json_dir = os.path.join(conf.json_dir, "uploaded")
+    conf.debug = getboolean("config", "debug", False)
 
     if parse_compile:
         # [scm]
-        conf.repo_dir = getfile('scm', 'repo_dir')
-        conf.update = getboolean('scm', 'update', True)
-        conf.git_remote = getstr('config', 'git_remote', default='remotes/origin')
+        conf.repo_dir = getfile("scm", "repo_dir")
+        conf.update = getboolean("scm", "update", True)
+        conf.git_remote = getstr("config", "git_remote", default="remotes/origin")
 
         # [compile]
-        conf.directory = getfile('compile', 'bench_dir')
-        conf.lto = getboolean('compile', 'lto', True)
-        conf.pgo = getboolean('compile', 'pgo', True)
-        conf.jit = getstr('compile', 'jit', '')
-        conf.install = getboolean('compile', 'install', True)
-        conf.pkg_only = getstr('compile', 'pkg_only', '').split()
+        conf.directory = getfile("compile", "bench_dir")
+        conf.lto = getboolean("compile", "lto", True)
+        conf.pgo = getboolean("compile", "pgo", True)
+        conf.jit = getstr("compile", "jit", "")
+        conf.install = getboolean("compile", "install", True)
+        conf.pkg_only = getstr("compile", "pkg_only", "").split()
         try:
-            conf.jobs = getint('compile', 'jobs')
+            conf.jobs = getint("compile", "jobs")
         except KeyError:
             conf.jobs = None
 
         # [run_benchmark]
-        conf.system_tune = getboolean('run_benchmark', 'system_tune', True)
-        conf.manifest = getfile('run_benchmark', 'manifest', default='')
-        conf.benchmarks = getstr('run_benchmark', 'benchmarks', default='')
-        conf.affinity = getstr('run_benchmark', 'affinity', default='')
-        conf.upload = getboolean('run_benchmark', 'upload', False)
-        conf.same_loops = getfile('run_benchmark', 'same_loops', default='')
+        conf.system_tune = getboolean("run_benchmark", "system_tune", True)
+        conf.manifest = getfile("run_benchmark", "manifest", default="")
+        conf.benchmarks = getstr("run_benchmark", "benchmarks", default="")
+        conf.affinity = getstr("run_benchmark", "affinity", default="")
+        conf.upload = getboolean("run_benchmark", "upload", False)
+        conf.same_loops = getfile("run_benchmark", "same_loops", default="")
 
         # paths
-        conf.build_dir = os.path.join(conf.directory, 'build')
-        conf.prefix = os.path.join(conf.directory, 'prefix')
-        conf.venv = os.path.join(conf.directory, 'venv')
+        conf.build_dir = os.path.join(conf.directory, "build")
+        conf.prefix = os.path.join(conf.directory, "prefix")
+        conf.venv = os.path.join(conf.directory, "venv")
 
         check_upload = conf.upload
     else:
         check_upload = True
 
     # [upload]
-    UPLOAD_OPTIONS = ('url', 'environment', 'executable', 'project')
+    UPLOAD_OPTIONS = ("url", "environment", "executable", "project")
 
-    conf.url = getstr('upload', 'url', default='')
-    conf.executable = getstr('upload', 'executable', default='')
-    conf.project = getstr('upload', 'project', default='')
-    conf.environment = getstr('upload', 'environment', default='')
+    conf.url = getstr("upload", "url", default="")
+    conf.executable = getstr("upload", "executable", default="")
+    conf.project = getstr("upload", "project", default="")
+    conf.environment = getstr("upload", "environment", default="")
 
     if check_upload and any(not getattr(conf, attr) for attr in UPLOAD_OPTIONS):
-        print("ERROR: Upload requires to set the following "
-              "configuration option in the the [upload] section "
-              "of %s:"
-              % filename)
+        print(
+            "ERROR: Upload requires to set the following "
+            "configuration option in the the [upload] section "
+            "of %s:" % filename
+        )
         for attr in UPLOAD_OPTIONS:
             text = "- %s" % attr
             if not getattr(conf, attr):
@@ -850,16 +881,16 @@ def parse_config(filename, command):
 
     if parse_compile_all:
         # [compile_all]
-        conf.branches = getstr('compile_all', 'branches', '').split()
+        conf.branches = getstr("compile_all", "branches", "").split()
         conf.revisions = []
         try:
-            revisions = cfgobj.items('compile_all_revisions')
+            revisions = cfgobj.items("compile_all_revisions")
         except configparser.NoSectionError:
             pass
         else:
             for revision, name in revisions:
                 # strip comments
-                name = name.partition('#')[0]
+                name = name.partition("#")[0]
                 # strip spaces
                 name = name.strip()
                 conf.revisions.append((revision, name))
@@ -879,7 +910,7 @@ class BenchmarkAll(Application):
         super().__init__(conf, options)
         self.config_filename = config_filename
         self.safe_makedirs(self.conf.directory)
-        self.setup_log('compile_all')
+        self.setup_log("compile_all")
         self.outputs = []
         self.skipped = []
         self.failed = []
@@ -888,16 +919,23 @@ class BenchmarkAll(Application):
 
     def benchmark(self, revision, branch):
         if branch:
-            key = '%s-%s' % (branch, revision)
+            key = "%s-%s" % (branch, revision)
         else:
             key = revision
 
-        cmd = [sys.executable, '-m', 'pyperformance', 'compile',
-               self.config_filename, revision, branch]
+        cmd = [
+            sys.executable,
+            "-m",
+            "pyperformance",
+            "compile",
+            self.config_filename,
+            revision,
+            branch,
+        ]
         if not self.conf.update:
-            cmd.append('--no-update')
+            cmd.append("--no-update")
         if not self.conf.system_tune:
-            cmd.append('--no-tune')
+            cmd.append("--no-tune")
 
         self.start = time.monotonic()
         exitcode = self.run_nocheck(*cmd, log_stdout=False)
@@ -969,8 +1007,9 @@ class BenchmarkAll(Application):
         self.logger.error("Branches: %r" % (self.conf.branches,))
 
         if not self.conf.revisions and not self.conf.branches:
-            self.logger.error("ERROR: no branches nor revisions "
-                              "configured for compile_all")
+            self.logger.error(
+                "ERROR: no branches nor revisions configured for compile_all"
+            )
             sys.exit(1)
 
         try:
