@@ -6,7 +6,7 @@ permissions: {}
 
 jobs:
   lint:
-    name: Check code with ruff
+    name: Run pre-commit checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
