@@ -72,8 +72,8 @@ dependencies = [
 ]
 
 optional-dependencies.dev = [
-  "mypy==1.2",
-  "tomli",     # Needed even on 3.11+ for typechecking with mypy
+  "mypy==1.17.1",
+  "tomli",        # Needed even on 3.11+ for typechecking with mypy
   "tox",
 ]
 urls = { Homepage = "https://github.com/python/pyperformance" }

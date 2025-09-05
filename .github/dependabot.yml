@@ -1,8 +1,8 @@
 version: 2
 updates:
   - package-ecosystem: "pip"
-    directory: "/pyperformance/requirements"
+    directory: "/"
     exclude-paths:
-      - "pyperformance/data-files/"
+      - "pyperformance/data-files/**"
     schedule:
       interval: "monthly"
