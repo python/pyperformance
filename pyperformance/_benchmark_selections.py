@@ -32,7 +32,7 @@ def parse_selection(selection, *, op=None):
         else:
             kind = "name"
             parsed = _utils.parse_name_pattern(selection, fail=True)
-            #            parsed = _utils.parse_name_pattern(selection, fail=False)
+            # parsed = _utils.parse_name_pattern(selection, fail=False)
             if not parsed:
                 raise ValueError(f"unsupported selection {selection!r}")
     return op or "+", selection, kind, parsed
