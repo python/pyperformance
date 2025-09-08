@@ -1,16 +1,13 @@
 __all__ = [
-    # filesystem
-    "temporary_file",
-    "check_file",
-    "check_dir",
-    # platform
     "MS_WINDOWS",
-    # misc
+    "check_dir",
+    "check_file",
     "check_name",
-    "parse_name_pattern",
-    "parse_tag_pattern",
-    "parse_selections",
     "iter_clean_lines",
+    "parse_name_pattern",
+    "parse_selections",
+    "parse_tag_pattern",
+    "temporary_file",
 ]
 
 
