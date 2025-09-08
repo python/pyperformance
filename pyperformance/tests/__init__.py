@@ -9,7 +9,6 @@ import sys
 import tempfile
 import unittest
 
-
 TESTS_ROOT = os.path.realpath(os.path.dirname(__file__))
 DATA_DIR = os.path.join(TESTS_ROOT, "data")
 REPO_ROOT = os.path.dirname(os.path.dirname(TESTS_ROOT))

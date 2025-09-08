@@ -1,10 +1,9 @@
 import csv
-import os.path
 import math
-
-import pyperf
+import os.path
 import statistics
 
+import pyperf
 
 NO_VERSION = "<not set>"
 

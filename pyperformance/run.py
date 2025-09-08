@@ -1,15 +1,15 @@
-from collections import namedtuple
 import hashlib
 import json
 import os
 import sys
 import time
 import traceback
+from collections import namedtuple
 
 import pyperformance
-from . import _utils, _python, _pythoninfo
-from .venv import VenvForBenchmarks, REQUIREMENTS_FILE
-from . import _venv
+
+from . import _python, _pythoninfo, _utils, _venv
+from .venv import REQUIREMENTS_FILE, VenvForBenchmarks
 
 
 class BenchmarkException(Exception):

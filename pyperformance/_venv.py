@@ -5,7 +5,7 @@ import os.path
 import sys
 import types
 
-from . import _utils, _pythoninfo, _pip
+from . import _pip, _pythoninfo, _utils
 
 
 class VenvCreationFailedError(Exception):

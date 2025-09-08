@@ -2,11 +2,11 @@
 # in the PyPI "packaging" package (once it's added there).
 
 __all__ = [
-    "parse_person",
+    "load_pyproject_toml",
     "parse_classifier",
     "parse_entry_point",
+    "parse_person",
     "parse_pyproject_toml",
-    "load_pyproject_toml",
 ]
 
 
@@ -25,7 +25,6 @@ except ImportError:
     import tomli as tomllib
 
 from ._utils import check_name
-
 
 NAME_RE = re.compile("^([A-Z0-9]|[A-Z0-9][A-Z0-9._-]*[A-Z0-9])$", re.IGNORECASE)
 

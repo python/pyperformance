@@ -4,8 +4,7 @@ import sys
 import sysconfig
 import unittest
 
-from pyperformance import tests, _pythoninfo
-
+from pyperformance import _pythoninfo, tests
 
 IS_VENV = sys.prefix != sys.base_prefix
 CURRENT = {

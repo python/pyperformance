@@ -7,10 +7,7 @@ __all__ = [
 
 import os.path
 
-
-from . import __version__, DATA_DIR
-from . import _benchmark, _utils
-
+from . import DATA_DIR, __version__, _benchmark, _utils
 
 DEFAULTS_DIR = os.path.join(DATA_DIR, "benchmarks")
 DEFAULT_MANIFEST = os.path.join(DEFAULTS_DIR, "MANIFEST")

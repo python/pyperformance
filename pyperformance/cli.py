@@ -3,23 +3,23 @@ import logging
 import os.path
 import sys
 
-from pyperformance import _utils, is_installed, is_dev, __version__
+from pyperf import _hooks
+
+from pyperformance import __version__, _utils, is_dev, is_installed
 from pyperformance.commands import (
+    cmd_compare,
+    cmd_compile,
+    cmd_compile_all,
     cmd_list,
     cmd_list_groups,
+    cmd_run,
+    cmd_show,
+    cmd_upload,
     cmd_venv_create,
     cmd_venv_recreate,
     cmd_venv_remove,
     cmd_venv_show,
-    cmd_run,
-    cmd_compile,
-    cmd_compile_all,
-    cmd_upload,
-    cmd_show,
-    cmd_compare,
 )
-
-from pyperf import _hooks
 
 
 def comma_separated(values):

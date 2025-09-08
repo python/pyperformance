@@ -73,7 +73,7 @@ def cmd_venv_create(options, root, python, benchmarks):
 
 
 def cmd_venv_recreate(options, root, python, benchmarks):
-    from . import _venv, _utils
+    from . import _utils, _venv
     from .venv import Requirements, VenvForBenchmarks
 
     requirements = Requirements.from_benchmarks(benchmarks)
@@ -156,7 +156,9 @@ def cmd_venv_show(options, root):
 
 def cmd_run(options, benchmarks):
     import pyperf
+
     import pyperformance
+
     from .compare import display_benchmark_suite
     from .run import run_benchmarks
 
@@ -198,7 +200,7 @@ def cmd_run(options, benchmarks):
 
 
 def cmd_compile(options):
-    from .compile import parse_config, BenchmarkRevision
+    from .compile import BenchmarkRevision, parse_config
 
     conf = parse_config(options.config_file, "compile")
     if options is not None:
@@ -221,7 +223,8 @@ def cmd_compile_all(options):
 
 def cmd_upload(options):
     import pyperf
-    from .compile import parse_config, parse_date, BenchmarkRevision
+
+    from .compile import BenchmarkRevision, parse_config, parse_date
 
     conf = parse_config(options.config_file, "upload")
 
@@ -246,6 +249,7 @@ def cmd_upload(options):
 
 def cmd_show(options):
     import pyperf
+
     from .compare import display_benchmark_suite
 
     suite = pyperf.BenchmarkSuite.load(options.filename)
@@ -253,7 +257,7 @@ def cmd_show(options):
 
 
 def cmd_compare(options):
-    from .compare import compare_results, write_csv, VersionMismatchError
+    from .compare import VersionMismatchError, compare_results, write_csv
 
     try:
         results = compare_results(options)

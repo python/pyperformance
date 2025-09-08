@@ -3,7 +3,6 @@ import os.path
 import sys
 from importlib.metadata import distribution
 
-
 VERSION = (1, 11, 0)
 __version__ = ".".join(map(str, VERSION))
 

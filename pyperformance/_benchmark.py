@@ -1,20 +1,20 @@
 __all__ = [
-    "BenchmarkSpec",
     "Benchmark",
+    "BenchmarkSpec",
     "check_name",
     "parse_benchmark",
 ]
 
 
-from collections import namedtuple
 import os
 import os.path
 import sys
+from collections import namedtuple
 
 import pyperf
 from packaging.specifiers import SpecifierSet
 
-from . import _utils, _benchmark_metadata
+from . import _benchmark_metadata, _utils
 
 
 def check_name(name):

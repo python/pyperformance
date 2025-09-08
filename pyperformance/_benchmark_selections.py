@@ -1,10 +1,10 @@
 __all__ = [
-    "parse_selection",
     "iter_selections",
+    "parse_selection",
 ]
 
 
-from . import _utils, _benchmark
+from . import _benchmark, _utils
 
 
 def parse_selection(selection, *, op=None):

@@ -3,8 +3,8 @@ import os.path
 import sys
 
 import pyperformance
-from . import _utils, _pip, _venv
 
+from . import _pip, _utils, _venv
 
 REQUIREMENTS_FILE = os.path.join(
     os.path.dirname(__file__), "requirements", "requirements.txt"

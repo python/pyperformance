@@ -4,8 +4,8 @@ import sys
 import types
 import unittest
 
-from pyperformance import tests
 import pyperformance._venv
+from pyperformance import tests
 
 
 def new_venv_config(

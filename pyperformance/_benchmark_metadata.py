@@ -5,9 +5,7 @@ __all__ = [
 
 import os.path
 
-from . import _utils, _pyproject_toml
-from . import _benchmark
-
+from . import _benchmark, _pyproject_toml, _utils
 
 METADATA = "pyproject.toml"
 DEPENDENCIES = "requirements.in"

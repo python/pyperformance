@@ -19,8 +19,7 @@ from urllib.request import urlopen
 import pyperf
 
 import pyperformance
-from pyperformance import _utils, _pip
-
+from pyperformance import _pip, _utils
 
 GIT = True
 DEFAULT_BRANCH = "master" if GIT else "default"

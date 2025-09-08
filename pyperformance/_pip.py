@@ -2,8 +2,7 @@ import os
 import os.path
 import sys
 
-from . import _utils, _pythoninfo
-
+from . import _pythoninfo, _utils
 
 GET_PIP_URL = "https://bootstrap.pypa.io/get-pip.py"
 # pip 6 is the first version supporting environment markers

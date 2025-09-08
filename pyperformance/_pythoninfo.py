@@ -9,7 +9,6 @@ import os.path
 import sys
 import sysconfig
 
-
 INFO = {
     # sys
     "executable (sys)": "sys.executable",
