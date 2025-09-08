@@ -1,4 +1,4 @@
-name: pre-commit
+name: lint
 
 on: [push, pull_request, workflow_dispatch]
 
@@ -6,7 +6,7 @@ permissions: {}
 
 jobs:
   lint:
-    name: Run pre-commit checks
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
