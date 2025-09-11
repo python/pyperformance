@@ -1,13 +1,16 @@
-__all__ = [
-    "MS_WINDOWS",
+__all__ = [  # noqa: RUF022
+    # filesystem
     "check_dir",
     "check_file",
+    "temporary_file",
+    # platform
+    "MS_WINDOWS",
+    # misc
     "check_name",
     "iter_clean_lines",
     "parse_name_pattern",
     "parse_selections",
     "parse_tag_pattern",
-    "temporary_file",
 ]
 
 
