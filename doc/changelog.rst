@@ -1,6 +1,7 @@
 Changelog
 =========
 
+* Run ruff format and check under pre-commit and GitHub Actions
 * Bump dask[distributed] to 2024.10.1 for Windows compatibility
 * Bump greenlet to 3.1.0 for compatibility with 3.13
 * Bump tornado to 6.2.0
