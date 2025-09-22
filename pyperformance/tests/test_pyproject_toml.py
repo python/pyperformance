@@ -1,6 +1,7 @@
-import unittest
-import tempfile
 import pathlib
+import tempfile
+import unittest
+
 from pyperformance import _pyproject_toml
 
 
@@ -44,17 +45,17 @@ class TestPyProjectToml(unittest.TestCase):
 
     def test_parse_fails_on_missing_name(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-          toml_content = """
+            toml_content = """
           [project]
           version = "1.0"
           """
 
-          with self.assertRaisesRegex(ValueError, r'missing required "name" field'):
-              _pyproject_toml.parse_pyproject_toml(toml_content, rootdir=str(tmpdir))
+            with self.assertRaisesRegex(ValueError, r'missing required "name" field'):
+                _pyproject_toml.parse_pyproject_toml(toml_content, rootdir=str(tmpdir))
 
     def test_parse_fails_on_unsupported_section(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-          toml_content = """
+            toml_content = """
           [project]
           name = "my-test-bench"
           version = "1.0"
@@ -63,8 +64,8 @@ class TestPyProjectToml(unittest.TestCase):
           key = "value"
           """
 
-          with self.assertRaisesRegex(ValueError, "unsupported sections"):
-              _pyproject_toml.parse_pyproject_toml(toml_content, rootdir=str(tmpdir))
+            with self.assertRaisesRegex(ValueError, "unsupported sections"):
+                _pyproject_toml.parse_pyproject_toml(toml_content, rootdir=str(tmpdir))
 
     def test_parse_readme_file_missing_with_requirefiles_true(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -93,6 +94,7 @@ class TestPyProjectToml(unittest.TestCase):
                 toml_content, rootdir=str(tmpdir), requirefiles=False
             )
             self.assertEqual(data["project"]["readme"]["file"], "MISSING_README.md")
+
 
 if __name__ == "__main__":
     unittest.main()
