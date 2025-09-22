@@ -46,9 +46,9 @@ class TestPyProjectToml(unittest.TestCase):
     def test_parse_fails_on_missing_name(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             toml_content = """
-          [project]
-          version = "1.0"
-          """
+            [project]
+            version = "1.0"
+            """
 
             with self.assertRaisesRegex(ValueError, r'missing required "name" field'):
                 _pyproject_toml.parse_pyproject_toml(toml_content, rootdir=str(tmpdir))
@@ -56,13 +56,13 @@ class TestPyProjectToml(unittest.TestCase):
     def test_parse_fails_on_unsupported_section(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             toml_content = """
-          [project]
-          name = "my-test-bench"
-          version = "1.0"
+            [project]
+            name = "my-test-bench"
+            version = "1.0"
 
-          [foobar]
-          key = "value"
-          """
+            [foobar]
+            key = "value"
+            """
 
             with self.assertRaisesRegex(ValueError, "unsupported sections"):
                 _pyproject_toml.parse_pyproject_toml(toml_content, rootdir=str(tmpdir))
