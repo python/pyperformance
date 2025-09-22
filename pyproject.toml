@@ -98,8 +98,12 @@ exclude = [
 fix = true
 
 lint.select = [
-  "E", # pycodestyle errors
-  "F", # pyflakes errors
+  "E",      # pycodestyle errors
+  "F",      # pyflakes errors
+  "I",      # isort
+  "ISC",    # flake8-implicit-str-concat
+  "RUF022", # unsorted-dunder-all
+  "RUF100", # unused noqa (yesqa)
 ]
 lint.ignore = [
   "E501", # line too long

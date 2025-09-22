@@ -14,8 +14,8 @@ def cmd_list(options, benchmarks):
 def cmd_list_groups(manifest, *, showtags=True):
     all_benchmarks = set(manifest.benchmarks)
 
-    groups = sorted(manifest.groups - {'all', 'default'})
-    groups[0:0] = ['all', 'default']
+    groups = sorted(manifest.groups - {"all", "default"})
+    groups[0:0] = ["all", "default"]
     for group in groups:
         specs = list(manifest.resolve_group(group))
         known = set(specs) & all_benchmarks
@@ -55,7 +55,7 @@ def cmd_venv_create(options, root, python, benchmarks):
     from .venv import Requirements, VenvForBenchmarks
 
     if _venv.venv_exists(root):
-        sys.exit(f'ERROR: the virtual environment already exists at {root}')
+        sys.exit(f"ERROR: the virtual environment already exists at {root}")
 
     requirements = Requirements.from_benchmarks(benchmarks)
     venv = VenvForBenchmarks.ensure(
@@ -73,7 +73,7 @@ def cmd_venv_create(options, root, python, benchmarks):
 
 
 def cmd_venv_recreate(options, root, python, benchmarks):
-    from . import _venv, _utils
+    from . import _utils, _venv
     from .venv import Requirements, VenvForBenchmarks
 
     requirements = Requirements.from_benchmarks(benchmarks)
@@ -156,7 +156,9 @@ def cmd_venv_show(options, root):
 
 def cmd_run(options, benchmarks):
     import pyperf
+
     import pyperformance
+
     from .compare import display_benchmark_suite
     from .run import run_benchmarks
 
@@ -169,12 +171,12 @@ def cmd_run(options, benchmarks):
         print("ERROR: the output file %s already exists!" % options.output)
         sys.exit(1)
 
-    if hasattr(options, 'python'):
+    if hasattr(options, "python"):
         executable = options.python
     else:
         executable = sys.executable
     if not os.path.isabs(executable):
-        print("ERROR: \"%s\" is not an absolute path" % executable)
+        print('ERROR: "%s" is not an absolute path' % executable)
         sys.exit(1)
 
     suite, errors = run_benchmarks(benchmarks, executable, options)
@@ -198,7 +200,7 @@ def cmd_run(options, benchmarks):
 
 
 def cmd_compile(options):
-    from .compile import parse_config, BenchmarkRevision
+    from .compile import BenchmarkRevision, parse_config
 
     conf = parse_config(options.config_file, "compile")
     if options is not None:
@@ -206,8 +208,9 @@ def cmd_compile(options):
             conf.update = False
         if options.no_tune:
             conf.system_tune = False
-    bench = BenchmarkRevision(conf, options.revision, options.branch,
-                              patch=options.patch, options=options)
+    bench = BenchmarkRevision(
+        conf, options.revision, options.branch, patch=options.patch, options=options
+    )
     bench.main()
 
 
@@ -220,25 +223,33 @@ def cmd_compile_all(options):
 
 def cmd_upload(options):
     import pyperf
-    from .compile import parse_config, parse_date, BenchmarkRevision
+
+    from .compile import BenchmarkRevision, parse_config, parse_date
 
     conf = parse_config(options.config_file, "upload")
 
     filename = options.json_file
     bench = pyperf.BenchmarkSuite.load(filename)
     metadata = bench.get_metadata()
-    revision = metadata['commit_id']
-    branch = metadata['commit_branch']
-    commit_date = parse_date(metadata['commit_date'])
+    revision = metadata["commit_id"]
+    branch = metadata["commit_branch"]
+    commit_date = parse_date(metadata["commit_date"])
 
-    bench = BenchmarkRevision(conf, revision, branch,
-                              filename=filename, commit_date=commit_date,
-                              setup_log=False, options=options)
+    bench = BenchmarkRevision(
+        conf,
+        revision,
+        branch,
+        filename=filename,
+        commit_date=commit_date,
+        setup_log=False,
+        options=options,
+    )
     bench.upload()
 
 
 def cmd_show(options):
     import pyperf
+
     from .compare import display_benchmark_suite
 
     suite = pyperf.BenchmarkSuite.load(options.filename)
@@ -246,12 +257,12 @@ def cmd_show(options):
 
 
 def cmd_compare(options):
-    from .compare import compare_results, write_csv, VersionMismatchError
+    from .compare import VersionMismatchError, compare_results, write_csv
 
     try:
         results = compare_results(options)
     except VersionMismatchError as exc:
-        print(f'ERROR: {exc}')
+        print(f"ERROR: {exc}")
         sys.exit(1)
 
     if options.csv:
