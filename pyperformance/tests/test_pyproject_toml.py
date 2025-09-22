@@ -89,7 +89,6 @@ class TestPyProjectToml(unittest.TestCase):
             version = "1.0"
             readme = "MISSING_README.md"
             """
-
             data = _pyproject_toml.parse_pyproject_toml(
                 toml_content, rootdir=str(tmpdir), requirefiles=False
             )
