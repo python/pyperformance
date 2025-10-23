@@ -175,7 +175,7 @@ def _normalize_project(data, rootdir, name, requirefiles, **_ignored):
     key = "readme"
     if key in data:
         readme = data[key]
-        if isinstance(readme, "str"):
+        if isinstance(readme, str):
             readme = data[key] = {"file": readme}
         # XXX Check the suffix.
         # XXX Handle 'content-type'.
