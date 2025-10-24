@@ -84,7 +84,8 @@ def create_venv(root=None, python=sys.executable, *, verbose=False):
         onfail="raise",
         verbose=verbose,
     )
-    return root, _resolve_venv_python(root), cleanup
+    venv_root = os.path.realpath(root)
+    return venv_root, _resolve_venv_python(venv_root), cleanup
 
 
 class CleanupFile:
