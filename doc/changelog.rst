@@ -26,7 +26,7 @@ Version 1.12.0 (2025-10-24)
 * Add Arm64 CI
 * Add Free-threading CI
 * Make Windows a non-experimental platform in CI
-* Drop support for Python 3.7, 3.8, 3.9
+* Add support Python 3.14 and drop Python 3.7, 3.8, 3.9
 * Skip dask benchmark on Windows for Python 3.13
 
 Version 1.11.0 (2024-03-09)
