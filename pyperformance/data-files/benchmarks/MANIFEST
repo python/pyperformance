@@ -97,7 +97,8 @@ unpack_sequence	<local>
 unpickle	<local:pickle>
 unpickle_list	<local:pickle>
 unpickle_pure_python	<local:pickle>
-xdsl	<local>
+# xdsl is temporary disabled: https://github.com/xdslproject/xdsl/issues/5396
+# xdsl	<local>
 xml_etree	<local>
 
 
