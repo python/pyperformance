@@ -3,16 +3,6 @@ Changelog
 
 Version 1.12.0 (2025-10-24)
 --------------
-* Run ruff format and check under pre-commit and GitHub Actions
-* Bump dask[distributed] to 2024.10.1 for Windows compatibility
-* Bump greenlet to 3.1.0 for compatibility with 3.13
-* Bump tornado to 6.2.0
-* Bump pyperf to 2.9.0
-* Bump sqlglot to V2
-* Bump mypy to 1.18.2
-* Fix check for editable mode
-* Fix ``--same-loops`` handling
-* Fix: pass ``--warmup`` and ``--timeout`` flags to pyperf
 * Add xdsl benchmark
 * Add a new quadtree nbody simulation using the Barnes Hut algorithm
 * Add argparse benchmark
@@ -20,14 +10,25 @@ Version 1.12.0 (2025-10-24)
 * Add Sphinx benchmark
 * Add decimal module benchmark
 * Add BPE tokeniser benchmark
+* Skip dask benchmark on Windows for Python 3.13
+* Bump dask[distributed] to 2024.10.1 for Windows compatibility
+* Bump greenlet to 3.2.4 for compatibility with 3.13+
+* Bump Chameleon to 4.6.0
+* Bump tornado to 6.5.0
+* Bump pyperf to 2.9.0
+* Bump sqlglot to V2
+* Bump mypy to 1.18.2
+* Fix check for editable mode
+* Fix ``--same-loops`` handling
+* Fix: pass ``--warmup`` and ``--timeout`` flags to pyperf
 * Add ``-V``/``--version`` CLI argument
 * Add ``--hook`` CLI argument
+* Run ruff format and check under pre-commit and GitHub Actions
 * Add support for experimental JIT builds
 * Add Arm64 CI
 * Add Free-threading CI
 * Make Windows a non-experimental platform in CI
 * Add support Python 3.14 and drop Python 3.7, 3.8, 3.9
-* Skip dask benchmark on Windows for Python 3.13
 
 Version 1.11.0 (2024-03-09)
 --------------
