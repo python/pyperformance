@@ -11,8 +11,8 @@ Version 1.12.0 (2025-10-24)
 * Bump sqlglot to V2
 * Bump mypy to 1.18.2
 * Fix check for editable mode
-* Fix --same-loops handling
-* Fix: pass --warmup and --timeout flags to pyperf
+* Fix ``--same-loops`` handling
+* Fix: pass ``--warmup`` and ``--timeout`` flags to pyperf
 * Add xdsl benchmark
 * Add a new quadtree nbody simulation using the Barnes Hut algorithm
 * Add argparse benchmark
