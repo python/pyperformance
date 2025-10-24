@@ -1,6 +1,8 @@
 # A script for running pyperformance out of the repo in dev-mode.
 
 import os.path
+import shutil
+import subprocess
 import sys
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -29,8 +31,6 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
         readyfile = os.path.join(sys.prefix, "READY")
         isready = os.path.exists(readyfile)
     else:
-        import venv
-
         if not venvroot:
             venvroot = resolve_venv_root(kind, venvsdir)
         # Make sure the venv exists.
@@ -38,11 +38,28 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
         isready = os.path.exists(readyfile)
         if not isready:
             relroot = os.path.relpath(venvroot)
-            if not os.path.exists(venvroot):
-                print(f"creating venv at {relroot}...")
+            uv = shutil.which("uv")
+            if not uv:
+                sys.exit(
+                    "ERROR: uv executable not found. "
+                    "Install uv from https://astral.sh/uv and retry."
+                )
+            if os.path.exists(venvroot):
+                print(f"uv env {relroot} not ready, re-creating...")
+                shutil.rmtree(venvroot)
             else:
-                print(f"venv {relroot} not ready, re-creating...")
-            venv.create(venvroot, with_pip=True, clear=True)
+                print(f"creating uv env at {relroot}...")
+            result = subprocess.run(
+                [
+                    uv,
+                    "venv",
+                    "--python",
+                    sys.executable,
+                    venvroot,
+                ]
+            )
+            if result.returncode != 0:
+                sys.exit("ERROR: uv venv creation failed")
         else:
             assert os.path.exists(os.path.join(venvroot, "pyvenv.cfg"))
         # Return the venv's Python executable.
@@ -52,18 +69,31 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
 
     # Now make sure the venv has pyperformance installed.
     if not isready:
-        import subprocess
-
         relroot = os.path.relpath(venvroot)
-        print(f"venv {relroot} not ready, installing dependencies...")
+        print(f"uv env {relroot} not ready, installing dependencies...")
+        uv = shutil.which("uv")
+        if not uv:
+            sys.exit(
+                "ERROR: uv executable not found. "
+                "Install uv from https://astral.sh/uv and retry."
+            )
         proc = subprocess.run(
-            [python, "-m", "pip", "install", "--upgrade", "--editable", REPO_ROOT],
+            [
+                uv,
+                "pip",
+                "install",
+                "--python",
+                python,
+                "--upgrade",
+                "--editable",
+                f"{REPO_ROOT}[dev]",
+            ],
         )
         if proc.returncode != 0:
-            sys.exit("ERROR: install failed")
+            sys.exit("ERROR: uv pip install failed")
         with open(readyfile, "w"):
             pass
-        print("...venv {relroot} ready!")
+        print(f"...uv env {relroot} ready!")
 
     return venvroot, python
 

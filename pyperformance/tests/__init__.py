@@ -75,16 +75,16 @@ def create_venv(root=None, python=sys.executable, *, verbose=False):
         def cleanup():
             return None
 
-    run_cmd(
-        python or sys.executable,
-        "-m",
-        "venv",
-        root,
-        capture=not verbose,
-        onfail="raise",
-        verbose=verbose,
-    )
-    return root, _resolve_venv_python(root), cleanup
+    uv = shutil.which("uv")
+    if not uv:
+        raise RuntimeError("uv executable is required to provision test environments")
+    argv = [uv, "venv"]
+    if python:
+        argv.extend(["--python", python])
+    argv.append(root)
+    run_cmd(*argv, capture=not verbose, onfail="raise", verbose=verbose)
+    venv_root = os.path.realpath(root)
+    return venv_root, _resolve_venv_python(venv_root), cleanup
 
 
 class CleanupFile:

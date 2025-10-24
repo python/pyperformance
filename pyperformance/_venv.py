@@ -2,6 +2,7 @@
 
 import os
 import os.path
+import shutil
 import sys
 import types
 
@@ -111,11 +112,24 @@ def create_venv(
 ):
     """Create a new venv at the given root, optionally installing pip."""
     already_existed = os.path.exists(root)
-    if withpip:
-        args = ["-m", "venv", root]
+    uv = shutil.which("uv")
+    if not uv:
+        print("ERROR: uv executable not found. Install uv from https://astral.sh/uv.")
+        raise VenvCreationFailedError(root, 127, already_existed)
+
+    if isinstance(python, str) or python is None:
+        target_python = python or sys.executable
     else:
-        args = ["-m", "venv", "--without-pip", root]
-    ec, _, _ = _utils.run_python(*args, python=python, env=env)
+        try:
+            target_python = python.sys.executable
+        except AttributeError as exc:
+            raise TypeError(f"expected python str, got {python!r}") from exc
+
+    argv = [uv, "venv"]
+    if target_python:
+        argv.extend(["--python", target_python])
+    argv.append(root)
+    ec, _, _ = _utils.run_cmd(argv, env=env)
     if ec != 0:
         if cleanonfail and not already_existed:
             _utils.safe_rmtree(root)
