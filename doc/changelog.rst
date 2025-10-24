@@ -22,7 +22,7 @@ Version 1.12.0 (2025-10-24)
 * Add BPE tokeniser benchmark
 * Add ``-V``/``--version`` CLI argument
 * Add ``--hook`` CLI argument
-* Add support for experimentak JIT builds
+* Add support for experimental JIT builds
 * Add Arm64 CI
 * Add Free-threading CI
 * Make Windows a non-experimental platform in CI
