@@ -2,12 +2,11 @@ import os
 import os.path
 import sys
 
-from . import _pythoninfo, _utils
+from . import _utils
 
 GET_PIP_URL = "https://bootstrap.pypa.io/get-pip.py"
 # pip 6 is the first version supporting environment markers
 MIN_PIP = "6.0"
-OLD_PIP = "7.1.2"
 OLD_SETUPTOOLS = "18.5"
 
 
@@ -19,21 +18,6 @@ def get_pkg_name(req):
     req = req.partition("==")[0]
     req = req.partition(">=")[0]
     return req
-
-
-def get_best_pip_version(python):
-    """Return the pip to install for the given Python executable."""
-    if not python or isinstance(python, str):
-        info = _pythoninfo.get_info(python)
-    else:
-        info = python
-    # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 7.1.2,
-    # the last version working on Python 3.5a0:
-    # https://sourceforge.net/p/pyparsing/bugs/100/
-    if 0x30500A0 <= info.sys.hexversion < 0x30500F0:
-        return OLD_PIP
-    else:
-        return None
 
 
 def run_pip(cmd, *args, **kwargs):
@@ -90,9 +74,6 @@ def install_pip(
 
     # python get-pip.py
     argv = [python, "-u", filename]
-    version = get_best_pip_version(info or python)
-    if version:
-        argv.append(version)
     res = _utils.run_cmd(argv, env=env)
     ec, _, _ = res
     if ec != 0:
@@ -113,14 +94,8 @@ def upgrade_pip(
     if not python:
         python = getattr(info, "executable", None) or sys.executable
 
-    version = get_best_pip_version(info or python)
-    if version:
-        reqs = [f"pip=={version}"]
-        if installer:
-            reqs.append(f"setuptools=={OLD_SETUPTOOLS}")
-    else:
-        # pip 6 is the first version supporting environment markers
-        reqs = [f"pip>={MIN_PIP}"]
+    # pip 6 is the first version supporting environment markers
+    reqs = [f"pip>={MIN_PIP}"]
     res = install_requirements(*reqs, python=python, upgrade=True, **kwargs)
     ec, _, _ = res
     if ec != 0:
