@@ -7,11 +7,12 @@ import unittest
 from pyperformance import _pythoninfo, tests
 
 IS_VENV = sys.prefix != sys.base_prefix
+_BASE_EXECUTABLE = getattr(sys, "_base_executable", None)
 CURRENT = {
     "executable (sys)": sys.executable,
     "executable (sys;realpath)": os.path.realpath(sys.executable),
-    "base_executable": sys.executable,
-    "base_executable (sys)": getattr(sys, "_base_executable", None),
+    "base_executable": _BASE_EXECUTABLE or sys.executable,
+    "base_executable (sys)": _BASE_EXECUTABLE,
     "version_str (sys)": sys.version,
     "version_info (sys)": sys.version_info,
     "hexversion (sys)": sys.hexversion,
