@@ -21,24 +21,24 @@ jobs:
       matrix:
         # Test all supported versions on Ubuntu:
         os: [ubuntu-latest, ubuntu-24.04-arm]
-        python: ["3.10", "3.11", "3.12", "3.13"]
+        python: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         experimental: [false]
         build: ['']
         include:
           # As the experimental task for the dev version.
           - os: ubuntu-latest
-            python: "3.13"
+            python: "3.14"
             experimental: true
             build: 'free-threading'
           - os: ubuntu-24.04-arm
-            python: "3.13"
+            python: "3.14"
             experimental: true
             build: 'free-threading'
           - os: ubuntu-latest
-            python: "3.14-dev"
+            python: "3.15-dev"
             experimental: true
           - os: ubuntu-latest
-            python: "3.14-dev"
+            python: "3.15-dev"
             experimental: true
             build: 'free-threading'
           # Also test PyPy, macOS, and Windows:
@@ -46,10 +46,10 @@ jobs:
             python: pypy-3.11
             experimental: false
           - os: macos-latest
-            python: "3.13"
+            python: "3.14"
             experimental: true
           - os: windows-latest
-            python: "3.13"
+            python: "3.14"
             experimental: false
     steps:
     - uses: actions/checkout@v4
