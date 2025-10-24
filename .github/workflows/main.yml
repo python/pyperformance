@@ -47,7 +47,7 @@ jobs:
             experimental: false
           - os: macos-latest
             python: "3.14"
-            experimental: true
+            experimental: false
           - os: windows-latest
             python: "3.14"
             experimental: false
@@ -77,3 +77,4 @@ jobs:
     - name: Run Tests
       id: pyperformance
       run: python -u -m pyperformance.tests
+      continue-on-error: ${{ matrix.experimental }}
