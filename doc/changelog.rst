@@ -3,7 +3,7 @@ Changelog
 
 Version 1.12.0 (2025-10-24)
 --------------
-* Add xdsl benchmark
+* Add xdsl benchmark (but disabled by default due to a regression)
 * Add a new quadtree nbody simulation using the Barnes Hut algorithm
 * Add argparse benchmark
 * Add NetworkX benchmarks
