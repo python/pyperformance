@@ -77,4 +77,3 @@ jobs:
     - name: Run Tests
       id: pyperformance
       run: python -u -m pyperformance.tests
-      continue-on-error: ${{ matrix.experimental }}
