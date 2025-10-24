@@ -20,8 +20,8 @@ Version 1.12.0 (2025-10-24)
 * Add Sphinx benchmark
 * Add decimal module benchmark
 * Add BPE tokeniser benchmark
-* Add -V/--version CLI option
-* Add --hook CLI parameter
+* Add ``-V``/``--version`` CLI argument
+* Add ``--hook`` CLI argument
 * Add support for experimentak JIT builds
 * Add Arm64 CI
 * Add Free-threading CI
