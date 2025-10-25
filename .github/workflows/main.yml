@@ -74,8 +74,8 @@ jobs:
       # pyperformance must be installed:
       # pyperformance/tests/test_compare.py imports it
       run: |
-        uv pip install --upgrade pip setuptools
-        uv pip install -e .
+        uv pip install --system --upgrade pip setuptools
+        uv pip install --system -e .
     - name: Display Python version
       run: |
         python -VV
