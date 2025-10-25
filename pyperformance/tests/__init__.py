@@ -9,8 +9,6 @@ import sys
 import tempfile
 import unittest
 
-from pyperformance._uv import run_uv
-
 TESTS_ROOT = os.path.realpath(os.path.dirname(__file__))
 DATA_DIR = os.path.join(TESTS_ROOT, "data")
 REPO_ROOT = os.path.dirname(os.path.dirname(TESTS_ROOT))
@@ -66,6 +64,8 @@ def _resolve_venv_python(venv):
 
 
 def create_venv(root=None, python=sys.executable, *, verbose=False):
+    from pyperformance._uv import run_uv
+
     if not root:
         tmpdir = tempfile.mkdtemp()
         root = os.path.join(tmpdir, "venv")

@@ -4,8 +4,6 @@ import os.path
 import shutil
 import sys
 
-from pyperformance._uv import run_uv
-
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 VENVS = os.path.join(REPO_ROOT, ".venvs")
 
@@ -32,6 +30,8 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
         readyfile = os.path.join(sys.prefix, "READY")
         isready = os.path.exists(readyfile)
     else:
+        from pyperformance._uv import run_uv
+
         if not venvroot:
             venvroot = resolve_venv_root(kind, venvsdir)
         # Make sure the venv exists.
