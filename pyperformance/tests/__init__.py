@@ -78,7 +78,7 @@ def create_venv(root=None, python=sys.executable, *, verbose=False):
     uv = shutil.which("uv")
     if not uv:
         raise RuntimeError("uv executable is required to provision test environments")
-    argv = [uv, "venv"]
+    argv = [uv, "venv", "--seed"]
     if python:
         argv.extend(["--python", python])
     argv.append(root)
