@@ -18,34 +18,6 @@ def run_uv(*args, env=None, capture=None, verbose=True):
     return _utils.run_cmd([uv, *args], env=env, capture=capture, verbose=verbose)
 
 
-def _iter_requirements(*reqs):
-    for item in reqs:
-        if item is None:
-            continue
-        if isinstance(item, os.PathLike):
-            yield os.fspath(item)
-            continue
-        if isinstance(item, bytes):
-            yield item.decode()
-            continue
-        if isinstance(item, str):
-            yield item
-            continue
-        specs = getattr(item, "specs", None)
-        if specs is not None:
-            yield from _iter_requirements(*specs)
-            continue
-        if isinstance(item, (list, tuple, set)):
-            yield from _iter_requirements(*item)
-            continue
-        try:
-            iterator = iter(item)
-        except TypeError:
-            yield str(item)
-        else:
-            yield from _iter_requirements(*iterator)
-
-
 def install_requirements(
     *reqs,
     python,
@@ -53,7 +25,16 @@ def install_requirements(
     env=None,
     verbose=True,
 ):
-    requirements = list(_iter_requirements(*reqs))
+    requirements = []
+    for item in reqs:
+        if item is None:
+            continue
+        if isinstance(item, os.PathLike):
+            requirements.append(os.fspath(item))
+        elif isinstance(item, bytes):
+            requirements.append(item.decode())
+        else:
+            requirements.append(str(item))
     if not requirements:
         return 0, None, None
 
