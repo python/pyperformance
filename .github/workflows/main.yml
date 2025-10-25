@@ -68,6 +68,7 @@ jobs:
       uses: astral-sh/setup-uv@v7
       with:
         version: "0.9.5"
+        enable-cache: true
         cache-suffix: ${{ runner.os }}-${{ matrix.python }}-${{ matrix.build != '' && matrix.build || 'default' }}
     - name: Install
       shell: bash
