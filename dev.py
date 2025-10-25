@@ -40,9 +40,9 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
         if not isready:
             relroot = os.path.relpath(venvroot)
             if not os.path.exists(venvroot):
-                print(f"creating uv env at {relroot}...")
+                print(f"creating env at {relroot}...")
             else:
-                print(f"uv env {relroot} not ready, re-creating...")
+                print(f"venv {relroot} not ready, re-creating...")
                 shutil.rmtree(venvroot)
             ec, _, _ = run_uv(
                 "venv",
@@ -62,7 +62,7 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
     # Now make sure the venv has pyperformance installed.
     if not isready:
         relroot = os.path.relpath(venvroot)
-        print(f"uv env {relroot} not ready, installing dependencies...")
+        print(f"venv {relroot} not ready, installing dependencies...")
         ec, _, _ = run_uv(
             "pip",
             "install",
@@ -76,7 +76,7 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
             sys.exit("ERROR: uv pip install failed")
         with open(readyfile, "w"):
             pass
-        print(f"...uv env {relroot} ready!")
+        print(f"...venv {relroot} ready!")
 
     return venvroot, python
 
