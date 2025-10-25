@@ -2,7 +2,6 @@
 
 import os
 import os.path
-import shutil
 import sys
 import types
 
@@ -123,7 +122,7 @@ def create_venv(
 
     args = [
         "venv",
-        *( ["--python", target_python] if target_python else [] ),
+        *(["--python", target_python] if target_python else []),
         root,
     ]
     ec, _, _ = _utils.run_uv(*args, env=env)

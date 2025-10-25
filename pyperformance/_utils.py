@@ -23,8 +23,8 @@ import contextlib
 import errno
 import os
 import os.path
-import shutil
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -171,7 +171,9 @@ def run_uv(*args, env=None, capture=None, verbose=True):
     uv = shutil.which("uv")
     if not uv:
         if verbose:
-            print("ERROR: uv executable not found. Install uv from https://astral.sh/uv.")
+            print(
+                "ERROR: uv executable not found. Install uv from https://astral.sh/uv."
+            )
         return 127, None, None
     return run_cmd([uv, *args], env=env, capture=capture, verbose=verbose)
 

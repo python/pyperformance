@@ -2,8 +2,8 @@
 
 import os.path
 import shutil
-import subprocess
 import sys
+
 from pyperformance import _utils
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
