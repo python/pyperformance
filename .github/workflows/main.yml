@@ -65,9 +65,11 @@ jobs:
         python-version: ${{ matrix.python }}
         nogil: ${{ matrix.build == 'free-threading' }}
     - name: Install uv
-      uses: astral-sh/setup-uv@v6
+      uses: astral-sh/setup-uv@v7
       with:
         version: "0.9.5"
+        enable-cache: true
+        cache-suffix: ${{ runner.os }}-${{ matrix.python }}-${{ matrix.build != '' && matrix.build || 'default' }}
     - name: Install
       # pyperformance must be installed:
       # pyperformance/tests/test_compare.py imports it
