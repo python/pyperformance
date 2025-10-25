@@ -4,7 +4,7 @@ import os.path
 import shutil
 import sys
 
-from pyperformance import _utils
+from pyperformance._utils import run_uv
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 VENVS = os.path.join(REPO_ROOT, ".venvs")
@@ -44,7 +44,7 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
                 shutil.rmtree(venvroot)
             else:
                 print(f"creating uv env at {relroot}...")
-            ec, _, _ = _utils.run_uv(
+            ec, _, _ = run_uv(
                 "venv",
                 "--python",
                 sys.executable,
@@ -63,7 +63,7 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
     if not isready:
         relroot = os.path.relpath(venvroot)
         print(f"uv env {relroot} not ready, installing dependencies...")
-        ec, _, _ = _utils.run_uv(
+        ec, _, _ = run_uv(
             "pip",
             "install",
             "--python",
