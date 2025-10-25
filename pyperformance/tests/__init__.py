@@ -9,6 +9,8 @@ import sys
 import tempfile
 import unittest
 
+from pyperformance._utils import run_uv
+
 TESTS_ROOT = os.path.realpath(os.path.dirname(__file__))
 DATA_DIR = os.path.join(TESTS_ROOT, "data")
 REPO_ROOT = os.path.dirname(os.path.dirname(TESTS_ROOT))
@@ -75,14 +77,17 @@ def create_venv(root=None, python=sys.executable, *, verbose=False):
         def cleanup():
             return None
 
-    uv = shutil.which("uv")
-    if not uv:
-        raise RuntimeError("uv executable is required to provision test environments")
-    argv = [uv, "venv", "--seed"]
+    argv = ["venv", "--seed"]
     if python:
         argv.extend(["--python", python])
     argv.append(root)
-    run_cmd(*argv, capture=not verbose, onfail="raise", verbose=verbose)
+    exitcode, _, _ = run_uv(*argv, capture=not verbose, verbose=verbose)
+    if exitcode:
+        if exitcode == 127:
+            raise RuntimeError(
+                "uv executable is required to provision test environments"
+            )
+        raise RuntimeError(f'"uv {" ".join(argv)}" failed with exit code {exitcode}')
     venv_root = os.path.realpath(root)
     return venv_root, _resolve_venv_python(venv_root), cleanup
 
