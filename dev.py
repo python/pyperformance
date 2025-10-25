@@ -39,11 +39,11 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
         isready = os.path.exists(readyfile)
         if not isready:
             relroot = os.path.relpath(venvroot)
-            if os.path.exists(venvroot):
+            if not os.path.exists(venvroot):
+                print(f"creating uv env at {relroot}...")
+            else:
                 print(f"uv env {relroot} not ready, re-creating...")
                 shutil.rmtree(venvroot)
-            else:
-                print(f"creating uv env at {relroot}...")
             ec, _, _ = run_uv(
                 "venv",
                 "--python",
