@@ -71,11 +71,13 @@ jobs:
         enable-cache: true
         cache-suffix: ${{ runner.os }}-${{ matrix.python }}-${{ matrix.build != '' && matrix.build || 'default' }}
     - name: Install
+      shell: bash
       # pyperformance must be installed:
       # pyperformance/tests/test_compare.py imports it
       run: |
-        uv pip install --system --upgrade pip setuptools
-        uv pip install --system -e .
+        PYTHON_BIN="$(python -c 'import sys; print(sys.executable)')"
+        uv pip install --python "$PYTHON_BIN" --upgrade pip setuptools
+        uv pip install --python "$PYTHON_BIN" -e .
     - name: Display Python version
       run: |
         python -VV
