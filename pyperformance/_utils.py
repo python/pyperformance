@@ -11,8 +11,6 @@ __all__ = [  # noqa: RUF022
     "parse_name_pattern",
     "parse_selections",
     "parse_tag_pattern",
-    # tooling
-    "run_uv",
 ]
 
 
@@ -165,17 +163,6 @@ def run_python(*args, python=sys.executable, **kwargs):
         except AttributeError:
             raise TypeError(f"expected python str, got {python!r}")
     return run_cmd([python, *args], **kwargs)
-
-
-def run_uv(*args, env=None, capture=None, verbose=True):
-    uv = shutil.which("uv")
-    if not uv:
-        if verbose:
-            print(
-                "ERROR: uv executable not found. Install uv from https://astral.sh/uv."
-            )
-        return 127, None, None
-    return run_cmd([uv, *args], env=env, capture=capture, verbose=verbose)
 
 
 #######################################

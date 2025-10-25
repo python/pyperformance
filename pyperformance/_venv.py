@@ -5,7 +5,7 @@ import os.path
 import sys
 import types
 
-from . import _pip, _pythoninfo, _utils
+from . import _pip, _pythoninfo, _utils, _uv
 
 
 class VenvCreationFailedError(Exception):
@@ -125,7 +125,7 @@ def create_venv(
         *(["--python", target_python] if target_python else []),
         root,
     ]
-    ec, _, _ = _utils.run_uv(*args, env=env)
+    ec, _, _ = _uv.run_uv(*args, env=env)
     if ec != 0:
         if cleanonfail and not already_existed:
             _utils.safe_rmtree(root)
@@ -214,7 +214,9 @@ class VirtualEnvironment:
             return self._base
 
     def ensure_pip(self, downloaddir=None, *, installer=True, upgrade=True):
-        if not upgrade and _pip.is_pip_installed(self.python, env=self._env):
+        if _pip.is_pip_installed(self.python, env=self._env):
+            if upgrade:
+                self.upgrade_pip(installer=installer)
             return
         ec, _, _ = _pip.install_pip(
             self.python,
@@ -250,7 +252,7 @@ class VirtualEnvironment:
 
     def ensure_reqs(self, *reqs, upgrade=True):
         print("Installing requirements into the virtual environment %s" % self.root)
-        ec, _, _ = _pip.install_requirements(
+        ec, _, _ = _uv.install_requirements(
             *reqs,
             python=self.python,
             env=self._env,

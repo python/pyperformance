@@ -9,7 +9,7 @@ import sys
 import tempfile
 import unittest
 
-from pyperformance._utils import run_uv
+from pyperformance._uv import run_uv
 
 TESTS_ROOT = os.path.realpath(os.path.dirname(__file__))
 DATA_DIR = os.path.join(TESTS_ROOT, "data")

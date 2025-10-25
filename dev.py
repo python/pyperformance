@@ -4,7 +4,7 @@ import os.path
 import shutil
 import sys
 
-from pyperformance._utils import run_uv
+from pyperformance._uv import run_uv
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 VENVS = os.path.join(REPO_ROOT, ".venvs")
