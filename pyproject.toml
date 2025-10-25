@@ -65,7 +65,6 @@ classifiers = [
 dynamic = [ "version" ]
 dependencies = [
   "packaging==23.1",
-  "psutil==5.9.5",
   "pyperf==2.9",
   "tomli; python_version<'3.11'",
 ]
