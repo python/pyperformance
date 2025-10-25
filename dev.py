@@ -4,6 +4,7 @@ import os.path
 import shutil
 import subprocess
 import sys
+from pyperformance import _utils
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 VENVS = os.path.join(REPO_ROOT, ".venvs")
@@ -38,27 +39,18 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
         isready = os.path.exists(readyfile)
         if not isready:
             relroot = os.path.relpath(venvroot)
-            uv = shutil.which("uv")
-            if not uv:
-                sys.exit(
-                    "ERROR: uv executable not found. "
-                    "Install uv from https://astral.sh/uv and retry."
-                )
             if os.path.exists(venvroot):
                 print(f"uv env {relroot} not ready, re-creating...")
                 shutil.rmtree(venvroot)
             else:
                 print(f"creating uv env at {relroot}...")
-            result = subprocess.run(
-                [
-                    uv,
-                    "venv",
-                    "--python",
-                    sys.executable,
-                    venvroot,
-                ]
+            ec, _, _ = _utils.run_uv(
+                "venv",
+                "--python",
+                sys.executable,
+                venvroot,
             )
-            if result.returncode != 0:
+            if ec != 0:
                 sys.exit("ERROR: uv venv creation failed")
         else:
             assert os.path.exists(os.path.join(venvroot, "pyvenv.cfg"))
@@ -71,25 +63,16 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
     if not isready:
         relroot = os.path.relpath(venvroot)
         print(f"uv env {relroot} not ready, installing dependencies...")
-        uv = shutil.which("uv")
-        if not uv:
-            sys.exit(
-                "ERROR: uv executable not found. "
-                "Install uv from https://astral.sh/uv and retry."
-            )
-        proc = subprocess.run(
-            [
-                uv,
-                "pip",
-                "install",
-                "--python",
-                python,
-                "--upgrade",
-                "--editable",
-                f"{REPO_ROOT}[dev]",
-            ],
+        ec, _, _ = _utils.run_uv(
+            "pip",
+            "install",
+            "--python",
+            python,
+            "--upgrade",
+            "--editable",
+            f"{REPO_ROOT}[dev]",
         )
-        if proc.returncode != 0:
+        if ec != 0:
             sys.exit("ERROR: uv pip install failed")
         with open(readyfile, "w"):
             pass
