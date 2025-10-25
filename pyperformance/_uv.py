@@ -18,26 +18,7 @@ def run_uv(*args, env=None, capture=None, verbose=True):
     return _utils.run_cmd([uv, *args], env=env, capture=capture, verbose=verbose)
 
 
-def install_requirements(
-    *reqs,
-    python,
-    upgrade=True,
-    env=None,
-    verbose=True,
-):
-    requirements = []
-    for item in reqs:
-        if item is None:
-            continue
-        if isinstance(item, os.PathLike):
-            requirements.append(os.fspath(item))
-        elif isinstance(item, bytes):
-            requirements.append(item.decode())
-        else:
-            requirements.append(str(item))
-    if not requirements:
-        return 0, None, None
-
+def install_requirements(reqs, *extra, python, upgrade=True, env=None, verbose=True):
     args = [
         "pip",
         "install",
@@ -47,7 +28,11 @@ def install_requirements(
     if upgrade:
         args.append("--upgrade")
 
-    for spec in requirements:
+    for spec in (reqs, *extra):
+        if spec is None:
+            continue
+        if isinstance(spec, os.PathLike):
+            spec = os.fspath(spec)
         if os.path.isfile(spec) and spec.endswith(".txt"):
             args.extend(["-r", spec])
         else:
@@ -55,12 +40,7 @@ def install_requirements(
 
     ec, stdout, stderr = run_uv(*args, env=env, verbose=verbose)
     if ec == 127:
-        first, *rest = requirements
         return _pip.install_requirements(
-            first,
-            *rest,
-            python=python,
-            env=env,
-            upgrade=upgrade,
+            reqs, *extra, python=python, env=env, upgrade=upgrade
         )
     return ec, stdout, stderr
