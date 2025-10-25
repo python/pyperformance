@@ -111,11 +111,21 @@ def create_venv(
 ):
     """Create a new venv at the given root, optionally installing pip."""
     already_existed = os.path.exists(root)
-    if withpip:
-        args = ["-m", "venv", root]
+
+    if isinstance(python, str) or python is None:
+        target_python = python or sys.executable
     else:
-        args = ["-m", "venv", "--without-pip", root]
-    ec, _, _ = _utils.run_python(*args, python=python, env=env)
+        try:
+            target_python = python.sys.executable
+        except AttributeError as exc:
+            raise TypeError(f"expected python str, got {python!r}") from exc
+
+    args = [
+        "venv",
+        *(["--python", target_python] if target_python else []),
+        root,
+    ]
+    ec, _, _ = _utils.run_uv(*args, env=env)
     if ec != 0:
         if cleanonfail and not already_existed:
             _utils.safe_rmtree(root)

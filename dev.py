@@ -1,7 +1,10 @@
 # A script for running pyperformance out of the repo in dev-mode.
 
 import os.path
+import shutil
 import sys
+
+from pyperformance import _utils
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 VENVS = os.path.join(REPO_ROOT, ".venvs")
@@ -29,8 +32,6 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
         readyfile = os.path.join(sys.prefix, "READY")
         isready = os.path.exists(readyfile)
     else:
-        import venv
-
         if not venvroot:
             venvroot = resolve_venv_root(kind, venvsdir)
         # Make sure the venv exists.
@@ -38,11 +39,19 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
         isready = os.path.exists(readyfile)
         if not isready:
             relroot = os.path.relpath(venvroot)
-            if not os.path.exists(venvroot):
-                print(f"creating venv at {relroot}...")
+            if os.path.exists(venvroot):
+                print(f"uv env {relroot} not ready, re-creating...")
+                shutil.rmtree(venvroot)
             else:
-                print(f"venv {relroot} not ready, re-creating...")
-            venv.create(venvroot, with_pip=True, clear=True)
+                print(f"creating uv env at {relroot}...")
+            ec, _, _ = _utils.run_uv(
+                "venv",
+                "--python",
+                sys.executable,
+                venvroot,
+            )
+            if ec != 0:
+                sys.exit("ERROR: uv venv creation failed")
         else:
             assert os.path.exists(os.path.join(venvroot, "pyvenv.cfg"))
         # Return the venv's Python executable.
@@ -52,18 +61,22 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
 
     # Now make sure the venv has pyperformance installed.
     if not isready:
-        import subprocess
-
         relroot = os.path.relpath(venvroot)
-        print(f"venv {relroot} not ready, installing dependencies...")
-        proc = subprocess.run(
-            [python, "-m", "pip", "install", "--upgrade", "--editable", REPO_ROOT],
+        print(f"uv env {relroot} not ready, installing dependencies...")
+        ec, _, _ = _utils.run_uv(
+            "pip",
+            "install",
+            "--python",
+            python,
+            "--upgrade",
+            "--editable",
+            f"{REPO_ROOT}[dev]",
         )
-        if proc.returncode != 0:
-            sys.exit("ERROR: install failed")
+        if ec != 0:
+            sys.exit("ERROR: uv pip install failed")
         with open(readyfile, "w"):
             pass
-        print("...venv {relroot} ready!")
+        print(f"...uv env {relroot} ready!")
 
     return venvroot, python
 
