@@ -40,7 +40,7 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
         if not isready:
             relroot = os.path.relpath(venvroot)
             if not os.path.exists(venvroot):
-                print(f"creating env at {relroot}...")
+                print(f"creating venv at {relroot}...")
             else:
                 print(f"venv {relroot} not ready, re-creating...")
                 shutil.rmtree(venvroot)
@@ -51,7 +51,7 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
                 venvroot,
             )
             if ec != 0:
-                sys.exit("ERROR: uv venv creation failed")
+                sys.exit("ERROR: venv creation failed")
         else:
             assert os.path.exists(os.path.join(venvroot, "pyvenv.cfg"))
         # Return the venv's Python executable.
