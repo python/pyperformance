@@ -46,7 +46,7 @@ jobs:
             python: pypy-3.11
             experimental: false
           - os: ubuntu-latest
-            python: graalpy-24.0
+            python: graalpy-25.0.0
             experimental: true
           - os: macos-latest
             python: "3.14"
