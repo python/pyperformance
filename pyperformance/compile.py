@@ -373,11 +373,6 @@ class Python(Task):
         _utils.download(url, filename)
 
     def _install_pip(self):
-        # On Python: 3.5a0 <= version < 3.5.0 (final), install pip 7.1.2,
-        # the last version working on Python 3.5a0:
-        # https://sourceforge.net/p/pyparsing/bugs/100/
-        assert self.hexversion > 0x3060000, self.hexversion
-
         # is pip already installed and working?
         exitcode = self.run_nocheck(self.program, "-u", "-m", "pip", "--version")
         if not exitcode:
