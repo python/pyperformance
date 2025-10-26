@@ -89,7 +89,6 @@ def cmd_venv_recreate(options, root, python, benchmarks):
             venv.ensure_pip()
             try:
                 venv.ensure_reqs(requirements)
-                venv.ensure_reqs(requirements)
             except _venv.RequirementsInstallationFailedError:
                 sys.exit(1)
         else:
@@ -156,7 +155,6 @@ def cmd_venv_show(options, root):
 
 def cmd_run(options, benchmarks):
     import pyperf
-
     import pyperformance
 
     from .compare import display_benchmark_suite
