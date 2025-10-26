@@ -155,6 +155,7 @@ def cmd_venv_show(options, root):
 
 def cmd_run(options, benchmarks):
     import pyperf
+
     import pyperformance
 
     from .compare import display_benchmark_suite
