@@ -150,27 +150,6 @@ def mark(label, func=None):
     return func
 
 
-class Compat:
-    """A mixin that lets older Pythons use newer unittest features."""
-
-    if sys.version_info < (3, 8):
-
-        @classmethod
-        def setUpClass(cls):
-            super().setUpClass()
-            cls._cleanups = []
-
-        @classmethod
-        def tearDownClass(cls):
-            super().tearDownClass()
-            for cleanup in cls._cleanups:
-                cleanup()
-
-        @classmethod
-        def addClassCleanup(cls, cleanup):
-            cls._cleanups.append(cleanup)
-
-
 #############################
 # functional tests
 
@@ -186,7 +165,7 @@ def SLOW(f):
     return unittest.skip("way too slow")(mark("slow", f))
 
 
-class Functional(Compat):
+class Functional:
     """A mixin for functional tests.
 
     In this context, "functional" means the test touches the filesystem,
