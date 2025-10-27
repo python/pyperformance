@@ -133,6 +133,24 @@ class BNode:
         else:
             return 1 + self.nodes[0].get_level()
 
+    def get_min_item(self):
+        """() -> (key:anything, value:anything)
+        Return the item with the minimal key.
+        """
+        if self.is_leaf():
+            return self.items[0]
+        else:
+            return self.nodes[0].get_min_item()
+
+    def get_max_item(self):
+        """() -> (key:anything, value:anything)
+        Return the item with the maximal key.
+        """
+        if self.is_leaf():
+            return self.items[-1]
+        else:
+            return self.nodes[-1].get_max_item()
+
     def delete(self, key):
         """(key:anything)
         Delete the item with this key.
