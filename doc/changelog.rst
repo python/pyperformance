@@ -5,9 +5,9 @@ Version 1.13.0 (2025-10-27)
 --------------
 * Re-enable xdsl benchmark
 * Remove code for Python 3.7 and previous versions
-* Fix workflow ubuntu-latest
 * CI updates:
-  * remove azure pipeline
+  * fix workflow ubuntu-latest
+  * remove unused Azure Pipelines config
   * update checkout version
   * setup dependabot
   * update setup-python version
