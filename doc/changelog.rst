@@ -1,6 +1,17 @@
 Changelog
 =========
 
+Version 1.13.0 (2025-10-27)
+--------------
+* Re-enable xdsl benchmark
+* Remove code for Python 3.7 and previous versions
+* Fix workflow ubuntu-latest
+* CI updates:
+  * remove azure pipeline
+  * update checkout version
+  * setup dependabot
+  * update setup-python version
+
 Version 1.12.0 (2025-10-24)
 --------------
 * Add xdsl benchmark (but disabled by default due to a regression)
