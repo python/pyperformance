@@ -32,21 +32,22 @@ def run_pyperformance(revision):
     out_file = output_dir / f"{branch}-{sha}.out"
     err_file = output_dir / f"{branch}-{sha}.err"
     with open(out_file, "w") as output, open(err_file, "w") as error:
-        subprocess.run([
-            "./run-pyperformance.sh",
-            "-x",
-            "--",
-            "compile",
-            "benchmark.conf",
-            sha,
-            branch,
-        ],
-        stdout=output,
-        stderr=error,
+        subprocess.run(
+            [
+                "./run-pyperformance.sh",
+                "-x",
+                "--",
+                "compile",
+                "benchmark.conf",
+                sha,
+                branch,
+            ],
+            stdout=output,
+            stderr=error,
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     original_sigint_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
     pool = Pool(10)
     signal.signal(signal.SIGINT, original_sigint_handler)
