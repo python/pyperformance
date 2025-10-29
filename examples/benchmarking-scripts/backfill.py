@@ -49,12 +49,12 @@ def run_pyperformance(revision):
 
 if __name__ == "__main__":
     original_sigint_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
-    pool = Pool(10)
+    pool = Pool(8)
     signal.signal(signal.SIGINT, original_sigint_handler)
     try:
         res = pool.map_async(run_pyperformance, get_revisions())
         # Without the timeout this blocking call ignores all signals.
-        res.get(600)
+        res.get(86400)
     except KeyboardInterrupt:
         print("Caught KeyboardInterrupt, terminating workers")
         pool.terminate()

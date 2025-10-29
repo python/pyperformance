@@ -60,7 +60,7 @@ pkg_only =
 install = True
 
 # Specify '-j' parameter in 'make' command
-jobs = 32
+jobs = 24
 
 [run_benchmark]
 # Run "sudo python3 -m pyperf system tune" before running benchmarks?
@@ -96,7 +96,7 @@ branches = main
 
 # List of revisions to benchmark by compile_all
 [compile_all_revisions]
-# list of 'sha1=' (default branch: 'master') or 'sha1=branch'
+# list of 'sha1=' (default branch: 'main') or 'sha1=branch'
 # used by the "pyperformance compile_all" command
 # e.g.:
 # 11159d2c9d6616497ef4cc62953a5c3cc8454afb =
