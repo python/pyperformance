@@ -1,5 +1,5 @@
-"""The background for this benchmark is that the garbage collection in Python 3.14
-had a performance regression, see
+"""The background for this benchmark is that the garbage collection in
+Python 3.14.0 had a performance regression, see
 
 * https://github.com/python/cpython/issues/140175
 * https://github.com/python/cpython/issues/139951
@@ -8,13 +8,12 @@ had a performance regression, see
 
 import tempfile
 from pathlib import Path
-
 import pyperf
+import pickle
+import pickletools
 
 
 def setup(fname, N):
-    import pickle
-
     x = {}
     for i in range(1, N):
         x[i] = f"ii{i:>07}"
@@ -24,8 +23,6 @@ def setup(fname, N):
 
 
 def run(fname):
-    import pickletools
-
     with open(fname, "rb") as fh:
         p = fh.read()
 
@@ -38,8 +35,9 @@ def run(fname):
 if __name__ == "__main__":
     runner = pyperf.Runner()
     N = 1_000_000
-    tmp_path = Path(tempfile.mkdtemp())
-    fname = tmp_path / "pickle"
-    setup(fname, N)
-    runner.metadata["description"] = "Pickletools optimize"
-    runner.bench_func("pickle_opt", run, fname)
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_path = Path(tmp)
+        fname = tmp_path / "pickle"
+        setup(fname, N)
+        runner.metadata["description"] = "Pickletools optimize"
+        runner.bench_func("pickle_opt", run, fname)
