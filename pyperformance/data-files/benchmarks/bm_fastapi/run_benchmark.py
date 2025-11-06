@@ -15,7 +15,6 @@ Author: Savannah Ostrowski
 import asyncio
 import socket
 import time
-from typing import List
 
 import httpx
 import pyperf
@@ -31,7 +30,7 @@ class Item(BaseModel):
     id: int
     name: str
     price: float
-    tags: List[str] = []
+    tags: list[str] = []
 
 app = FastAPI()
 
