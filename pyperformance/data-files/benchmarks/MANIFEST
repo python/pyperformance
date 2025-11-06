@@ -42,7 +42,7 @@ django_template	<local>
 dulwich_log	<local>
 docutils	<local>
 fannkuch	<local>
-fastapi    <local>
+fastapi	<local>
 float	<local>
 genshi	<local>
 go	<local>
