@@ -14,7 +14,7 @@ output/<branch>-<sha>.(out|err).
 """
 
 
-def get_revisions():
+def get_revisions() -> tuple[str, str]:
     revisions = []
     with open("backfill_shas.txt", "r") as f:
         for line in f:
