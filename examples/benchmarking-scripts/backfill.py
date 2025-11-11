@@ -24,8 +24,7 @@ def get_revisions():
 
 
 def run_pyperformance(revision):
-    sha = revision[0]
-    branch = revision[1]
+    sha, branch = revision
     print(f"Running run-pyperformance.sh with sha: {sha}, branch: {branch}")
     output_dir = Path("output")
     output_dir.mkdir(parents=True, exist_ok=True)
