@@ -12,7 +12,7 @@
 pyperf
 
 # for benchmark metadata:
-packaging
+packaging==23.1
 tomli; python_version < '3.11'
 
 
@@ -22,4 +22,4 @@ tomli; python_version < '3.11'
 # The list of optional dependencies is hardcoded in pyperformance/venv.py
 
 # XXX Do we still need this?
-psutil
+psutil==5.9.5
