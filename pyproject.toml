@@ -71,7 +71,7 @@ dependencies = [
 ]
 
 optional-dependencies.dev = [
-  "mypy==1.18.2",
+  "mypy==1.19.0",
   "tomli",        # Needed even on 3.11+ for typechecking with mypy
   "tox",
 ]
