@@ -52,7 +52,7 @@ jobs:
             python: "3.14"
             experimental: false
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Set up Python ${{ matrix.python }}
       uses: actions/setup-python@v6
       if: "!endsWith(matrix.python, '-dev')"
