@@ -4,6 +4,7 @@ import os.path
 import sys
 
 from pyperf import _hooks
+
 from pyperformance import __version__, _utils, is_dev, is_installed
 from pyperformance.commands import (
     cmd_compare,
