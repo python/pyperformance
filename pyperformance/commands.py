@@ -89,7 +89,6 @@ def cmd_venv_recreate(options, root, python, benchmarks):
             venv.ensure_pip()
             try:
                 venv.ensure_reqs(requirements)
-                venv.ensure_reqs(requirements)
             except _venv.RequirementsInstallationFailedError:
                 sys.exit(1)
         else:
