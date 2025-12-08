@@ -1,8 +1,7 @@
 # Update dependencies:
 #
-#  - python3 -m pip install --user --upgrade pip-tools build
 #  - git clean -fdx  # remove all untracked files!
-#  - (pip-compile --upgrade -o requirements.txt requirements.in)
+#  - uv pip compile --upgrade -o requirements.txt requirements.in
 #
 # Prepare a release:
 #
@@ -28,8 +27,8 @@
 #  - git tag VERSION
 #  - git push --tags
 #  - Remove untracked files/dirs: git clean -fdx
-#  - python -m build
-#  - twine upload dist/*
+#  - uv run python -m build
+#  - uvx twine upload dist/*
 #
 # After the release:
 #
@@ -65,8 +64,8 @@ classifiers = [
 ]
 dynamic = [ "version" ]
 dependencies = [
-  "packaging",
-  "pyperf",
+  "packaging==23.1",
+  "pyperf==2.9",
   "tomli; python_version<'3.11'",
 ]
 
