@@ -43,26 +43,14 @@ async def get_item(item_id: int):
     }
 
 
-def bench_fastapi(loops):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((HOST, 0))
-        s.listen(1)
-        port = s.getsockname()[1]
-
-    config = uvicorn.Config(app, host=HOST, port=port, log_level="error")
-    server = uvicorn.Server(config)
-
+def bench_fastapi(loops, url):
     async def run_benchmark():
-        server_task = asyncio.create_task(server.serve())
-        while not server.started:
-            await asyncio.sleep(0.01)
-
         async with httpx.AsyncClient() as client:
             t0 = pyperf.perf_counter()
 
             for i in range(loops):
                 tasks = [
-                    client.get(f"http://{HOST}:{port}/items/{i}")
+                    client.get(f"{url}/items/{i}")
                     for _ in range(CONCURRENCY)
                 ]
                 responses = await asyncio.gather(*tasks)
@@ -72,16 +60,30 @@ def bench_fastapi(loops):
                     assert data["id"] == i
                     assert "tags" in data
 
-            elapsed = pyperf.perf_counter() - t0
-
-        server.should_exit = True
-        await server_task
-        return elapsed
+            return pyperf.perf_counter() - t0
 
     return asyncio.run(run_benchmark())
 
 
 if __name__ == "__main__":
+    import threading
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, 0))
+        s.listen(1)
+        port = s.getsockname()[1]
+
+    config = uvicorn.Config(app, host=HOST, port=port, log_level="error")
+    server = uvicorn.Server(config)
+
+    server_thread = threading.Thread(target=server.run, daemon=True)
+    server_thread.start()
+
+    while not server.started:
+        pass
+
+    url = f"http://{HOST}:{port}"
+
     runner = pyperf.Runner()
     runner.metadata['description'] = "Test the performance of HTTP requests with FastAPI"
-    runner.bench_time_func("fastapi_http", bench_fastapi)
+    runner.bench_time_func("fastapi_http", bench_fastapi, url)
