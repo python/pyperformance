@@ -49,7 +49,6 @@ def bench_fastapi(loops):
         s.listen(1)
         port = s.getsockname()[1]
 
-    # Setup server
     config = uvicorn.Config(app, host=HOST, port=port, log_level="error")
     server = uvicorn.Server(config)
 
