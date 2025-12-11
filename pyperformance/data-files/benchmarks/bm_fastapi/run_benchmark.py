@@ -55,7 +55,8 @@ def bench_fastapi(loops):
 
     async def run_benchmark():
         server_task = asyncio.create_task(server.serve())
-        await asyncio.sleep(0.5)
+        while not server.started:
+            await asyncio.sleep(0.01)
 
         async with httpx.AsyncClient() as client:
             t0 = pyperf.perf_counter()
