@@ -14,7 +14,6 @@ Author: Savannah Ostrowski
 
 import asyncio
 import socket
-import time
 
 import httpx
 import pyperf
@@ -44,41 +43,42 @@ async def get_item(item_id: int):
     }
 
 
-async def run_server_and_benchmark(loops):
+def bench_fastapi(loops):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, 0))
         s.listen(1)
         port = s.getsockname()[1]
 
+    # Setup server
     config = uvicorn.Config(app, host=HOST, port=port, log_level="error")
     server = uvicorn.Server(config)
-    server_task = asyncio.create_task(server.serve())
 
-    await asyncio.sleep(0.5)
+    async def run_benchmark():
+        server_task = asyncio.create_task(server.serve())
+        await asyncio.sleep(0.5)
 
-    async with httpx.AsyncClient() as client:
-        t0 = time.perf_counter()
+        async with httpx.AsyncClient() as client:
+            t0 = pyperf.perf_counter()
 
-        for i in range(loops):
-            tasks = [
-                client.get(f"http://{HOST}:{port}/items/{i}")
-                for _ in range(CONCURRENCY)
-            ]
-            responses = await asyncio.gather(*tasks)
-            for response in responses:
-                response.raise_for_status()
-                data = response.json()
-                assert data["id"] == i
-                assert "tags" in data
+            for i in range(loops):
+                tasks = [
+                    client.get(f"http://{HOST}:{port}/items/{i}")
+                    for _ in range(CONCURRENCY)
+                ]
+                responses = await asyncio.gather(*tasks)
+                for response in responses:
+                    response.raise_for_status()
+                    data = response.json()
+                    assert data["id"] == i
+                    assert "tags" in data
 
-        elapsed = time.perf_counter() - t0
+            elapsed = pyperf.perf_counter() - t0
 
-    server.should_exit = True
-    await server_task
-    return elapsed
+        server.should_exit = True
+        await server_task
+        return elapsed
 
-def bench_fastapi(loops):
-    return asyncio.run(run_server_and_benchmark(loops))
+    return asyncio.run(run_benchmark())
 
 
 if __name__ == "__main__":
