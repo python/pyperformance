@@ -17,6 +17,7 @@ import socket
 
 import httpx
 import pyperf
+import threading
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -42,6 +43,23 @@ async def get_item(item_id: int):
         "tags": ["sample", "item", "fastapi"]
     }
 
+def setup_server(): 
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, 0))
+        s.listen(1)
+        port = s.getsockname()[1]
+
+    config = uvicorn.Config(app, host=HOST, port=port, log_level="error")
+    server = uvicorn.Server(config)
+
+    server_thread = threading.Thread(target=server.run, daemon=True)
+    server_thread.start()
+
+    while not server.started:
+        pass
+
+    url = f"http://{HOST}:{port}"
+    return url
 
 def bench_fastapi(loops, url):
     async def run_benchmark():
@@ -66,24 +84,7 @@ def bench_fastapi(loops, url):
 
 
 if __name__ == "__main__":
-    import threading
-
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((HOST, 0))
-        s.listen(1)
-        port = s.getsockname()[1]
-
-    config = uvicorn.Config(app, host=HOST, port=port, log_level="error")
-    server = uvicorn.Server(config)
-
-    server_thread = threading.Thread(target=server.run, daemon=True)
-    server_thread.start()
-
-    while not server.started:
-        pass
-
-    url = f"http://{HOST}:{port}"
-
+    url = setup_server()
     runner = pyperf.Runner()
     runner.metadata['description'] = "Test the performance of HTTP requests with FastAPI"
     runner.bench_time_func("fastapi_http", bench_fastapi, url)
