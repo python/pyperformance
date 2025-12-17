@@ -2,9 +2,7 @@ name: test
 
 on:
   push:
-    branches: [main]
   pull_request:
-    branches: [main]
   schedule:
     # Midnight UTC:
     - cron: "0 0 * * *"
@@ -22,41 +20,46 @@ jobs:
       fail-fast: false
       matrix:
         # Test all supported versions on Ubuntu:
-        os: [ubuntu-latest]
-        python: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+        python: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         experimental: [false]
         build: ['']
         include:
           # As the experimental task for the dev version.
           - os: ubuntu-latest
-            python: "3.13-dev"
+            python: "3.14"
+            experimental: true
+            build: 'free-threading'
+          - os: ubuntu-24.04-arm
+            python: "3.14"
+            experimental: true
+            build: 'free-threading'
+          - os: ubuntu-latest
+            python: "3.15-dev"
             experimental: true
           - os: ubuntu-latest
-            python: "3.13-dev"
+            python: "3.15-dev"
             experimental: true
             build: 'free-threading'
           # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
-            python: pypy-3.10
-            experimental: false
-          - os: ubuntu-latest
-            python: pypy-3.9
+            python: pypy-3.11
             experimental: false
           - os: macos-latest
-            python: "3.12"
+            python: "3.14"
             experimental: true
           - os: windows-latest
-            python: "3.12"
-            experimental: true
+            python: "3.14"
+            experimental: false
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Python ${{ matrix.python }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       if: "!endsWith(matrix.python, '-dev')"
       with:
         python-version: ${{ matrix.python }}
     - name: Set up Python ${{ matrix.python }} using deadsnakes
-      uses: deadsnakes/action@v3.1.0
+      uses: deadsnakes/action@v3.2.0
       if: "endsWith(matrix.python, '-dev')"
       with:
         python-version: ${{ matrix.python }}

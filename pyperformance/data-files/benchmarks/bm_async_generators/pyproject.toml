@@ -7,3 +7,4 @@ dynamic = ["version"]
 
 [tool.pyperformance]
 name = "async_generators"
+tags = "asyncio"

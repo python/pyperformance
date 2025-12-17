@@ -1,13 +1,14 @@
+import json
 import os.path
 import sys
+from importlib.metadata import distribution
 
-
-VERSION = (1, 11, 0)
-__version__ = '.'.join(map(str, VERSION))
+VERSION = (1, 13, 0)
+__version__ = ".".join(map(str, VERSION))
 
 
 PKG_ROOT = os.path.dirname(__file__)
-DATA_DIR = os.path.join(PKG_ROOT, 'data-files')
+DATA_DIR = os.path.join(PKG_ROOT, "data-files")
 
 
 def is_installed():
@@ -20,7 +21,7 @@ def is_installed():
 
 def is_dev():
     parent = os.path.dirname(PKG_ROOT)
-    return os.path.exists(os.path.join(parent, 'setup.py'))
+    return os.path.exists(os.path.join(parent, "pyproject.toml"))
 
 
 def _is_venv():
@@ -33,14 +34,8 @@ def _is_devel_install():
     # pip install -e <path-to-git-checkout> will do a "devel" install.
     # This means it creates a link back to the checkout instead
     # of copying the files.
-    try:
-        import packaging
-    except ModuleNotFoundError:
-        return False
-    sitepackages = os.path.dirname(os.path.dirname(packaging.__file__))
-    if os.path.isdir(os.path.join(sitepackages, 'pyperformance')):
-        return False
-    if not os.path.exists(os.path.join(sitepackages, 'pyperformance.egg-link')):
-        # XXX Check the contents?
-        return False
-    return True
+
+    direct_url = distribution("pyperformance").read_text("direct_url.json")
+    if direct_url:
+        return json.loads(direct_url).get("dir_info", {}).get("editable", False)
+    return False

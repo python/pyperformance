@@ -140,7 +140,7 @@ def train(data: str):
 
 def bench_bpe_tokeniser(loops: int) -> float:
     DATA = Path(__file__).parent / "data" / "frankenstein_intro.txt"
-    with open(DATA, "r") as f:
+    with open(DATA, "r", encoding="utf8") as f:
         data = f.read()
 
     range_it = range(loops)
