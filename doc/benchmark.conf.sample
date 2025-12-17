@@ -37,6 +37,20 @@ lto = True
 # Profiled Guided Optimization (PGO)?
 pgo = True
 
+# Build the experimental just-in-time (JIT) compiler?
+# Possible values are:
+# - no: (default) do not build the JIT or the micro-op interpreter.
+#   The new PYTHON_JIT environment variable has no effect.
+# - yes: build the JIT and enable it by default. PYTHON_JIT=0 can be used to
+#   disable it at runtime.
+# - yes-off: build the JIT, but do not enable it by default. PYTHON_JIT=1 can
+#   be used to enable it at runtime.
+# - interpreter: do not build the JIT, but do build and enable the micro-op
+#   interpreter. This is useful for those of us who find ourselves developing
+#   or debugging micro-ops (but don’t want to deal with the JIT).
+#   PYTHON_JIT=0 can be used to disable the micro-op interpreter at runtime.
+jit = no
+
 # The space-separated list of libraries that are package-only,
 # i.e., locally installed but not on header and library paths.
 # For each such library, determine the install path and add an
@@ -82,6 +96,8 @@ affinity =
 # disabled.
 upload = False
 
+# --rigorous option for 'pyperformance run'
+rigorous = False
 
 # Configuration to upload results to a Codespeed website
 [upload]

@@ -4,11 +4,11 @@
 #
 #    pip-compile --output-file=pyperformance/requirements/requirements.txt requirements.in
 #
-packaging==23.1
+packaging>=24.1
     # via -r requirements.in
-psutil==5.9.5
+psutil==7.0.0
     # via
     #   -r requirements.in
     #   pyperf
-pyperf==2.6.3
+pyperf==2.9.0
     # via -r requirements.in
