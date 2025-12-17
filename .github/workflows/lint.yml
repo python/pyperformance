@@ -1,0 +1,12 @@
+name: Lint
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions: {}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: tox-dev/action-pre-commit-uv@v1

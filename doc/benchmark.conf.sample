@@ -96,6 +96,8 @@ affinity =
 # disabled.
 upload = False
 
+# --rigorous option for 'pyperformance run'
+rigorous = False
 
 # Configuration to upload results to a Codespeed website
 [upload]

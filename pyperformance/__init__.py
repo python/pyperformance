@@ -3,13 +3,12 @@ import os.path
 import sys
 from importlib.metadata import distribution
 
-
-VERSION = (1, 11, 0)
-__version__ = '.'.join(map(str, VERSION))
+VERSION = (1, 13, 0)
+__version__ = ".".join(map(str, VERSION))
 
 
 PKG_ROOT = os.path.dirname(__file__)
-DATA_DIR = os.path.join(PKG_ROOT, 'data-files')
+DATA_DIR = os.path.join(PKG_ROOT, "data-files")
 
 
 def is_installed():
@@ -22,7 +21,7 @@ def is_installed():
 
 def is_dev():
     parent = os.path.dirname(PKG_ROOT)
-    return os.path.exists(os.path.join(parent, 'pyproject.toml'))
+    return os.path.exists(os.path.join(parent, "pyproject.toml"))
 
 
 def _is_venv():
