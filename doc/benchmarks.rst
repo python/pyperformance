@@ -76,6 +76,22 @@ These benchmarks also have an "eager" flavor that uses asyncio eager task factor
 if available.
 
 
+btree
+-----
+
+Benchmark a pure-Python implementation of a B-tree data structure.  The tree
+is created with a relatively large number of nodes (default is 200,000).  This
+attempts to simulate an application that operates on a large number of objects
+in memory (at least, large compared to other benchmarks currently in this
+suite). There are two variations of this benchmark: `btree` records the time to
+create the B-tree, run `gc.collect()` and then do some operations on it; the
+`btree_gc_only` variant records only the time to run `gc.collect()` and it
+skips the operations after creation.
+
+Note that this benchmark does not create any reference cycles that the garbage
+collector will need to break to free memory.
+
+
 chameleon
 ---------
 
