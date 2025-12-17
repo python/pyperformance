@@ -48,8 +48,8 @@ BENCHMARKS = (
 
 if __name__ == '__main__':
     runner = pyperf.Runner()
-    runner.metadata['description'] = "random benchmark"
+    runner.metadata['description'] = 'random benchmark: core random distributions'
 
     for func, args in BENCHMARKS:
-        name = f"random.{func.__name__}{args!r}"
+        name = f'random.{func.__name__}{args}'
         runner.bench_time_func(name, bench_func(func, args))
