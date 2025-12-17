@@ -6,6 +6,7 @@
 # Temporary files, usually created by text editors (vim)
 *.swp
 *~
+.vscode
 
 # Created by setup.py sdist
 build/
