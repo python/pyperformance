@@ -79,25 +79,25 @@ if available.
 base64
 ------
 
-Benchmark the ``base64`` module's encoding and decoding functions across
-various data sizes (20 bytes, 127 bytes, 3 KB, and 100 KB).
+Benchmark the ``base64`` module's encoding and decoding functions. Each
+algorithm has ``_small`` and ``_large`` variants that test both encode and
+decode in a single benchmark:
+
+* ``_small``: Balanced iterations across tiny (20B), small (127B), medium (3KB),
+  and 9KB data sizes
+* ``_large``: Large data focus with 100KB x 10 iterations plus 1MB x 1 iteration
 
 Available benchmarks:
 
-* ``base64_encode``: Standard Base64 encoding (``b64encode``)
-* ``base64_decode``: Standard Base64 decoding (``b64decode``)
-* ``base64_decode_validate``: Base64 decoding with ``validate=True``
-* ``urlsafe_base64_encode``: URL-safe Base64 encoding (``urlsafe_b64encode``)
-* ``urlsafe_base64_decode``: URL-safe Base64 decoding (``urlsafe_b64decode``)
-* ``base32_encode``: Base32 encoding (``b32encode``)
-* ``base32_decode``: Base32 decoding (``b32decode``)
-* ``base16_encode``: Base16/hex encoding (``b16encode``)
-* ``base16_decode``: Base16/hex decoding (``b16decode``)
-* ``ascii85_encode``: Ascii85 encoding (``a85encode``)
-* ``ascii85_decode``: Ascii85 decoding (``a85decode``)
-* ``ascii85_encode_wrapcol``: Ascii85 encoding with ``wrapcol=76``
-* ``base85_encode``: Base85 encoding (``b85encode``)
-* ``base85_decode``: Base85 decoding (``b85decode``)
+* ``base64_small``, ``base64_large``: Standard Base64 encoding and decoding
+  (includes ``validate=True`` code path)
+* ``urlsafe_base64_small``: URL-safe Base64 (small only, as URLs shouldn't
+  contain huge data)
+* ``base32_small``, ``base32_large``: Base32 encoding and decoding
+* ``base16_small``, ``base16_large``: Base16/hex encoding and decoding
+* ``ascii85_small``, ``ascii85_large``: Ascii85 encoding and decoding
+  (includes ``wrapcol=76`` code path)
+* ``base85_small``, ``base85_large``: Base85 encoding and decoding
 
 See the `base64 module <https://docs.python.org/dev/library/base64.html>`_.
 
