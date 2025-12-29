@@ -1,6 +1,10 @@
 Changelog
 =========
 
+Version 1.14.0
+--------------
+* Add base64 module benchmark (b64, b32, b16, a85, b85)
+
 Version 1.13.0 (2025-10-27)
 --------------
 * Re-enable xdsl benchmark
