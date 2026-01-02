@@ -2,18 +2,18 @@
 # Directory where JSON files are written.
 # - uploaded files are moved to json_dir/uploaded/
 # - results of patched Python are written into json_dir/patch/
-json_dir = ~/json
+json_dir = TMPDIR/json
 
-# If True, compile CPython in debug mode (LTO and PGO disabled),
+# If True, compile CPython is debug mode (LTO and PGO disabled),
 # run benchmarks with --debug-single-sample, and disable upload.
 #
-# Use this option to quickly test a configuration.
+# Use this option used to quickly test a configuration.
 debug = False
 
 
 [scm]
 # Directory of CPython source code (Git repository)
-repo_dir = ~/cpython
+repo_dir = TMPDIR/cpython
 
 # Update the Git repository (git fetch)?
 update = True
@@ -29,27 +29,13 @@ git_remote = remotes/origin
 # - bench_dir/bench-xxx.log
 # - bench_dir/prefix/: where Python is installed
 # - bench_dir/venv/: Virtual environment used by pyperformance
-bench_dir = ~/bench_tmpdir
+bench_dir = TMPDIR/bench_tmpdir
 
 # Link Time Optimization (LTO)?
 lto = True
 
 # Profiled Guided Optimization (PGO)?
 pgo = True
-
-# Build the experimental just-in-time (JIT) compiler?
-# Possible values are:
-# - no: (default) do not build the JIT or the micro-op interpreter.
-#   The new PYTHON_JIT environment variable has no effect.
-# - yes: build the JIT and enable it by default. PYTHON_JIT=0 can be used to
-#   disable it at runtime.
-# - yes-off: build the JIT, but do not enable it by default. PYTHON_JIT=1 can
-#   be used to enable it at runtime.
-# - interpreter: do not build the JIT, but do build and enable the micro-op
-#   interpreter. This is useful for those of us who find ourselves developing
-#   or debugging micro-ops (but don’t want to deal with the JIT).
-#   PYTHON_JIT=0 can be used to disable the micro-op interpreter at runtime.
-jit = no
 
 # The space-separated list of libraries that are package-only,
 # i.e., locally installed but not on header and library paths.
@@ -74,12 +60,11 @@ pkg_only =
 install = True
 
 # Specify '-j' parameter in 'make' command
-jobs = 8
-
+jobs = 24
 
 [run_benchmark]
 # Run "sudo python3 -m pyperf system tune" before running benchmarks?
-system_tune = True
+system_tune = False
 
 # --manifest option for 'pyperformance run'
 manifest =
@@ -88,33 +73,30 @@ manifest =
 benchmarks =
 
 # --affinity option for 'pyperf system tune' and 'pyperformance run'
-affinity =
+affinity = CPUID
 
 # Upload generated JSON file?
 #
 # Upload is disabled on patched Python, in debug mode or if install is
 # disabled.
-upload = False
-
-# --rigorous option for 'pyperformance run'
-rigorous = False
+upload = True
 
 # Configuration to upload results to a Codespeed website
 [upload]
-url =
-environment =
-executable =
-project =
-
+url = https://speed.python.org/
+# environment-name should be created on speed.python.org
+environment = environment-name
+executable = lto-pgo
+project = CPython
 
 [compile_all]
 # List of CPython Git branches
-branches = default 3.6 3.5 2.7
+branches = main
 
 
 # List of revisions to benchmark by compile_all
 [compile_all_revisions]
-# list of 'sha1=' (default branch: 'master') or 'sha1=branch'
+# list of 'sha1=' (default branch: 'main') or 'sha1=branch'
 # used by the "pyperformance compile_all" command
 # e.g.:
-11159d2c9d6616497ef4cc62953a5c3cc8454afb =
+# 11159d2c9d6616497ef4cc62953a5c3cc8454afb =

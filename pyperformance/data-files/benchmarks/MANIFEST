@@ -42,6 +42,7 @@ django_template	<local>
 dulwich_log	<local>
 docutils	<local>
 fannkuch	<local>
+fastapi	<local>
 float	<local>
 genshi	<local>
 go	<local>
@@ -97,8 +98,7 @@ unpack_sequence	<local>
 unpickle	<local:pickle>
 unpickle_list	<local:pickle>
 unpickle_pure_python	<local:pickle>
-# xdsl is temporary disabled: https://github.com/xdslproject/xdsl/issues/5396
-# xdsl	<local>
+xdsl	<local>
 xml_etree	<local>
 
 
