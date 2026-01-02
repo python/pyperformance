@@ -83,14 +83,14 @@ Benchmark the ``base64`` module's encoding and decoding functions. Each
 algorithm has ``_small`` and ``_large`` variants that test both encode and
 decode in a single benchmark:
 
-* ``_small``: Balanced iterations across tiny (20B), small (127B), medium (3KB),
-  and 9KB data sizes
-* ``_large``: Large data focus with 100KB x 10 iterations plus 1MB x 1 iteration
+* ``_small``: Balanced iterations across 20B, 127B, 3KiB, and 9KB data sizes
+  more likely to show the impact of overhead.
+* ``_large``: Large data focus with 100KiB and ~1MiB data sizes likely to
+  demonstrate implementation efficiency.
 
 Available benchmarks:
 
 * ``base64_small``, ``base64_large``: Standard Base64 encoding and decoding
-  (includes ``validate=True`` code path)
 * ``urlsafe_base64_small``: URL-safe Base64 (small only, as URLs shouldn't
   contain huge data)
 * ``base32_small``, ``base32_large``: Base32 encoding and decoding
