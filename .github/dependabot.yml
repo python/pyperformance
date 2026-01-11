@@ -8,6 +8,8 @@ updates:
       actions:
         patterns:
           - "*"
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "pip"
     directory: "/"
@@ -15,3 +17,5 @@ updates:
       - "pyperformance/data-files/**"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
