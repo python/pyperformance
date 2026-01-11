@@ -5,12 +5,12 @@ import os.path
 import sys
 import types
 
-from . import _utils, _pythoninfo, _pip
+from . import _pip, _pythoninfo, _utils
 
 
 class VenvCreationFailedError(Exception):
     def __init__(self, root, exitcode, already_existed):
-        super().__init__(f'venv creation failed ({root})')
+        super().__init__(f"venv creation failed ({root})")
         self.root = root
         self.exitcode = exitcode
         self.already_existed = already_existed
@@ -18,7 +18,7 @@ class VenvCreationFailedError(Exception):
 
 class VenvPipInstallFailedError(Exception):
     def __init__(self, root, exitcode, msg=None):
-        super().__init__(msg or f'failed to install pip in venv {root}')
+        super().__init__(msg or f"failed to install pip in venv {root}")
         self.root = root
         self.exitcode = exitcode
 
@@ -31,10 +31,10 @@ def read_venv_config(root=None):
     """Return the config for the given venv, from its pyvenv.cfg file."""
     if not root:
         if sys.prefix == sys.base_prefix:
-            raise Exception('current Python is not a venv')
+            raise Exception("current Python is not a venv")
         root = sys.prefix
-    cfgfile = os.path.join(root, 'pyvenv.cfg')
-    with open(cfgfile, encoding='utf-8') as infile:
+    cfgfile = os.path.join(root, "pyvenv.cfg")
+    with open(cfgfile, encoding="utf-8") as infile:
         text = infile.read()
     return parse_venv_config(text, root)
 
@@ -43,7 +43,7 @@ def parse_venv_config(lines, root=None):
     if isinstance(lines, str):
         lines = lines.splitlines()
     else:
-        lines = (l.rstrip(os.linesep) for l in lines)
+        lines = (line.rstrip(os.linesep) for line in lines)
 
     cfg = types.SimpleNamespace(
         home=None,
@@ -56,41 +56,42 @@ def parse_venv_config(lines, root=None):
     fields = set(vars(cfg))
     for line in lines:
         # We do not validate the lines.
-        name, sep, value = line.partition('=')
+        name, sep, value = line.partition("=")
         if not sep:
             continue
         # We do not check for duplicate names.
         name = name.strip().lower()
-        if name == 'include-system-site-packages':
-            name = 'system_site_packages'
+        if name == "include-system-site-packages":
+            name = "system_site_packages"
         if name not in fields:
             # XXX Preserve this anyway?
             continue
         value = value.lstrip()
-        if name == 'system_site_packages':
-            value = (value == 'true')
+        if name == "system_site_packages":
+            value = value == "true"
         setattr(cfg, name, value)
     return cfg
 
 
 def resolve_venv_python(root):
-    python_exe = 'python'
-    if sys.executable.endswith('.exe'):
-        python_exe += '.exe'
+    python_exe = "python"
+    if sys.executable.endswith(".exe"):
+        python_exe += ".exe"
     if os.name == "nt":
-        return os.path.join(root, 'Scripts', python_exe)
+        return os.path.join(root, "Scripts", python_exe)
     else:
-        return os.path.join(root, 'bin', python_exe)
+        return os.path.join(root, "bin", python_exe)
 
 
-def get_venv_root(name=None, venvsdir='venv', *, python=sys.executable):
+def get_venv_root(name=None, venvsdir="venv", *, python=sys.executable):
     """Return the venv root to use for the given name (or given python)."""
     if not name:
         from .run import get_run_id
+
         runid = get_run_id(python)
         name = runid.name
     return os.path.abspath(
-        os.path.join(venvsdir or '.', name),
+        os.path.join(venvsdir or ".", name),
     )
 
 
@@ -99,18 +100,21 @@ def venv_exists(root):
     return os.path.exists(venv_python)
 
 
-def create_venv(root, python=sys.executable, *,
-                env=None,
-                downloaddir=None,
-                withpip=True,
-                cleanonfail=True
-                ):
+def create_venv(
+    root,
+    python=sys.executable,
+    *,
+    env=None,
+    downloaddir=None,
+    withpip=True,
+    cleanonfail=True,
+):
     """Create a new venv at the given root, optionally installing pip."""
     already_existed = os.path.exists(root)
     if withpip:
-        args = ['-m', 'venv', root]
+        args = ["-m", "venv", root]
     else:
-        args = ['-m', 'venv', '--without-pip', root]
+        args = ["-m", "venv", "--without-pip", root]
     ec, _, _ = _utils.run_python(*args, python=python, env=env)
     if ec != 0:
         if cleanonfail and not already_existed:
@@ -120,7 +124,6 @@ def create_venv(root, python=sys.executable, *,
 
 
 class VirtualEnvironment:
-
     _env = None
 
     @classmethod
@@ -139,14 +142,10 @@ class VirtualEnvironment:
 
         print("Creating the virtual environment %s" % root)
         if venv_exists(root):
-            raise Exception(f'virtual environment {root} already exists')
+            raise Exception(f"virtual environment {root} already exists")
 
         try:
-            venv_python = create_venv(
-                root,
-                info or python,
-                **kwargs
-            )
+            venv_python = create_venv(root, info or python, **kwargs)
         except BaseException:
             _utils.safe_rmtree(root)
             raise  # re-raise
@@ -174,7 +173,7 @@ class VirtualEnvironment:
         try:
             return self._python
         except AttributeError:
-            if not getattr(self, '_info', None):
+            if not getattr(self, "_info", None):
                 return resolve_venv_python(self.root)
             self._python = self.info.sys.executable
             return self._python
@@ -227,7 +226,7 @@ class VirtualEnvironment:
                 upgrade=True,
             )
             if ec != 0:
-                raise RequirementsInstallationFailedError('wheel')
+                raise RequirementsInstallationFailedError("wheel")
 
     def upgrade_pip(self, *, installer=True):
         ec, _, _ = _pip.upgrade_pip(
@@ -237,7 +236,7 @@ class VirtualEnvironment:
             installer=installer,
         )
         if ec != 0:
-            raise RequirementsInstallationFailedError('pip')
+            raise RequirementsInstallationFailedError("pip")
 
     def ensure_reqs(self, *reqs, upgrade=True):
         print("Installing requirements into the virtual environment %s" % self.root)

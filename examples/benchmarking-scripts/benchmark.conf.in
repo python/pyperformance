@@ -1,0 +1,102 @@
+[config]
+# Directory where JSON files are written.
+# - uploaded files are moved to json_dir/uploaded/
+# - results of patched Python are written into json_dir/patch/
+json_dir = TMPDIR/json
+
+# If True, compile CPython is debug mode (LTO and PGO disabled),
+# run benchmarks with --debug-single-sample, and disable upload.
+#
+# Use this option used to quickly test a configuration.
+debug = False
+
+
+[scm]
+# Directory of CPython source code (Git repository)
+repo_dir = TMPDIR/cpython
+
+# Update the Git repository (git fetch)?
+update = True
+
+# Name of the Git remote, used to create revision of
+# the Git branch. For example, use revision 'remotes/origin/3.6'
+# for the branch '3.6'.
+git_remote = remotes/origin
+
+
+[compile]
+# Create files into bench_dir:
+# - bench_dir/bench-xxx.log
+# - bench_dir/prefix/: where Python is installed
+# - bench_dir/venv/: Virtual environment used by pyperformance
+bench_dir = TMPDIR/bench_tmpdir
+
+# Link Time Optimization (LTO)?
+lto = True
+
+# Profiled Guided Optimization (PGO)?
+pgo = True
+
+# The space-separated list of libraries that are package-only,
+# i.e., locally installed but not on header and library paths.
+# For each such library, determine the install path and add an
+# appropriate subpath to CFLAGS and LDFLAGS declarations passed
+# to configure. As an exception, the prefix for openssl, if that
+# library is present here, is passed via the --with-openssl
+# option. Currently, this only works with Homebrew on macOS.
+# If running on macOS with Homebrew, you probably want to use:
+#     pkg_only = openssl readline sqlite3 xz zlib
+# The version of zlib shipping with macOS probably works as well,
+# as long as Apple's SDK headers are installed.
+pkg_only =
+
+# Install Python? If false, run Python from the build directory
+#
+# WARNING: Running Python from the build directory introduces subtle changes
+# compared to running an installed Python. Moreover, creating a virtual
+# environment using a Python run from the build directory fails in many cases,
+# especially on Python older than 3.4. Only disable installation if you
+# really understand what you are doing!
+install = True
+
+# Specify '-j' parameter in 'make' command
+jobs = 24
+
+[run_benchmark]
+# Run "sudo python3 -m pyperf system tune" before running benchmarks?
+system_tune = False
+
+# --manifest option for 'pyperformance run'
+manifest =
+
+# --benchmarks option for 'pyperformance run'
+benchmarks =
+
+# --affinity option for 'pyperf system tune' and 'pyperformance run'
+affinity = CPUID
+
+# Upload generated JSON file?
+#
+# Upload is disabled on patched Python, in debug mode or if install is
+# disabled.
+upload = True
+
+# Configuration to upload results to a Codespeed website
+[upload]
+url = https://speed.python.org/
+# environment-name should be created on speed.python.org
+environment = environment-name
+executable = lto-pgo
+project = CPython
+
+[compile_all]
+# List of CPython Git branches
+branches = main
+
+
+# List of revisions to benchmark by compile_all
+[compile_all_revisions]
+# list of 'sha1=' (default branch: 'main') or 'sha1=branch'
+# used by the "pyperformance compile_all" command
+# e.g.:
+# 11159d2c9d6616497ef4cc62953a5c3cc8454afb =

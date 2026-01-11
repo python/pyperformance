@@ -24,6 +24,7 @@ async_tree_eager_memoization_tg	<local:async_tree>
 asyncio_tcp	<local>
 asyncio_tcp_ssl	<local:asyncio_tcp>
 asyncio_websockets	<local>
+base64	<local>
 bpe_tokeniser	<local>
 btree	<local>
 btree_gc_only	<local:btree>
@@ -44,6 +45,7 @@ django_template	<local>
 dulwich_log	<local>
 docutils	<local>
 fannkuch	<local>
+fastapi	<local>
 float	<local>
 genshi	<local>
 go	<local>
@@ -85,10 +87,10 @@ spectral_norm	<local>
 sphinx	<local>
 sqlalchemy_declarative	<local>
 sqlalchemy_imperative	<local>
-sqlglot	<local>
-sqlglot_parse	<local:sqlglot>
-sqlglot_transpile	<local:sqlglot>
-sqlglot_optimize	<local:sqlglot>
+sqlglot_v2	<local>
+sqlglot_v2_parse	<local:sqlglot_v2>
+sqlglot_v2_transpile	<local:sqlglot_v2>
+sqlglot_v2_optimize	<local:sqlglot_v2>
 sqlite_synth	<local>
 sympy	<local>
 telco	<local>
@@ -99,6 +101,7 @@ unpack_sequence	<local>
 unpickle	<local:pickle>
 unpickle_list	<local:pickle>
 unpickle_pure_python	<local:pickle>
+xdsl	<local>
 xml_etree	<local>
 
 

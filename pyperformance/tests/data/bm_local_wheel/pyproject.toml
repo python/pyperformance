@@ -1,9 +1,20 @@
 [project]
-name = "pyperformance_bm_local_wheel"
-requires-python = ">=3.7"
-dependencies = ["pyperf"]
-urls = {repository = "https://github.com/python/pyperformance"}
+name = "pyperformance-bm-local-wheel"
 version = "1.0"
+
+requires-python = ">=3.7"
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dependencies = [ "pyperf" ]
+urls = { repository = "https://github.com/python/pyperformance" }
 
 [tool.pyperformance]
 name = "local_wheel"
