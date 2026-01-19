@@ -38,6 +38,8 @@ comprehensions	<local>
 crypto_pyaes	<local>
 dask	<local>
 deepcopy	<local>
+decimal_factorial	<local>
+decimal_pi	<local>
 deltablue	<local>
 django_template	<local>
 dulwich_log	<local>
