@@ -76,6 +76,32 @@ These benchmarks also have an "eager" flavor that uses asyncio eager task factor
 if available.
 
 
+base64
+------
+
+Benchmark the ``base64`` module's encoding and decoding functions. Each
+algorithm has ``_small`` and ``_large`` variants that test both encode and
+decode in a single benchmark:
+
+* ``_small``: Balanced iterations across 20B, 127B, 3KiB, and 9KB data sizes
+  more likely to show the impact of overhead.
+* ``_large``: Large data focus with 100KiB and ~1MiB data sizes likely to
+  demonstrate implementation efficiency.
+
+Available benchmarks:
+
+* ``base64_small``, ``base64_large``: Standard Base64 encoding and decoding
+* ``urlsafe_base64_small``: URL-safe Base64 (small only, as URLs shouldn't
+  contain huge data)
+* ``base32_small``, ``base32_large``: Base32 encoding and decoding
+* ``base16_small``, ``base16_large``: Base16/hex encoding and decoding
+* ``ascii85_small``, ``ascii85_large``: Ascii85 encoding and decoding
+  (includes ``wrapcol=76`` code path)
+* ``base85_small``, ``base85_large``: Base85 encoding and decoding
+
+See the `base64 module <https://docs.python.org/dev/library/base64.html>`_.
+
+
 chameleon
 ---------
 
