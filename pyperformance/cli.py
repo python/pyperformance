@@ -244,6 +244,7 @@ def parse_args():
         "venv", parents=[venv_common], help="Actions on the virtual environment"
     )
     cmd.set_defaults(venv_action="show")
+    cmds.append(cmd)
     venvsubs = cmd.add_subparsers(dest="venv_action")
     cmd = venvsubs.add_parser("show", parents=[venv_common])
     cmds.append(cmd)
