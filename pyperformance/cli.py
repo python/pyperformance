@@ -387,7 +387,8 @@ def _main():
         elif action == "show":
             cmd_venv_show(options, root)
         else:
-            print(f"ERROR: unsupported venv command action {action!r}")
+            if action is not None:
+                print(f"ERROR: unsupported venv command action {action!r}")
             parser.print_help()
             sys.exit(1)
     elif options.action == "compile":
