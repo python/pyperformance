@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=pyperformance/requirements/requirements.txt requirements.in
 #
-packaging==26.0
+packaging>=24.1
     # via -r requirements.in
 psutil==7.0.0
     # via

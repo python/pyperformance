@@ -1,12 +1,9 @@
 Changelog
 =========
 
-Version 1.15.0
---------------
-* Bump ``pyperf`` to 2.10.0
-
 Version 1.14.0
 --------------
+* Bump ``pyperf`` to 2.10.0
 * Add base64 module benchmark (b64, b32, b16, a85, b85)
 * Add FastAPI HTTP benchmark
 * Add YAML parsing benchmark
