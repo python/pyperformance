@@ -37,8 +37,7 @@ chaos	<local>
 comprehensions	<local>
 crypto_pyaes	<local>
 dask	<local>
-# FIXME: this doesn't work with `_pydecimal`
-# decimal_factorial	<local>
+decimal_factorial	<local>
 decimal_pi	<local>
 deepcopy	<local>
 deltablue	<local>

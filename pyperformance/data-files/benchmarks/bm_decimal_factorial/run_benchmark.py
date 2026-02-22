@@ -4,6 +4,8 @@ Calculate `factorial` using the decimal module.
 - 2024-06-14: Michael Droettboom copied this from
   Modules/_decimal/tests/bench.py in the CPython source and adapted to use
   pyperf.
+- 2026-02-22: Sergey B Kirpichev adapted context settings and tested
+  values to support also pure-Python decimal module.
 """
 
 # Original copyright notice in CPython source:
@@ -13,8 +15,11 @@ Calculate `factorial` using the decimal module.
 # Modified and extended by Stefan Krah.
 #
 
-
 import decimal
+try:
+    import _decimal
+except ImportError:
+    _decimal = None
 
 
 import pyperf
@@ -33,12 +38,16 @@ def factorial(n, m):
 
 def bench_decimal_factorial():
     c = decimal.getcontext()
-    c.prec = decimal.MAX_PREC
-    c.Emax = decimal.MAX_EMAX
-    c.Emin = decimal.MIN_EMIN
+    if _decimal:
+        c.prec = decimal.MAX_PREC
+        c.Emax = decimal.MAX_EMAX
+        c.Emin = decimal.MIN_EMIN
+        data = [10000, 100000]
+    else:
+        c.prec = 20000  # Should be enough to hold largest factorial exactly.
+        data = [1000, 5000]
 
-    for n in [10000, 100000]:
-        # C version of decimal
+    for n in data:
         _ = factorial(decimal.Decimal(n), 0)
 
 
