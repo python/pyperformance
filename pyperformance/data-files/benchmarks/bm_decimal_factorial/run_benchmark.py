@@ -22,6 +22,7 @@ try:
 except ImportError:
     _decimal = None
 import sys
+from functools import wraps
 
 import pyperf
 
