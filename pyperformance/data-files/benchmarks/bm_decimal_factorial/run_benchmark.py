@@ -60,6 +60,7 @@ def bench_decimal_factorial():
         c.Emin = decimal.MIN_EMIN
         data = [10000, 100000]
     else:
+        # Workaround for python/cpython#140036 (PyPy uses pure-Python Decimal's)
         c.prec = 20000  # Should be enough to hold largest factorial exactly.
         data = [1000, 5000]
 
