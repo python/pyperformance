@@ -1,3 +1,4 @@
+import os
 import pathlib
 import tempfile
 import textwrap
@@ -63,7 +64,7 @@ class CompileCommandTests(unittest.TestCase):
         configure_call = app.run.call_args_list[0]
         self.assertEqual(
             configure_call.args,
-            ("/tmp/cpython/configure", "--with-tail-call-interp"),
+            (os.path.join(conf.repo_dir, "configure"), "--with-tail-call-interp"),
         )
         self.assertEqual(configure_call.kwargs, {"cwd": "/tmp/build"})
 
