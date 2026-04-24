@@ -16,12 +16,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
+      with:
+        persist-credentials: false
     - name: Set up Python
       uses: actions/setup-python@v6
       with:
         python-version: '3.x'
-        cache: pip
-        cache-dependency-path: pyproject.toml
     - name: Install dependencies
       run: |
         python -m pip install --upgrade build

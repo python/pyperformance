@@ -53,6 +53,8 @@ jobs:
             experimental: false
     steps:
     - uses: actions/checkout@v6
+      with:
+        persist-credentials: false
     - name: Set up Python ${{ matrix.python }}
       uses: actions/setup-python@v6
       if: "!endsWith(matrix.python, '-dev')"

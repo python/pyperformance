@@ -10,6 +10,22 @@ repos:
         name: Run Ruff (format)
         args: [--exit-non-zero-on-fix]
 
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.37.1
+    hooks:
+      - id: check-dependabot
+      - id: check-github-workflows
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint
+
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.23.1
+    hooks:
+      - id: zizmor
+
   - repo: https://github.com/tox-dev/pyproject-fmt
     rev: v2.21.1
     hooks:
@@ -19,3 +35,8 @@ repos:
     rev: v0.25
     hooks:
       - id: validate-pyproject
+
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes
