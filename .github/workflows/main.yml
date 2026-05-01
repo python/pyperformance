@@ -47,7 +47,7 @@ jobs:
             experimental: false
           - os: macos-latest
             python: "3.14"
-            experimental: true
+            experimental: false
           - os: windows-latest
             python: "3.14"
             experimental: false
