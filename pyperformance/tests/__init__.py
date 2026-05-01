@@ -64,6 +64,8 @@ def _resolve_venv_python(venv):
 
 
 def create_venv(root=None, python=sys.executable, *, verbose=False):
+    from pyperformance._uv import run_uv
+
     if not root:
         tmpdir = tempfile.mkdtemp()
         root = os.path.join(tmpdir, "venv")
@@ -75,16 +77,19 @@ def create_venv(root=None, python=sys.executable, *, verbose=False):
         def cleanup():
             return None
 
-    run_cmd(
-        python or sys.executable,
-        "-m",
-        "venv",
-        root,
-        capture=not verbose,
-        onfail="raise",
-        verbose=verbose,
-    )
-    return root, _resolve_venv_python(root), cleanup
+    argv = ["venv", "--seed"]
+    if python:
+        argv.extend(["--python", python])
+    argv.append(root)
+    exitcode, _, _ = run_uv(*argv, capture=not verbose, verbose=verbose)
+    if exitcode:
+        if exitcode == 127:
+            raise RuntimeError(
+                "uv executable is required to provision test environments"
+            )
+        raise RuntimeError(f'"uv {" ".join(argv)}" failed with exit code {exitcode}')
+    venv_root = os.path.realpath(root)
+    return venv_root, _resolve_venv_python(venv_root), cleanup
 
 
 class CleanupFile:
