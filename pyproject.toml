@@ -36,10 +36,8 @@
 #  - set version to n+1: pyperformance/__init__.py and doc/conf.py
 #  - git commit -a -m "post-release"
 #  - git push
-
 [build-system]
 build-backend = "setuptools.build_meta"
-
 requires = [ "setuptools>=61" ]
 
 [project]
@@ -69,7 +67,6 @@ dependencies = [
   "pyperf",
   "tomli; python_version<'3.11'",
 ]
-
 optional-dependencies.dev = [
   "mypy==1.20.2",
   "tomli",        # Needed even on 3.11+ for typechecking with mypy
@@ -80,22 +77,15 @@ scripts.pyperformance = "pyperformance.cli:main"
 
 [tool.setuptools]
 include-package-data = true
-
-[tool.setuptools.packages]
-find = {} # Scanning implicit namespaces is active by default
-
-[tool.setuptools.dynamic]
-version = { attr = "pyperformance.__version__" }
+dynamic.version = { attr = "pyperformance.__version__" }
+packages.find = {}  # Scanning implicit namespaces is active by default
 
 [tool.ruff]
 target-version = "py310"
-
 exclude = [
   "pyperformance/data-files/",
 ]
-
 fix = true
-
 lint.select = [
   "E",      # pycodestyle errors
   "F",      # pyflakes errors
@@ -121,13 +111,10 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
 files = [
-  'pyperformance/',
+  "pyperformance/",
 ]
 exclude = [
-  'pyperformance/data-files/',
-  'pyperformance/tests/',
+  "pyperformance/data-files/",
+  "pyperformance/tests/",
 ]
-
-[[tool.mypy.overrides]]
-module = "pyperf"
-ignore_missing_imports = true
+overrides = [ { module = "pyperf", ignore_missing_imports = true } ]
