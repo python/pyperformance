@@ -51,6 +51,9 @@ pgo = True
 #   PYTHON_JIT=0 can be used to disable the micro-op interpreter at runtime.
 jit = no
 
+# Tail-calling interpreter?
+tail_call_interp = False
+
 # The space-separated list of libraries that are package-only,
 # i.e., locally installed but not on header and library paths.
 # For each such library, determine the install path and add an
