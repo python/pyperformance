@@ -266,10 +266,10 @@ if __name__ == "__main__":
     if options.pure_python:
         name += "_pure_python"
 
-    if not (options.pure_python or IS_PYPY):
+    if not (options.pure_python):
         # C accelerators are enabled by default on 3.x
         import pickle
-        if not is_accelerated_module(pickle):
+        if not is_accelerated_module(pickle) and not IS_PYPY:
             raise RuntimeError("Missing C accelerators for pickle")
     else:
         sys.modules['_pickle'] = None
