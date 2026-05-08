@@ -1,3 +1,11 @@
+"""
+Measures the time it takes to import all the modules (excluding those with
+import side effects) in the stdlib.
+
+This benchmark is expected to change as the stdlib changes, so it is not
+suitable for measuring compilation time.
+"""
+
 import os
 import sys
 import subprocess
@@ -13,17 +21,14 @@ if __name__ == "__main__":
 
     with tempfile.TemporaryDirectory() as tmp:
         main = os.path.join(tmp, "main.py")
-        with open(main, "w") as f:
-            f.write("""
-import importlib
-import sys
-for m in sys.stdlib_module_names:
-    if m in {"antigravity", "this"}:
-        continue
-    try:
-        importlib.import_module(m)
-    except ImportError:
-        pass
+        modules_to_import = sorted(sys.stdlib_module_names - {'antigravity', 'this'})
+        with open(main, 'w', encoding='utf-8') as f:
+            for module in modules_to_import:
+                f.write(f"""
+try:
+    import {module}
+except ImportError:
+    pass
 """)
         command = [sys.executable, main]
         runner.bench_command('stdlib_startup', command)
