@@ -1,0 +1,3 @@
+[tool.pyperformance]
+name = "btree_gc"
+extra_opts = ["--gc-only"]

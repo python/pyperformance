@@ -17,7 +17,7 @@ def generate_arguments(i: int) -> list:
     return arguments
 
 
-def bm_many_optionals() -> argparse.ArgumentParser:
+def bm_subparsers() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="A version control system CLI")
 
     parser.add_argument("--version", action="version", version="1.0")
@@ -83,7 +83,7 @@ def bm_many_optionals() -> argparse.ArgumentParser:
         parser.parse_args(arguments)
 
 
-def bm_subparsers() -> argparse.ArgumentParser:
+def bm_many_optionals() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
 
     parser.add_argument("input_file", type=str, help="The input file")
