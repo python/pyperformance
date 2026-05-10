@@ -62,6 +62,7 @@ def bench_sqlalchemy(loops, npeople):
         # drop rows created by the previous benchmark
         session.query(Person).delete(synchronize_session=False)
         session.query(Address).delete(synchronize_session=False)
+        session.expunge_all()
 
         # Run the benchmark once
         t0 = pyperf.perf_counter()
