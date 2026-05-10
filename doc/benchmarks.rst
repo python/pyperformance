@@ -56,7 +56,7 @@ depending on the Python version.
 alloc
 -----
 
-Allocate blocks of memory with ``bytesarray``. The default sizes are smaller or
+Allocate blocks of memory with ``bytearray``. The default sizes are smaller or
 equal to obmalloc's small request threshold.
 
 Command lines options::
