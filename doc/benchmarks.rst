@@ -76,6 +76,48 @@ These benchmarks also have an "eager" flavor that uses asyncio eager task factor
 if available.
 
 
+base64
+------
+
+Benchmark the ``base64`` module's encoding and decoding functions. Each
+algorithm has ``_small`` and ``_large`` variants that test both encode and
+decode in a single benchmark:
+
+* ``_small``: Balanced iterations across 20B, 127B, 3KiB, and 9KB data sizes
+  more likely to show the impact of overhead.
+* ``_large``: Large data focus with 100KiB and ~1MiB data sizes likely to
+  demonstrate implementation efficiency.
+
+Available benchmarks:
+
+* ``base64_small``, ``base64_large``: Standard Base64 encoding and decoding
+* ``urlsafe_base64_small``: URL-safe Base64 (small only, as URLs shouldn't
+  contain huge data)
+* ``base32_small``, ``base32_large``: Base32 encoding and decoding
+* ``base16_small``, ``base16_large``: Base16/hex encoding and decoding
+* ``ascii85_small``, ``ascii85_large``: Ascii85 encoding and decoding
+  (includes ``wrapcol=76`` code path)
+* ``base85_small``, ``base85_large``: Base85 encoding and decoding
+
+See the `base64 module <https://docs.python.org/dev/library/base64.html>`_.
+
+
+btree
+-----
+
+Benchmark a pure-Python implementation of a B-tree data structure.  The tree
+is created with a relatively large number of nodes (default is 200,000).  This
+attempts to simulate an application that operates on a large number of objects
+in memory (at least, large compared to other benchmarks currently in this
+suite). There are two variations of this benchmark: `btree` records the time to
+create the B-tree, run `gc.collect()` and then do some operations on it; the
+`btree_gc_only` variant records only the time to run `gc.collect()` and it
+skips the operations after creation.
+
+Note that this benchmark does not create any reference cycles that the garbage
+collector will need to break to free memory.
+
+
 chameleon
 ---------
 

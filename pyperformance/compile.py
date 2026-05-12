@@ -295,6 +295,8 @@ class Python(Task):
             config_args.append("--with-lto")
         if self.conf.jit:
             config_args.append(f"--enable-experimental-jit={self.conf.jit}")
+        if self.conf.tail_call_interp:
+            config_args.append("--with-tail-call-interp")
         if self.conf.pkg_only:
             config_args.extend(self.get_package_only_flags())
         if self.conf.debug:
@@ -570,6 +572,8 @@ class BenchmarkRevision(Application):
             cmd.append("--debug-single-value")
         if self.conf.same_loops:
             cmd.append("--same_loops=%s" % self.conf.same_loops)
+        if self.conf.rigorous:
+            cmd.append("--rigorous")
         exitcode = self.run_nocheck(*cmd)
 
         if os.path.exists(self.filename):
@@ -828,6 +832,7 @@ def parse_config(filename, command):
         conf.lto = getboolean("compile", "lto", True)
         conf.pgo = getboolean("compile", "pgo", True)
         conf.jit = getstr("compile", "jit", "")
+        conf.tail_call_interp = getboolean("compile", "tail_call_interp", False)
         conf.install = getboolean("compile", "install", True)
         conf.pkg_only = getstr("compile", "pkg_only", "").split()
         try:
@@ -842,6 +847,7 @@ def parse_config(filename, command):
         conf.affinity = getstr("run_benchmark", "affinity", default="")
         conf.upload = getboolean("run_benchmark", "upload", False)
         conf.same_loops = getfile("run_benchmark", "same_loops", default="")
+        conf.rigorous = getboolean("run_benchmark", "rigorous", False)
 
         # paths
         conf.build_dir = os.path.join(conf.directory, "build")
