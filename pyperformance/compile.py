@@ -571,7 +571,7 @@ class BenchmarkRevision(Application):
         if self.conf.debug:
             cmd.append("--debug-single-value")
         if self.conf.same_loops:
-            cmd.append("--same_loops=%s" % self.conf.same_loops)
+            cmd.append("--same-loops=%s" % self.conf.same_loops)
         if self.conf.rigorous:
             cmd.append("--rigorous")
         exitcode = self.run_nocheck(*cmd)
