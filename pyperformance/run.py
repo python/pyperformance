@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import random
 import sys
 import time
 import traceback
@@ -67,13 +68,26 @@ def get_loops_from_file(filename):
     return loops
 
 
+def order_benchmarks(benchmarks, *, shuffle=False, shuffle_seed=None):
+    seq = list(benchmarks)
+    if shuffle or shuffle_seed is not None:
+        rng = random.Random(shuffle_seed)
+        rng.shuffle(seq)
+        return seq
+    return sorted(seq)
+
+
 def run_benchmarks(should_run, python, options):
     if options.same_loops is not None:
         loops = get_loops_from_file(options.same_loops)
     else:
         loops = {}
 
-    to_run = sorted(should_run)
+    to_run = order_benchmarks(
+        should_run,
+        shuffle=getattr(options, "shuffle", False),
+        shuffle_seed=getattr(options, "shuffle_seed", None),
+    )
 
     info = _pythoninfo.get_info(python)
     runid = get_run_id(info)
