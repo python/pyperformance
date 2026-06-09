@@ -1,6 +1,7 @@
 # A script for running pyperformance out of the repo in dev-mode.
 
 import os.path
+import shutil
 import sys
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -29,7 +30,7 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
         readyfile = os.path.join(sys.prefix, "READY")
         isready = os.path.exists(readyfile)
     else:
-        import venv
+        from pyperformance._uv import run_uv
 
         if not venvroot:
             venvroot = resolve_venv_root(kind, venvsdir)
@@ -42,7 +43,15 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
                 print(f"creating venv at {relroot}...")
             else:
                 print(f"venv {relroot} not ready, re-creating...")
-            venv.create(venvroot, with_pip=True, clear=True)
+                shutil.rmtree(venvroot)
+            ec, _, _ = run_uv(
+                "venv",
+                "--python",
+                sys.executable,
+                venvroot,
+            )
+            if ec != 0:
+                sys.exit("ERROR: venv creation failed")
         else:
             assert os.path.exists(os.path.join(venvroot, "pyvenv.cfg"))
         # Return the venv's Python executable.
@@ -52,18 +61,22 @@ def ensure_venv_ready(venvroot=None, kind="dev", venvsdir=VENVS):
 
     # Now make sure the venv has pyperformance installed.
     if not isready:
-        import subprocess
-
         relroot = os.path.relpath(venvroot)
         print(f"venv {relroot} not ready, installing dependencies...")
-        proc = subprocess.run(
-            [python, "-m", "pip", "install", "--upgrade", "--editable", REPO_ROOT],
+        ec, _, _ = run_uv(
+            "pip",
+            "install",
+            "--python",
+            python,
+            "--upgrade",
+            "--editable",
+            f"{REPO_ROOT}[dev]",
         )
-        if proc.returncode != 0:
-            sys.exit("ERROR: install failed")
+        if ec != 0:
+            sys.exit("ERROR: uv pip install failed")
         with open(readyfile, "w"):
             pass
-        print("...venv {relroot} ready!")
+        print(f"...venv {relroot} ready!")
 
     return venvroot, python
 
