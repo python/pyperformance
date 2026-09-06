@@ -50,7 +50,6 @@ DBSession = sessionmaker(bind=engine)
 # session.commit(). If you're not happy about the changes, you can
 # revert all of them back to the last commit by calling
 # session.rollback()
-session = DBSession()
 
 
 # add 'npeople' people to the database
@@ -59,29 +58,30 @@ def bench_sqlalchemy(loops, npeople):
     total_dt = 0.0
 
     for loops in range(loops):
+        with DBSession() as session:
         # drop rows created by the previous benchmark
-        session.query(Person).delete(synchronize_session=False)
-        session.query(Address).delete(synchronize_session=False)
+            session.query(Person).delete(synchronize_session=False)
+            session.query(Address).delete(synchronize_session=False)
 
-        # Run the benchmark once
-        t0 = pyperf.perf_counter()
+            # Run the benchmark once
+            t0 = pyperf.perf_counter()
 
-        for i in range(npeople):
-            # Insert a Person in the person table
-            new_person = Person(name="name %i" % i)
-            session.add(new_person)
-            session.commit()
+            for i in range(npeople):
+                # Insert a Person in the person table
+                new_person = Person(name="name %i" % i)
+                session.add(new_person)
+                session.commit()
 
-            # Insert an Address in the address table
-            new_address = Address(post_code='%05i' % i, person=new_person)
-            session.add(new_address)
-            session.commit()
+                # Insert an Address in the address table
+                new_address = Address(post_code='%05i' % i, person=new_person)
+                session.add(new_address)
+                session.commit()
 
-        # do 100 queries per insert
-        for i in range(npeople):
-            session.query(Person).all()
+            # do 100 queries per insert
+            for i in range(npeople):
+                session.query(Person).all()
 
-        total_dt += (pyperf.perf_counter() - t0)
+            total_dt += (pyperf.perf_counter() - t0)
 
     return total_dt
 
