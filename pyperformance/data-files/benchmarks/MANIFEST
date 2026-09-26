@@ -39,6 +39,8 @@ chaos	<local>
 comprehensions	<local>
 crypto_pyaes	<local>
 dask	<local>
+decimal_factorial	<local>
+decimal_pi	<local>
 deepcopy	<local>
 deltablue	<local>
 django_template	<local>
