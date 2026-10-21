@@ -203,6 +203,30 @@ class BenchmarkCompatibilityTests(unittest.TestCase):
         self.assertIn("ERROR: No benchmark was run", stdout.getvalue())
         run_benchmarks.assert_not_called()
 
+    def test_registered_gc_benchmarks_use_supported_implementations(self):
+        """Normal and all selections should retain portable GC coverage on PyPy."""
+        manifest = _manifest.load_manifest(None)
+        portable = {"gc_collect_large", "gc_collect_self_lists", "gc_tuple_survivors"}
+        restricted = {
+            "btree_gc_only_frozen",
+            "gc_weakref_recheck",
+            "gc_resurrection_partial",
+            "gc_resurrection_full",
+        }
+        for selection in ("default", "all"):
+            with self.subTest(selection=selection, implementation="cpython"):
+                names, _ = self.select(selection, manifest, self.cpython)
+                self.assertTrue(portable | restricted <= set(names))
+            with self.subTest(selection=selection, implementation="pypy"):
+                names, stderr = self.select(selection, manifest, self.pypy)
+                self.assertTrue(portable <= set(names))
+                self.assertTrue(restricted.isdisjoint(names))
+                for name in restricted:
+                    self.assertIn(
+                        f"Skipping {name}: target implementation pypy is not supported",
+                        stderr,
+                    )
+
     def test_dispatch_selects_for_the_effective_interpreter(self):
         """Commands should select for the interpreter they pass to execution."""
         _, manifest_path = self.make_manifest()
