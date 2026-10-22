@@ -1,0 +1,3 @@
+[tool.pyperformance]
+name = "gc_collect_self_lists"
+runscript = "run_self_lists_benchmark.py"

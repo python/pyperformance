@@ -1,0 +1,3 @@
+[tool.pyperformance]
+name = "gc_resurrection_partial"
+extra_opts = ["--mode", "partial"]
