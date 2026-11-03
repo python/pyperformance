@@ -4,6 +4,7 @@ Changelog
 Version 1.15.0 (unreleased)
 --------------
 * Add support for Python 3.15 and drop 3.10
+* Bump tornado to 6.6 (fixes ``BufferError`` on PyPy)
 
 Version 1.14.0 (2026-02-07)
 --------------
