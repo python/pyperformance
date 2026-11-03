@@ -3,8 +3,7 @@ Changelog
 
 Version 1.15.0 (unreleased)
 --------------
-
-* Drop support for Python 3.10
+* Add support for Python 3.15 and drop 3.10
 
 Version 1.14.0 (2026-02-07)
 --------------
