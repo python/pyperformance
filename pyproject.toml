@@ -46,7 +46,7 @@ description = "Python benchmark suite"
 readme = "README.rst"
 license = { text = "MIT" }
 authors = [ { name = "Collin Winter" }, { name = "Jeffrey Yasskin" } ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
@@ -55,7 +55,6 @@ classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -65,11 +64,9 @@ dynamic = [ "version" ]
 dependencies = [
   "packaging",
   "pyperf",
-  "tomli; python_version<'3.11'",
 ]
 optional-dependencies.dev = [
   "mypy==2.3.1",
-  "tomli",       # Needed even on 3.11+ for typechecking with mypy
   "tox",
 ]
 urls = { Homepage = "https://github.com/python/pyperformance" }
@@ -81,7 +78,7 @@ dynamic.version = { attr = "pyperformance.__version__" }
 packages.find = {}  # Scanning implicit namespaces is active by default
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py311"
 exclude = [
   "pyperformance/data-files/",
 ]
@@ -102,7 +99,7 @@ lint.ignore = [
 max_supported_python = "3.14"
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.11"
 pretty = true
 enable_error_code = "ignore-without-code"
 disallow_any_generics = true

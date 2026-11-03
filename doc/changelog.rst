@@ -1,7 +1,12 @@
 Changelog
 =========
 
-Version 1.14.0
+Version 1.15.0 (unreleased)
+--------------
+
+* Drop support for Python 3.10
+
+Version 1.14.0 (2026-02-07)
 --------------
 * Bump ``pyperf`` to 2.10.0
 * Add base64 module benchmark (b64, b32, b16, a85, b85)

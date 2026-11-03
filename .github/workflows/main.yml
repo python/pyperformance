@@ -21,7 +21,7 @@ jobs:
       matrix:
         # Test all supported versions on Ubuntu:
         os: [ubuntu-latest, ubuntu-24.04-arm]
-        python: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        python: ["3.11", "3.12", "3.13", "3.14"]
         experimental: [false]
         build: ['']
         include:
