@@ -43,7 +43,7 @@ jobs:
             build: 'free-threading'
           # Also test PyPy, macOS, and Windows:
           - os: ubuntu-latest
-            python: pypy-3.11
+            python: pypy3.12
             experimental: false
           - os: macos-latest
             python: "3.15"
