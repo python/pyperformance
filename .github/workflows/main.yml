@@ -35,10 +35,10 @@ jobs:
             experimental: true
             build: 'free-threading'
           - os: ubuntu-latest
-            python: "3.15-dev"  # TODO 3.16-dev pending https://github.com/actions/python-versions/pull/413
+            python: "3.16-dev"
             experimental: true
           - os: ubuntu-latest
-            python: "3.15-dev"  # TODO 3.16-dev pending https://github.com/actions/python-versions/pull/413
+            python: "3.16-dev"
             experimental: true
             build: 'free-threading'
           # Also test PyPy, macOS, and Windows:
