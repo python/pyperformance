@@ -8,7 +8,7 @@ Version 1.15.0 (unreleased)
 * Bump genshi to 0.7.12 (fixes ``TypeError`` on Python 3.15)
 
 Version 1.14.0 (2026-02-07)
---------------
+---------------------------
 * Bump ``pyperf`` to 2.10.0
 * Add base64 module benchmark (b64, b32, b16, a85, b85)
 * Add FastAPI HTTP benchmark
