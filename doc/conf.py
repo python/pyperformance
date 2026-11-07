@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # Python Performance Benchmark Suite documentation build configuration file, created by
 # sphinx-quickstart on Tue Mar 28 15:59:41 2017.

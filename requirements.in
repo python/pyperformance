@@ -13,7 +13,6 @@ pyperf
 
 # for benchmark metadata:
 packaging
-tomli; python_version < '3.11'
 
 
 # Optional dependencies

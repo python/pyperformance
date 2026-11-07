@@ -43,7 +43,7 @@ def parse_date(text):
     return datetime.datetime.strptime(text2, "%Y-%m-%dT%H:%M:%S%z")
 
 
-class Task(object):
+class Task:
     def __init__(self, app, cwd):
         self.app = app
         self.cwd = cwd
@@ -118,14 +118,14 @@ class Repository(Task):
             node, date = stdout.split("|")
             date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S %z")
             # convert local date to UTC
-            date = (date - date.utcoffset()).replace(tzinfo=datetime.timezone.utc)
+            date = (date - date.utcoffset()).replace(tzinfo=datetime.UTC)
         else:
             node, date = stdout.split("|")
             date = datetime.datetime.strptime(date[:16], "%Y-%m-%d %H:%M")
         return (node, date)
 
 
-class Application(object):
+class Application:
     def __init__(self, conf, options):
         self.conf = conf
         self.options = options
