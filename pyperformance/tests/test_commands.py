@@ -1,11 +1,30 @@
 import os
 import os.path
 import shutil
+import sys
 import textwrap
 import unittest
+from types import SimpleNamespace
+from unittest import mock
 
 import pyperformance
-from pyperformance import tests
+from pyperformance import _pythoninfo, cli, tests
+
+
+class BenchmarkSelectionTests(unittest.TestCase):
+    def test_target_python_version(self):
+        options = SimpleNamespace(
+            benchmarks="async_tree_eager", manifest=None, python="target-python"
+        )
+        info = SimpleNamespace(sys=SimpleNamespace(version_info=(3, 16, 0)))
+        with (
+            mock.patch.object(sys, "version_info", (3, 11, 0)),
+            mock.patch.object(_pythoninfo, "get_info", return_value=info) as get_info,
+        ):
+            benchmarks = cli._benchmarks_from_options(options)
+
+        get_info.assert_called_once_with("target-python")
+        self.assertEqual([bench.name for bench in benchmarks], ["async_tree_eager"])
 
 
 class FullStackTests(tests.Functional, unittest.TestCase):

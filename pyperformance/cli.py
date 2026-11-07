@@ -317,11 +317,11 @@ def _benchmarks_from_options(options):
     if not getattr(options, "benchmarks", None):
         return None
     manifest = _manifest_from_options(options)
-    return _select_benchmarks(options.benchmarks, manifest)
+    return _select_benchmarks(options.benchmarks, manifest, options.python)
 
 
-def _select_benchmarks(raw, manifest):
-    from pyperformance import _benchmark_selections
+def _select_benchmarks(raw, manifest, python):
+    from pyperformance import _benchmark_selections, _pythoninfo
 
     # Get the raw list of benchmarks.
     entries = raw.lower()
@@ -342,12 +342,13 @@ def _select_benchmarks(raw, manifest):
 
     # Get the selections.
     selected = []
-    this_python_version = ".".join(map(str, sys.version_info[:3]))
+    info = _pythoninfo.get_info(python)
+    this_python_version = ".".join(map(str, info.sys.version_info[:3]))
     for bench in _benchmark_selections.iter_selections(manifest, parsed_infos):
         if isinstance(bench, str):
             logging.warning(f"no benchmark named {bench!r}")
             continue
-        # Filter out any benchmarks that can't be run on the Python version we're running
+        # Filter using the target interpreter, which may differ from the running Python.
         if this_python_version in bench.python:
             selected.append(bench)
 
