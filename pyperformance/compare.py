@@ -231,7 +231,7 @@ def format_table(base_label, changed_label, results):
     return "\n".join(output)
 
 
-class BenchmarkResult(object):
+class BenchmarkResult:
     """An object representing data from a succesful benchmark run."""
 
     def __init__(self, base, changed):
