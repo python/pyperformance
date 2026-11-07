@@ -1,0 +1,3 @@
+[tool.pyperformance]
+name = "gc_resurrection_full"
+extra_opts = ["--mode", "full"]

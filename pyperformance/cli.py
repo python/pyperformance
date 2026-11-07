@@ -313,14 +313,31 @@ def _manifest_from_options(options):
     return _manifest.load_manifest(options.manifest)
 
 
-def _benchmarks_from_options(options):
+def _benchmarks_from_options(options, python):
+    """Resolve selected benchmarks for the interpreter the command will use.
+
+    options: Parsed options containing the manifest and benchmark selection.
+    python: Target executable as a string, or information returned by _pythoninfo.get_info().
+    Return: Eligible benchmarks, or None when no benchmarks were requested.
+    """
     if not getattr(options, "benchmarks", None):
         return None
+
+    from pyperformance import _pythoninfo
+
+    info = _pythoninfo.get_info(python) if isinstance(python, str) else python
     manifest = _manifest_from_options(options)
-    return _select_benchmarks(options.benchmarks, manifest)
+    return _select_benchmarks(options.benchmarks, manifest, info)
 
 
-def _select_benchmarks(raw, manifest):
+def _select_benchmarks(raw, manifest, info):
+    """Resolve a selection and omit benchmarks unsupported by the target.
+
+    raw: Benchmark names and groups in command-line selection syntax.
+    manifest: Catalog used to expand the selection.
+    info: Target interpreter information returned by _pythoninfo.get_info().
+    Return: Eligible benchmarks after explicit exclusions are applied.
+    """
     from pyperformance import _benchmark_selections
 
     # Get the raw list of benchmarks.
@@ -342,14 +359,23 @@ def _select_benchmarks(raw, manifest):
 
     # Get the selections.
     selected = []
-    this_python_version = ".".join(map(str, sys.version_info[:3]))
+    python_version = ".".join(map(str, info.sys.version_info[:3]))
+    implementation = info.sys.implementation.name.lower()
     for bench in _benchmark_selections.iter_selections(manifest, parsed_infos):
         if isinstance(bench, str):
             logging.warning(f"no benchmark named {bench!r}")
             continue
-        # Filter out any benchmarks that can't be run on the Python version we're running
-        if this_python_version in bench.python:
-            selected.append(bench)
+        implementations = bench.python_implementations
+        if implementations and implementation not in implementations:
+            supported = ", ".join(implementations)
+            print(
+                f"Skipping {bench.name}: target implementation {implementation} is not supported (supported: {supported})",
+                file=sys.stderr,
+            )
+            continue
+        if python_version not in bench.python:
+            continue
+        selected.append(bench)
 
     return selected
 
@@ -376,10 +402,10 @@ def _main():
 
         action = options.venv_action
         if action == "create":
-            benchmarks = _benchmarks_from_options(options)
+            benchmarks = _benchmarks_from_options(options, info or sys.executable)
             cmd_venv_create(options, root, info, benchmarks)
         elif action == "recreate":
-            benchmarks = _benchmarks_from_options(options)
+            benchmarks = _benchmarks_from_options(options, info or sys.executable)
             cmd_venv_recreate(options, root, info, benchmarks)
         elif action == "remove":
             cmd_venv_remove(options, root)
@@ -402,12 +428,12 @@ def _main():
         cmd_show(options)
         sys.exit()
     elif options.action == "run":
-        benchmarks = _benchmarks_from_options(options)
+        benchmarks = _benchmarks_from_options(options, options.python)
         cmd_run(options, benchmarks)
     elif options.action == "compare":
         cmd_compare(options)
     elif options.action == "list":
-        benchmarks = _benchmarks_from_options(options)
+        benchmarks = _benchmarks_from_options(options, options.python)
         cmd_list(options, benchmarks)
     elif options.action == "list_groups":
         manifest = _manifest_from_options(options)
