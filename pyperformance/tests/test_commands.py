@@ -475,7 +475,7 @@ class FullStackTests(tests.Functional, unittest.TestCase):
         filename = self.resolve_tmp("outfile.csv", unique=True)
         with tests.CleanupFile(filename):
             self.compare("--csv", filename)
-            with open(filename, "r", encoding="utf-8") as infile:
+            with open(filename, encoding="utf-8") as infile:
                 csv = infile.read()
 
         self.assertEqual(csv, expected)
