@@ -16,7 +16,7 @@ output/<branch>-<sha>.(out|err).
 
 def get_revisions() -> tuple[str, str]:
     revisions = []
-    with open("backfill_shas.txt", "r") as f:
+    with open("backfill_shas.txt") as f:
         for line in f:
             sha, branch = line.split("=")
             revisions.append((sha, branch.rstrip()))
