@@ -16,7 +16,7 @@ Version 1.14.0 (2026-02-07)
 * Respect rigorous setting in benchmark configuration files
 
 Version 1.13.0 (2025-10-27)
---------------
+---------------------------
 * Re-enable xdsl benchmark
 * Remove code for Python 3.7 and previous versions
 * CI updates:
@@ -27,7 +27,7 @@ Version 1.13.0 (2025-10-27)
   * update setup-python version
 
 Version 1.12.0 (2025-10-24)
---------------
+---------------------------
 * Add xdsl benchmark (but disabled by default due to a regression)
 * Add a new quadtree nbody simulation using the Barnes Hut algorithm
 * Add argparse benchmark
@@ -56,7 +56,7 @@ Version 1.12.0 (2025-10-24)
 * Add support Python 3.14 and drop Python 3.7, 3.8, 3.9
 
 Version 1.11.0 (2024-03-09)
---------------
+---------------------------
 * Add a --same-loops option to the run command to use the exact same number of
   loops as a previous run (without recalibrating).
 * Bump pyperf to 2.6.3
@@ -64,19 +64,19 @@ Version 1.11.0 (2024-03-09)
 * Fix benchmark.conf.sample
 
 Version 1.10.0 (2023-10-22)
---------------
+---------------------------
 * Add benchmark for asyncio_webockets
 * Expose --min-time from pyperf to pyperformance CLI
 * Bump coverage to 7.3.2 for compatibilty with 3.13
 * Bump greenlet to 3.0.0rc3 for compatibilty with 3.13
 
 Version 1.0.9 (2023-06-14)
--------------
+--------------------------
 * Vendor lib2to3 for Python 3.13+
 * Add TaskGroups variants to async_tree benchmarks
 
 Version 1.0.8 (2023-06-02)
--------------
+--------------------------
 
 * Move the main requirements.txt file to pyperformance/requirements
   so that dependabot can only run on that one file
@@ -94,7 +94,7 @@ Version 1.0.8 (2023-06-02)
 * Extend async tree benchmarks to cover eager task execution
 
 Version 1.0.7 (2023-04-22)
--------------
+--------------------------
 
 * Upgrade pyperf from 2.5.0 to 2.6.0
 * Clean unused imports and other small code details
@@ -108,7 +108,7 @@ Version 1.0.7 (2023-04-22)
 * Add the gc benchmarks to the MANIFEST file
 
 Version 1.0.6 (2022-11-20)
--------------
+--------------------------
 
 * Upgrade pyperf from 2.4.1 to 2.5.0
 * Add a benchmark to measure gc traversal
@@ -136,18 +136,18 @@ Version 1.0.6 (2022-11-20)
 * Use working Genshi 0.7.7
 
 Version 1.0.4 (2022-01-25)
--------------
+--------------------------
 
 * Re-release support for user-defined benchmark after fixing problem
   with virtual environments.
 
 Version 1.0.3 (2021-12-20)
--------------
+--------------------------
 
 * Support user-defined benchmark suites.
 
 Version 1.0.2 (2021-05-11)
--------------
+--------------------------
 
 * Disable the henshi benchmark temporarily since is no longer compatible
   with Python 3.11.
