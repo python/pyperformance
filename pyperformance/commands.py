@@ -251,7 +251,11 @@ def cmd_show(options):
 
     from .compare import display_benchmark_suite
 
-    suite = pyperf.BenchmarkSuite.load(options.filename)
+    try:
+        suite = pyperf.BenchmarkSuite.load(options.filename)
+    except OSError as exc:
+        print(f"ERROR: {exc}")
+        sys.exit(1)
     display_benchmark_suite(suite)
 
 
@@ -261,6 +265,9 @@ def cmd_compare(options):
     try:
         results = compare_results(options)
     except VersionMismatchError as exc:
+        print(f"ERROR: {exc}")
+        sys.exit(1)
+    except OSError as exc:
         print(f"ERROR: {exc}")
         sys.exit(1)
 
