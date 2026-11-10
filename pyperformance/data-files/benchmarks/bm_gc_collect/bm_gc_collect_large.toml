@@ -1,0 +1,3 @@
+[tool.pyperformance]
+name = "gc_collect_large"
+runscript = "run_large_benchmark.py"
