@@ -31,7 +31,8 @@ Other Python Benchmarks:
   pyperformance and `Codespeed <https://github.com/tobami/codespeed/>`_ (Django
   web application)
 * PyPy: `speed.pypy.org <https://speed.pypy.org/>`_
-  uses `PyPy benchmarks <https://foss.heptapod.net/pypy/benchmarks>`_
+  uses `PyPy benchmarks <https://foss.heptapod.net/pypy/benchmarks>`_ and also
+  records the pyperformance suite
 * Pyston: `pyston-perf <https://github.com/dropbox/pyston-perf>`_
 * `Numba benchmarks <https://numba.pydata.org/numba-benchmark/>`_
 * Cython: `Cython Demos/benchmarks
