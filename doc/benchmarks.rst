@@ -18,6 +18,8 @@ Available benchmark groups:
 * ``all``: Group including all benchmarks
 * ``apps``: "High-level" applicative benchmarks (2to3, Chameleon, Tornado HTTP)
 * ``default``: Group of benchmarks run by default by the ``run`` command
+* ``io``: File and stream I/O benchmarks. Not part of ``default``: run them
+  explicitly with ``-b io``.
 * ``math``: Float and integers
 * ``regex``: Collection of regular expression benchmarks
 * ``serialize``: Benchmarks on ``pickle`` and ``json`` modules
@@ -304,6 +306,28 @@ rendered):
    :alt: html5lib values
 
 See the `html5lib project <https://html5lib.readthedocs.io/>`_.
+
+
+io
+--
+
+I/O benchmarks (``io`` group, not run by default). They stay at the binary
+(bytes) I/O layer where possible and use a fresh temporary directory per run.
+Files stay in the OS page cache and writes are not fsync'ed, so they measure
+Python's I/O stack and system call overhead rather than the storage device,
+except for results ending in ``_uncached``. Results still depend on the
+operating system and file system of the temporary directory.
+
+* ``io_whole_file``: read or write a whole file in a single call, one API
+  per result: ``open().read()`` / ``open().write()`` in binary mode at 4 KiB
+  and 1 MiB (``io_whole_file_read_bytes_4k``,
+  ``io_whole_file_write_bytes_4k``, ...), and ``pathlib.Path.read_text()`` /
+  ``write_text()`` at 1 MiB. The binary reads are also measured with the
+  file's pages dropped from the page cache before each read
+  (``io_whole_file_read_bytes_4k_uncached``,
+  ``io_whole_file_read_bytes_1m_uncached``), so the read waits for the storage
+  device. These need ``os.posix_fadvise()`` and are skipped where it is not
+  available (macOS, Windows).
 
 
 json_dumps, json_loads

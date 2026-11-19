@@ -54,6 +54,7 @@ hexiom	<local>
 # Unable to get the program 'hg' from the virtual environment
 #hg_startup	<local>
 html5lib	<local>
+io_whole_file	<local>
 json_dumps	<local>
 json_loads	<local>
 logging	<local>
@@ -107,6 +108,8 @@ xml_etree	<local>
 
 
 [group default]
+# I/O benchmarks are opt-in: run them with "-b io".
+-io_whole_file
 [group asyncio]
 [group startup]
 [group regex]
@@ -114,3 +117,4 @@ xml_etree	<local>
 [group apps]
 [group math]
 [group template]
+[group io]

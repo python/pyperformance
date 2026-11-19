@@ -1,0 +1,10 @@
+[project]
+name = "pyperformance_bm_io_whole_file"
+requires-python = ">=3.8"
+dependencies = ["pyperf"]
+urls = {repository = "https://github.com/python/pyperformance"}
+dynamic = ["version"]
+
+[tool.pyperformance]
+name = "io_whole_file"
+tags = "io"
