@@ -6,6 +6,14 @@ Version 1.15.0 (unreleased)
 * Add support for Python 3.15 and drop 3.10
 * Bump tornado to 6.6 (fixes ``BufferError`` on PyPy)
 * Bump genshi to 0.7.12 (fixes ``TypeError`` on Python 3.15)
+* Bump the pinned dependencies of most benchmarks to current releases,
+  including Django 5.2, SQLAlchemy 2.1, dulwich 1.2, SymPy 1.14, Mako 1.4,
+  docutils 0.23, sqlglot 30, websockets 17, Sphinx 9.0 and dask 2026.8.
+* Port the SQLAlchemy benchmarks to the SQLAlchemy 2 API and drop the
+  ``greenlet`` requirement
+* ``mako``: use the pure Python implementation of ``markupsafe``, which Mako
+  now requires
+* Bump ``pyperf`` to 2.11.0 and ``psutil`` to 7.2.2
 
 Version 1.14.0 (2026-02-07)
 ---------------------------

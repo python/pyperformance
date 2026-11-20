@@ -1,8 +1,7 @@
 import pyperf
 
 from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from sqlalchemy import create_engine
 
 
@@ -36,11 +35,6 @@ engine = create_engine('sqlite://')
 # Create all tables in the engine. This is equivalent to "Create Table"
 # statements in raw SQL.
 Base.metadata.create_all(engine)
-
-
-# Bind the engine to the metadata of the Base class so that the
-# declaratives can be accessed through a DBSession instance
-Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 # A DBSession() instance establishes all conversations with the database
