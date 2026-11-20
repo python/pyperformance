@@ -63,7 +63,8 @@ def setup_server():
 
 def bench_fastapi(loops, url):
     async def run_benchmark():
-        async with httpx.AsyncClient(trust_env=False) as client:
+        limits = httpx.Limits(max_connections=CONCURRENCY)
+        async with httpx.AsyncClient(limits=limits, trust_env=False) as client:
             t0 = pyperf.perf_counter()
 
             for i in range(loops):
