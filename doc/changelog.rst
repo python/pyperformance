@@ -8,7 +8,7 @@ Version 1.15.0 (unreleased)
 * Bump genshi to 0.7.12 (fixes ``TypeError`` on Python 3.15)
 * Bump the pinned dependencies of most benchmarks to current releases,
   including Django 5.2, SQLAlchemy 2.1, dulwich 1.2, SymPy 1.14, Mako 1.4,
-  docutils 0.23, sqlglot 30, websockets 17, Sphinx 9.0 and dask 2026.8.
+  docutils 0.22, sqlglot 30, websockets 17, Sphinx 9.0 and dask 2026.8.
 * Port the SQLAlchemy benchmarks to the SQLAlchemy 2 API and drop the
   ``greenlet`` requirement
 * ``mako``: use the pure Python implementation of ``markupsafe``, which Mako
