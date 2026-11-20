@@ -185,7 +185,7 @@ def parse_args():
     cmd.add_argument("changed_filename", metavar="changed_file.json")
 
     # list
-    cmd = subparsers.add_parser("list", help="List benchmarks of the running Python")
+    cmd = subparsers.add_parser("list", help="List benchmarks of the target Python")
     cmds.append(cmd)
     filter_opts(cmd)
 
@@ -343,13 +343,13 @@ def _select_benchmarks(raw, manifest, python):
     # Get the selections.
     selected = []
     info = _pythoninfo.get_info(python)
-    this_python_version = ".".join(map(str, info.sys.version_info[:3]))
+    target_python_version = ".".join(map(str, info.sys.version_info[:3]))
     for bench in _benchmark_selections.iter_selections(manifest, parsed_infos):
         if isinstance(bench, str):
             logging.warning(f"no benchmark named {bench!r}")
             continue
         # Filter using the target interpreter, which may differ from the running Python.
-        if this_python_version in bench.python:
+        if target_python_version in bench.python:
             selected.append(bench)
 
     return selected

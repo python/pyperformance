@@ -6,6 +6,8 @@ Version 1.15.0 (unreleased)
 * Add support for Python 3.15 and drop 3.10
 * Bump tornado to 6.6 (fixes ``BufferError`` on PyPy)
 * Bump genshi to 0.7.12 (fixes ``TypeError`` on Python 3.15)
+* Fix benchmark selection checking Python version requirements against the
+  running interpreter instead of the target specified by ``--python``
 
 Version 1.14.0 (2026-02-07)
 ---------------------------
