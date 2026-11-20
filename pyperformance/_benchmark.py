@@ -167,6 +167,11 @@ class Benchmark:
     def python(self):
         return SpecifierSet(self._get_metadata_value("python", ""))
 
+    @property
+    def python_implementations(self):
+        """Return supported implementation names, or an empty sequence for all."""
+        return self._get_metadata_value("python_implementations", ())
+
     # Other metadata keys:
     # * base
     # * dependencies

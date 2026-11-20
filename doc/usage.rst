@@ -559,8 +559,15 @@ significant.
 Omitting the ``-b`` option will result in the default group of benchmarks being
 run Omitting ``-b`` is the same as specifying `-b default`.
 
-To run every benchmark pyperformance knows about, use ``-b all``. To see a full
+To select every benchmark eligible for the target interpreter, use ``-b all``. To see a full
 list of all available benchmarks, use `--help`.
+
+The ``run`` and ``list`` commands check compatibility against the interpreter
+selected by ``--python``. A benchmark must support its Python language version
+and, when restricted by metadata, its implementation. Unsupported implementations
+are reported on stderr and omitted from groups and explicit selections. If no
+benchmarks remain, ``run`` reports that no benchmark was run.
+``list_groups`` continues to show declared group membership without filtering.
 
 Negative benchmarks specifications are also supported: `-b -2to3` will run every
 benchmark in the default group except for 2to3 (this is the same as

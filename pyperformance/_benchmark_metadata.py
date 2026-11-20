@@ -26,6 +26,7 @@ TOOL_FIELDS = {
     "metafile": None,
     "name": None,
     "tags": None,
+    "python_implementations": None,
     "datadir": None,
     "runscript": None,
     "extra_opts": None,
@@ -38,6 +39,7 @@ TOOL_FIELDS = {
 #    metafile
 #    tags
 #    python
+#    python_implementations
 #    dependencies  # (from requirements.in)
 #    requirements  # (from lock file or requirements.txt)
 #    datadir
@@ -219,6 +221,18 @@ def _resolve_value(field, value, rootdir):
                 raise ValueError("Invalid tag 'all'")
             elif tag == "":
                 raise ValueError("Invalid empty tag")
+    elif field == "python_implementations":
+        if not isinstance(value, list):
+            raise TypeError("python_implementations should be a list of names")
+        if not value:
+            raise ValueError("python_implementations should not be empty")
+        implementations = []
+        for name in value:
+            if not isinstance(name, str):
+                raise TypeError("python_implementations should be a list of names")
+            _utils.check_name(name)
+            implementations.append(name.lower())
+        value = implementations
     elif field == "datadir":
         if not os.path.isabs(value):
             value = os.path.join(rootdir, value)

@@ -117,6 +117,13 @@ skips the operations after creation.
 Note that this benchmark does not create any reference cycles that the garbage
 collector will need to break to free memory.
 
+The ``btree_gc_only_frozen`` variant freezes the startup heap before creating
+the tree. An ordinary holder references a frozen anchor so the measured full
+collection runs with references into a nonempty permanent generation. Tree
+construction, freezing, and unfreezing are outside timing. The permanent
+generation must be empty when this benchmark starts. This variant runs on
+CPython, which provides the required GC freeze API.
+
 
 chameleon
 ---------
@@ -248,6 +255,56 @@ Create 100,000 point objects which compute ``math.cos()``, ``math.sin()`` and
 .. versionchanged:: 0.5.5
    Use ``__slots__`` on the Point class to focus the benchmark on float rather
    than testing performance of class attributes.
+
+
+gc_collect_large, gc_collect_self_lists
+---------------------------------------
+
+``gc_collect_large`` uses the same cyclic graph as ``gc_collect`` with 10,000
+independent bidirectional rings of 21 nodes each, for 210,000 garbage nodes.
+``gc_collect_self_lists`` uses 1,000,000 independent one-element lists that
+each contain themselves. Its small per-object traversal emphasizes the cost
+of processing a large garbage list.
+
+Both benchmarks keep the graph rooted until ``gc.disable()`` is called, then
+time only the explicit full collection. PyPy may still run minor collections
+while automatic major collections and finalizers are disabled. Construction
+and checks are outside timing. ``--cycles`` controls the number of rings or
+self-referential lists.
+
+
+gc_weakref_recheck, gc_resurrection_partial, gc_resurrection_full
+-----------------------------------------------------------------
+
+Collect 10,000 independent rings of 21 nodes each with one callback event:
+
+* ``gc_weakref_recheck`` runs one weakref callback that observes a cleared
+  reference and retains no fixture objects.
+* ``gc_resurrection_partial`` runs one finalizer that retains half the rings.
+* ``gc_resurrection_full`` runs one finalizer that retains every ring.
+
+The resurrection variants add one finalizing node and a list of roots. Timing
+includes the collections needed to reclaim unrescued garbage. If an older
+collector defers all garbage after resurrection, the partial variant includes
+the second collection needed to finish that work. Setup, validation, and the
+final collection of rescued objects are outside timing.
+
+These variants run on CPython and use its integer reclamation counts to verify
+the measured work. ``--cycles`` controls the number of rings and must be even.
+
+
+gc_tuple_survivors
+------------------
+
+Retain 200,000 fresh tuples containing 16 ``None`` items each and time
+``gc.collect(0)``. Construction and cleanup are outside timing. ``--entries``
+and ``--width`` control the population and tuple size.
+
+On GIL-enabled CPython, the retained root is aged before the tuples are created,
+and the young-generation collection can untrack the tuples. Free-threaded
+CPython scans the full GC heap for this call. PyPy also performs a full
+collection and may reclaim construction temporaries, so those results have a
+broader scope than the GIL-enabled CPython result.
 
 
 genshi

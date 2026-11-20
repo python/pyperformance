@@ -324,21 +324,26 @@ All other PEP 621 fields are optional (e.g. ``requires-python = ">=3.8"``,
 The ``[tool.pyperformance]`` Section
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-=============== ===== === === ===
-field           type  R   B   F 
-=============== ===== === === ===
-tool.name       str   X       X
-tool.tags       [str]     X    
-tool.extra_opts [str]     X    
-tool.inherits   file           
-tool.runscript  file      X    
-tool.datadir    file      X    
-=============== ===== === === ===
+=========================== ===== === === ===
+field                       type  R   B   F
+=========================== ===== === === ===
+tool.name                   str   X       X
+tool.tags                   [str]     X
+tool.python_implementations [str]     X
+tool.extra_opts             [str]     X
+tool.inherits               file
+tool.runscript              file      X
+tool.datadir                file      X
+=========================== ===== === === ===
 
 "R": required
 "B": inferred from the inherited metadata
 "F": inferred from filename
 
 * tags: optional list of names to group benchmarks
+* python_implementations: optional nonempty list of supported names from
+  ``sys.implementation.name``, such as ``["cpython"]``. Names are normalized
+  to lowercase. Omitting this field allows every implementation unless the
+  inherited metadata restricts it. A supplied list replaces the inherited list.
 * extra_opts: optional list of args to pass to ``tool.runscript``
 * runscript: the benchmark script to use instead of run_benchmark.py.

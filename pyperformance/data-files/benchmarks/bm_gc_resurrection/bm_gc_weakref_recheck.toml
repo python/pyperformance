@@ -1,0 +1,3 @@
+[tool.pyperformance]
+name = "gc_weakref_recheck"
+extra_opts = ["--mode", "weakref"]

@@ -1,0 +1,4 @@
+[tool.pyperformance]
+name = "btree_gc_only_frozen"
+python_implementations = ["cpython"]
+runscript = "run_frozen_benchmark.py"
