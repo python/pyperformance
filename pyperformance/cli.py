@@ -351,6 +351,9 @@ def _select_benchmarks(raw, manifest, python):
         # Filter using the target interpreter, which may differ from the running Python.
         if target_python_version in bench.python:
             selected.append(bench)
+        else:
+            logging.warning("Benchmark: %s is being skipped because Python version required is %s but found %s",
+                            bench.spec.name, bench.python, this_python_version)
 
     return selected
 
