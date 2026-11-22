@@ -1,1 +1,1 @@
-tornado==6.6
+tornado==6.6.1

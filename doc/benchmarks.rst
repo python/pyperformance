@@ -713,18 +713,6 @@ Benchmark HTTP server of the ``tornado`` module
 See the `Tornado project <http://www.tornadoweb.org/>`_.
 
 
-unpack_sequence
----------------
-
-Microbenchmark for unpacking lists and tuples.
-
-Pseudo-code::
-
-    a, b, c, d, e, f, g, h, i, j = to_unpack
-
-where ``to_unpack`` is ``tuple(range(10))`` or ``list(range(10))``.
-
-
 xml_etree
 ---------
 
