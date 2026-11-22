@@ -8,6 +8,8 @@ Version 2.0.0 (unreleased)
 * Bump genshi to 0.7.12 (fixes ``TypeError`` on Python 3.15)
 * Remove the ``unpack_sequence`` benchmark: it runs for only a few nanoseconds
   and its results are mostly noise
+* Fix benchmark selection checking Python version requirements against the
+  running interpreter instead of the target specified by ``--python``
 
 Version 1.14.0 (2026-02-07)
 ---------------------------
