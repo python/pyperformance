@@ -12,7 +12,7 @@ REQUIREMENTS_FILE = os.path.join(
 PYPERF_OPTIONAL = ["psutil"]
 
 
-class Requirements(object):
+class Requirements:
     @classmethod
     def from_file(cls, filename):
         self = cls()

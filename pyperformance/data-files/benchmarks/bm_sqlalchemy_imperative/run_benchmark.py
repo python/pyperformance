@@ -1,8 +1,8 @@
 import pyperf
 
 from sqlalchemy import Column, ForeignKey, Integer, String, Table, MetaData
+from sqlalchemy import create_engine, delete, insert, select
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
 
 
 metadata = MetaData()
@@ -26,11 +26,6 @@ engine = create_engine('sqlite://')
 # statements in raw SQL.
 metadata.create_all(engine)
 
-
-# Bind the engine to the metadata of the Base class so that the
-# declaratives can be accessed through a DBSession instance
-metadata.bind = engine
-
 DBSession = sessionmaker(bind=engine)
 # A DBSession() instance establishes all conversations with the database
 # and represents a "staging zone" for all the objects loaded into the
@@ -48,28 +43,24 @@ def bench_sqlalchemy(loops, npeople):
 
     for loops in range(loops):
         # drop rows created by the previous benchmark
-        cur = Person.delete()
-        cur.execute()
-
-        cur = Address.delete()
-        cur.execute()
+        session.execute(delete(Person))
+        session.execute(delete(Address))
 
         # Run the benchmark once
         t0 = pyperf.perf_counter()
 
         for i in range(npeople):
             # Insert a Person in the person table
-            new_person = Person.insert()
-            new_person.execute(name="name %i" % i)
+            new_person = insert(Person).values(name="name %i" % i)
+            session.execute(new_person)
 
             # Insert an Address in the address table
-            new_address = Address.insert()
-            new_address.execute(post_code='%05i' % i)
+            new_address = insert(Address).values(post_code='%05i' % i)
+            session.execute(new_address)
 
         # do 'npeople' queries per insert
         for i in range(npeople):
-            cur = Person.select()
-            cur.execute()
+            session.execute(select(Person))
 
         total_dt += (pyperf.perf_counter() - t0)
 

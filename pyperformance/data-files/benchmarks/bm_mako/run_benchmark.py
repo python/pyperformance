@@ -12,8 +12,9 @@ import sys
 
 import pyperf
 
-# Mako imports (w/o markupsafe)
-sys.modules['markupsafe'] = None
+# Mako requires markupsafe; use its pure Python implementation
+# rather than the C speedups.
+sys.modules['markupsafe._speedups'] = None
 
 import mako   # noqa
 from mako.template import Template   # noqa
