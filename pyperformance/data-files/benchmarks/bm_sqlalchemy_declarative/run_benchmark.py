@@ -53,7 +53,7 @@ def bench_sqlalchemy(loops, npeople):
 
     for loops in range(loops):
         with DBSession() as session:
-        # drop rows created by the previous benchmark
+            # drop rows created by the previous benchmark
             session.query(Person).delete(synchronize_session=False)
             session.query(Address).delete(synchronize_session=False)
 
