@@ -16,7 +16,12 @@ class BenchmarkSelectionTests(unittest.TestCase):
         options = SimpleNamespace(
             benchmarks="async_tree_eager", manifest=None, python="target-python"
         )
-        info = SimpleNamespace(sys=SimpleNamespace(version_info=(3, 16, 0)))
+        info = SimpleNamespace(
+            sys=SimpleNamespace(
+                version_info=(3, 16, 0),
+                implementation=SimpleNamespace(name="cpython"),
+            )
+        )
         with (
             mock.patch.object(sys, "version_info", (3, 11, 0)),
             mock.patch.object(_pythoninfo, "get_info", return_value=info) as get_info,
@@ -25,6 +30,27 @@ class BenchmarkSelectionTests(unittest.TestCase):
 
         get_info.assert_called_once_with("target-python")
         self.assertEqual([bench.name for bench in benchmarks], ["async_tree_eager"])
+
+    def test_unsupported_implementation(self):
+        options = SimpleNamespace(
+            benchmarks="dask,nbody", manifest=None, python="target-python"
+        )
+        for implementation, expected in [
+            ("cpython", ["dask", "nbody"]),
+            ("pypy", ["nbody"]),
+        ]:
+            info = SimpleNamespace(
+                sys=SimpleNamespace(
+                    version_info=(3, 12, 0),
+                    implementation=SimpleNamespace(name=implementation),
+                )
+            )
+            with (
+                self.subTest(implementation),
+                mock.patch.object(_pythoninfo, "get_info", return_value=info),
+            ):
+                benchmarks = cli._benchmarks_from_options(options)
+                self.assertEqual(sorted(bench.name for bench in benchmarks), expected)
 
 
 class FullStackTests(tests.Functional, unittest.TestCase):

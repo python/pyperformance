@@ -167,6 +167,11 @@ class Benchmark:
     def python(self):
         return SpecifierSet(self._get_metadata_value("python", ""))
 
+    @property
+    def unsupported_implementations(self):
+        """The names (sys.implementation.name) of the unsupported Pythons."""
+        return self._get_metadata_value("unsupported_implementations", ())
+
     # Other metadata keys:
     # * base
     # * dependencies
