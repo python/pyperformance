@@ -4,6 +4,7 @@ Changelog
 Version 2.0.0 (unreleased)
 --------------------------
 * Add support for Python 3.15 and drop 3.10
+* Add support for PyPy 3.12
 * Bump tornado to 6.6 (fixes ``BufferError`` on PyPy)
 * Bump genshi to 0.7.12 (fixes ``TypeError`` on Python 3.15)
 * Bump the pinned dependencies of most benchmarks to current releases,
