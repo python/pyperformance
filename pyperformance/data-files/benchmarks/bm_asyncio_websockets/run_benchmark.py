@@ -6,9 +6,9 @@ Author: Kumar Aditya
 """
 
 import pyperf
-import websockets.server
-import websockets.client
 import websockets.exceptions
+from websockets.asyncio.client import connect
+from websockets.asyncio.server import serve
 import asyncio
 
 CHUNK_SIZE = 1024 ** 2
@@ -35,8 +35,8 @@ async def main() -> None:
     global stop
     t0 = pyperf.perf_counter()
     stop = asyncio.Event()
-    async with websockets.server.serve(handler, "", 8001):
-        async with websockets.client.connect("ws://localhost:8001") as ws:
+    async with serve(handler, "", 8001):
+        async with connect("ws://localhost:8001") as ws:
             await asyncio.gather(*[send(ws) for _ in range(100)])
         await stop.wait()
     return pyperf.perf_counter() - t0

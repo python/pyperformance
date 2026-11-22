@@ -1,1 +1,1 @@
-mercurial==5.8
+mercurial==7.2.4
