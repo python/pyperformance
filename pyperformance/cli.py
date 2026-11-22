@@ -344,13 +344,17 @@ def _select_benchmarks(raw, manifest, python):
     selected = []
     info = _pythoninfo.get_info(python)
     target_python_version = ".".join(map(str, info.sys.version_info[:3]))
+    target_implementation = info.sys.implementation.name.lower()
     for bench in _benchmark_selections.iter_selections(manifest, parsed_infos):
         if isinstance(bench, str):
             logging.warning(f"no benchmark named {bench!r}")
             continue
         # Filter using the target interpreter, which may differ from the running Python.
-        if target_python_version in bench.python:
-            selected.append(bench)
+        if target_python_version not in bench.python:
+            continue
+        if target_implementation in bench.unsupported_implementations:
+            continue
+        selected.append(bench)
 
     return selected
 
