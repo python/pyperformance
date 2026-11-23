@@ -29,6 +29,7 @@ TOOL_FIELDS = {
     "datadir": None,
     "runscript": None,
     "extra_opts": None,
+    "unsupported_implementations": None,
 }
 
 
@@ -43,6 +44,7 @@ TOOL_FIELDS = {
 #    datadir
 #    runscript
 #    extra_opts
+#    unsupported_implementations
 
 
 def load_metadata(metafile, defaults=None):
@@ -235,6 +237,17 @@ def _resolve_value(field, value, rootdir):
                 raise TypeError(
                     f"extra_opts should be a list of strings, got {value!r}"
                 )
+    elif field == "unsupported_implementations":
+        if isinstance(value, str):
+            raise TypeError(
+                f"unsupported_implementations should be a list of strings, got {value!r}"
+            )
+        for name in value:
+            if not name or not isinstance(name, str):
+                raise TypeError(
+                    f"unsupported_implementations should be a list of strings, got {value!r}"
+                )
+        value = [name.lower() for name in value]
     else:
         raise NotImplementedError(field)
     return value

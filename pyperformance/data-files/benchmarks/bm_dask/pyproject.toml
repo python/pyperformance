@@ -7,3 +7,5 @@ dynamic = ["version"]
 
 [tool.pyperformance]
 name = "dask"
+# cloudpickle and distributed do not support PyPy.
+unsupported_implementations = ["pypy"]

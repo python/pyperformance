@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # Python Performance Benchmark Suite documentation build configuration file, created by
 # sphinx-quickstart on Tue Mar 28 15:59:41 2017.
@@ -88,12 +87,6 @@ html_theme = "alabaster"
 # documentation.
 #
 # html_theme_options = {}
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
-
 
 # -- Options for HTMLHelp output ------------------------------------------
 

@@ -1,2 +1,2 @@
-mako==1.1.4
-markupsafe==2.0.1
+mako==1.4.3
+markupsafe==3.0.4

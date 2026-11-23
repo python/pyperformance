@@ -12,17 +12,13 @@ __all__ = [
 
 import os.path
 import re
+import tomllib
 import urllib.parse
 
 import packaging.requirements
 import packaging.specifiers
 import packaging.utils
 import packaging.version
-
-try:
-    import tomllib  # type: ignore[import-not-found] # tomllib doesn't exist on 3.7-3.10
-except ImportError:
-    import tomli as tomllib
 
 from ._utils import check_name
 

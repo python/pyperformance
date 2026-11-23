@@ -20,8 +20,7 @@ possible.
   (source code, issues)
 * `Download pyperformance on PyPI <https://pypi.python.org/pypi/pyperformance>`_
 
-pyperformance is not tuned for PyPy yet: use the `PyPy benchmarks project
-<https://foss.heptapod.net/pypy/benchmarks>`_ instead to measure PyPy
-performances.
+pyperformance supports PyPy, except for the ``dask`` benchmark, as its dependencies
+do not support PyPy. See also the `PyPy benchmarks project <https://foss.heptapod.net/pypy/benchmarks>`_.
 
 pyperformance is distributed under the MIT license.

@@ -16,8 +16,6 @@ def new_venv_config(
     system_site_packages=False,
     executable=None,
     command=None,
-    *,
-    old=sys.version_info < (3, 11),
 ):
     if not home:
         home = os.path.dirname(sys.executable)
@@ -26,11 +24,10 @@ def new_venv_config(
     if not isinstance(system_site_packages, str):
         system_site_packages = "true" if system_site_packages else "false"
     system_site_packages = system_site_packages == "true"
-    if not old:
-        if executable is None:
-            executable = sys.executable
-        if command is None:
-            command = f"{executable} -m venv {root}"
+    if executable is None:
+        executable = sys.executable
+    if command is None:
+        command = f"{executable} -m venv {root}"
     return types.SimpleNamespace(
         home=home,
         version=version,

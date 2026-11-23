@@ -100,7 +100,6 @@ telco	<local>
 tomli_loads	<local>
 tornado_http	<local>
 typing_runtime_protocols	<local>
-unpack_sequence	<local>
 unpickle	<local:pickle>
 unpickle_list	<local:pickle>
 unpickle_pure_python	<local:pickle>
