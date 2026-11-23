@@ -35,8 +35,8 @@ async def main() -> None:
     global stop
     t0 = pyperf.perf_counter()
     stop = asyncio.Event()
-    async with serve(handler, "", 8001):
-        async with connect("ws://localhost:8001") as ws:
+    async with serve(handler, "", 8001, compression=None):
+        async with connect("ws://localhost:8001", compression=None) as ws:
             await asyncio.gather(*[send(ws) for _ in range(100)])
         await stop.wait()
     return pyperf.perf_counter() - t0
