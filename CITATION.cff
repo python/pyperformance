@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "pyperformance: The Python Performance Benchmark Suite"
+type: software
+authors:
+  - name: "The pyperformance contributors"
+url: "https://github.com/python/pyperformance"
+repository-code: "https://github.com/python/pyperformance"
+license: MIT
+abstract: >-
+  The pyperformance project is intended to be an authoritative source of
+  benchmarks for all Python implementations. The focus is on real-world
+  benchmarks, rather than synthetic benchmarks, using whole applications
+  when possible.
+keywords:
+  - Python
+  - benchmark
+  - performance

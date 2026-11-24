@@ -1,1 +1,1 @@
-dask[distributed]==2024.10.0
+dask[distributed]==2026.8.0
