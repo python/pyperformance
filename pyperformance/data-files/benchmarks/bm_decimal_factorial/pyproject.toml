@@ -8,3 +8,5 @@ dynamic = ["version"]
 [tool.pyperformance]
 name = "decimal_factorial"
 tags = "decimal"
+# Until fix for python/cpython#140036 will be backported.
+unsupported_implementations = ["pypy"]

@@ -4,8 +4,7 @@ Calculate `factorial` using the decimal module.
 - 2024-06-14: Michael Droettboom copied this from
   Modules/_decimal/tests/bench.py in the CPython source and adapted to use
   pyperf.
-- 2026-09-26: Sergey B Kirpichev adapted context settings and tested
-  values to support also pure-Python decimal module, copy
+- 2026-09-26: Sergey B Kirpichev copied
   increase_int_max_str_digits() decorator.
 """
 
@@ -16,13 +15,11 @@ Calculate `factorial` using the decimal module.
 # Modified and extended by Stefan Krah.
 #
 
+
 import decimal
-try:
-    import _decimal
-except ImportError:
-    _decimal = None
 import sys
 from functools import wraps
+
 
 import pyperf
 
@@ -54,17 +51,11 @@ def increase_int_max_str_digits(maxdigits):
 @increase_int_max_str_digits(maxdigits=10000000)
 def bench_decimal_factorial():
     c = decimal.getcontext()
-    if _decimal:
-        c.prec = decimal.MAX_PREC
-        c.Emax = decimal.MAX_EMAX
-        c.Emin = decimal.MIN_EMIN
-        data = [10000, 100000]
-    else:
-        # Workaround for python/cpython#140036 (PyPy uses pure-Python Decimal's)
-        c.prec = 20000  # Should be enough to hold largest factorial exactly.
-        data = [1000, 5000]
+    c.prec = decimal.MAX_PREC
+    c.Emax = decimal.MAX_EMAX
+    c.Emin = decimal.MIN_EMIN
 
-    for n in data:
+    for n in [10000, 100000]:
         _ = factorial(decimal.Decimal(n), 0)
 
 
