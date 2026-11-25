@@ -42,11 +42,15 @@ async def main(use_ssl: bool) -> None:
         server_context = None
         client_context = None
 
-    server = await asyncio.start_server(handle_echo, '127.0.0.1', 8882, ssl=server_context)
+    # Bind to an ephemeral port (port 0) and read back the port the kernel
+    # assigned.  This keeps concurrent runs (e.g. asyncio_tcp and
+    # asyncio_tcp_ssl running in parallel) from colliding on a fixed port.
+    server = await asyncio.start_server(handle_echo, '127.0.0.1', 0, ssl=server_context)
+    host, port = server.sockets[0].getsockname()[:2]
 
     async with server:
         asyncio.create_task(server.start_serving())
-        reader, writer = await asyncio.open_connection('127.0.0.1', 8882, ssl=client_context)
+        reader, writer = await asyncio.open_connection(host, port, ssl=client_context)
         data_len = 0
         while True:
             data = await reader.read(CHUNK_SIZE)
