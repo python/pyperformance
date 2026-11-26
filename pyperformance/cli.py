@@ -148,6 +148,17 @@ def parse_args():
         default=None,
         help="number of skipped values per run used to warmup the benchmark",
     )
+    cmd.add_argument(
+        "--shuffle",
+        action="store_true",
+        help="Run selected benchmarks in random order",
+    )
+    cmd.add_argument(
+        "--shuffle-seed",
+        type=int,
+        default=None,
+        help="Seed used when shuffling benchmarks (implies --shuffle)",
+    )
     filter_opts(cmd)
 
     # show
